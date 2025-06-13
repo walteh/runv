@@ -69,7 +69,7 @@ func NewTaskService(ctx context.Context, publisher shim.Publisher, sd shutdown.S
 		ep, err = oomv2.New(publisher)
 	} else {
 		// ep, err = oomv1.New(publisher)
-		return nil, fmt.Errorf("unsupported cgroup mode: %s", cgroups.Mode())
+		return nil, fmt.Errorf("unsupported cgroup mode: %d", cgroups.Mode())
 	}
 	if err != nil {
 		return nil, err

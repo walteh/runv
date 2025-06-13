@@ -22,12 +22,12 @@ import (
 	"fmt"
 
 	"github.com/containerd/containerd/v2/pkg/stdio"
-	runvconsole "github.com/walteh/runv/pkg/console"
+	"github.com/walteh/runv/pkg/kqueue"
 )
 
 // NewPlatform returns a linux platform for use with I/O operations
 func NewPlatform() (stdio.Platform, error) {
-	kqueuer, err := runvconsole.NewKqueuer()
+	kqueuer, err := kqueue.NewKqueuer()
 	if err != nil {
 		return nil, fmt.Errorf("failed to initialize kqueuer: %w", err)
 	}
