@@ -1,7 +1,7 @@
 version: v2
 modules:
-  - name: github.com/walteh/runv/proxy
-    path: proxy
+  - name: github.com/walteh/runv
+    path: .
 deps:
   - "buf.build/bufbuild/protovalidate"
   - "buf.build/googleapis/googleapis"

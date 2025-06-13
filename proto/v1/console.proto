@@ -1,0 +1,24 @@
+edition = "2023";
+
+package runv.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/go_features.proto";
+
+option features.(pb.go).api_level = API_OPAQUE;
+
+service ConsoleProxyService {
+	rpc Poll(PollRequest) returns (PollResponse) {}
+}
+
+message PollRequest {
+	string session_id = 1 [
+		(buf.validate.field).string.uuid = true
+	];
+}
+
+message PollResponse {
+	string session_id = 1 [
+		(buf.validate.field).string.uuid = true
+	];
+}

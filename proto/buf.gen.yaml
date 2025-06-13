@@ -3,25 +3,23 @@
 version: v2
 managed:
     enabled: true
-    # override:
-    #   - file_option: go_package_prefix
-    #     value: github.com/walteh/ec1/gen/proto/golang
+    override:
+      - file_option: go_package_prefix
+        value: github.com/walteh/runv/proto
     disable:
       - module: buf.build/bufbuild/protovalidate
         file_option: go_package
 
-clean: true
-
 plugins:
 
-  - out: gen/proto/golang
+  - out: .
     local: ["go", "tool", "google.golang.org/protobuf/cmd/protoc-gen-go"]
     include_imports: false
     strategy: all
     opt:
       - paths=source_relative
 
-  - out: gen/proto/golang
+  - out: .
     #   - out: gen/proto/golang
     #     local: ["go", "tool", "google.golang.org/grpc/cmd/protoc-gen-go-grpc"]
     #     opt:
@@ -37,8 +35,8 @@ plugins:
       - paths=source_relative
       - prefix=TTRPC
 
-  - out: gen/proto/golang
-    local: ["go", "tool", "github.com/walteh/ec1/tools/cmd/protoc-gen-go-opaque-helpers"]
+  - out: .
+    local: ["go", "tool", "github.com/walteh/runv/tools/cmd/protoc-gen-go-opaque-helpers"]
     opt:
       - paths=source_relative
       - enable_protovalidate=true

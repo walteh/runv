@@ -110,6 +110,7 @@ tasks:
 
     gen:buf:
         desc: generates protobuf files
+        dir: proto
         cmds:
           - |-
             {{.GO_COMMAND}} tool github.com/bufbuild/buf/cmd/buf generate

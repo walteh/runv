@@ -4,6 +4,11 @@
 			"name": "root",
 			"path": "."
 		},
+		{
+			// so the buf and proto lsps work
+			"name": "proto",
+			"path": "./proto"
+		},
 		// {
 		// 	"name": "gvisor-tap-vsock",
 		// 	"path": "../gvisor-tap-vsock"
