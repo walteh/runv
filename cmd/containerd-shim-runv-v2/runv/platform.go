@@ -31,7 +31,6 @@ import (
 	"github.com/containerd/containerd/v2/pkg/stdio"
 	"github.com/containerd/fifo"
 	"github.com/walteh/runv/cmd/containerd-shim-runv-v2/process"
-	"github.com/walteh/runv/pkg/epoll"
 )
 
 var bufPool = sync.Pool{
@@ -43,28 +42,33 @@ var bufPool = sync.Pool{
 	},
 }
 
-// NewPlatform returns a linux platform for use with I/O operations
-func NewPlatform() (stdio.Platform, error) {
-	epoller, err := epoll.NewEpoller()
-	if err != nil {
-		return nil, fmt.Errorf("failed to initialize epoller: %w", err)
-	}
-	go epoller.Wait()
-	return &linuxPlatform{
-		epoller: epoller,
+func newPlatform[T shutdownConsole](queue queue[T]) (stdio.Platform, error) {
+	return &platform[T]{
+		queue: queue,
 	}, nil
 }
 
-type linuxPlatform struct {
-	epoller *epoll.Epoller
+type queue[T shutdownConsole] interface {
+	Add(console console.Console) (T, error)
+	Close() error
+	CloseConsole(int) error
 }
 
-func (p *linuxPlatform) CopyConsole(ctx context.Context, console console.Console, id, stdin, stdout, stderr string, wg *sync.WaitGroup) (cons console.Console, retErr error) {
-	if p.epoller == nil {
-		return nil, errors.New("uninitialized epoller")
+type shutdownConsole interface {
+	console.Console
+	Shutdown(close func(int) error) error
+}
+
+type platform[T shutdownConsole] struct {
+	queue queue[T]
+}
+
+func (p *platform[T]) CopyConsole(ctx context.Context, console console.Console, id, stdin, stdout, stderr string, wg *sync.WaitGroup) (cons console.Console, retErr error) {
+	if p.queue == nil {
+		return nil, errors.New("uninitialized queue")
 	}
 
-	epollConsole, err := p.epoller.Add(console)
+	kqueueConsole, err := p.queue.Add(console)
 	if err != nil {
 		return nil, err
 	}
@@ -80,10 +84,10 @@ func (p *linuxPlatform) CopyConsole(ctx context.Context, console console.Console
 			cwg.Done()
 			bp := bufPool.Get().(*[]byte)
 			defer bufPool.Put(bp)
-			io.CopyBuffer(epollConsole, in, *bp)
-			// we need to shutdown epollConsole when pipe broken
-			epollConsole.Shutdown(p.epoller.CloseConsole)
-			epollConsole.Close()
+			io.CopyBuffer(kqueueConsole, in, *bp)
+			// we need to shutdown kqueueConsole when pipe broken
+			kqueueConsole.Shutdown(p.queue.CloseConsole)
+			kqueueConsole.Close()
 			in.Close()
 		}()
 	}
@@ -137,7 +141,7 @@ func (p *linuxPlatform) CopyConsole(ctx context.Context, console console.Console
 		cwg.Add(1)
 		go func() {
 			cwg.Done()
-			io.Copy(outW, epollConsole)
+			io.Copy(outW, kqueueConsole)
 			outW.Close()
 			wg.Done()
 		}()
@@ -173,7 +177,7 @@ func (p *linuxPlatform) CopyConsole(ctx context.Context, console console.Console
 			cwg.Done()
 			buf := bufPool.Get().(*[]byte)
 			defer bufPool.Put(buf)
-			io.CopyBuffer(outw, epollConsole, *buf)
+			io.CopyBuffer(outw, kqueueConsole, *buf)
 
 			outw.Close()
 			outr.Close()
@@ -182,20 +186,20 @@ func (p *linuxPlatform) CopyConsole(ctx context.Context, console console.Console
 		cwg.Wait()
 	}
 
-	return epollConsole, nil
+	return kqueueConsole, nil
 }
 
-func (p *linuxPlatform) ShutdownConsole(ctx context.Context, cons console.Console) error {
-	if p.epoller == nil {
-		return errors.New("uninitialized epoller")
+func (p *platform[T]) ShutdownConsole(ctx context.Context, cons console.Console) error {
+	if p.queue == nil {
+		return errors.New("uninitialized kqueuer")
 	}
-	epollConsole, ok := cons.(*epoll.EpollConsole)
+	kqueueConsole, ok := cons.(shutdownConsole)
 	if !ok {
-		return fmt.Errorf("expected EpollConsole, got %#v", cons)
+		return fmt.Errorf("expected kqueueConsole, got %#v", cons)
 	}
-	return epollConsole.Shutdown(p.epoller.CloseConsole)
+	return kqueueConsole.Shutdown(p.queue.CloseConsole)
 }
 
-func (p *linuxPlatform) Close() error {
-	return p.epoller.Close()
+func (p *platform[T]) Close() error {
+	return p.queue.Close()
 }
