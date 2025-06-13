@@ -1,0 +1,433 @@
+version: "3"
+
+vars:
+    GO_MODULES:
+        sh: cat go.work | grep -oEh  '\t+(\./*[^[:space:]]*)' | tr -d '\t'
+    GO_ROOT_PKG:
+        sh: cat go.mod | grep -oE '^module[^\S]+' | cut -d' ' -f2
+    GO_COMMAND: go
+
+env:
+    COMPOSE_BAKE: true
+    GOPROXY: 'https://proxy.golang.org'
+    GOSUMDB: sum.golang.org
+    GOPRIVATE: github.com/walteh
+    DOCKER_BUILDKIT: 1
+
+tasks:
+    go:tidy:
+        run: once
+        aliases: [go-mod-tidy]
+        cmds:
+          - for: {var: GO_MODULES}
+            cmd: cd {{.ITEM}} && go mod tidy -e
+
+    go:upgrade:
+        aliases: [go-mod-upgrade]
+        run: once
+        cmds:
+          - |-
+            {{.GO_COMMAND}} tool go-mod-upgrade --force
+          - task: go-mod-tidy
+
+    go:update:
+        aliases: [go-mod-update]
+        requires: {vars: [CLI_ARGS]}
+        run: once
+        cmds:
+          - task: go:tidy
+          - for: {var: GO_MODULES}
+            cmd: cd {{.ITEM}} && go get -u {{.CLI_ARGS}}
+          - task: go:tidy
+
+    term:
+        desc: opens a terminal in the project root
+        platforms: [darwin]
+        cmds:
+          - cmd: open -a Terminal $(pwd)
+
+    zellij:
+        desc: opens zellij
+        platforms: [darwin]
+        cmds:
+          - cmd: zellij --config-dir .zellij
+
+    gen:options:
+        desc: generates options for structs with '//go:opts' comment
+        vars:
+            OPTION_GEN_DATA:
+                sh: |-
+                    grep -rl "//go:opts" --include="*.go" . | xargs -I{} bash -c 'd=$(dirname {}); d=${d#./}; awk -v d="$d {}" '\''/\/\/go:opts/ {getline; if($1=="type") print d, $2}'\'' {}'
+            OPTION_GEN_SOURCE_FILES:
+                sh: |-
+                    grep -rl "//go:opts" --include="*.go" .
+        generates:
+          - "**/*_opts.gen.go"
+        sources:
+          - '{{.OPTION_GEN_SOURCE_FILES | join ","}}'
+        cmds:
+          - for: {var: OPTION_GEN_DATA, split: "\n"}
+            cmd: |-
+                set -e
+                {{.GO_COMMAND}} tool github.com/kazhuravlev/options-gen/cmd/options-gen \
+                  -out-filename={{splitList " " .ITEM | first}}/{{ splitList " " .ITEM | last | lower | trimSuffix "opts" }}_opts.gen.go \
+                  -filename={{ splitList " " .ITEM | rest | first }} \
+                  -from-struct={{ splitList " " .ITEM | last }} \
+                  -pkg={{ splitList " " .ITEM | first | splitList "/" | last }}
+
+    gen:mockery:
+        desc: generates mocks for interfaces with '//go:mock' comment
+        vars:
+            TMP_DIR:
+                sh: mktemp -d
+            MOCKERY_INTERFACE_DATA:
+                sh: |-
+                    grep -rl "//go:mock" --include="*.go" . | xargs -I{} sh -c '
+                        f="{}"
+                        d=$(dirname "$f"); d=${d#./}
+                        raw=$(awk "/\/\/go:mock/{getline; if(\$1==\"type\") print \$2}" "$f")
+                        name=${raw%%\[*}
+                        echo "$d $f $name"'
+            MOCKERY_SOURCE_FILES:
+                sh: |-
+                    grep -rl "//go:mock" --include="*.go" .
+        sources:
+          - '{{.MOCKERY_SOURCE_FILES | join ","}}'
+          - .mockery.yaml
+        generates:
+          - ./gen/mocks/**/*_mock.gen.go
+          - ./gen/config/.mockery.yaml
+        cmds:
+          - cmd: mkdir -p {{.TMP_DIR}}
+          - defer: rm -rf {{.TMP_DIR}}
+          - cmd: cp .mockery.yaml {{.TMP_DIR}}/.mockery.yaml
+          - for: {var: "MOCKERY_INTERFACE_DATA", split: "\n", as: ITEM}
+            cmd: |-
+                set -e
+                yq -i ".packages.\"{{ .GO_ROOT_PKG }}/{{ splitList " " .ITEM | first }}\".interfaces.{{ splitList " " .ITEM | last }} = {}" {{.TMP_DIR}}/.mockery.yaml
+          - cmd: |-
+                {{.GO_COMMAND}} tool github.com/vektra/mockery/v2 --config={{.TMP_DIR}}/.mockery.yaml
+
+    gen:buf:
+        desc: generates protobuf files
+        cmds:
+          - |-
+            {{.GO_COMMAND}} tool github.com/bufbuild/buf/cmd/buf generate
+
+    install:bindfs:
+        env:
+            fuse_CFLAGS: "-I/usr/local/include/fuse -D_FILE_OFFSET_BITS=64 -D_DARWIN_C_SOURCE"
+            fuse_LIBS: "-L/usr/local/lib -lfuse-t -pthread"
+        cmds:
+          - git clone https://github.com/mpartel/bindfs.git /tmp/bindfs
+          - defer: rm -rf /tmp/bindfs
+          - cd /tmp/bindfs && ./autogen.sh
+          - cd /tmp/bindfs && ./configure --with-fuse2
+          - cd /tmp/bindfs && make
+          - cd /tmp/bindfs && sudo make install
+          - sudo install_name_tool -add_rpath /usr/local/lib /usr/local/bin/bindfs
+
+    harpoon:harpoond:*:
+        label: 'harpoon:harpoond:{{.ARCH}}'
+        requires: {vars: [ARCH]}
+        desc: embeds the bins
+        vars:
+            ARCH: "{{index .MATCH 0}}"
+            BIN: harpoond
+            PACKAGE: harpoon_harpoond_{{ .ARCH }}
+            OUT_DIR: ./gen/harpoon/{{.PACKAGE}}
+        generates:
+          - ./gen/harpoon/harpoon_harpoond_{{ .ARCH }}/**
+        sources:
+          - ./cmd/harpoond/**
+          - ./pkg/harpoon/**
+          - ./pkg/vmm/**
+
+        cmds:
+          - cmd: rm -rf {{.OUT_DIR}}
+          - cmd: mkdir -p {{.OUT_DIR}}
+          - cmd: |-
+                GOOS=linux GOARCH={{.ARCH}} go build -ldflags="-s -w -extldflags=-static" -trimpath -o {{.OUT_DIR}}/{{.BIN}} ./cmd/{{.BIN}}
+                xz -k {{.OUT_DIR}}/{{.BIN}}
+                sha256sum {{.OUT_DIR}}/{{.BIN}}.xz > {{.OUT_DIR}}/{{.BIN}}.xz.sha256
+          - cmd: |-
+                echo -e "package {{.PACKAGE}}\n\nimport _ \"embed\"\nimport \"github.com/walteh/ec1/pkg/binembed\"\n" > {{.OUT_DIR}}/embed.gen.go
+                echo -e "//go:embed {{.BIN}}.xz\nvar BinaryXZ []byte\n" >> {{.OUT_DIR}}/embed.gen.go
+                echo -e "const BinaryXZChecksum = \"$(cat {{.OUT_DIR}}/{{.BIN}}.xz.sha256 | awk '{print $1}')\"\n" >> {{.OUT_DIR}}/embed.gen.go
+                echo -e "func init() {\n\tbinembed.RegisterXZ(BinaryXZChecksum, BinaryXZ)\n}\n" >> {{.OUT_DIR}}/embed.gen.go
+          - cmd: go fmt {{.OUT_DIR}}/embed.gen.go
+
+    harpoon:harpoond:
+        desc: builds the harpoond
+        cmds:
+          - task: harpoon:harpoond:arm64
+          - task: harpoon:harpoond:amd64
+
+    harpoon:kernel:*:
+        label: 'harpoon:kernel:{{.ARCH}}'
+        requires: {vars: [ARCH]}
+        desc: builds the kernel
+        sources:
+          - ./harpoon/kernel/**
+        generates:
+          - ./gen/harpoon/harpoon_vmlinux_{{ .ARCH }}/**
+        vars:
+            KERNEL_VERSION: 6.15-rc7
+            ARCH: "{{index .MATCH 0}}"
+            PACKAGE: harpoon_vmlinux_{{ .ARCH }}
+            OUT_DIR: ./gen/harpoon/{{.PACKAGE}}
+            TMP_DIR:
+                sh: mktemp -d
+        cmds:
+          - defer: rm -rf {{.TMP_DIR}}
+          - cmd: mkdir -p {{.TMP_DIR}}
+          - |-
+            docker buildx build \
+                --platform=linux/{{.ARCH}} \
+                --build-arg KERNEL_VERSION=6.15-rc7 \
+                --build-arg KERNEL_CONFIG=harpoon-{{.ARCH}}.config \
+                --target export \
+                --output type=local,dest={{.TMP_DIR}} \
+                harpoon/kernel
+          - cmd: xz -k {{.TMP_DIR}}/vmlinux
+          - cmd: sha256sum {{.TMP_DIR}}/vmlinux.xz > {{.TMP_DIR}}/vmlinux.xz.sha256
+          - cmd: sha256sum {{.TMP_DIR}}/config-{{.KERNEL_VERSION}} > {{.TMP_DIR}}/config-{{.KERNEL_VERSION}}.sha256
+          - cmd: rm {{.TMP_DIR}}/vmlinux
+          - cmd: |-
+                echo -e "package {{.PACKAGE}}\n\nimport _ \"embed\"\nimport \"github.com/walteh/ec1/pkg/binembed\"\n" > {{.TMP_DIR}}/embed.gen.go
+                echo -e "//go:embed vmlinux.xz\nvar BinaryXZ []byte\n" >> {{.TMP_DIR}}/embed.gen.go
+                echo -e "const BinaryXZChecksum = \"$(cat {{.TMP_DIR}}/vmlinux.xz.sha256 | awk '{print $1}')\"\n" >> {{.TMP_DIR}}/embed.gen.go
+                echo -e "const Version = \"{{.KERNEL_VERSION}}\"\n" >> {{.TMP_DIR}}/embed.gen.go
+                echo -e "//go:embed config-{{.KERNEL_VERSION}}\n\nvar Config []byte\n" >> {{.TMP_DIR}}/embed.gen.go
+                echo -e "const ConfigChecksum = \"$(cat {{.TMP_DIR}}/config-{{.KERNEL_VERSION}}.sha256 | awk '{print $1}')\"\n" >> {{.TMP_DIR}}/embed.gen.go
+                echo -e "func init() {\n\tbinembed.RegisterXZ(BinaryXZChecksum, BinaryXZ)\n\tbinembed.RegisterRaw(ConfigChecksum, Config)\n}\n" >> {{.TMP_DIR}}/embed.gen.go
+          - cmd: go fmt {{.TMP_DIR}}/embed.gen.go
+          - cmd: mkdir -p $(dirname {{.OUT_DIR}})
+          - cmd: mv -f {{.TMP_DIR}}/* {{.OUT_DIR}}
+
+    harpoon:kernel:
+        desc: builds the kernel
+        cmds:
+          - task: harpoon:kernel:arm64
+          - task: harpoon:kernel:amd64
+
+    harpoon:initramfs:*:
+        deps:
+          - harpoon:harpoond:{{.ARCH}}
+        label: 'harpoon:initramfs:{{.ARCH}}'
+        requires: {vars: [ARCH]}
+        desc: builds the initramfs
+        sources:
+          - ./gen/harpoon/harpoon_harpoond_{{ .ARCH }}/**
+          - ./harpoon/initramfs/**
+        generates:
+          - ./gen/harpoon/harpoon_initramfs_{{ .ARCH }}/**
+        vars:
+            BUSYBOX_VERSION: 1.37.0
+            ARCH: "{{index .MATCH 0}}"
+            PACKAGE: harpoon_initramfs_{{ .ARCH }}
+            OUT_DIR: ./gen/harpoon/{{.PACKAGE}}
+            TMP_DIR:
+                sh: mktemp -d
+        cmds:
+          - defer: rm -rf {{.TMP_DIR}}
+          - cmd: mkdir -p {{.TMP_DIR}}
+          - |-
+            docker buildx build \
+                --platform=linux/{{.ARCH}} \
+                --build-arg BUSYBOX_VERSION={{.BUSYBOX_VERSION}} \
+                --target export \
+                --output type=local,dest={{.TMP_DIR}} \
+                --build-context=harpoond=./gen/harpoon/harpoon_harpoond_{{ .ARCH }} \
+                harpoon/initramfs
+          - cmd: xz -k {{.TMP_DIR}}/initramfs.cpio.gz
+          - cmd: sha256sum {{.TMP_DIR}}/initramfs.cpio.gz.xz > {{.TMP_DIR}}/initramfs.cpio.gz.xz.sha256
+          - cmd: rm {{.TMP_DIR}}/initramfs.cpio.gz
+          - cmd: |-
+                echo -e "package {{.PACKAGE}}\n\nimport _ \"embed\"\nimport \"github.com/walteh/ec1/pkg/binembed\"\n" > {{.TMP_DIR}}/embed.gen.go
+                echo -e "//go:embed initramfs.cpio.gz.xz\nvar BinaryXZ []byte\n" >> {{.TMP_DIR}}/embed.gen.go
+                echo -e "const BinaryXZChecksum = \"$(cat {{.TMP_DIR}}/initramfs.cpio.gz.xz.sha256 | awk '{print $1}')\"\n" >> {{.TMP_DIR}}/embed.gen.go
+                echo -e "func init() {\n\tbinembed.RegisterXZ(BinaryXZChecksum, BinaryXZ)\n}\n" >> {{.TMP_DIR}}/embed.gen.go
+          - cmd: go fmt {{.TMP_DIR}}/embed.gen.go
+          - cmd: mkdir -p $(dirname {{.OUT_DIR}})
+          - cmd: mv -f {{.TMP_DIR}}/* {{.OUT_DIR}}
+
+    harpoon:initramfs:
+        desc: builds the initramfs
+        cmds:
+          - task: harpoon:initramfs:arm64
+          - task: harpoon:initramfs:amd64
+
+    harpoon:all:
+        desc: builds all harpoon components
+        cmds:
+          - task: harpoon:kernel
+          - task: harpoon:initramfs
+          - task: harpoon:harpoond
+
+    oci:cache:*:
+        label: 'oci:cache:{{.IMAGE}}'
+        requires: {vars: [LAYOUTS_DIR, GO_FILE, WRK_DIR, FMT_IMAGE, IMAGE]}
+        desc: pulls an oci image and archives it
+        vars:
+            IMAGE: "{{ index .MATCH 0 }}"
+            VAR_NAME: "{{.FMT_IMAGE | upper }}"
+            OUT_FILE: "{{.LAYOUTS_DIR}}/{{.FMT_IMAGE}}.tar.gz"
+            PLATFORMS:
+              - linux/arm64
+              - linux/amd64
+
+        cmds:
+          - for: {var: PLATFORMS}
+            cmd: ./gow tool crane pull --format=oci {{.IMAGE}} {{.WRK_DIR}} --platform {{.ITEM}} --annotate-ref
+
+          - cmd: cd {{.WRK_DIR}} && tar -czf {{.OUT_FILE}} .
+            #   - cmd: ./gow run ./cmd/manifest-prune -oci-layout {{.WRK_DIR}}
+            #   - cmd: ./gow tool arc archive -f 'tar' -c 'gz' -f '{{.OUT_FILE}}' {{.WRK_DIR}}/*
+          - cmd: sha256sum {{.OUT_FILE}} > {{.OUT_FILE}}.sha256
+          - cmd: rm -rf {{.WRK_DIR}}
+          - cmd: |-
+                echo -e "const {{.VAR_NAME }}_TAR_GZ_CHECKSUM = \"$(cat {{.OUT_FILE}}.sha256 | awk '{print $1}')\"" >> {{.GO_FILE}}
+                echo -e "const {{.VAR_NAME }} OCICachedImage = \"{{.IMAGE}}\"" >> {{.GO_FILE}}
+                echo -e "const {{.VAR_NAME }}_SIZE = \"$(ls -S -lh {{.OUT_FILE}} | awk '{print $5}')\"" >> {{.GO_FILE}}
+                echo -e "func init() { register({{.VAR_NAME }}.String(), \"{{.FMT_IMAGE}}.tar.gz\") }\n" >> {{.GO_FILE}}
+
+    oci:cache:
+        desc: pulls all oci images and archives them
+        vars:
+            DIRECTORY: 'gen/oci-image-cache'
+            GO_FILE: '{{.DIRECTORY}}/oci_image_cache.gen.go'
+            IMAGES:
+              - docker.io/library/alpine:latest
+              - docker.io/library/busybox:glibc
+              - docker.io/library/debian:bookworm-slim
+              - docker.io/oven/bun:alpine
+              - docker.io/alpine/socat:latest
+        cmds:
+          - cmd: rm -rf {{.DIRECTORY}}
+          - cmd: mkdir -p {{.DIRECTORY}}/layouts
+          - cmd: |-
+                echo -e "package oci_image_cache\n\n" > {{.GO_FILE}}
+                echo -e "import (\n\t\"embed\"\n\t\"github.com/walteh/ec1/pkg/testing/toci\"\n)\n" >> {{.GO_FILE}}
+                echo -e "type OCICachedImage string\n" >> {{.GO_FILE}}
+                echo -e "func (me OCICachedImage) String() string {\n\treturn string(me)\n}\n" >> {{.GO_FILE}}
+                echo -e "//go:embed layouts/*\nvar s embed.FS\n\n" >> {{.GO_FILE}}
+                echo -e "func register(imageName string, fileName string) {\n\ttoci.MustRegisterImage(imageName, \"layouts/\" + fileName, s)\n}\n" >> {{.GO_FILE}}
+          - for: {var: IMAGES}
+            task: oci:cache:{{.ITEM}}
+            vars:
+                LAYOUTS_DIR: {sh: "echo \"$(pwd)/{{.DIRECTORY}}/layouts\""}
+                GO_FILE: "{{.GO_FILE}}"
+                WRK_DIR: {sh: 'mktemp -d'}
+                FMT_IMAGE: |-
+                    {{.ITEM | trimPrefix "docker.io/library/" | trimPrefix "docker.io/" | replace "/" "_" | replace ":" "_" | lower | replace "-" "_" | replace "." "_" | replace "+" "_" }}
+          - cmd: go fmt {{.DIRECTORY}}/oci_image_cache.gen.go
+
+    dev:shim:killall:
+        desc: kills all running containers
+        cmds:
+          - cmd: sudo -A pkill -f containerd-shim-harpoon-v2 || true
+          - cmd: sudo -A pkill -f nerdctl-dev || true
+          - cmd: sudo -A killall -9 containerd-shim-harpoon-v2 || true
+          - cmd: sudo -A killall -9 nerdctl-dev || true
+
+    dev:2025-06-08:01:
+        desc: runs the shim for 2025-06-08
+        cmds:
+          - task: dev:shim:killall
+          - task: harpoon:initramfs:arm64
+          - task: harpoon:kernel:arm64
+          - cmd: |-
+                timeout 20s ./gow -root run -codesign -log-file-to-append-in=.logs/containerd.log ./cmd/nerdctl-dev run \
+                    --platform=linux/arm64 \
+                    --network=host \
+                    --runtime=containerd.shim.harpoon.v2 \
+                    --pull=missing \
+                    --rm \
+                    docker.io/library/alpine:latest \
+                    "echo" "-e" "\n\nhi\n\n"
+    dev:2025-06-10:01:
+        desc: runs the shim for 2025-06-08
+        cmds:
+          - task: dev:shim:killall
+          - task: harpoon:initramfs:arm64
+          - task: harpoon:kernel:arm64
+          - cmd: |-
+                timeout 20s ./gow -root run -codesign -log-file-to-append-in=.logs/containerd.log ./cmd/nerdctl-dev run \
+                    --platform=linux/arm64 \
+                    --network=host \
+                    --runtime=containerd.shim.harpoon.v2 \
+                    --pull=missing \
+                    --rm \
+                    docker.io/oven/bun:alpine \
+                    --version
+
+    dev:2025-06-10:02:
+        desc: runs the shim for 2025-06-08
+        vars:
+            TMP_DIR:
+                sh: mktemp -d
+        cmds:
+          - task: dev:shim:killall
+          - task: harpoon:initramfs:arm64
+          - task: harpoon:kernel:arm64
+          - cmd: mkdir -p {{.TMP_DIR}}
+          - defer: rm -rf {{.TMP_DIR}}
+          - cmd: echo "console.log(new Date().toISOString()); console.log('hi from bun!');" > {{.TMP_DIR}}/script.ts
+          - cmd: |-
+                timeout 20s ./gow -root run -codesign -log-file-to-append-in=.logs/containerd.log ./cmd/nerdctl-dev run \
+                    --platform=linux/arm64 \
+                    --network=host \
+                    --runtime=containerd.shim.harpoon.v2 \
+                    --pull=missing \
+                    --rm \
+                    --mount=type=bind,src={{.TMP_DIR}},dst=/app/scripts \
+                    docker.io/oven/bun:alpine \
+                    run /app/scripts/script.ts
+
+    dev:2025-06-08:*:
+        label: 'dev:2025-06-08:{{.ARG}}'
+        desc: runs the shim for 2025-06-08
+        vars:
+            ARG: "{{index .MATCH 0}}"
+        cmds:
+          - cmd: CGO_ENABLED=1 go build -buildmode=plugin -o /tmp/proc-demo/vz-plugin.so ./cmd/plugin-demo/plugin/main.go
+          - cmd: ./gow run -codesign ./cmd/proc-demo -{{.ARG}}
+
+    setup:
+        desc: sets up the environment
+        cmds:
+          - task: fork:sync
+
+    fork:sync:
+        desc: syncs the forks
+        dir: ../
+        vars:
+            FORKS:
+              - branch: main
+                repo: "github.com/Code-Hex/vz"
+
+              - branch: main
+                repo: "github.com/walteh/containerd"
+
+              - branch: main
+                repo: "github.com/walteh/nerdctl"
+
+              - branch: main
+                repo: "github.com/walteh/gvisor-tap-vsock"
+
+              - branch: main
+                repo: "github.com/walteh/tint"
+
+              - branch: main
+                repo: "github.com/walteh/buildkit"
+
+              - branch: main
+                repo: "github.com/walteh/ttrpc"
+
+              - branch: main
+                repo: "github.com/walteh/nerdctl"
+
+        cmds:
+          - for: {var: FORKS}
+            cmd: git clone {{.ITEM.repo}} --depth 1 && git fetch origin {{.ITEM.branch}} && git checkout {{.ITEM.branch}}

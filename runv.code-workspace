@@ -1,0 +1,132 @@
+{
+	"folders": [
+		{
+			"name": "root",
+			"path": "."
+		},
+		// {
+		// 	"name": "gvisor-tap-vsock",
+		// 	"path": "../gvisor-tap-vsock"
+		// },
+		{
+			"name": "console",
+			"path": "../console"
+		},
+		{
+			"name": "containerd",
+			"path": "../containerd"
+		},
+		{
+			"name": "nerdctl",
+			"path": "../nerdctl"
+		},
+		{
+			"name": "buildkit",
+			"path": "../buildkit"
+		},
+		{
+			"name": "ec1",
+			"path": "../ec1"
+		},
+		{
+			"name": "ttrpc",
+			"path": "../ttrpc"
+		},
+		{
+			"name": "vz",
+			"path": "../vz"
+		}
+		// {
+		// 	"name": "sys",
+		// 	"path": "../sys"
+		// },
+		// {
+		// 	"name": "go-errors",
+		// 	"path": "../go-errors"
+		// }
+	],
+	"extensions": {
+		"recommendations": [
+			"golang.go",
+			"tooltitudeteam.tooltitude",
+			"jeff-hykin.better-dockerfile-syntax",
+			"jeff-hykin.better-shellscript-syntax",
+			"walteh.retab-vscode",
+			"microsoft-dciborow.align-bicep",
+			"mortenson.go-template-transpiler-extension",
+			"casualjim.gotemplate",
+			"tooltitudeteam.tooltitude-pb"
+		]
+	},
+	"settings": {
+		"[toml]": {
+			"editor.defaultFormatter": "tamasfe.even-better-toml"
+		},
+		"tooltitude.brokenRefsEnabled": false,
+		"evenBetterToml.formatter.alignEntries": true,
+		"evenBetterToml.formatter.alignComments": true,
+		"evenBetterToml.formatter.indentEntries": true,
+		"evenBetterToml.formatter.indentTables": true,
+
+		"workbench.colorCustomizations": {
+			"editorOverviewRuler.errorForeground": "#FF0000",
+			"editorError.background": "#FF000033",
+			"editorError.border": "#FF0000",
+			// "editorError.foreground": "#FF0000",,
+			"editorWarning.background": "#FFCC0033",
+			"editorWarning.border": "#FFCC00",
+			// "editorWarning.foreground": "#FFCC00",
+			"editorInfo.background": "#00AAFF33",
+			"editorInfo.border": "#00AAFF"
+			// "editorInfo.foreground": "#00AAFF",
+		},
+		"go.testExplorer.showOutput": true,
+
+		// "[go]": {
+		// 	"editor.formatOnSave": false
+		// },
+
+		// "go.gopath": "${workspaceFolder}/go",
+
+		"editor.formatOnSave": true,
+		"editor.detectIndentation": false,
+		"files.associations": {
+			"tsconfig.*json": "jsonc",
+			"*.css": "tailwindcss",
+			"Dockerfile": "dockerfile",
+			".copyrc": "hcl"
+		},
+		"explorer.sortOrder": "type",
+		"explorer.sortOrderLexicographicOptions": "upper",
+		"yaml.format.enable": false,
+		"[protobuf]": {
+			"editor.defaultFormatter": "walteh.retab-vscode"
+		},
+		"material-icon-theme.folders.associations": {
+			"dynamo": "database",
+			"mw": "middleware"
+		},
+		"[json]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode"
+		},
+		"[jsonc]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode"
+		},
+		"[dotenv]": {
+			"editor.defaultFormatter": "foxundermoon.shell-format"
+		},
+		"[go]": {
+			"editor.defaultFormatter": "golang.go",
+			"editor.formatOnSave": true
+		},
+		"[ignore]": {
+			"editor.defaultFormatter": "foxundermoon.shell-format"
+		},
+		"[typescript]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode"
+		},
+		"[typescriptreact]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode"
+		}
+	}
+}

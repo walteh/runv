@@ -1,0 +1,18 @@
+edition = "2023";
+
+package runv.proxies.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/go_features.proto";
+
+option features.(pb.go).api_level = API_OPAQUE;
+
+service ConsoleProxyService {
+	// rpc Poll(PollRequest) returns (PollResponse);
+
+	// rpc AddConsole(AddConsoleRequest) returns (AddConsoleResponse);
+
+	// rpc CloseConsole(CloseConsoleRequest) returns (CloseConsoleResponse);
+
+	// rpc CloseSession(CloseSessionRequest) returns (CloseSessionResponse);
+}
