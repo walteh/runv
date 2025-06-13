@@ -31,6 +31,8 @@ const (
 //
 // Simple Console Service - Single service with bidirectional streaming
 // Based on research suggesting gRPC bidirectional streams + PTY libraries
+
+//go:mock
 type SimpleConsoleServiceClient interface {
 	// StreamConsole provides bidirectional streaming for PTY I/O and control
 	StreamConsole(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[ConsoleChunk, ConsoleChunk], error)
@@ -97,6 +99,8 @@ func (c *simpleConsoleServiceClient) ClosePlatform(ctx context.Context, in *Simp
 //
 // Simple Console Service - Single service with bidirectional streaming
 // Based on research suggesting gRPC bidirectional streams + PTY libraries
+
+//go:mock
 type SimpleConsoleServiceServer interface {
 	// StreamConsole provides bidirectional streaming for PTY I/O and control
 	StreamConsole(grpc.BidiStreamingServer[ConsoleChunk, ConsoleChunk]) error
