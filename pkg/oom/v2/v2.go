@@ -24,8 +24,8 @@ import (
 	eventstypes "github.com/containerd/containerd/api/events"
 	"github.com/containerd/containerd/v2/core/events"
 	"github.com/containerd/containerd/v2/core/runtime"
-	"github.com/containerd/containerd/v2/pkg/oom"
 	"github.com/containerd/log"
+	"github.com/walteh/runv/pkg/oom"
 )
 
 // New returns an implementation that listens to OOM events

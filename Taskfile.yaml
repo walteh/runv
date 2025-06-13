@@ -40,6 +40,11 @@ tasks:
             cmd: cd {{.ITEM}} && go get -u {{.CLI_ARGS}}
           - task: go:tidy
 
+    go:test:
+        desc: runs the tests
+        cmds:
+          - cmd: go tool gotestsum go test ./...
+
     term:
         desc: opens a terminal in the project root
         platforms: [darwin]
@@ -432,3 +437,4 @@ tasks:
         cmds:
           - for: {var: FORKS}
             cmd: git clone {{.ITEM.repo}} --depth 1 && git fetch origin {{.ITEM.branch}} && git checkout {{.ITEM.branch}}
+
