@@ -1,5 +1,3 @@
-//go:build linux
-
 /*
    Copyright The containerd Authors.
 
@@ -40,19 +38,20 @@ import (
 	"github.com/containerd/ttrpc"
 	"github.com/containerd/typeurl/v2"
 
-	"github.com/containerd/containerd/v2/cmd/containerd-shim-runc-v2/process"
-	"github.com/containerd/containerd/v2/cmd/containerd-shim-runc-v2/runc"
 	"github.com/containerd/containerd/v2/core/runtime"
 	"github.com/containerd/containerd/v2/pkg/namespaces"
-	"github.com/containerd/containerd/v2/pkg/oom"
-	oomv1 "github.com/containerd/containerd/v2/pkg/oom/v1"
-	oomv2 "github.com/containerd/containerd/v2/pkg/oom/v2"
+	"github.com/walteh/runv/pkg/oom"
+
+	// oomv1 "github.com/walteh/runv/pkg/oom/v1"
 	"github.com/containerd/containerd/v2/pkg/protobuf"
 	ptypes "github.com/containerd/containerd/v2/pkg/protobuf/types"
 	"github.com/containerd/containerd/v2/pkg/shim"
 	"github.com/containerd/containerd/v2/pkg/shutdown"
 	"github.com/containerd/containerd/v2/pkg/stdio"
 	"github.com/containerd/containerd/v2/pkg/sys/reaper"
+	"github.com/walteh/runv/cmd/containerd-shim-runv-v2/process"
+	runc "github.com/walteh/runv/cmd/containerd-shim-runv-v2/runv"
+	oomv2 "github.com/walteh/runv/pkg/oom/v2"
 )
 
 var (
@@ -69,7 +68,8 @@ func NewTaskService(ctx context.Context, publisher shim.Publisher, sd shutdown.S
 	if cgroups.Mode() == cgroups.Unified {
 		ep, err = oomv2.New(publisher)
 	} else {
-		ep, err = oomv1.New(publisher)
+		// ep, err = oomv1.New(publisher)
+		return nil, fmt.Errorf("unsupported cgroup mode: %s", cgroups.Mode())
 	}
 	if err != nil {
 		return nil, err

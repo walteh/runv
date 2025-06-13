@@ -36,11 +36,8 @@ import (
 	cgroupsv2 "github.com/containerd/cgroups/v3/cgroup2"
 	"github.com/containerd/containerd/api/types"
 	"github.com/containerd/containerd/api/types/runc/options"
-	"github.com/containerd/containerd/v2/cmd/containerd-shim-runc-v2/process"
-	"github.com/containerd/containerd/v2/cmd/containerd-shim-runc-v2/runc"
 	"github.com/containerd/containerd/v2/core/mount"
 	"github.com/containerd/containerd/v2/pkg/namespaces"
-	"github.com/containerd/containerd/v2/pkg/schedcore"
 	"github.com/containerd/containerd/v2/pkg/shim"
 	"github.com/containerd/containerd/v2/version"
 	"github.com/containerd/errdefs"
@@ -48,6 +45,8 @@ import (
 	"github.com/containerd/log"
 	"github.com/containerd/typeurl/v2"
 	"github.com/opencontainers/runtime-spec/specs-go/features"
+	"github.com/walteh/runv/cmd/containerd-shim-runv-v2/process"
+	runc "github.com/walteh/runv/cmd/containerd-shim-runv-v2/runv"
 	"golang.org/x/sys/unix"
 )
 
@@ -233,9 +232,10 @@ func (manager) Start(ctx context.Context, id string, opts shim.StartOpts) (_ shi
 
 	goruntime.LockOSThread()
 	if os.Getenv("SCHED_CORE") != "" {
-		if err := schedcore.Create(schedcore.ProcessGroup); err != nil {
-			return params, fmt.Errorf("enable sched core support: %w", err)
-		}
+		// not possible ouside of linux
+		// if err := schedcore.Create(schedcore.ProcessGroup); err != nil {
+		// 	return params, fmt.Errorf("enable sched core support: %w", err)
+		// }
 	}
 
 	if err := cmd.Start(); err != nil {

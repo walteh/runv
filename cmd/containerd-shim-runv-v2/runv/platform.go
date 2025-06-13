@@ -1,5 +1,3 @@
-//go:build linux
-
 /*
    Copyright The containerd Authors.
 
@@ -29,10 +27,11 @@ import (
 	"syscall"
 
 	"github.com/containerd/console"
-	"github.com/containerd/containerd/v2/cmd/containerd-shim-runc-v2/process"
 	"github.com/containerd/containerd/v2/pkg/namespaces"
 	"github.com/containerd/containerd/v2/pkg/stdio"
 	"github.com/containerd/fifo"
+	"github.com/walteh/runv/cmd/containerd-shim-runv-v2/process"
+	"github.com/walteh/runv/pkg/epoll"
 )
 
 var bufPool = sync.Pool{
@@ -46,7 +45,7 @@ var bufPool = sync.Pool{
 
 // NewPlatform returns a linux platform for use with I/O operations
 func NewPlatform() (stdio.Platform, error) {
-	epoller, err := console.NewEpoller()
+	epoller, err := epoll.NewEpoller()
 	if err != nil {
 		return nil, fmt.Errorf("failed to initialize epoller: %w", err)
 	}
@@ -57,7 +56,7 @@ func NewPlatform() (stdio.Platform, error) {
 }
 
 type linuxPlatform struct {
-	epoller *console.Epoller
+	epoller *epoll.Epoller
 }
 
 func (p *linuxPlatform) CopyConsole(ctx context.Context, console console.Console, id, stdin, stdout, stderr string, wg *sync.WaitGroup) (cons console.Console, retErr error) {
@@ -190,7 +189,7 @@ func (p *linuxPlatform) ShutdownConsole(ctx context.Context, cons console.Consol
 	if p.epoller == nil {
 		return errors.New("uninitialized epoller")
 	}
-	epollConsole, ok := cons.(*console.EpollConsole)
+	epollConsole, ok := cons.(*epoll.EpollConsole)
 	if !ok {
 		return fmt.Errorf("expected EpollConsole, got %#v", cons)
 	}
