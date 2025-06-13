@@ -40,7 +40,7 @@ func generateFile(gen *protogen.Plugin, file *protogen.File, enableValidation bo
 		return nil
 	}
 
-	filename := file.GeneratedFilenamePrefix + "_opaque_helpers.pb.go"
+	filename := file.GeneratedFilenamePrefix + "_opaque.pb.go"
 	g := gen.NewGeneratedFile(filename, file.GoImportPath)
 
 	generateFileHeader(g, file)
@@ -80,11 +80,6 @@ func generateFileHeader(g *protogen.GeneratedFile, file *protogen.File) {
 	g.P("// source: ", file.Desc.Path())
 	g.P()
 	g.P("package ", file.GoPackageName)
-	g.P()
-
-	// Generate ptr helper function
-	g.P("// ptr is a helper function to get a pointer to a value")
-	g.P("func ptr[T any](v T) *T { return &v }")
 	g.P()
 }
 
