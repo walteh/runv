@@ -73,14 +73,12 @@ func (x EpollEventType) Number() protoreflect.EnumNumber {
 }
 
 type AddRequest struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_SessionId   *string                `protobuf:"bytes,1,opt,name=session_id,json=sessionId"`
-	xxx_hidden_ConsoleId   int32                  `protobuf:"varint,2,opt,name=console_id,json=consoleId"`
-	xxx_hidden_Fd          int32                  `protobuf:"varint,3,opt,name=fd"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state                protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_SessionId string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId"`
+	xxx_hidden_ConsoleId int32                  `protobuf:"varint,2,opt,name=console_id,json=consoleId"`
+	xxx_hidden_Fd        int32                  `protobuf:"varint,3,opt,name=fd"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *AddRequest) Reset() {
@@ -110,10 +108,7 @@ func (x *AddRequest) ProtoReflect() protoreflect.Message {
 
 func (x *AddRequest) GetSessionId() string {
 	if x != nil {
-		if x.xxx_hidden_SessionId != nil {
-			return *x.xxx_hidden_SessionId
-		}
-		return ""
+		return x.xxx_hidden_SessionId
 	}
 	return ""
 }
@@ -133,90 +128,40 @@ func (x *AddRequest) GetFd() int32 {
 }
 
 func (x *AddRequest) SetSessionId(v string) {
-	x.xxx_hidden_SessionId = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
+	x.xxx_hidden_SessionId = v
 }
 
 func (x *AddRequest) SetConsoleId(v int32) {
 	x.xxx_hidden_ConsoleId = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
 }
 
 func (x *AddRequest) SetFd(v int32) {
 	x.xxx_hidden_Fd = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
-}
-
-func (x *AddRequest) HasSessionId() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
-}
-
-func (x *AddRequest) HasConsoleId() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
-}
-
-func (x *AddRequest) HasFd() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
-}
-
-func (x *AddRequest) ClearSessionId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_SessionId = nil
-}
-
-func (x *AddRequest) ClearConsoleId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_ConsoleId = 0
-}
-
-func (x *AddRequest) ClearFd() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
-	x.xxx_hidden_Fd = 0
 }
 
 type AddRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	SessionId *string
-	ConsoleId *int32
-	Fd        *int32
+	SessionId string
+	ConsoleId int32
+	Fd        int32
 }
 
 func (b0 AddRequest_builder) Build() *AddRequest {
 	m0 := &AddRequest{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.SessionId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
-		x.xxx_hidden_SessionId = b.SessionId
-	}
-	if b.ConsoleId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
-		x.xxx_hidden_ConsoleId = *b.ConsoleId
-	}
-	if b.Fd != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
-		x.xxx_hidden_Fd = *b.Fd
-	}
+	x.xxx_hidden_SessionId = b.SessionId
+	x.xxx_hidden_ConsoleId = b.ConsoleId
+	x.xxx_hidden_Fd = b.Fd
 	return m0
 }
 
 type AddResponse struct {
 	state                          protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Success             bool                   `protobuf:"varint,1,opt,name=success"`
-	xxx_hidden_Error               *string                `protobuf:"bytes,2,opt,name=error"`
-	xxx_hidden_ProxyConsoleAddress *string                `protobuf:"bytes,3,opt,name=proxy_console_address,json=proxyConsoleAddress"`
-	XXX_raceDetectHookData         protoimpl.RaceDetectHookData
-	XXX_presence                   [1]uint32
+	xxx_hidden_Error               string                 `protobuf:"bytes,2,opt,name=error"`
+	xxx_hidden_ProxyConsoleAddress string                 `protobuf:"bytes,3,opt,name=proxy_console_address,json=proxyConsoleAddress"`
 	unknownFields                  protoimpl.UnknownFields
 	sizeCache                      protoimpl.SizeCache
 }
@@ -255,109 +200,53 @@ func (x *AddResponse) GetSuccess() bool {
 
 func (x *AddResponse) GetError() string {
 	if x != nil {
-		if x.xxx_hidden_Error != nil {
-			return *x.xxx_hidden_Error
-		}
-		return ""
+		return x.xxx_hidden_Error
 	}
 	return ""
 }
 
 func (x *AddResponse) GetProxyConsoleAddress() string {
 	if x != nil {
-		if x.xxx_hidden_ProxyConsoleAddress != nil {
-			return *x.xxx_hidden_ProxyConsoleAddress
-		}
-		return ""
+		return x.xxx_hidden_ProxyConsoleAddress
 	}
 	return ""
 }
 
 func (x *AddResponse) SetSuccess(v bool) {
 	x.xxx_hidden_Success = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
 }
 
 func (x *AddResponse) SetError(v string) {
-	x.xxx_hidden_Error = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
+	x.xxx_hidden_Error = v
 }
 
 func (x *AddResponse) SetProxyConsoleAddress(v string) {
-	x.xxx_hidden_ProxyConsoleAddress = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
-}
-
-func (x *AddResponse) HasSuccess() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
-}
-
-func (x *AddResponse) HasError() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
-}
-
-func (x *AddResponse) HasProxyConsoleAddress() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
-}
-
-func (x *AddResponse) ClearSuccess() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_Success = false
-}
-
-func (x *AddResponse) ClearError() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_Error = nil
-}
-
-func (x *AddResponse) ClearProxyConsoleAddress() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
-	x.xxx_hidden_ProxyConsoleAddress = nil
+	x.xxx_hidden_ProxyConsoleAddress = v
 }
 
 type AddResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Success             *bool
-	Error               *string
-	ProxyConsoleAddress *string
+	Success             bool
+	Error               string
+	ProxyConsoleAddress string
 }
 
 func (b0 AddResponse_builder) Build() *AddResponse {
 	m0 := &AddResponse{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.Success != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
-		x.xxx_hidden_Success = *b.Success
-	}
-	if b.Error != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
-		x.xxx_hidden_Error = b.Error
-	}
-	if b.ProxyConsoleAddress != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
-		x.xxx_hidden_ProxyConsoleAddress = b.ProxyConsoleAddress
-	}
+	x.xxx_hidden_Success = b.Success
+	x.xxx_hidden_Error = b.Error
+	x.xxx_hidden_ProxyConsoleAddress = b.ProxyConsoleAddress
 	return m0
 }
 
 type WaitRequest struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_SessionId   *string                `protobuf:"bytes,1,opt,name=session_id,json=sessionId"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state                protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_SessionId string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *WaitRequest) Reset() {
@@ -387,56 +276,35 @@ func (x *WaitRequest) ProtoReflect() protoreflect.Message {
 
 func (x *WaitRequest) GetSessionId() string {
 	if x != nil {
-		if x.xxx_hidden_SessionId != nil {
-			return *x.xxx_hidden_SessionId
-		}
-		return ""
+		return x.xxx_hidden_SessionId
 	}
 	return ""
 }
 
 func (x *WaitRequest) SetSessionId(v string) {
-	x.xxx_hidden_SessionId = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
-}
-
-func (x *WaitRequest) HasSessionId() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
-}
-
-func (x *WaitRequest) ClearSessionId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_SessionId = nil
+	x.xxx_hidden_SessionId = v
 }
 
 type WaitRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	SessionId *string
+	SessionId string
 }
 
 func (b0 WaitRequest_builder) Build() *WaitRequest {
 	m0 := &WaitRequest{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.SessionId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
-		x.xxx_hidden_SessionId = b.SessionId
-	}
+	x.xxx_hidden_SessionId = b.SessionId
 	return m0
 }
 
 type WaitResponse struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_SessionId   *string                `protobuf:"bytes,1,opt,name=session_id,json=sessionId"`
-	xxx_hidden_Events      *[]*EpollEvent         `protobuf:"bytes,2,rep,name=events"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state                protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_SessionId string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId"`
+	xxx_hidden_Events    *[]*EpollEvent         `protobuf:"bytes,2,rep,name=events"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *WaitResponse) Reset() {
@@ -466,10 +334,7 @@ func (x *WaitResponse) ProtoReflect() protoreflect.Message {
 
 func (x *WaitResponse) GetSessionId() string {
 	if x != nil {
-		if x.xxx_hidden_SessionId != nil {
-			return *x.xxx_hidden_SessionId
-		}
-		return ""
+		return x.xxx_hidden_SessionId
 	}
 	return ""
 }
@@ -484,30 +349,17 @@ func (x *WaitResponse) GetEvents() []*EpollEvent {
 }
 
 func (x *WaitResponse) SetSessionId(v string) {
-	x.xxx_hidden_SessionId = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
+	x.xxx_hidden_SessionId = v
 }
 
 func (x *WaitResponse) SetEvents(v []*EpollEvent) {
 	x.xxx_hidden_Events = &v
 }
 
-func (x *WaitResponse) HasSessionId() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
-}
-
-func (x *WaitResponse) ClearSessionId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_SessionId = nil
-}
-
 type WaitResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	SessionId *string
+	SessionId string
 	Events    []*EpollEvent
 }
 
@@ -515,22 +367,17 @@ func (b0 WaitResponse_builder) Build() *WaitResponse {
 	m0 := &WaitResponse{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.SessionId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
-		x.xxx_hidden_SessionId = b.SessionId
-	}
+	x.xxx_hidden_SessionId = b.SessionId
 	x.xxx_hidden_Events = &b.Events
 	return m0
 }
 
 type CloseConsoleRequest struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_SessionId   *string                `protobuf:"bytes,1,opt,name=session_id,json=sessionId"`
-	xxx_hidden_ConsoleId   int32                  `protobuf:"varint,2,opt,name=console_id,json=consoleId"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state                protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_SessionId string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId"`
+	xxx_hidden_ConsoleId int32                  `protobuf:"varint,2,opt,name=console_id,json=consoleId"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *CloseConsoleRequest) Reset() {
@@ -560,10 +407,7 @@ func (x *CloseConsoleRequest) ProtoReflect() protoreflect.Message {
 
 func (x *CloseConsoleRequest) GetSessionId() string {
 	if x != nil {
-		if x.xxx_hidden_SessionId != nil {
-			return *x.xxx_hidden_SessionId
-		}
-		return ""
+		return x.xxx_hidden_SessionId
 	}
 	return ""
 }
@@ -576,69 +420,35 @@ func (x *CloseConsoleRequest) GetConsoleId() int32 {
 }
 
 func (x *CloseConsoleRequest) SetSessionId(v string) {
-	x.xxx_hidden_SessionId = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
+	x.xxx_hidden_SessionId = v
 }
 
 func (x *CloseConsoleRequest) SetConsoleId(v int32) {
 	x.xxx_hidden_ConsoleId = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
-}
-
-func (x *CloseConsoleRequest) HasSessionId() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
-}
-
-func (x *CloseConsoleRequest) HasConsoleId() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
-}
-
-func (x *CloseConsoleRequest) ClearSessionId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_SessionId = nil
-}
-
-func (x *CloseConsoleRequest) ClearConsoleId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_ConsoleId = 0
 }
 
 type CloseConsoleRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	SessionId *string
-	ConsoleId *int32
+	SessionId string
+	ConsoleId int32
 }
 
 func (b0 CloseConsoleRequest_builder) Build() *CloseConsoleRequest {
 	m0 := &CloseConsoleRequest{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.SessionId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
-		x.xxx_hidden_SessionId = b.SessionId
-	}
-	if b.ConsoleId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
-		x.xxx_hidden_ConsoleId = *b.ConsoleId
-	}
+	x.xxx_hidden_SessionId = b.SessionId
+	x.xxx_hidden_ConsoleId = b.ConsoleId
 	return m0
 }
 
 type CloseConsoleResponse struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Success     bool                   `protobuf:"varint,1,opt,name=success"`
-	xxx_hidden_Error       *string                `protobuf:"bytes,2,opt,name=error"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state              protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Success bool                   `protobuf:"varint,1,opt,name=success"`
+	xxx_hidden_Error   string                 `protobuf:"bytes,2,opt,name=error"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *CloseConsoleResponse) Reset() {
@@ -675,79 +485,42 @@ func (x *CloseConsoleResponse) GetSuccess() bool {
 
 func (x *CloseConsoleResponse) GetError() string {
 	if x != nil {
-		if x.xxx_hidden_Error != nil {
-			return *x.xxx_hidden_Error
-		}
-		return ""
+		return x.xxx_hidden_Error
 	}
 	return ""
 }
 
 func (x *CloseConsoleResponse) SetSuccess(v bool) {
 	x.xxx_hidden_Success = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
 }
 
 func (x *CloseConsoleResponse) SetError(v string) {
-	x.xxx_hidden_Error = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
-}
-
-func (x *CloseConsoleResponse) HasSuccess() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
-}
-
-func (x *CloseConsoleResponse) HasError() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
-}
-
-func (x *CloseConsoleResponse) ClearSuccess() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_Success = false
-}
-
-func (x *CloseConsoleResponse) ClearError() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_Error = nil
+	x.xxx_hidden_Error = v
 }
 
 type CloseConsoleResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Success *bool
-	Error   *string
+	Success bool
+	Error   string
 }
 
 func (b0 CloseConsoleResponse_builder) Build() *CloseConsoleResponse {
 	m0 := &CloseConsoleResponse{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.Success != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
-		x.xxx_hidden_Success = *b.Success
-	}
-	if b.Error != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
-		x.xxx_hidden_Error = b.Error
-	}
+	x.xxx_hidden_Success = b.Success
+	x.xxx_hidden_Error = b.Error
 	return m0
 }
 
 type EpollEvent struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_ConsoleId   int32                  `protobuf:"varint,1,opt,name=console_id,json=consoleId"`
-	xxx_hidden_EventType   EpollEventType         `protobuf:"varint,2,opt,name=event_type,json=eventType,enum=runv.v1.EpollEventType"`
-	xxx_hidden_Error       *string                `protobuf:"bytes,3,opt,name=error"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state                protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_ConsoleId int32                  `protobuf:"varint,1,opt,name=console_id,json=consoleId"`
+	xxx_hidden_EventType EpollEventType         `protobuf:"varint,2,opt,name=event_type,json=eventType,enum=runv.v1.EpollEventType"`
+	xxx_hidden_Error     string                 `protobuf:"bytes,3,opt,name=error"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *EpollEvent) Reset() {
@@ -784,98 +557,45 @@ func (x *EpollEvent) GetConsoleId() int32 {
 
 func (x *EpollEvent) GetEventType() EpollEventType {
 	if x != nil {
-		if protoimpl.X.Present(&(x.XXX_presence[0]), 1) {
-			return x.xxx_hidden_EventType
-		}
+		return x.xxx_hidden_EventType
 	}
 	return EpollEventType_EPOLL_EVENT_TYPE_UNSPECIFIED
 }
 
 func (x *EpollEvent) GetError() string {
 	if x != nil {
-		if x.xxx_hidden_Error != nil {
-			return *x.xxx_hidden_Error
-		}
-		return ""
+		return x.xxx_hidden_Error
 	}
 	return ""
 }
 
 func (x *EpollEvent) SetConsoleId(v int32) {
 	x.xxx_hidden_ConsoleId = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
 }
 
 func (x *EpollEvent) SetEventType(v EpollEventType) {
 	x.xxx_hidden_EventType = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
 }
 
 func (x *EpollEvent) SetError(v string) {
-	x.xxx_hidden_Error = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
-}
-
-func (x *EpollEvent) HasConsoleId() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
-}
-
-func (x *EpollEvent) HasEventType() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
-}
-
-func (x *EpollEvent) HasError() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
-}
-
-func (x *EpollEvent) ClearConsoleId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_ConsoleId = 0
-}
-
-func (x *EpollEvent) ClearEventType() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_EventType = EpollEventType_EPOLL_EVENT_TYPE_UNSPECIFIED
-}
-
-func (x *EpollEvent) ClearError() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
-	x.xxx_hidden_Error = nil
+	x.xxx_hidden_Error = v
 }
 
 type EpollEvent_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	ConsoleId *int32
-	EventType *EpollEventType
-	Error     *string
+	ConsoleId int32
+	EventType EpollEventType
+	Error     string
 }
 
 func (b0 EpollEvent_builder) Build() *EpollEvent {
 	m0 := &EpollEvent{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.ConsoleId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
-		x.xxx_hidden_ConsoleId = *b.ConsoleId
-	}
-	if b.EventType != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
-		x.xxx_hidden_EventType = *b.EventType
-	}
-	if b.Error != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
-		x.xxx_hidden_Error = b.Error
-	}
+	x.xxx_hidden_ConsoleId = b.ConsoleId
+	x.xxx_hidden_EventType = b.EventType
+	x.xxx_hidden_Error = b.Error
 	return m0
 }
 
@@ -939,9 +659,9 @@ const file_v1_epoll_proto_rawDesc = "" +
 	"\x0eEpollerService\x122\n" +
 	"\x03Add\x12\x13.runv.v1.AddRequest\x1a\x14.runv.v1.AddResponse\"\x00\x12M\n" +
 	"\fCloseConsole\x12\x1c.runv.v1.CloseConsoleRequest\x1a\x1d.runv.v1.CloseConsoleResponse\"\x00\x127\n" +
-	"\x04Wait\x12\x14.runv.v1.WaitRequest\x1a\x15.runv.v1.WaitResponse\"\x000\x01B\x86\x01\n" +
+	"\x04Wait\x12\x14.runv.v1.WaitRequest\x1a\x15.runv.v1.WaitResponse\"\x000\x01B\x88\x01\n" +
 	"\vcom.runv.v1B\n" +
-	"EpollProtoP\x01Z&github.com/walteh/runv/proto/v1;runvv1\xa2\x02\x03RXX\xaa\x02\aRunv.V1\xca\x02\aRunv\\V1\xe2\x02\x13Runv\\V1\\GPBMetadata\xea\x02\bRunv::V1\x92\x03\x05\xd2>\x02\x10\x03b\beditionsp\xe8\a"
+	"EpollProtoP\x01Z&github.com/walteh/runv/proto/v1;runvv1\xa2\x02\x03RXX\xaa\x02\aRunv.V1\xca\x02\aRunv\\V1\xe2\x02\x13Runv\\V1\\GPBMetadata\xea\x02\bRunv::V1\x92\x03\a\xd2>\x02\x10\x03\b\x02b\beditionsp\xe8\a"
 
 var file_v1_epoll_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_v1_epoll_proto_msgTypes = make([]protoimpl.MessageInfo, 7)

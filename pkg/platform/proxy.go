@@ -127,13 +127,13 @@ func (p *LinuxProxyPlatform) CopyConsole(ctx context.Context, console console.Co
 	consoleID := uuid.New().String()
 
 	// Call the remote platform to set up the console copying
-	copyReq, err := runvv1.NewCopyConsoleRequestE(func(b *runvv1.CopyConsoleRequest_builder) {
-		b.SessionId = &p.sessionID
-		b.ConsoleId = &consoleID
-		b.ProcessId = &id
-		b.StdinPath = &stdin
-		b.StdoutPath = &stdout
-		b.StderrPath = &stderr
+	copyReq, err := runvv1.NewCopyConsoleRequestE(&runvv1.CopyConsoleRequest_builder{
+		SessionId:  p.sessionID,
+		ConsoleId:  consoleID,
+		ProcessId:  id,
+		StdinPath:  stdin,
+		StdoutPath: stdout,
+		StderrPath: stderr,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to create copy console request: %w", err)
@@ -152,16 +152,11 @@ func (p *LinuxProxyPlatform) CopyConsole(ctx context.Context, console console.Co
 	}
 
 	// Add the console to the remote epoller
-	addReq, err := runvv1.NewAddRequestE(func(b *runvv1.AddRequest_builder) {
-		b.SessionId = &p.sessionID
-		consID := int32(console.Fd()) // Use the local FD as console ID
-		b.ConsoleId = &consID
-		fd := int32(console.Fd())
-		b.Fd = &fd
+	addReq := runvv1.NewAddRequest(&runvv1.AddRequest_builder{
+		SessionId: p.sessionID,
+		// ConsoleId: int32(consoleID),
+		Fd: int32(console.Fd()),
 	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to create add request: %w", err)
-	}
 
 	addCtx, addCancel := context.WithTimeout(ctx, p.timeout)
 	defer addCancel()
@@ -200,13 +195,10 @@ func (p *LinuxProxyPlatform) ShutdownConsole(ctx context.Context, cons console.C
 		return fmt.Errorf("expected ProxyConsole, got %T", cons)
 	}
 
-	shutdownReq, err := runvv1.NewShutdownConsoleRequestE(func(b *runvv1.ShutdownConsoleRequest_builder) {
-		b.SessionId = &p.sessionID
-		b.ProxyConsoleId = &proxyConsole.consoleID
+	shutdownReq := runvv1.NewShutdownConsoleRequest(&runvv1.ShutdownConsoleRequest_builder{
+		SessionId:      p.sessionID,
+		ProxyConsoleId: proxyConsole.consoleID,
 	})
-	if err != nil {
-		return fmt.Errorf("failed to create shutdown request: %w", err)
-	}
 
 	shutdownCtx, cancel := context.WithTimeout(ctx, p.timeout)
 	defer cancel()
@@ -237,18 +229,15 @@ func (p *LinuxProxyPlatform) Close() error {
 	ctx, cancel := context.WithTimeout(context.Background(), p.timeout)
 	defer cancel()
 
-	closeReq, err := runvv1.NewClosePlatformRequestE(func(b *runvv1.ClosePlatformRequest_builder) {
-		b.SessionId = &p.sessionID
+	closeReq := runvv1.NewClosePlatformRequest(&runvv1.ClosePlatformRequest_builder{
+		SessionId: p.sessionID,
 	})
+
+	closeResp, err := p.platformClient.ClosePlatform(ctx, closeReq)
 	if err != nil {
 		// Best effort - continue to close connection
-	} else {
-		closeResp, err := p.platformClient.ClosePlatform(ctx, closeReq)
-		if err != nil {
-			// Best effort - continue to close connection
-		} else if !closeResp.GetSuccess() {
-			// Log error but continue
-		}
+	} else if !closeResp.GetSuccess() {
+		// Log error but continue
 	}
 
 	// Close the connection
@@ -273,11 +262,10 @@ func (pc *ProxyConsole) Read(p []byte) (n int, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), pc.timeout)
 	defer cancel()
 
-	readReq, err := runvv1.NewConsoleReadRequestE(func(b *runvv1.ConsoleReadRequest_builder) {
-		b.SessionId = &pc.sessionID
-		b.ConsoleId = &pc.consoleID
-		bufSize := int32(len(p))
-		b.BufferSize = &bufSize
+	readReq := runvv1.NewConsoleReadRequest(&runvv1.ConsoleReadRequest_builder{
+		SessionId:  pc.sessionID,
+		ConsoleId:  pc.consoleID,
+		BufferSize: int32(len(p)),
 	})
 	if err != nil {
 		return 0, fmt.Errorf("failed to create read request: %w", err)
@@ -314,14 +302,11 @@ func (pc *ProxyConsole) Write(p []byte) (n int, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), pc.timeout)
 	defer cancel()
 
-	writeReq, err := runvv1.NewConsoleWriteRequestE(func(b *runvv1.ConsoleWriteRequest_builder) {
-		b.SessionId = &pc.sessionID
-		b.ConsoleId = &pc.consoleID
-		b.Data = p
+	writeReq := runvv1.NewConsoleWriteRequest(&runvv1.ConsoleWriteRequest_builder{
+		SessionId: pc.sessionID,
+		ConsoleId: pc.consoleID,
+		Data:      p,
 	})
-	if err != nil {
-		return 0, fmt.Errorf("failed to create write request: %w", err)
-	}
 
 	resp, err := pc.client.Write(ctx, writeReq)
 	if err != nil {

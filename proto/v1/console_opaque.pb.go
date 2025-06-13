@@ -7,160 +7,140 @@ import (
 	protovalidate "buf.build/go/protovalidate"
 )
 
-// NewCopyConsoleRequest creates a new CopyConsoleRequest using the builder pattern
-func NewCopyConsoleRequest(f func(*CopyConsoleRequest_builder)) *CopyConsoleRequest {
-	b := &CopyConsoleRequest_builder{}
-	f(b)
+// NewCopyConsoleRequest creates a new CopyConsoleRequest using the builder
+func NewCopyConsoleRequest(b *CopyConsoleRequest_builder) *CopyConsoleRequest {
 	return b.Build()
 }
 
-// NewCopyConsoleRequestE creates a new CopyConsoleRequest using the builder pattern with validation
-func NewCopyConsoleRequestE(f func(*CopyConsoleRequest_builder)) (*CopyConsoleRequest, error) {
-	m := NewCopyConsoleRequest(f)
+// NewCopyConsoleRequestE creates a new CopyConsoleRequest using the builder with validation
+func NewCopyConsoleRequestE(b *CopyConsoleRequest_builder) (*CopyConsoleRequest, error) {
+	m := b.Build()
 	if err := protovalidate.Validate(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-// NewCopyConsoleResponse creates a new CopyConsoleResponse using the builder pattern
-func NewCopyConsoleResponse(f func(*CopyConsoleResponse_builder)) *CopyConsoleResponse {
-	b := &CopyConsoleResponse_builder{}
-	f(b)
+// NewCopyConsoleResponse creates a new CopyConsoleResponse using the builder
+func NewCopyConsoleResponse(b *CopyConsoleResponse_builder) *CopyConsoleResponse {
 	return b.Build()
 }
 
-// NewCopyConsoleResponseE creates a new CopyConsoleResponse using the builder pattern with validation
-func NewCopyConsoleResponseE(f func(*CopyConsoleResponse_builder)) (*CopyConsoleResponse, error) {
-	m := NewCopyConsoleResponse(f)
+// NewCopyConsoleResponseE creates a new CopyConsoleResponse using the builder with validation
+func NewCopyConsoleResponseE(b *CopyConsoleResponse_builder) (*CopyConsoleResponse, error) {
+	m := b.Build()
 	if err := protovalidate.Validate(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-// NewShutdownConsoleRequest creates a new ShutdownConsoleRequest using the builder pattern
-func NewShutdownConsoleRequest(f func(*ShutdownConsoleRequest_builder)) *ShutdownConsoleRequest {
-	b := &ShutdownConsoleRequest_builder{}
-	f(b)
+// NewShutdownConsoleRequest creates a new ShutdownConsoleRequest using the builder
+func NewShutdownConsoleRequest(b *ShutdownConsoleRequest_builder) *ShutdownConsoleRequest {
 	return b.Build()
 }
 
-// NewShutdownConsoleRequestE creates a new ShutdownConsoleRequest using the builder pattern with validation
-func NewShutdownConsoleRequestE(f func(*ShutdownConsoleRequest_builder)) (*ShutdownConsoleRequest, error) {
-	m := NewShutdownConsoleRequest(f)
+// NewShutdownConsoleRequestE creates a new ShutdownConsoleRequest using the builder with validation
+func NewShutdownConsoleRequestE(b *ShutdownConsoleRequest_builder) (*ShutdownConsoleRequest, error) {
+	m := b.Build()
 	if err := protovalidate.Validate(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-// NewShutdownConsoleResponse creates a new ShutdownConsoleResponse using the builder pattern
-func NewShutdownConsoleResponse(f func(*ShutdownConsoleResponse_builder)) *ShutdownConsoleResponse {
-	b := &ShutdownConsoleResponse_builder{}
-	f(b)
+// NewShutdownConsoleResponse creates a new ShutdownConsoleResponse using the builder
+func NewShutdownConsoleResponse(b *ShutdownConsoleResponse_builder) *ShutdownConsoleResponse {
 	return b.Build()
 }
 
-// NewShutdownConsoleResponseE creates a new ShutdownConsoleResponse using the builder pattern with validation
-func NewShutdownConsoleResponseE(f func(*ShutdownConsoleResponse_builder)) (*ShutdownConsoleResponse, error) {
-	m := NewShutdownConsoleResponse(f)
+// NewShutdownConsoleResponseE creates a new ShutdownConsoleResponse using the builder with validation
+func NewShutdownConsoleResponseE(b *ShutdownConsoleResponse_builder) (*ShutdownConsoleResponse, error) {
+	m := b.Build()
 	if err := protovalidate.Validate(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-// NewClosePlatformRequest creates a new ClosePlatformRequest using the builder pattern
-func NewClosePlatformRequest(f func(*ClosePlatformRequest_builder)) *ClosePlatformRequest {
-	b := &ClosePlatformRequest_builder{}
-	f(b)
+// NewClosePlatformRequest creates a new ClosePlatformRequest using the builder
+func NewClosePlatformRequest(b *ClosePlatformRequest_builder) *ClosePlatformRequest {
 	return b.Build()
 }
 
-// NewClosePlatformRequestE creates a new ClosePlatformRequest using the builder pattern with validation
-func NewClosePlatformRequestE(f func(*ClosePlatformRequest_builder)) (*ClosePlatformRequest, error) {
-	m := NewClosePlatformRequest(f)
+// NewClosePlatformRequestE creates a new ClosePlatformRequest using the builder with validation
+func NewClosePlatformRequestE(b *ClosePlatformRequest_builder) (*ClosePlatformRequest, error) {
+	m := b.Build()
 	if err := protovalidate.Validate(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-// NewClosePlatformResponse creates a new ClosePlatformResponse using the builder pattern
-func NewClosePlatformResponse(f func(*ClosePlatformResponse_builder)) *ClosePlatformResponse {
-	b := &ClosePlatformResponse_builder{}
-	f(b)
+// NewClosePlatformResponse creates a new ClosePlatformResponse using the builder
+func NewClosePlatformResponse(b *ClosePlatformResponse_builder) *ClosePlatformResponse {
 	return b.Build()
 }
 
-// NewClosePlatformResponseE creates a new ClosePlatformResponse using the builder pattern with validation
-func NewClosePlatformResponseE(f func(*ClosePlatformResponse_builder)) (*ClosePlatformResponse, error) {
-	m := NewClosePlatformResponse(f)
+// NewClosePlatformResponseE creates a new ClosePlatformResponse using the builder with validation
+func NewClosePlatformResponseE(b *ClosePlatformResponse_builder) (*ClosePlatformResponse, error) {
+	m := b.Build()
 	if err := protovalidate.Validate(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-// NewConsoleReadRequest creates a new ConsoleReadRequest using the builder pattern
-func NewConsoleReadRequest(f func(*ConsoleReadRequest_builder)) *ConsoleReadRequest {
-	b := &ConsoleReadRequest_builder{}
-	f(b)
+// NewConsoleReadRequest creates a new ConsoleReadRequest using the builder
+func NewConsoleReadRequest(b *ConsoleReadRequest_builder) *ConsoleReadRequest {
 	return b.Build()
 }
 
-// NewConsoleReadRequestE creates a new ConsoleReadRequest using the builder pattern with validation
-func NewConsoleReadRequestE(f func(*ConsoleReadRequest_builder)) (*ConsoleReadRequest, error) {
-	m := NewConsoleReadRequest(f)
+// NewConsoleReadRequestE creates a new ConsoleReadRequest using the builder with validation
+func NewConsoleReadRequestE(b *ConsoleReadRequest_builder) (*ConsoleReadRequest, error) {
+	m := b.Build()
 	if err := protovalidate.Validate(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-// NewConsoleReadResponse creates a new ConsoleReadResponse using the builder pattern
-func NewConsoleReadResponse(f func(*ConsoleReadResponse_builder)) *ConsoleReadResponse {
-	b := &ConsoleReadResponse_builder{}
-	f(b)
+// NewConsoleReadResponse creates a new ConsoleReadResponse using the builder
+func NewConsoleReadResponse(b *ConsoleReadResponse_builder) *ConsoleReadResponse {
 	return b.Build()
 }
 
-// NewConsoleReadResponseE creates a new ConsoleReadResponse using the builder pattern with validation
-func NewConsoleReadResponseE(f func(*ConsoleReadResponse_builder)) (*ConsoleReadResponse, error) {
-	m := NewConsoleReadResponse(f)
+// NewConsoleReadResponseE creates a new ConsoleReadResponse using the builder with validation
+func NewConsoleReadResponseE(b *ConsoleReadResponse_builder) (*ConsoleReadResponse, error) {
+	m := b.Build()
 	if err := protovalidate.Validate(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-// NewConsoleWriteRequest creates a new ConsoleWriteRequest using the builder pattern
-func NewConsoleWriteRequest(f func(*ConsoleWriteRequest_builder)) *ConsoleWriteRequest {
-	b := &ConsoleWriteRequest_builder{}
-	f(b)
+// NewConsoleWriteRequest creates a new ConsoleWriteRequest using the builder
+func NewConsoleWriteRequest(b *ConsoleWriteRequest_builder) *ConsoleWriteRequest {
 	return b.Build()
 }
 
-// NewConsoleWriteRequestE creates a new ConsoleWriteRequest using the builder pattern with validation
-func NewConsoleWriteRequestE(f func(*ConsoleWriteRequest_builder)) (*ConsoleWriteRequest, error) {
-	m := NewConsoleWriteRequest(f)
+// NewConsoleWriteRequestE creates a new ConsoleWriteRequest using the builder with validation
+func NewConsoleWriteRequestE(b *ConsoleWriteRequest_builder) (*ConsoleWriteRequest, error) {
+	m := b.Build()
 	if err := protovalidate.Validate(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-// NewConsoleWriteResponse creates a new ConsoleWriteResponse using the builder pattern
-func NewConsoleWriteResponse(f func(*ConsoleWriteResponse_builder)) *ConsoleWriteResponse {
-	b := &ConsoleWriteResponse_builder{}
-	f(b)
+// NewConsoleWriteResponse creates a new ConsoleWriteResponse using the builder
+func NewConsoleWriteResponse(b *ConsoleWriteResponse_builder) *ConsoleWriteResponse {
 	return b.Build()
 }
 
-// NewConsoleWriteResponseE creates a new ConsoleWriteResponse using the builder pattern with validation
-func NewConsoleWriteResponseE(f func(*ConsoleWriteResponse_builder)) (*ConsoleWriteResponse, error) {
-	m := NewConsoleWriteResponse(f)
+// NewConsoleWriteResponseE creates a new ConsoleWriteResponse using the builder with validation
+func NewConsoleWriteResponseE(b *ConsoleWriteResponse_builder) (*ConsoleWriteResponse, error) {
+	m := b.Build()
 	if err := protovalidate.Validate(m); err != nil {
 		return nil, err
 	}

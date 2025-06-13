@@ -104,11 +104,9 @@ func generateMessageHelpers(g *protogen.GeneratedFile, message *protogen.Message
 	messageName := message.GoIdent.GoName
 	builderName := messageName + "_builder"
 
-	// Generate New helper (direct creation, no error)
-	g.P("// New", messageName, " creates a new ", messageName, " using the builder pattern")
-	g.P("func New", messageName, "(f func(*", builderName, ")) *", messageName, " {")
-	g.P("	b := &", builderName, "{}")
-	g.P("	f(b)")
+	// Generate New helper (direct creation, no error) - takes builder as pointer arg
+	g.P("// New", messageName, " creates a new ", messageName, " using the builder")
+	g.P("func New", messageName, "(b *", builderName, ") *", messageName, " {")
 	g.P("	return b.Build()")
 	g.P("}")
 	g.P()
@@ -120,9 +118,9 @@ func generateMessageHelpers(g *protogen.GeneratedFile, message *protogen.Message
 			GoImportPath: "buf.build/go/protovalidate",
 		})
 
-		g.P("// New", messageName, "E creates a new ", messageName, " using the builder pattern with validation")
-		g.P("func New", messageName, "E(f func(*", builderName, ")) (*", messageName, ", error) {")
-		g.P("	m := New", messageName, "(f)")
+		g.P("// New", messageName, "E creates a new ", messageName, " using the builder with validation")
+		g.P("func New", messageName, "E(b *", builderName, ") (*", messageName, ", error) {")
+		g.P("	m := b.Build()")
 		g.P("	if err := ", validateIdent, "(m); err != nil {")
 		g.P("		return nil, err")
 		g.P("	}")
@@ -130,9 +128,9 @@ func generateMessageHelpers(g *protogen.GeneratedFile, message *protogen.Message
 		g.P("}")
 		g.P()
 	} else {
-		g.P("// New", messageName, "E creates a new ", messageName, " using the builder pattern (validation disabled)")
-		g.P("func New", messageName, "E(f func(*", builderName, ")) (*", messageName, ", error) {")
-		g.P("	m := New", messageName, "(f)")
+		g.P("// New", messageName, "E creates a new ", messageName, " using the builder (validation disabled)")
+		g.P("func New", messageName, "E(b *", builderName, ") (*", messageName, ", error) {")
+		g.P("	m := b.Build()")
 		g.P("	return m, nil")
 		g.P("}")
 		g.P()
@@ -166,11 +164,11 @@ func generateOneofHelpers(g *protogen.GeneratedFile, message *protogen.Message, 
 
 		// Generate combined helper: NewMessage_WithField
 		funcName := "New" + messageName + "_With" + fieldName
-		g.P("// ", funcName, " creates a new ", messageName, " with the ", fieldName, " field set using the builder pattern")
-		g.P("func ", funcName, "(f func(*", fieldBuilderName, ")) *", messageName, " {")
-		g.P("	inner := New", fieldTypeName, "(f)")
-		g.P("	return New", messageName, "(func(b *", builderName, ") {")
-		g.P("		b.", fieldName, " = inner")
+		g.P("// ", funcName, " creates a new ", messageName, " with the ", fieldName, " field set using the builder")
+		g.P("func ", funcName, "(innerBuilder *", fieldBuilderName, ") *", messageName, " {")
+		g.P("	inner := New", fieldTypeName, "(innerBuilder)")
+		g.P("	return New", messageName, "(&", builderName, "{")
+		g.P("		", fieldName, ": inner,")
 		g.P("	})")
 		g.P("}")
 		g.P()
@@ -183,14 +181,14 @@ func generateOneofHelpers(g *protogen.GeneratedFile, message *protogen.Message, 
 				GoImportPath: "buf.build/go/protovalidate",
 			})
 
-			g.P("// ", validatedFuncNameE, " creates a new ", messageName, " with the ", fieldName, " field set using the builder pattern with validation")
-			g.P("func ", validatedFuncNameE, "(f func(*", fieldBuilderName, ")) (*", messageName, ", error) {")
-			g.P("	inner, err := New", fieldTypeName, "E(f)")
+			g.P("// ", validatedFuncNameE, " creates a new ", messageName, " with the ", fieldName, " field set using the builder with validation")
+			g.P("func ", validatedFuncNameE, "(innerBuilder *", fieldBuilderName, ") (*", messageName, ", error) {")
+			g.P("	inner, err := New", fieldTypeName, "E(innerBuilder)")
 			g.P("	if err != nil {")
 			g.P("		return nil, err")
 			g.P("	}")
-			g.P("	m := New", messageName, "(func(b *", builderName, ") {")
-			g.P("		b.", fieldName, " = inner")
+			g.P("	m := New", messageName, "(&", builderName, "{")
+			g.P("		", fieldName, ": inner,")
 			g.P("	})")
 			g.P("	if err := ", validateIdent, "(m); err != nil {")
 			g.P("		return nil, err")
@@ -199,11 +197,11 @@ func generateOneofHelpers(g *protogen.GeneratedFile, message *protogen.Message, 
 			g.P("}")
 			g.P()
 		} else {
-			g.P("// ", validatedFuncNameE, " creates a new ", messageName, " with the ", fieldName, " field set using the builder pattern (validation disabled)")
-			g.P("func ", validatedFuncNameE, "(f func(*", fieldBuilderName, ")) (*", messageName, ", error) {")
-			g.P("	inner := New", fieldTypeName, "(f)")
-			g.P("	m := New", messageName, "(func(b *", builderName, ") {")
-			g.P("		b.", fieldName, " = inner")
+			g.P("// ", validatedFuncNameE, " creates a new ", messageName, " with the ", fieldName, " field set using the builder (validation disabled)")
+			g.P("func ", validatedFuncNameE, "(innerBuilder *", fieldBuilderName, ") (*", messageName, ", error) {")
+			g.P("	inner := New", fieldTypeName, "(innerBuilder)")
+			g.P("	m := New", messageName, "(&", builderName, "{")
+			g.P("		", fieldName, ": inner,")
 			g.P("	})")
 			g.P("	return m, nil")
 			g.P("}")

@@ -6,6 +6,7 @@ import "buf/validate/validate.proto";
 import "google/protobuf/go_features.proto";
 
 option features.(pb.go).api_level = API_OPAQUE;
+option features.field_presence = IMPLICIT;
 
 service EpollerService {
 	rpc Add(AddRequest) returns (AddResponse) {}

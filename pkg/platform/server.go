@@ -109,10 +109,10 @@ func (s *ConsoleProxyServer) CopyConsole(ctx context.Context, req *runvv1.CopyCo
 
 	session := s.createSession(sessionID)
 	if session == nil {
-		return runvv1.NewCopyConsoleResponseE(func(b *runvv1.CopyConsoleResponse_builder) {
-			b.Success = &[]bool{false}[0]
-			b.Error = &[]string{"failed to create session"}[0]
-		})
+		return runvv1.NewCopyConsoleResponse(&runvv1.CopyConsoleResponse_builder{
+			Success: false,
+			Error:   "failed to create session",
+		}), nil
 	}
 
 	// Create a dummy console - in real implementation this would come from the container process
@@ -132,20 +132,20 @@ func (s *ConsoleProxyServer) CopyConsole(ctx context.Context, req *runvv1.CopyCo
 
 	if mockConsole == nil {
 		// If we can't create a real console, create a minimal mock
-		return runvv1.NewCopyConsoleResponseE(func(b *runvv1.CopyConsoleResponse_builder) {
-			b.Success = &[]bool{false}[0]
-			b.Error = &[]string{"failed to create console from paths"}[0]
-		})
+		return runvv1.NewCopyConsoleResponse(&runvv1.CopyConsoleResponse_builder{
+			Success: false,
+			Error:   "failed to create console from paths",
+		}), nil
 	}
 
 	// Create console using the platform (this will need the console, not separate paths)
 	var wg sync.WaitGroup
 	platformConsole, err := session.platform.CopyConsole(ctx, mockConsole, processID, stdinPath, stdoutPath, stderrPath, &wg)
 	if err != nil {
-		return runvv1.NewCopyConsoleResponseE(func(b *runvv1.CopyConsoleResponse_builder) {
-			b.Success = &[]bool{false}[0]
-			b.Error = &[]string{fmt.Sprintf("failed to copy console: %v", err)}[0]
-		})
+		return runvv1.NewCopyConsoleResponse(&runvv1.CopyConsoleResponse_builder{
+			Success: false,
+			Error:   fmt.Sprintf("failed to copy console: %v", err),
+		}), nil
 	}
 
 	// Generate proxy console ID
@@ -161,11 +161,11 @@ func (s *ConsoleProxyServer) CopyConsole(ctx context.Context, req *runvv1.CopyCo
 	}
 	session.mutex.Unlock()
 
-	return runvv1.NewCopyConsoleResponseE(func(b *runvv1.CopyConsoleResponse_builder) {
-		b.Success = &[]bool{true}[0]
-		b.ProxyConsoleId = &proxyConsoleID
-		b.ProxyAddress = &[]string{""}[0] // Could be set if needed
-	})
+	return runvv1.NewCopyConsoleResponse(&runvv1.CopyConsoleResponse_builder{
+		Success:        true,
+		ProxyConsoleId: proxyConsoleID,
+		ProxyAddress:   "", // Could be set if needed
+	}), nil
 }
 
 // ShutdownConsole implements the PlatformProxyService.ShutdownConsole method
@@ -175,10 +175,10 @@ func (s *ConsoleProxyServer) ShutdownConsole(ctx context.Context, req *runvv1.Sh
 
 	session, exists := s.getSession(sessionID)
 	if !exists {
-		return runvv1.NewShutdownConsoleResponseE(func(b *runvv1.ShutdownConsoleResponse_builder) {
-			b.Success = &[]bool{false}[0]
-			b.Error = &[]string{"session not found"}[0]
-		})
+		return runvv1.NewShutdownConsoleResponse(&runvv1.ShutdownConsoleResponse_builder{
+			Success: false,
+			Error:   "session not found",
+		}), nil
 	}
 
 	// Find console by proxy console ID
@@ -195,29 +195,29 @@ func (s *ConsoleProxyServer) ShutdownConsole(ctx context.Context, req *runvv1.Sh
 
 	if targetConsole == nil {
 		session.mutex.Unlock()
-		return runvv1.NewShutdownConsoleResponseE(func(b *runvv1.ShutdownConsoleResponse_builder) {
-			b.Success = &[]bool{false}[0]
-			b.Error = &[]string{"console not found"}[0]
-		})
+		return runvv1.NewShutdownConsoleResponse(&runvv1.ShutdownConsoleResponse_builder{
+			Success: false,
+			Error:   "console not found",
+		}), nil
 	}
 
 	// Shutdown console using the platform interface
 	err := session.platform.ShutdownConsole(ctx, targetConsole.console)
 	if err != nil {
 		session.mutex.Unlock()
-		return runvv1.NewShutdownConsoleResponseE(func(b *runvv1.ShutdownConsoleResponse_builder) {
-			b.Success = &[]bool{false}[0]
-			b.Error = &[]string{fmt.Sprintf("failed to shutdown console: %v", err)}[0]
-		})
+		return runvv1.NewShutdownConsoleResponse(&runvv1.ShutdownConsoleResponse_builder{
+			Success: false,
+			Error:   fmt.Sprintf("failed to shutdown console: %v", err),
+		}), nil
 	}
 
 	// Remove from session
 	delete(session.consoles, targetConsoleID)
 	session.mutex.Unlock()
 
-	return runvv1.NewShutdownConsoleResponseE(func(b *runvv1.ShutdownConsoleResponse_builder) {
-		b.Success = &[]bool{true}[0]
-	})
+	return runvv1.NewShutdownConsoleResponse(&runvv1.ShutdownConsoleResponse_builder{
+		Success: true,
+	}), nil
 }
 
 // ClosePlatform implements the PlatformProxyService.ClosePlatform method
@@ -226,27 +226,27 @@ func (s *ConsoleProxyServer) ClosePlatform(ctx context.Context, req *runvv1.Clos
 
 	session, exists := s.getSession(sessionID)
 	if !exists {
-		return runvv1.NewClosePlatformResponseE(func(b *runvv1.ClosePlatformResponse_builder) {
-			b.Success = &[]bool{false}[0]
-			b.Error = &[]string{"session not found"}[0]
-		})
+		return runvv1.NewClosePlatformResponse(&runvv1.ClosePlatformResponse_builder{
+			Success: false,
+			Error:   "session not found",
+		}), nil
 	}
 
 	// Close platform for session
 	err := session.platform.Close()
 	if err != nil {
-		return runvv1.NewClosePlatformResponseE(func(b *runvv1.ClosePlatformResponse_builder) {
-			b.Success = &[]bool{false}[0]
-			b.Error = &[]string{fmt.Sprintf("failed to close platform: %v", err)}[0]
-		})
+		return runvv1.NewClosePlatformResponse(&runvv1.ClosePlatformResponse_builder{
+			Success: false,
+			Error:   fmt.Sprintf("failed to close platform: %v", err),
+		}), nil
 	}
 
 	// Remove session
 	s.removeSession(sessionID)
 
-	return runvv1.NewClosePlatformResponseE(func(b *runvv1.ClosePlatformResponse_builder) {
-		b.Success = &[]bool{true}[0]
-	})
+	return runvv1.NewClosePlatformResponse(&runvv1.ClosePlatformResponse_builder{
+		Success: true,
+	}), nil
 }
 
 // Epoll service methods
@@ -258,10 +258,10 @@ func (s *ConsoleProxyServer) Add(ctx context.Context, req *runvv1.AddRequest) (*
 
 	session, exists := s.getSession(sessionID)
 	if !exists {
-		return runvv1.NewAddResponseE(func(b *runvv1.AddResponse_builder) {
-			b.Success = &[]bool{false}[0]
-			b.Error = &[]string{"session not found"}[0]
-		})
+		return runvv1.NewAddResponse(&runvv1.AddResponse_builder{
+			Success: false,
+			Error:   "session not found",
+		}), nil
 	}
 
 	// Find the console by ID to add to epoll
@@ -276,25 +276,25 @@ func (s *ConsoleProxyServer) Add(ctx context.Context, req *runvv1.AddRequest) (*
 	session.mutex.RUnlock()
 
 	if targetConsole == nil {
-		return runvv1.NewAddResponseE(func(b *runvv1.AddResponse_builder) {
-			b.Success = &[]bool{false}[0]
-			b.Error = &[]string{"console not found for fd"}[0]
-		})
+		return runvv1.NewAddResponse(&runvv1.AddResponse_builder{
+			Success: false,
+			Error:   "console not found for fd",
+		}), nil
 	}
 
 	// Add console to epoll
 	_, err := session.epoll.Add(targetConsole)
 	if err != nil {
-		return runvv1.NewAddResponseE(func(b *runvv1.AddResponse_builder) {
-			b.Success = &[]bool{false}[0]
-			b.Error = &[]string{fmt.Sprintf("failed to add to epoll: %v", err)}[0]
-		})
+		return runvv1.NewAddResponse(&runvv1.AddResponse_builder{
+			Success: false,
+			Error:   fmt.Sprintf("failed to add to epoll: %v", err),
+		}), nil
 	}
 
-	return runvv1.NewAddResponseE(func(b *runvv1.AddResponse_builder) {
-		b.Success = &[]bool{true}[0]
-		b.ProxyConsoleAddress = &[]string{""}[0] // Could be set if needed
-	})
+	return runvv1.NewAddResponse(&runvv1.AddResponse_builder{
+		Success:             true,
+		ProxyConsoleAddress: "", // Could be set if needed
+	}), nil
 }
 
 // CloseConsole implements the EpollerService.CloseConsole method
@@ -304,10 +304,10 @@ func (s *ConsoleProxyServer) CloseConsole(ctx context.Context, req *runvv1.Close
 
 	session, exists := s.getSession(sessionID)
 	if !exists {
-		return runvv1.NewCloseConsoleResponseE(func(b *runvv1.CloseConsoleResponse_builder) {
-			b.Success = &[]bool{false}[0]
-			b.Error = &[]string{"session not found"}[0]
-		})
+		return runvv1.NewCloseConsoleResponse(&runvv1.CloseConsoleResponse_builder{
+			Success: false,
+			Error:   "session not found",
+		}), nil
 	}
 
 	// Find console by ID
@@ -322,24 +322,24 @@ func (s *ConsoleProxyServer) CloseConsole(ctx context.Context, req *runvv1.Close
 	session.mutex.RUnlock()
 
 	if targetFd == 0 {
-		return runvv1.NewCloseConsoleResponseE(func(b *runvv1.CloseConsoleResponse_builder) {
-			b.Success = &[]bool{false}[0]
-			b.Error = &[]string{"console not found"}[0]
-		})
+		return runvv1.NewCloseConsoleResponse(&runvv1.CloseConsoleResponse_builder{
+			Success: false,
+			Error:   "console not found",
+		}), nil
 	}
 
 	// Close console in epoll
 	err := session.epoll.CloseConsole(targetFd)
 	if err != nil {
-		return runvv1.NewCloseConsoleResponseE(func(b *runvv1.CloseConsoleResponse_builder) {
-			b.Success = &[]bool{false}[0]
-			b.Error = &[]string{fmt.Sprintf("failed to close console in epoll: %v", err)}[0]
-		})
+		return runvv1.NewCloseConsoleResponse(&runvv1.CloseConsoleResponse_builder{
+			Success: false,
+			Error:   fmt.Sprintf("failed to close console in epoll: %v", err),
+		}), nil
 	}
 
-	return runvv1.NewCloseConsoleResponseE(func(b *runvv1.CloseConsoleResponse_builder) {
-		b.Success = &[]bool{true}[0]
-	})
+	return runvv1.NewCloseConsoleResponse(&runvv1.CloseConsoleResponse_builder{
+		Success: true,
+	}), nil
 }
 
 // Wait implements the EpollerService.Wait method (streaming)
@@ -349,16 +349,16 @@ func (s *ConsoleProxyServer) Wait(ctx context.Context, req *runvv1.WaitRequest, 
 	session, exists := s.getSession(sessionID)
 	if !exists {
 		// Send error response
-		errorEvent, _ := runvv1.NewEpollEventE(func(eb *runvv1.EpollEvent_builder) {
-			eb.ConsoleId = &[]int32{-1}[0]
-			eb.EventType = &[]runvv1.EpollEventType{runvv1.EpollEventType_EPOLL_EVENT_TYPE_ERROR}[0]
-			eb.Error = &[]string{"session not found"}[0]
+		errorEvent := runvv1.NewEpollEvent(&runvv1.EpollEvent_builder{
+			ConsoleId: -1,
+			EventType: runvv1.EpollEventType_EPOLL_EVENT_TYPE_ERROR,
+			Error:     "session not found",
 		})
 
 		if errorEvent != nil {
-			errorResp, _ := runvv1.NewWaitResponseE(func(b *runvv1.WaitResponse_builder) {
-				b.SessionId = &sessionID
-				b.Events = []*runvv1.EpollEvent{errorEvent}
+			errorResp := runvv1.NewWaitResponse(&runvv1.WaitResponse_builder{
+				SessionId: sessionID,
+				Events:    []*runvv1.EpollEvent{errorEvent},
 			})
 			if errorResp != nil {
 				stream.Send(errorResp)
@@ -384,11 +384,11 @@ func (s *ConsoleProxyServer) Wait(ctx context.Context, req *runvv1.WaitRequest, 
 		case <-ticker.C:
 			// Send a simple event to show the system is working
 			// In a real implementation, this would be replaced with actual epoll events
-			resp, err := runvv1.NewWaitResponseE(func(b *runvv1.WaitResponse_builder) {
-				b.SessionId = &sessionID
-				b.Events = []*runvv1.EpollEvent{} // Empty for now
+			resp := runvv1.NewWaitResponse(&runvv1.WaitResponse_builder{
+				SessionId: sessionID,
+				Events:    []*runvv1.EpollEvent{}, // Empty for now
 			})
-			if err == nil && resp != nil {
+			if resp != nil {
 				if err := stream.Send(resp); err != nil {
 					return err
 				}
@@ -407,10 +407,10 @@ func (s *ConsoleProxyServer) Read(ctx context.Context, req *runvv1.ConsoleReadRe
 
 	session, exists := s.getSession(sessionID)
 	if !exists {
-		return runvv1.NewConsoleReadResponseE(func(b *runvv1.ConsoleReadResponse_builder) {
-			b.Success = &[]bool{false}[0]
-			b.Error = &[]string{"session not found"}[0]
-		})
+		return runvv1.NewConsoleReadResponse(&runvv1.ConsoleReadResponse_builder{
+			Success: false,
+			Error:   "session not found",
+		}), nil
 	}
 
 	session.mutex.RLock()
@@ -418,10 +418,10 @@ func (s *ConsoleProxyServer) Read(ctx context.Context, req *runvv1.ConsoleReadRe
 	session.mutex.RUnlock()
 
 	if !exists {
-		return runvv1.NewConsoleReadResponseE(func(b *runvv1.ConsoleReadResponse_builder) {
-			b.Success = &[]bool{false}[0]
-			b.Error = &[]string{"console not found"}[0]
-		})
+		return runvv1.NewConsoleReadResponse(&runvv1.ConsoleReadResponse_builder{
+			Success: false,
+			Error:   "console not found",
+		}), nil
 	}
 
 	// Read from console
@@ -429,21 +429,21 @@ func (s *ConsoleProxyServer) Read(ctx context.Context, req *runvv1.ConsoleReadRe
 	n, err := proxyConsole.console.Read(buffer)
 
 	if err != nil && err != io.EOF {
-		return runvv1.NewConsoleReadResponseE(func(b *runvv1.ConsoleReadResponse_builder) {
-			b.Success = &[]bool{false}[0]
-			b.Error = &[]string{fmt.Sprintf("read error: %v", err)}[0]
-		})
+		return runvv1.NewConsoleReadResponse(&runvv1.ConsoleReadResponse_builder{
+			Success: false,
+			Error:   fmt.Sprintf("read error: %v", err),
+		}), nil
 	}
 
 	eof := err == io.EOF
 	data := buffer[:n]
 
-	return runvv1.NewConsoleReadResponseE(func(b *runvv1.ConsoleReadResponse_builder) {
-		b.Success = &[]bool{true}[0]
-		b.Data = data
-		b.Count = &[]int32{int32(n)}[0]
-		b.Eof = &eof
-	})
+	return runvv1.NewConsoleReadResponse(&runvv1.ConsoleReadResponse_builder{
+		Success: true,
+		Data:    data,
+		Count:   int32(n),
+		Eof:     eof,
+	}), nil
 }
 
 // Write implements the ConsoleIOService.Write method
@@ -454,10 +454,10 @@ func (s *ConsoleProxyServer) Write(ctx context.Context, req *runvv1.ConsoleWrite
 
 	session, exists := s.getSession(sessionID)
 	if !exists {
-		return runvv1.NewConsoleWriteResponseE(func(b *runvv1.ConsoleWriteResponse_builder) {
-			b.Success = &[]bool{false}[0]
-			b.Error = &[]string{"session not found"}[0]
-		})
+		return runvv1.NewConsoleWriteResponse(&runvv1.ConsoleWriteResponse_builder{
+			Success: false,
+			Error:   "session not found",
+		}), nil
 	}
 
 	session.mutex.RLock()
@@ -465,25 +465,25 @@ func (s *ConsoleProxyServer) Write(ctx context.Context, req *runvv1.ConsoleWrite
 	session.mutex.RUnlock()
 
 	if !exists {
-		return runvv1.NewConsoleWriteResponseE(func(b *runvv1.ConsoleWriteResponse_builder) {
-			b.Success = &[]bool{false}[0]
-			b.Error = &[]string{"console not found"}[0]
-		})
+		return runvv1.NewConsoleWriteResponse(&runvv1.ConsoleWriteResponse_builder{
+			Success: false,
+			Error:   "console not found",
+		}), nil
 	}
 
 	// Write to console
 	n, err := proxyConsole.console.Write(data)
 	if err != nil {
-		return runvv1.NewConsoleWriteResponseE(func(b *runvv1.ConsoleWriteResponse_builder) {
-			b.Success = &[]bool{false}[0]
-			b.Error = &[]string{fmt.Sprintf("write error: %v", err)}[0]
-		})
+		return runvv1.NewConsoleWriteResponse(&runvv1.ConsoleWriteResponse_builder{
+			Success: false,
+			Error:   fmt.Sprintf("write error: %v", err),
+		}), nil
 	}
 
-	return runvv1.NewConsoleWriteResponseE(func(b *runvv1.ConsoleWriteResponse_builder) {
-		b.Success = &[]bool{true}[0]
-		b.Count = &[]int32{int32(n)}[0]
-	})
+	return runvv1.NewConsoleWriteResponse(&runvv1.ConsoleWriteResponse_builder{
+		Success: true,
+		Count:   int32(n),
+	}), nil
 }
 
 // Helper methods

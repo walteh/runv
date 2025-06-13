@@ -5,6 +5,7 @@ package runv.v1;
 import "google/protobuf/go_features.proto";
 
 option features.(pb.go).api_level = API_OPAQUE;
+option features.field_presence = IMPLICIT;  // makes everything by default required, for optional set to EXPLICIT
 
 service PrctlService {
 	rpc Create(CreateRequest) returns (CreateResponse) {}

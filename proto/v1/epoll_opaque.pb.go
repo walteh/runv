@@ -7,112 +7,98 @@ import (
 	protovalidate "buf.build/go/protovalidate"
 )
 
-// NewAddRequest creates a new AddRequest using the builder pattern
-func NewAddRequest(f func(*AddRequest_builder)) *AddRequest {
-	b := &AddRequest_builder{}
-	f(b)
+// NewAddRequest creates a new AddRequest using the builder
+func NewAddRequest(b *AddRequest_builder) *AddRequest {
 	return b.Build()
 }
 
-// NewAddRequestE creates a new AddRequest using the builder pattern with validation
-func NewAddRequestE(f func(*AddRequest_builder)) (*AddRequest, error) {
-	m := NewAddRequest(f)
+// NewAddRequestE creates a new AddRequest using the builder with validation
+func NewAddRequestE(b *AddRequest_builder) (*AddRequest, error) {
+	m := b.Build()
 	if err := protovalidate.Validate(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-// NewAddResponse creates a new AddResponse using the builder pattern
-func NewAddResponse(f func(*AddResponse_builder)) *AddResponse {
-	b := &AddResponse_builder{}
-	f(b)
+// NewAddResponse creates a new AddResponse using the builder
+func NewAddResponse(b *AddResponse_builder) *AddResponse {
 	return b.Build()
 }
 
-// NewAddResponseE creates a new AddResponse using the builder pattern with validation
-func NewAddResponseE(f func(*AddResponse_builder)) (*AddResponse, error) {
-	m := NewAddResponse(f)
+// NewAddResponseE creates a new AddResponse using the builder with validation
+func NewAddResponseE(b *AddResponse_builder) (*AddResponse, error) {
+	m := b.Build()
 	if err := protovalidate.Validate(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-// NewWaitRequest creates a new WaitRequest using the builder pattern
-func NewWaitRequest(f func(*WaitRequest_builder)) *WaitRequest {
-	b := &WaitRequest_builder{}
-	f(b)
+// NewWaitRequest creates a new WaitRequest using the builder
+func NewWaitRequest(b *WaitRequest_builder) *WaitRequest {
 	return b.Build()
 }
 
-// NewWaitRequestE creates a new WaitRequest using the builder pattern with validation
-func NewWaitRequestE(f func(*WaitRequest_builder)) (*WaitRequest, error) {
-	m := NewWaitRequest(f)
+// NewWaitRequestE creates a new WaitRequest using the builder with validation
+func NewWaitRequestE(b *WaitRequest_builder) (*WaitRequest, error) {
+	m := b.Build()
 	if err := protovalidate.Validate(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-// NewWaitResponse creates a new WaitResponse using the builder pattern
-func NewWaitResponse(f func(*WaitResponse_builder)) *WaitResponse {
-	b := &WaitResponse_builder{}
-	f(b)
+// NewWaitResponse creates a new WaitResponse using the builder
+func NewWaitResponse(b *WaitResponse_builder) *WaitResponse {
 	return b.Build()
 }
 
-// NewWaitResponseE creates a new WaitResponse using the builder pattern with validation
-func NewWaitResponseE(f func(*WaitResponse_builder)) (*WaitResponse, error) {
-	m := NewWaitResponse(f)
+// NewWaitResponseE creates a new WaitResponse using the builder with validation
+func NewWaitResponseE(b *WaitResponse_builder) (*WaitResponse, error) {
+	m := b.Build()
 	if err := protovalidate.Validate(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-// NewCloseConsoleRequest creates a new CloseConsoleRequest using the builder pattern
-func NewCloseConsoleRequest(f func(*CloseConsoleRequest_builder)) *CloseConsoleRequest {
-	b := &CloseConsoleRequest_builder{}
-	f(b)
+// NewCloseConsoleRequest creates a new CloseConsoleRequest using the builder
+func NewCloseConsoleRequest(b *CloseConsoleRequest_builder) *CloseConsoleRequest {
 	return b.Build()
 }
 
-// NewCloseConsoleRequestE creates a new CloseConsoleRequest using the builder pattern with validation
-func NewCloseConsoleRequestE(f func(*CloseConsoleRequest_builder)) (*CloseConsoleRequest, error) {
-	m := NewCloseConsoleRequest(f)
+// NewCloseConsoleRequestE creates a new CloseConsoleRequest using the builder with validation
+func NewCloseConsoleRequestE(b *CloseConsoleRequest_builder) (*CloseConsoleRequest, error) {
+	m := b.Build()
 	if err := protovalidate.Validate(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-// NewCloseConsoleResponse creates a new CloseConsoleResponse using the builder pattern
-func NewCloseConsoleResponse(f func(*CloseConsoleResponse_builder)) *CloseConsoleResponse {
-	b := &CloseConsoleResponse_builder{}
-	f(b)
+// NewCloseConsoleResponse creates a new CloseConsoleResponse using the builder
+func NewCloseConsoleResponse(b *CloseConsoleResponse_builder) *CloseConsoleResponse {
 	return b.Build()
 }
 
-// NewCloseConsoleResponseE creates a new CloseConsoleResponse using the builder pattern with validation
-func NewCloseConsoleResponseE(f func(*CloseConsoleResponse_builder)) (*CloseConsoleResponse, error) {
-	m := NewCloseConsoleResponse(f)
+// NewCloseConsoleResponseE creates a new CloseConsoleResponse using the builder with validation
+func NewCloseConsoleResponseE(b *CloseConsoleResponse_builder) (*CloseConsoleResponse, error) {
+	m := b.Build()
 	if err := protovalidate.Validate(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-// NewEpollEvent creates a new EpollEvent using the builder pattern
-func NewEpollEvent(f func(*EpollEvent_builder)) *EpollEvent {
-	b := &EpollEvent_builder{}
-	f(b)
+// NewEpollEvent creates a new EpollEvent using the builder
+func NewEpollEvent(b *EpollEvent_builder) *EpollEvent {
 	return b.Build()
 }
 
-// NewEpollEventE creates a new EpollEvent using the builder pattern with validation
-func NewEpollEventE(f func(*EpollEvent_builder)) (*EpollEvent, error) {
-	m := NewEpollEvent(f)
+// NewEpollEventE creates a new EpollEvent using the builder with validation
+func NewEpollEventE(b *EpollEvent_builder) (*EpollEvent, error) {
+	m := b.Build()
 	if err := protovalidate.Validate(m); err != nil {
 		return nil, err
 	}

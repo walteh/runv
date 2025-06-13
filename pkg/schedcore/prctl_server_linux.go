@@ -32,15 +32,9 @@ type PrctlServer struct {
 func (s *PrctlServer) Create(ctx context.Context, req *runvv1.CreateRequest) (*runvv1.CreateResponse, error) {
 	goError := schedcore.Create(schedcore.PidType(req.GetPidType()))
 
-	createResponse, err := runvv1.NewCreateResponseE(func(b *runvv1.CreateResponse_builder) {
-		if goError != nil {
-			str := goError.Error()
-			b.GoError = &str
-		}
+	createResponse := runvv1.NewCreateResponse(&runvv1.CreateResponse_builder{
+		GoError: goError.Error(),
 	})
-	if err != nil {
-		return nil, err
-	}
 
 	return createResponse, nil
 }
@@ -48,15 +42,9 @@ func (s *PrctlServer) Create(ctx context.Context, req *runvv1.CreateRequest) (*r
 // ShareFrom shares the sched core domain from the provided pid
 func (s *PrctlServer) ShareFrom(ctx context.Context, req *runvv1.ShareFromRequest) (*runvv1.ShareFromResponse, error) {
 	goError := schedcore.ShareFrom(req.GetPid(), schedcore.PidType(req.GetPidType()))
-	shareFromResponse, err := runvv1.NewShareFromResponseE(func(b *runvv1.ShareFromResponse_builder) {
-		if goError != nil {
-			str := goError.Error()
-			b.GoError = &str
-		}
+	shareFromResponse := runvv1.NewShareFromResponse(&runvv1.ShareFromResponse_builder{
+		GoError: goError.Error(),
 	})
-	if err != nil {
-		return nil, err
-	}
 
 	return shareFromResponse, nil
 }

@@ -29,16 +29,17 @@ type PrctlClient struct {
 
 // Create a new sched core domain
 func (s *PrctlClient) Create(ctx context.Context, t runvv1.PrctlPidType) error {
-	createRequest, err := runvv1.NewCreateRequestE(func(b *runvv1.CreateRequest_builder) {
-		b.PidType = &t
+	createRequest := runvv1.NewCreateRequest(&runvv1.CreateRequest_builder{
+		PidType: t,
 	})
+
+	r, err := s.service.Create(ctx, createRequest)
 	if err != nil {
 		return err
 	}
 
-	_, err = s.service.Create(ctx, createRequest)
-	if err != nil {
-		return err
+	if r.GetGoError() != "" {
+		return errors.New(r.GetGoError())
 	}
 
 	return nil
@@ -46,13 +47,10 @@ func (s *PrctlClient) Create(ctx context.Context, t runvv1.PrctlPidType) error {
 
 // ShareFrom shares the sched core domain from the provided pid
 func (s *PrctlClient) ShareFrom(ctx context.Context, pid uint64, t runvv1.PrctlPidType) error {
-	shareFromRequest, err := runvv1.NewShareFromRequestE(func(b *runvv1.ShareFromRequest_builder) {
-		b.Pid = &pid
-		b.PidType = &t
+	shareFromRequest := runvv1.NewShareFromRequest(&runvv1.ShareFromRequest_builder{
+		Pid:     pid,
+		PidType: t,
 	})
-	if err != nil {
-		return err
-	}
 
 	r, err := s.service.ShareFrom(ctx, shareFromRequest)
 	if err != nil {

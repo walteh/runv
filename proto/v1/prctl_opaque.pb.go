@@ -7,64 +7,56 @@ import (
 	protovalidate "buf.build/go/protovalidate"
 )
 
-// NewCreateRequest creates a new CreateRequest using the builder pattern
-func NewCreateRequest(f func(*CreateRequest_builder)) *CreateRequest {
-	b := &CreateRequest_builder{}
-	f(b)
+// NewCreateRequest creates a new CreateRequest using the builder
+func NewCreateRequest(b *CreateRequest_builder) *CreateRequest {
 	return b.Build()
 }
 
-// NewCreateRequestE creates a new CreateRequest using the builder pattern with validation
-func NewCreateRequestE(f func(*CreateRequest_builder)) (*CreateRequest, error) {
-	m := NewCreateRequest(f)
+// NewCreateRequestE creates a new CreateRequest using the builder with validation
+func NewCreateRequestE(b *CreateRequest_builder) (*CreateRequest, error) {
+	m := b.Build()
 	if err := protovalidate.Validate(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-// NewCreateResponse creates a new CreateResponse using the builder pattern
-func NewCreateResponse(f func(*CreateResponse_builder)) *CreateResponse {
-	b := &CreateResponse_builder{}
-	f(b)
+// NewCreateResponse creates a new CreateResponse using the builder
+func NewCreateResponse(b *CreateResponse_builder) *CreateResponse {
 	return b.Build()
 }
 
-// NewCreateResponseE creates a new CreateResponse using the builder pattern with validation
-func NewCreateResponseE(f func(*CreateResponse_builder)) (*CreateResponse, error) {
-	m := NewCreateResponse(f)
+// NewCreateResponseE creates a new CreateResponse using the builder with validation
+func NewCreateResponseE(b *CreateResponse_builder) (*CreateResponse, error) {
+	m := b.Build()
 	if err := protovalidate.Validate(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-// NewShareFromRequest creates a new ShareFromRequest using the builder pattern
-func NewShareFromRequest(f func(*ShareFromRequest_builder)) *ShareFromRequest {
-	b := &ShareFromRequest_builder{}
-	f(b)
+// NewShareFromRequest creates a new ShareFromRequest using the builder
+func NewShareFromRequest(b *ShareFromRequest_builder) *ShareFromRequest {
 	return b.Build()
 }
 
-// NewShareFromRequestE creates a new ShareFromRequest using the builder pattern with validation
-func NewShareFromRequestE(f func(*ShareFromRequest_builder)) (*ShareFromRequest, error) {
-	m := NewShareFromRequest(f)
+// NewShareFromRequestE creates a new ShareFromRequest using the builder with validation
+func NewShareFromRequestE(b *ShareFromRequest_builder) (*ShareFromRequest, error) {
+	m := b.Build()
 	if err := protovalidate.Validate(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-// NewShareFromResponse creates a new ShareFromResponse using the builder pattern
-func NewShareFromResponse(f func(*ShareFromResponse_builder)) *ShareFromResponse {
-	b := &ShareFromResponse_builder{}
-	f(b)
+// NewShareFromResponse creates a new ShareFromResponse using the builder
+func NewShareFromResponse(b *ShareFromResponse_builder) *ShareFromResponse {
 	return b.Build()
 }
 
-// NewShareFromResponseE creates a new ShareFromResponse using the builder pattern with validation
-func NewShareFromResponseE(f func(*ShareFromResponse_builder)) (*ShareFromResponse, error) {
-	m := NewShareFromResponse(f)
+// NewShareFromResponseE creates a new ShareFromResponse using the builder with validation
+func NewShareFromResponseE(b *ShareFromResponse_builder) (*ShareFromResponse, error) {
+	m := b.Build()
 	if err := protovalidate.Validate(m); err != nil {
 		return nil, err
 	}

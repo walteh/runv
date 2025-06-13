@@ -69,12 +69,10 @@ func (x PrctlPidType) Number() protoreflect.EnumNumber {
 }
 
 type CreateRequest struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_PidType     PrctlPidType           `protobuf:"varint,1,opt,name=pid_type,json=pidType,enum=runv.v1.PrctlPidType"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state              protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_PidType PrctlPidType           `protobuf:"varint,1,opt,name=pid_type,json=pidType,enum=runv.v1.PrctlPidType"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *CreateRequest) Reset() {
@@ -104,54 +102,34 @@ func (x *CreateRequest) ProtoReflect() protoreflect.Message {
 
 func (x *CreateRequest) GetPidType() PrctlPidType {
 	if x != nil {
-		if protoimpl.X.Present(&(x.XXX_presence[0]), 0) {
-			return x.xxx_hidden_PidType
-		}
+		return x.xxx_hidden_PidType
 	}
 	return PrctlPidType_PRCTL_PID_TYPE_UNSPECIFIED
 }
 
 func (x *CreateRequest) SetPidType(v PrctlPidType) {
 	x.xxx_hidden_PidType = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
-}
-
-func (x *CreateRequest) HasPidType() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
-}
-
-func (x *CreateRequest) ClearPidType() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_PidType = PrctlPidType_PRCTL_PID_TYPE_UNSPECIFIED
 }
 
 type CreateRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	PidType *PrctlPidType
+	PidType PrctlPidType
 }
 
 func (b0 CreateRequest_builder) Build() *CreateRequest {
 	m0 := &CreateRequest{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.PidType != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
-		x.xxx_hidden_PidType = *b.PidType
-	}
+	x.xxx_hidden_PidType = b.PidType
 	return m0
 }
 
 type CreateResponse struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_GoError     *string                `protobuf:"bytes,1,opt,name=go_error,json=goError"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state              protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_GoError string                 `protobuf:"bytes,1,opt,name=go_error,json=goError"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *CreateResponse) Reset() {
@@ -181,56 +159,35 @@ func (x *CreateResponse) ProtoReflect() protoreflect.Message {
 
 func (x *CreateResponse) GetGoError() string {
 	if x != nil {
-		if x.xxx_hidden_GoError != nil {
-			return *x.xxx_hidden_GoError
-		}
-		return ""
+		return x.xxx_hidden_GoError
 	}
 	return ""
 }
 
 func (x *CreateResponse) SetGoError(v string) {
-	x.xxx_hidden_GoError = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
-}
-
-func (x *CreateResponse) HasGoError() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
-}
-
-func (x *CreateResponse) ClearGoError() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_GoError = nil
+	x.xxx_hidden_GoError = v
 }
 
 type CreateResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	GoError *string
+	GoError string
 }
 
 func (b0 CreateResponse_builder) Build() *CreateResponse {
 	m0 := &CreateResponse{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.GoError != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
-		x.xxx_hidden_GoError = b.GoError
-	}
+	x.xxx_hidden_GoError = b.GoError
 	return m0
 }
 
 type ShareFromRequest struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Pid         uint64                 `protobuf:"varint,1,opt,name=pid"`
-	xxx_hidden_PidType     PrctlPidType           `protobuf:"varint,2,opt,name=pid_type,json=pidType,enum=runv.v1.PrctlPidType"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state              protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Pid     uint64                 `protobuf:"varint,1,opt,name=pid"`
+	xxx_hidden_PidType PrctlPidType           `protobuf:"varint,2,opt,name=pid_type,json=pidType,enum=runv.v1.PrctlPidType"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *ShareFromRequest) Reset() {
@@ -267,76 +224,40 @@ func (x *ShareFromRequest) GetPid() uint64 {
 
 func (x *ShareFromRequest) GetPidType() PrctlPidType {
 	if x != nil {
-		if protoimpl.X.Present(&(x.XXX_presence[0]), 1) {
-			return x.xxx_hidden_PidType
-		}
+		return x.xxx_hidden_PidType
 	}
 	return PrctlPidType_PRCTL_PID_TYPE_UNSPECIFIED
 }
 
 func (x *ShareFromRequest) SetPid(v uint64) {
 	x.xxx_hidden_Pid = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
 }
 
 func (x *ShareFromRequest) SetPidType(v PrctlPidType) {
 	x.xxx_hidden_PidType = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
-}
-
-func (x *ShareFromRequest) HasPid() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
-}
-
-func (x *ShareFromRequest) HasPidType() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
-}
-
-func (x *ShareFromRequest) ClearPid() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_Pid = 0
-}
-
-func (x *ShareFromRequest) ClearPidType() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
-	x.xxx_hidden_PidType = PrctlPidType_PRCTL_PID_TYPE_UNSPECIFIED
 }
 
 type ShareFromRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Pid     *uint64
-	PidType *PrctlPidType
+	Pid     uint64
+	PidType PrctlPidType
 }
 
 func (b0 ShareFromRequest_builder) Build() *ShareFromRequest {
 	m0 := &ShareFromRequest{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.Pid != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
-		x.xxx_hidden_Pid = *b.Pid
-	}
-	if b.PidType != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
-		x.xxx_hidden_PidType = *b.PidType
-	}
+	x.xxx_hidden_Pid = b.Pid
+	x.xxx_hidden_PidType = b.PidType
 	return m0
 }
 
 type ShareFromResponse struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_GoError     *string                `protobuf:"bytes,1,opt,name=go_error,json=goError"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state              protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_GoError string                 `protobuf:"bytes,1,opt,name=go_error,json=goError"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *ShareFromResponse) Reset() {
@@ -366,45 +287,26 @@ func (x *ShareFromResponse) ProtoReflect() protoreflect.Message {
 
 func (x *ShareFromResponse) GetGoError() string {
 	if x != nil {
-		if x.xxx_hidden_GoError != nil {
-			return *x.xxx_hidden_GoError
-		}
-		return ""
+		return x.xxx_hidden_GoError
 	}
 	return ""
 }
 
 func (x *ShareFromResponse) SetGoError(v string) {
-	x.xxx_hidden_GoError = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
-}
-
-func (x *ShareFromResponse) HasGoError() bool {
-	if x == nil {
-		return false
-	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
-}
-
-func (x *ShareFromResponse) ClearGoError() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
-	x.xxx_hidden_GoError = nil
+	x.xxx_hidden_GoError = v
 }
 
 type ShareFromResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	GoError *string
+	GoError string
 }
 
 func (b0 ShareFromResponse_builder) Build() *ShareFromResponse {
 	m0 := &ShareFromResponse{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.GoError != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
-		x.xxx_hidden_GoError = b.GoError
-	}
+	x.xxx_hidden_GoError = b.GoError
 	return m0
 }
 
@@ -429,9 +331,9 @@ const file_v1_prctl_proto_rawDesc = "" +
 	"\x13PRCTL_PID_TYPE_PGID\x10\x032\x91\x01\n" +
 	"\fPrctlService\x12;\n" +
 	"\x06Create\x12\x16.runv.v1.CreateRequest\x1a\x17.runv.v1.CreateResponse\"\x00\x12D\n" +
-	"\tShareFrom\x12\x19.runv.v1.ShareFromRequest\x1a\x1a.runv.v1.ShareFromResponse\"\x00B\x86\x01\n" +
+	"\tShareFrom\x12\x19.runv.v1.ShareFromRequest\x1a\x1a.runv.v1.ShareFromResponse\"\x00B\x88\x01\n" +
 	"\vcom.runv.v1B\n" +
-	"PrctlProtoP\x01Z&github.com/walteh/runv/proto/v1;runvv1\xa2\x02\x03RXX\xaa\x02\aRunv.V1\xca\x02\aRunv\\V1\xe2\x02\x13Runv\\V1\\GPBMetadata\xea\x02\bRunv::V1\x92\x03\x05\xd2>\x02\x10\x03b\beditionsp\xe8\a"
+	"PrctlProtoP\x01Z&github.com/walteh/runv/proto/v1;runvv1\xa2\x02\x03RXX\xaa\x02\aRunv.V1\xca\x02\aRunv\\V1\xe2\x02\x13Runv\\V1\\GPBMetadata\xea\x02\bRunv::V1\x92\x03\a\xd2>\x02\x10\x03\b\x02b\beditionsp\xe8\a"
 
 var file_v1_prctl_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_v1_prctl_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
