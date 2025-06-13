@@ -7,37 +7,121 @@ import (
 	ttrpc "github.com/containerd/ttrpc"
 )
 
-type TTRPCConsoleProxyServiceService interface {
-	Poll(context.Context, *PollRequest) (*PollResponse, error)
+type TTRPCPlatformProxyServiceService interface {
+	CopyConsole(context.Context, *CopyConsoleRequest) (*CopyConsoleResponse, error)
+	ShutdownConsole(context.Context, *ShutdownConsoleRequest) (*ShutdownConsoleResponse, error)
+	ClosePlatform(context.Context, *ClosePlatformRequest) (*ClosePlatformResponse, error)
 }
 
-func RegisterTTRPCConsoleProxyServiceService(srv *ttrpc.Server, svc TTRPCConsoleProxyServiceService) {
-	srv.RegisterService("runv.v1.ConsoleProxyService", &ttrpc.ServiceDesc{
+func RegisterTTRPCPlatformProxyServiceService(srv *ttrpc.Server, svc TTRPCPlatformProxyServiceService) {
+	srv.RegisterService("runv.v1.PlatformProxyService", &ttrpc.ServiceDesc{
 		Methods: map[string]ttrpc.Method{
-			"Poll": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
-				var req PollRequest
+			"CopyConsole": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+				var req CopyConsoleRequest
 				if err := unmarshal(&req); err != nil {
 					return nil, err
 				}
-				return svc.Poll(ctx, &req)
+				return svc.CopyConsole(ctx, &req)
+			},
+			"ShutdownConsole": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+				var req ShutdownConsoleRequest
+				if err := unmarshal(&req); err != nil {
+					return nil, err
+				}
+				return svc.ShutdownConsole(ctx, &req)
+			},
+			"ClosePlatform": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+				var req ClosePlatformRequest
+				if err := unmarshal(&req); err != nil {
+					return nil, err
+				}
+				return svc.ClosePlatform(ctx, &req)
 			},
 		},
 	})
 }
 
-type ttrpcconsoleproxyserviceClient struct {
+type ttrpcplatformproxyserviceClient struct {
 	client *ttrpc.Client
 }
 
-func NewTTRPCConsoleProxyServiceClient(client *ttrpc.Client) TTRPCConsoleProxyServiceService {
-	return &ttrpcconsoleproxyserviceClient{
+func NewTTRPCPlatformProxyServiceClient(client *ttrpc.Client) TTRPCPlatformProxyServiceService {
+	return &ttrpcplatformproxyserviceClient{
 		client: client,
 	}
 }
 
-func (c *ttrpcconsoleproxyserviceClient) Poll(ctx context.Context, req *PollRequest) (*PollResponse, error) {
-	var resp PollResponse
-	if err := c.client.Call(ctx, "runv.v1.ConsoleProxyService", "Poll", req, &resp); err != nil {
+func (c *ttrpcplatformproxyserviceClient) CopyConsole(ctx context.Context, req *CopyConsoleRequest) (*CopyConsoleResponse, error) {
+	var resp CopyConsoleResponse
+	if err := c.client.Call(ctx, "runv.v1.PlatformProxyService", "CopyConsole", req, &resp); err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (c *ttrpcplatformproxyserviceClient) ShutdownConsole(ctx context.Context, req *ShutdownConsoleRequest) (*ShutdownConsoleResponse, error) {
+	var resp ShutdownConsoleResponse
+	if err := c.client.Call(ctx, "runv.v1.PlatformProxyService", "ShutdownConsole", req, &resp); err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (c *ttrpcplatformproxyserviceClient) ClosePlatform(ctx context.Context, req *ClosePlatformRequest) (*ClosePlatformResponse, error) {
+	var resp ClosePlatformResponse
+	if err := c.client.Call(ctx, "runv.v1.PlatformProxyService", "ClosePlatform", req, &resp); err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+type TTRPCConsoleIOServiceService interface {
+	Read(context.Context, *ConsoleReadRequest) (*ConsoleReadResponse, error)
+	Write(context.Context, *ConsoleWriteRequest) (*ConsoleWriteResponse, error)
+}
+
+func RegisterTTRPCConsoleIOServiceService(srv *ttrpc.Server, svc TTRPCConsoleIOServiceService) {
+	srv.RegisterService("runv.v1.ConsoleIOService", &ttrpc.ServiceDesc{
+		Methods: map[string]ttrpc.Method{
+			"Read": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+				var req ConsoleReadRequest
+				if err := unmarshal(&req); err != nil {
+					return nil, err
+				}
+				return svc.Read(ctx, &req)
+			},
+			"Write": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+				var req ConsoleWriteRequest
+				if err := unmarshal(&req); err != nil {
+					return nil, err
+				}
+				return svc.Write(ctx, &req)
+			},
+		},
+	})
+}
+
+type ttrpcconsoleioserviceClient struct {
+	client *ttrpc.Client
+}
+
+func NewTTRPCConsoleIOServiceClient(client *ttrpc.Client) TTRPCConsoleIOServiceService {
+	return &ttrpcconsoleioserviceClient{
+		client: client,
+	}
+}
+
+func (c *ttrpcconsoleioserviceClient) Read(ctx context.Context, req *ConsoleReadRequest) (*ConsoleReadResponse, error) {
+	var resp ConsoleReadResponse
+	if err := c.client.Call(ctx, "runv.v1.ConsoleIOService", "Read", req, &resp); err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (c *ttrpcconsoleioserviceClient) Write(ctx context.Context, req *ConsoleWriteRequest) (*ConsoleWriteResponse, error) {
+	var resp ConsoleWriteResponse
+	if err := c.client.Call(ctx, "runv.v1.ConsoleIOService", "Write", req, &resp); err != nil {
 		return nil, err
 	}
 	return &resp, nil

@@ -22,29 +22,35 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type PollRequest struct {
+// Platform service messages
+type CopyConsoleRequest struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_SessionId   *string                `protobuf:"bytes,1,opt,name=session_id,json=sessionId"`
+	xxx_hidden_ConsoleId   *string                `protobuf:"bytes,2,opt,name=console_id,json=consoleId"`
+	xxx_hidden_ProcessId   *string                `protobuf:"bytes,3,opt,name=process_id,json=processId"`
+	xxx_hidden_StdinPath   *string                `protobuf:"bytes,4,opt,name=stdin_path,json=stdinPath"`
+	xxx_hidden_StdoutPath  *string                `protobuf:"bytes,5,opt,name=stdout_path,json=stdoutPath"`
+	xxx_hidden_StderrPath  *string                `protobuf:"bytes,6,opt,name=stderr_path,json=stderrPath"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
 	sizeCache              protoimpl.SizeCache
 }
 
-func (x *PollRequest) Reset() {
-	*x = PollRequest{}
+func (x *CopyConsoleRequest) Reset() {
+	*x = CopyConsoleRequest{}
 	mi := &file_v1_console_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *PollRequest) String() string {
+func (x *CopyConsoleRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*PollRequest) ProtoMessage() {}
+func (*CopyConsoleRequest) ProtoMessage() {}
 
-func (x *PollRequest) ProtoReflect() protoreflect.Message {
+func (x *CopyConsoleRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_v1_console_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -56,7 +62,7 @@ func (x *PollRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *PollRequest) GetSessionId() string {
+func (x *CopyConsoleRequest) GetSessionId() string {
 	if x != nil {
 		if x.xxx_hidden_SessionId != nil {
 			return *x.xxx_hidden_SessionId
@@ -66,31 +72,662 @@ func (x *PollRequest) GetSessionId() string {
 	return ""
 }
 
-func (x *PollRequest) SetSessionId(v string) {
-	x.xxx_hidden_SessionId = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
+func (x *CopyConsoleRequest) GetConsoleId() string {
+	if x != nil {
+		if x.xxx_hidden_ConsoleId != nil {
+			return *x.xxx_hidden_ConsoleId
+		}
+		return ""
+	}
+	return ""
 }
 
-func (x *PollRequest) HasSessionId() bool {
+func (x *CopyConsoleRequest) GetProcessId() string {
+	if x != nil {
+		if x.xxx_hidden_ProcessId != nil {
+			return *x.xxx_hidden_ProcessId
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *CopyConsoleRequest) GetStdinPath() string {
+	if x != nil {
+		if x.xxx_hidden_StdinPath != nil {
+			return *x.xxx_hidden_StdinPath
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *CopyConsoleRequest) GetStdoutPath() string {
+	if x != nil {
+		if x.xxx_hidden_StdoutPath != nil {
+			return *x.xxx_hidden_StdoutPath
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *CopyConsoleRequest) GetStderrPath() string {
+	if x != nil {
+		if x.xxx_hidden_StderrPath != nil {
+			return *x.xxx_hidden_StderrPath
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *CopyConsoleRequest) SetSessionId(v string) {
+	x.xxx_hidden_SessionId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 6)
+}
+
+func (x *CopyConsoleRequest) SetConsoleId(v string) {
+	x.xxx_hidden_ConsoleId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 6)
+}
+
+func (x *CopyConsoleRequest) SetProcessId(v string) {
+	x.xxx_hidden_ProcessId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 6)
+}
+
+func (x *CopyConsoleRequest) SetStdinPath(v string) {
+	x.xxx_hidden_StdinPath = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 6)
+}
+
+func (x *CopyConsoleRequest) SetStdoutPath(v string) {
+	x.xxx_hidden_StdoutPath = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 6)
+}
+
+func (x *CopyConsoleRequest) SetStderrPath(v string) {
+	x.xxx_hidden_StderrPath = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 6)
+}
+
+func (x *CopyConsoleRequest) HasSessionId() bool {
 	if x == nil {
 		return false
 	}
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
-func (x *PollRequest) ClearSessionId() {
+func (x *CopyConsoleRequest) HasConsoleId() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+}
+
+func (x *CopyConsoleRequest) HasProcessId() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
+func (x *CopyConsoleRequest) HasStdinPath() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+}
+
+func (x *CopyConsoleRequest) HasStdoutPath() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
+}
+
+func (x *CopyConsoleRequest) HasStderrPath() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 5)
+}
+
+func (x *CopyConsoleRequest) ClearSessionId() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
 	x.xxx_hidden_SessionId = nil
 }
 
-type PollRequest_builder struct {
+func (x *CopyConsoleRequest) ClearConsoleId() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_ConsoleId = nil
+}
+
+func (x *CopyConsoleRequest) ClearProcessId() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_ProcessId = nil
+}
+
+func (x *CopyConsoleRequest) ClearStdinPath() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_StdinPath = nil
+}
+
+func (x *CopyConsoleRequest) ClearStdoutPath() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
+	x.xxx_hidden_StdoutPath = nil
+}
+
+func (x *CopyConsoleRequest) ClearStderrPath() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 5)
+	x.xxx_hidden_StderrPath = nil
+}
+
+type CopyConsoleRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	SessionId  *string
+	ConsoleId  *string
+	ProcessId  *string
+	StdinPath  *string
+	StdoutPath *string
+	StderrPath *string
+}
+
+func (b0 CopyConsoleRequest_builder) Build() *CopyConsoleRequest {
+	m0 := &CopyConsoleRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.SessionId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 6)
+		x.xxx_hidden_SessionId = b.SessionId
+	}
+	if b.ConsoleId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 6)
+		x.xxx_hidden_ConsoleId = b.ConsoleId
+	}
+	if b.ProcessId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 6)
+		x.xxx_hidden_ProcessId = b.ProcessId
+	}
+	if b.StdinPath != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 6)
+		x.xxx_hidden_StdinPath = b.StdinPath
+	}
+	if b.StdoutPath != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 6)
+		x.xxx_hidden_StdoutPath = b.StdoutPath
+	}
+	if b.StderrPath != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 6)
+		x.xxx_hidden_StderrPath = b.StderrPath
+	}
+	return m0
+}
+
+type CopyConsoleResponse struct {
+	state                     protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Success        bool                   `protobuf:"varint,1,opt,name=success"`
+	xxx_hidden_Error          *string                `protobuf:"bytes,2,opt,name=error"`
+	xxx_hidden_ProxyConsoleId *string                `protobuf:"bytes,3,opt,name=proxy_console_id,json=proxyConsoleId"`
+	xxx_hidden_ProxyAddress   *string                `protobuf:"bytes,4,opt,name=proxy_address,json=proxyAddress"`
+	XXX_raceDetectHookData    protoimpl.RaceDetectHookData
+	XXX_presence              [1]uint32
+	unknownFields             protoimpl.UnknownFields
+	sizeCache                 protoimpl.SizeCache
+}
+
+func (x *CopyConsoleResponse) Reset() {
+	*x = CopyConsoleResponse{}
+	mi := &file_v1_console_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CopyConsoleResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CopyConsoleResponse) ProtoMessage() {}
+
+func (x *CopyConsoleResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_console_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *CopyConsoleResponse) GetSuccess() bool {
+	if x != nil {
+		return x.xxx_hidden_Success
+	}
+	return false
+}
+
+func (x *CopyConsoleResponse) GetError() string {
+	if x != nil {
+		if x.xxx_hidden_Error != nil {
+			return *x.xxx_hidden_Error
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *CopyConsoleResponse) GetProxyConsoleId() string {
+	if x != nil {
+		if x.xxx_hidden_ProxyConsoleId != nil {
+			return *x.xxx_hidden_ProxyConsoleId
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *CopyConsoleResponse) GetProxyAddress() string {
+	if x != nil {
+		if x.xxx_hidden_ProxyAddress != nil {
+			return *x.xxx_hidden_ProxyAddress
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *CopyConsoleResponse) SetSuccess(v bool) {
+	x.xxx_hidden_Success = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 4)
+}
+
+func (x *CopyConsoleResponse) SetError(v string) {
+	x.xxx_hidden_Error = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 4)
+}
+
+func (x *CopyConsoleResponse) SetProxyConsoleId(v string) {
+	x.xxx_hidden_ProxyConsoleId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 4)
+}
+
+func (x *CopyConsoleResponse) SetProxyAddress(v string) {
+	x.xxx_hidden_ProxyAddress = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 4)
+}
+
+func (x *CopyConsoleResponse) HasSuccess() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+}
+
+func (x *CopyConsoleResponse) HasError() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+}
+
+func (x *CopyConsoleResponse) HasProxyConsoleId() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
+func (x *CopyConsoleResponse) HasProxyAddress() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+}
+
+func (x *CopyConsoleResponse) ClearSuccess() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Success = false
+}
+
+func (x *CopyConsoleResponse) ClearError() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Error = nil
+}
+
+func (x *CopyConsoleResponse) ClearProxyConsoleId() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_ProxyConsoleId = nil
+}
+
+func (x *CopyConsoleResponse) ClearProxyAddress() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_ProxyAddress = nil
+}
+
+type CopyConsoleResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Success        *bool
+	Error          *string
+	ProxyConsoleId *string
+	ProxyAddress   *string
+}
+
+func (b0 CopyConsoleResponse_builder) Build() *CopyConsoleResponse {
+	m0 := &CopyConsoleResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.Success != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 4)
+		x.xxx_hidden_Success = *b.Success
+	}
+	if b.Error != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 4)
+		x.xxx_hidden_Error = b.Error
+	}
+	if b.ProxyConsoleId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 4)
+		x.xxx_hidden_ProxyConsoleId = b.ProxyConsoleId
+	}
+	if b.ProxyAddress != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 4)
+		x.xxx_hidden_ProxyAddress = b.ProxyAddress
+	}
+	return m0
+}
+
+type ShutdownConsoleRequest struct {
+	state                     protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_SessionId      *string                `protobuf:"bytes,1,opt,name=session_id,json=sessionId"`
+	xxx_hidden_ProxyConsoleId *string                `protobuf:"bytes,2,opt,name=proxy_console_id,json=proxyConsoleId"`
+	XXX_raceDetectHookData    protoimpl.RaceDetectHookData
+	XXX_presence              [1]uint32
+	unknownFields             protoimpl.UnknownFields
+	sizeCache                 protoimpl.SizeCache
+}
+
+func (x *ShutdownConsoleRequest) Reset() {
+	*x = ShutdownConsoleRequest{}
+	mi := &file_v1_console_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ShutdownConsoleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ShutdownConsoleRequest) ProtoMessage() {}
+
+func (x *ShutdownConsoleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_console_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ShutdownConsoleRequest) GetSessionId() string {
+	if x != nil {
+		if x.xxx_hidden_SessionId != nil {
+			return *x.xxx_hidden_SessionId
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *ShutdownConsoleRequest) GetProxyConsoleId() string {
+	if x != nil {
+		if x.xxx_hidden_ProxyConsoleId != nil {
+			return *x.xxx_hidden_ProxyConsoleId
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *ShutdownConsoleRequest) SetSessionId(v string) {
+	x.xxx_hidden_SessionId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
+}
+
+func (x *ShutdownConsoleRequest) SetProxyConsoleId(v string) {
+	x.xxx_hidden_ProxyConsoleId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
+}
+
+func (x *ShutdownConsoleRequest) HasSessionId() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+}
+
+func (x *ShutdownConsoleRequest) HasProxyConsoleId() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+}
+
+func (x *ShutdownConsoleRequest) ClearSessionId() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_SessionId = nil
+}
+
+func (x *ShutdownConsoleRequest) ClearProxyConsoleId() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_ProxyConsoleId = nil
+}
+
+type ShutdownConsoleRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	SessionId      *string
+	ProxyConsoleId *string
+}
+
+func (b0 ShutdownConsoleRequest_builder) Build() *ShutdownConsoleRequest {
+	m0 := &ShutdownConsoleRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.SessionId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
+		x.xxx_hidden_SessionId = b.SessionId
+	}
+	if b.ProxyConsoleId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
+		x.xxx_hidden_ProxyConsoleId = b.ProxyConsoleId
+	}
+	return m0
+}
+
+type ShutdownConsoleResponse struct {
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Success     bool                   `protobuf:"varint,1,opt,name=success"`
+	xxx_hidden_Error       *string                `protobuf:"bytes,2,opt,name=error"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *ShutdownConsoleResponse) Reset() {
+	*x = ShutdownConsoleResponse{}
+	mi := &file_v1_console_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ShutdownConsoleResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ShutdownConsoleResponse) ProtoMessage() {}
+
+func (x *ShutdownConsoleResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_console_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ShutdownConsoleResponse) GetSuccess() bool {
+	if x != nil {
+		return x.xxx_hidden_Success
+	}
+	return false
+}
+
+func (x *ShutdownConsoleResponse) GetError() string {
+	if x != nil {
+		if x.xxx_hidden_Error != nil {
+			return *x.xxx_hidden_Error
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *ShutdownConsoleResponse) SetSuccess(v bool) {
+	x.xxx_hidden_Success = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
+}
+
+func (x *ShutdownConsoleResponse) SetError(v string) {
+	x.xxx_hidden_Error = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
+}
+
+func (x *ShutdownConsoleResponse) HasSuccess() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+}
+
+func (x *ShutdownConsoleResponse) HasError() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+}
+
+func (x *ShutdownConsoleResponse) ClearSuccess() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Success = false
+}
+
+func (x *ShutdownConsoleResponse) ClearError() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Error = nil
+}
+
+type ShutdownConsoleResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Success *bool
+	Error   *string
+}
+
+func (b0 ShutdownConsoleResponse_builder) Build() *ShutdownConsoleResponse {
+	m0 := &ShutdownConsoleResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.Success != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
+		x.xxx_hidden_Success = *b.Success
+	}
+	if b.Error != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
+		x.xxx_hidden_Error = b.Error
+	}
+	return m0
+}
+
+type ClosePlatformRequest struct {
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_SessionId   *string                `protobuf:"bytes,1,opt,name=session_id,json=sessionId"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *ClosePlatformRequest) Reset() {
+	*x = ClosePlatformRequest{}
+	mi := &file_v1_console_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ClosePlatformRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ClosePlatformRequest) ProtoMessage() {}
+
+func (x *ClosePlatformRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_console_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ClosePlatformRequest) GetSessionId() string {
+	if x != nil {
+		if x.xxx_hidden_SessionId != nil {
+			return *x.xxx_hidden_SessionId
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *ClosePlatformRequest) SetSessionId(v string) {
+	x.xxx_hidden_SessionId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
+}
+
+func (x *ClosePlatformRequest) HasSessionId() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+}
+
+func (x *ClosePlatformRequest) ClearSessionId() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_SessionId = nil
+}
+
+type ClosePlatformRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	SessionId *string
 }
 
-func (b0 PollRequest_builder) Build() *PollRequest {
-	m0 := &PollRequest{}
+func (b0 ClosePlatformRequest_builder) Build() *ClosePlatformRequest {
+	m0 := &ClosePlatformRequest{}
 	b, x := &b0, m0
 	_, _ = b, x
 	if b.SessionId != nil {
@@ -100,30 +737,31 @@ func (b0 PollRequest_builder) Build() *PollRequest {
 	return m0
 }
 
-type PollResponse struct {
+type ClosePlatformResponse struct {
 	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_SessionId   *string                `protobuf:"bytes,1,opt,name=session_id,json=sessionId"`
+	xxx_hidden_Success     bool                   `protobuf:"varint,1,opt,name=success"`
+	xxx_hidden_Error       *string                `protobuf:"bytes,2,opt,name=error"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
 	sizeCache              protoimpl.SizeCache
 }
 
-func (x *PollResponse) Reset() {
-	*x = PollResponse{}
-	mi := &file_v1_console_proto_msgTypes[1]
+func (x *ClosePlatformResponse) Reset() {
+	*x = ClosePlatformResponse{}
+	mi := &file_v1_console_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *PollResponse) String() string {
+func (x *ClosePlatformResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*PollResponse) ProtoMessage() {}
+func (*ClosePlatformResponse) ProtoMessage() {}
 
-func (x *PollResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_console_proto_msgTypes[1]
+func (x *ClosePlatformResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_console_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -134,7 +772,117 @@ func (x *PollResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *PollResponse) GetSessionId() string {
+func (x *ClosePlatformResponse) GetSuccess() bool {
+	if x != nil {
+		return x.xxx_hidden_Success
+	}
+	return false
+}
+
+func (x *ClosePlatformResponse) GetError() string {
+	if x != nil {
+		if x.xxx_hidden_Error != nil {
+			return *x.xxx_hidden_Error
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *ClosePlatformResponse) SetSuccess(v bool) {
+	x.xxx_hidden_Success = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
+}
+
+func (x *ClosePlatformResponse) SetError(v string) {
+	x.xxx_hidden_Error = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 2)
+}
+
+func (x *ClosePlatformResponse) HasSuccess() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+}
+
+func (x *ClosePlatformResponse) HasError() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+}
+
+func (x *ClosePlatformResponse) ClearSuccess() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Success = false
+}
+
+func (x *ClosePlatformResponse) ClearError() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Error = nil
+}
+
+type ClosePlatformResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Success *bool
+	Error   *string
+}
+
+func (b0 ClosePlatformResponse_builder) Build() *ClosePlatformResponse {
+	m0 := &ClosePlatformResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.Success != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
+		x.xxx_hidden_Success = *b.Success
+	}
+	if b.Error != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 2)
+		x.xxx_hidden_Error = b.Error
+	}
+	return m0
+}
+
+// Console I/O operation requests/responses
+type ConsoleReadRequest struct {
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_SessionId   *string                `protobuf:"bytes,1,opt,name=session_id,json=sessionId"`
+	xxx_hidden_ConsoleId   *string                `protobuf:"bytes,2,opt,name=console_id,json=consoleId"`
+	xxx_hidden_BufferSize  int32                  `protobuf:"varint,3,opt,name=buffer_size,json=bufferSize"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *ConsoleReadRequest) Reset() {
+	*x = ConsoleReadRequest{}
+	mi := &file_v1_console_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConsoleReadRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConsoleReadRequest) ProtoMessage() {}
+
+func (x *ConsoleReadRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_console_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ConsoleReadRequest) GetSessionId() string {
 	if x != nil {
 		if x.xxx_hidden_SessionId != nil {
 			return *x.xxx_hidden_SessionId
@@ -144,36 +892,580 @@ func (x *PollResponse) GetSessionId() string {
 	return ""
 }
 
-func (x *PollResponse) SetSessionId(v string) {
-	x.xxx_hidden_SessionId = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 1)
+func (x *ConsoleReadRequest) GetConsoleId() string {
+	if x != nil {
+		if x.xxx_hidden_ConsoleId != nil {
+			return *x.xxx_hidden_ConsoleId
+		}
+		return ""
+	}
+	return ""
 }
 
-func (x *PollResponse) HasSessionId() bool {
+func (x *ConsoleReadRequest) GetBufferSize() int32 {
+	if x != nil {
+		return x.xxx_hidden_BufferSize
+	}
+	return 0
+}
+
+func (x *ConsoleReadRequest) SetSessionId(v string) {
+	x.xxx_hidden_SessionId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
+}
+
+func (x *ConsoleReadRequest) SetConsoleId(v string) {
+	x.xxx_hidden_ConsoleId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
+}
+
+func (x *ConsoleReadRequest) SetBufferSize(v int32) {
+	x.xxx_hidden_BufferSize = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
+}
+
+func (x *ConsoleReadRequest) HasSessionId() bool {
 	if x == nil {
 		return false
 	}
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
-func (x *PollResponse) ClearSessionId() {
+func (x *ConsoleReadRequest) HasConsoleId() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+}
+
+func (x *ConsoleReadRequest) HasBufferSize() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
+func (x *ConsoleReadRequest) ClearSessionId() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
 	x.xxx_hidden_SessionId = nil
 }
 
-type PollResponse_builder struct {
-	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
-
-	SessionId *string
+func (x *ConsoleReadRequest) ClearConsoleId() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_ConsoleId = nil
 }
 
-func (b0 PollResponse_builder) Build() *PollResponse {
-	m0 := &PollResponse{}
+func (x *ConsoleReadRequest) ClearBufferSize() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_BufferSize = 0
+}
+
+type ConsoleReadRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	SessionId  *string
+	ConsoleId  *string
+	BufferSize *int32
+}
+
+func (b0 ConsoleReadRequest_builder) Build() *ConsoleReadRequest {
+	m0 := &ConsoleReadRequest{}
 	b, x := &b0, m0
 	_, _ = b, x
 	if b.SessionId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 1)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
 		x.xxx_hidden_SessionId = b.SessionId
+	}
+	if b.ConsoleId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
+		x.xxx_hidden_ConsoleId = b.ConsoleId
+	}
+	if b.BufferSize != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_BufferSize = *b.BufferSize
+	}
+	return m0
+}
+
+type ConsoleReadResponse struct {
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Success     bool                   `protobuf:"varint,1,opt,name=success"`
+	xxx_hidden_Error       *string                `protobuf:"bytes,2,opt,name=error"`
+	xxx_hidden_Data        []byte                 `protobuf:"bytes,3,opt,name=data"`
+	xxx_hidden_Count       int32                  `protobuf:"varint,4,opt,name=count"`
+	xxx_hidden_Eof         bool                   `protobuf:"varint,5,opt,name=eof"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *ConsoleReadResponse) Reset() {
+	*x = ConsoleReadResponse{}
+	mi := &file_v1_console_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConsoleReadResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConsoleReadResponse) ProtoMessage() {}
+
+func (x *ConsoleReadResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_console_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ConsoleReadResponse) GetSuccess() bool {
+	if x != nil {
+		return x.xxx_hidden_Success
+	}
+	return false
+}
+
+func (x *ConsoleReadResponse) GetError() string {
+	if x != nil {
+		if x.xxx_hidden_Error != nil {
+			return *x.xxx_hidden_Error
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *ConsoleReadResponse) GetData() []byte {
+	if x != nil {
+		return x.xxx_hidden_Data
+	}
+	return nil
+}
+
+func (x *ConsoleReadResponse) GetCount() int32 {
+	if x != nil {
+		return x.xxx_hidden_Count
+	}
+	return 0
+}
+
+func (x *ConsoleReadResponse) GetEof() bool {
+	if x != nil {
+		return x.xxx_hidden_Eof
+	}
+	return false
+}
+
+func (x *ConsoleReadResponse) SetSuccess(v bool) {
+	x.xxx_hidden_Success = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 5)
+}
+
+func (x *ConsoleReadResponse) SetError(v string) {
+	x.xxx_hidden_Error = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 5)
+}
+
+func (x *ConsoleReadResponse) SetData(v []byte) {
+	if v == nil {
+		v = []byte{}
+	}
+	x.xxx_hidden_Data = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 5)
+}
+
+func (x *ConsoleReadResponse) SetCount(v int32) {
+	x.xxx_hidden_Count = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 5)
+}
+
+func (x *ConsoleReadResponse) SetEof(v bool) {
+	x.xxx_hidden_Eof = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 5)
+}
+
+func (x *ConsoleReadResponse) HasSuccess() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+}
+
+func (x *ConsoleReadResponse) HasError() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+}
+
+func (x *ConsoleReadResponse) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
+func (x *ConsoleReadResponse) HasCount() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+}
+
+func (x *ConsoleReadResponse) HasEof() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
+}
+
+func (x *ConsoleReadResponse) ClearSuccess() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Success = false
+}
+
+func (x *ConsoleReadResponse) ClearError() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Error = nil
+}
+
+func (x *ConsoleReadResponse) ClearData() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Data = nil
+}
+
+func (x *ConsoleReadResponse) ClearCount() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_Count = 0
+}
+
+func (x *ConsoleReadResponse) ClearEof() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
+	x.xxx_hidden_Eof = false
+}
+
+type ConsoleReadResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Success *bool
+	Error   *string
+	Data    []byte
+	Count   *int32
+	Eof     *bool
+}
+
+func (b0 ConsoleReadResponse_builder) Build() *ConsoleReadResponse {
+	m0 := &ConsoleReadResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.Success != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 5)
+		x.xxx_hidden_Success = *b.Success
+	}
+	if b.Error != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 5)
+		x.xxx_hidden_Error = b.Error
+	}
+	if b.Data != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 5)
+		x.xxx_hidden_Data = b.Data
+	}
+	if b.Count != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 5)
+		x.xxx_hidden_Count = *b.Count
+	}
+	if b.Eof != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 5)
+		x.xxx_hidden_Eof = *b.Eof
+	}
+	return m0
+}
+
+type ConsoleWriteRequest struct {
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_SessionId   *string                `protobuf:"bytes,1,opt,name=session_id,json=sessionId"`
+	xxx_hidden_ConsoleId   *string                `protobuf:"bytes,2,opt,name=console_id,json=consoleId"`
+	xxx_hidden_Data        []byte                 `protobuf:"bytes,3,opt,name=data"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *ConsoleWriteRequest) Reset() {
+	*x = ConsoleWriteRequest{}
+	mi := &file_v1_console_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConsoleWriteRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConsoleWriteRequest) ProtoMessage() {}
+
+func (x *ConsoleWriteRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_console_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ConsoleWriteRequest) GetSessionId() string {
+	if x != nil {
+		if x.xxx_hidden_SessionId != nil {
+			return *x.xxx_hidden_SessionId
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *ConsoleWriteRequest) GetConsoleId() string {
+	if x != nil {
+		if x.xxx_hidden_ConsoleId != nil {
+			return *x.xxx_hidden_ConsoleId
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *ConsoleWriteRequest) GetData() []byte {
+	if x != nil {
+		return x.xxx_hidden_Data
+	}
+	return nil
+}
+
+func (x *ConsoleWriteRequest) SetSessionId(v string) {
+	x.xxx_hidden_SessionId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
+}
+
+func (x *ConsoleWriteRequest) SetConsoleId(v string) {
+	x.xxx_hidden_ConsoleId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
+}
+
+func (x *ConsoleWriteRequest) SetData(v []byte) {
+	if v == nil {
+		v = []byte{}
+	}
+	x.xxx_hidden_Data = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
+}
+
+func (x *ConsoleWriteRequest) HasSessionId() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+}
+
+func (x *ConsoleWriteRequest) HasConsoleId() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+}
+
+func (x *ConsoleWriteRequest) HasData() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
+func (x *ConsoleWriteRequest) ClearSessionId() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_SessionId = nil
+}
+
+func (x *ConsoleWriteRequest) ClearConsoleId() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_ConsoleId = nil
+}
+
+func (x *ConsoleWriteRequest) ClearData() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Data = nil
+}
+
+type ConsoleWriteRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	SessionId *string
+	ConsoleId *string
+	Data      []byte
+}
+
+func (b0 ConsoleWriteRequest_builder) Build() *ConsoleWriteRequest {
+	m0 := &ConsoleWriteRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.SessionId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
+		x.xxx_hidden_SessionId = b.SessionId
+	}
+	if b.ConsoleId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
+		x.xxx_hidden_ConsoleId = b.ConsoleId
+	}
+	if b.Data != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_Data = b.Data
+	}
+	return m0
+}
+
+type ConsoleWriteResponse struct {
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Success     bool                   `protobuf:"varint,1,opt,name=success"`
+	xxx_hidden_Error       *string                `protobuf:"bytes,2,opt,name=error"`
+	xxx_hidden_Count       int32                  `protobuf:"varint,3,opt,name=count"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *ConsoleWriteResponse) Reset() {
+	*x = ConsoleWriteResponse{}
+	mi := &file_v1_console_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConsoleWriteResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConsoleWriteResponse) ProtoMessage() {}
+
+func (x *ConsoleWriteResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_console_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ConsoleWriteResponse) GetSuccess() bool {
+	if x != nil {
+		return x.xxx_hidden_Success
+	}
+	return false
+}
+
+func (x *ConsoleWriteResponse) GetError() string {
+	if x != nil {
+		if x.xxx_hidden_Error != nil {
+			return *x.xxx_hidden_Error
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *ConsoleWriteResponse) GetCount() int32 {
+	if x != nil {
+		return x.xxx_hidden_Count
+	}
+	return 0
+}
+
+func (x *ConsoleWriteResponse) SetSuccess(v bool) {
+	x.xxx_hidden_Success = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 3)
+}
+
+func (x *ConsoleWriteResponse) SetError(v string) {
+	x.xxx_hidden_Error = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 3)
+}
+
+func (x *ConsoleWriteResponse) SetCount(v int32) {
+	x.xxx_hidden_Count = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
+}
+
+func (x *ConsoleWriteResponse) HasSuccess() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+}
+
+func (x *ConsoleWriteResponse) HasError() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+}
+
+func (x *ConsoleWriteResponse) HasCount() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
+func (x *ConsoleWriteResponse) ClearSuccess() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Success = false
+}
+
+func (x *ConsoleWriteResponse) ClearError() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Error = nil
+}
+
+func (x *ConsoleWriteResponse) ClearCount() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_Count = 0
+}
+
+type ConsoleWriteResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Success *bool
+	Error   *string
+	Count   *int32
+}
+
+func (b0 ConsoleWriteResponse_builder) Build() *ConsoleWriteResponse {
+	m0 := &ConsoleWriteResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.Success != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 3)
+		x.xxx_hidden_Success = *b.Success
+	}
+	if b.Error != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 3)
+		x.xxx_hidden_Error = b.Error
+	}
+	if b.Count != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_Count = *b.Count
 	}
 	return m0
 }
@@ -182,27 +1474,121 @@ var File_v1_console_proto protoreflect.FileDescriptor
 
 const file_v1_console_proto_rawDesc = "" +
 	"\n" +
-	"\x10v1/console.proto\x12\arunv.v1\x1a\x1bbuf/validate/validate.proto\x1a!google/protobuf/go_features.proto\"6\n" +
-	"\vPollRequest\x12'\n" +
+	"\x10v1/console.proto\x12\arunv.v1\x1a\x1bbuf/validate/validate.proto\x1a!google/protobuf/go_features.proto\"\xe9\x06\n" +
+	"\x12CopyConsoleRequest\x12l\n" +
 	"\n" +
-	"session_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\tsessionId\"7\n" +
-	"\fPollResponse\x12'\n" +
+	"session_id\x18\x01 \x01(\tBM\xbaHJ\xba\x01B\n" +
+	"\x14session_id.not_empty\x12\x1asession_id cannot be empty\x1a\x0esize(this) > 0r\x03\xb0\x01\x01R\tsessionId\x12l\n" +
 	"\n" +
-	"session_id\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\tsessionId2L\n" +
-	"\x13ConsoleProxyService\x125\n" +
-	"\x04Poll\x12\x14.runv.v1.PollRequest\x1a\x15.runv.v1.PollResponse\"\x00B\x88\x01\n" +
+	"console_id\x18\x02 \x01(\tBM\xbaHJ\xba\x01B\n" +
+	"\x14console_id.not_empty\x12\x1aconsole_id cannot be empty\x1a\x0esize(this) > 0r\x03\xb0\x01\x01R\tconsoleId\x12\x95\x01\n" +
+	"\n" +
+	"process_id\x18\x03 \x01(\tBv\xbaHs\xba\x01i\n" +
+	"\x17process_id.valid_format\x12,process_id must be alphanumeric with hyphens\x1a this.matches('^[a-zA-Z0-9-_]+$')r\x05\x10\x01\x18\x80\x02R\tprocessId\x12\x96\x01\n" +
+	"\n" +
+	"stdin_path\x18\x04 \x01(\tBw\xbaHt\xba\x01l\n" +
+	"\x15stdin_path.valid_path\x12/stdin_path must be empty or valid absolute path\x1a\"this == '' || this.startsWith('/')r\x03\x18\x80 R\tstdinPath\x12\xa8\x01\n" +
+	"\vstdout_path\x18\x05 \x01(\tB\x86\x01\xbaH\x82\x01\xba\x01x\n" +
+	"\x19stdout_path.required_path\x12'stdout_path must be valid absolute path\x1a2this.startsWith('/') || this.startsWith('binary:')r\x05\x10\x01\x18\x80 R\n" +
+	"stdoutPath\x12\x9a\x01\n" +
+	"\vstderr_path\x18\x06 \x01(\tBy\xbaHv\xba\x01n\n" +
+	"\x16stderr_path.valid_path\x120stderr_path must be empty or valid absolute path\x1a\"this == '' || this.startsWith('/')r\x03\x18\x80 R\n" +
+	"stderrPath\"\xb7\x04\n" +
+	"\x13CopyConsoleResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x92\x01\n" +
+	"\x05error\x18\x02 \x01(\tB|\xbaHy\xba\x01q\n" +
+	"\x1aerror.conditional_required\x12,error must be provided when success is false\x1a%!this.success || size(this.error) > 0r\x03\x18\x80\bR\x05error\x12\xc1\x01\n" +
+	"\x10proxy_console_id\x18\x03 \x01(\tB\x96\x01\xbaH\x92\x01\xba\x01\x89\x01\n" +
+	"%proxy_console_id.conditional_required\x12.proxy_console_id required when success is true\x1a0!this.success || size(this.proxy_console_id) > 0r\x03\xb0\x01\x01R\x0eproxyConsoleId\x12\xac\x01\n" +
+	"\rproxy_address\x18\x04 \x01(\tB\x86\x01\xbaH\x82\x01\xba\x01z\n" +
+	"\x14proxy_address.format\x12\x1bproxy address must be valid\x1aEthis == '' || this.startsWith('unix://') || this.startsWith('tcp://')r\x03\x18\x80\bR\fproxyAddress\"\x8c\x02\n" +
+	"\x16ShutdownConsoleRequest\x12l\n" +
+	"\n" +
+	"session_id\x18\x01 \x01(\tBM\xbaHJ\xba\x01B\n" +
+	"\x14session_id.not_empty\x12\x1asession_id cannot be empty\x1a\x0esize(this) > 0r\x03\xb0\x01\x01R\tsessionId\x12\x83\x01\n" +
+	"\x10proxy_console_id\x18\x02 \x01(\tBY\xbaHV\xba\x01N\n" +
+	"\x1aproxy_console_id.not_empty\x12 proxy_console_id cannot be empty\x1a\x0esize(this) > 0r\x03\xb0\x01\x01R\x0eproxyConsoleId\"\xc8\x01\n" +
+	"\x17ShutdownConsoleResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x92\x01\n" +
+	"\x05error\x18\x02 \x01(\tB|\xbaHy\xba\x01q\n" +
+	"\x1aerror.conditional_required\x12,error must be provided when success is false\x1a%!this.success || size(this.error) > 0r\x03\x18\x80\bR\x05error\"\x84\x01\n" +
+	"\x14ClosePlatformRequest\x12l\n" +
+	"\n" +
+	"session_id\x18\x01 \x01(\tBM\xbaHJ\xba\x01B\n" +
+	"\x14session_id.not_empty\x12\x1asession_id cannot be empty\x1a\x0esize(this) > 0r\x03\xb0\x01\x01R\tsessionId\"\xc6\x01\n" +
+	"\x15ClosePlatformResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x92\x01\n" +
+	"\x05error\x18\x02 \x01(\tB|\xbaHy\xba\x01q\n" +
+	"\x1aerror.conditional_required\x12,error must be provided when success is false\x1a%!this.success || size(this.error) > 0r\x03\x18\x80\bR\x05error\"\xfd\x02\n" +
+	"\x12ConsoleReadRequest\x12l\n" +
+	"\n" +
+	"session_id\x18\x01 \x01(\tBM\xbaHJ\xba\x01B\n" +
+	"\x14session_id.not_empty\x12\x1asession_id cannot be empty\x1a\x0esize(this) > 0r\x03\xb0\x01\x01R\tsessionId\x12l\n" +
+	"\n" +
+	"console_id\x18\x02 \x01(\tBM\xbaHJ\xba\x01B\n" +
+	"\x14console_id.not_empty\x12\x1aconsole_id cannot be empty\x1a\x0esize(this) > 0r\x03\xb0\x01\x01R\tconsoleId\x12\x8a\x01\n" +
+	"\vbuffer_size\x18\x03 \x01(\x05Bi\xbaHf\xba\x01[\n" +
+	"\x16buffer_size.reasonable\x12&buffer_size must be between 1 and 64KB\x1a\x19this > 0 && this <= 65536\x1a\x06\x18\x80\x80\x04 \x00R\n" +
+	"bufferSize\"\xd4\x03\n" +
+	"\x13ConsoleReadResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x92\x01\n" +
+	"\x05error\x18\x02 \x01(\tB|\xbaHy\xba\x01q\n" +
+	"\x1aerror.conditional_required\x12,error must be provided when success is false\x1a%!this.success || size(this.error) > 0r\x03\x18\x80\bR\x05error\x12x\n" +
+	"\x04data\x18\x03 \x01(\fBd\xbaHa\xba\x01X\n" +
+	"\x15data.size_consistency\x12 data size must match count field\x1a\x1dsize(this.data) == this.countz\x04\x18\x80\x80\x04R\x04data\x12\x81\x01\n" +
+	"\x05count\x18\x04 \x01(\x05Bk\xbaHh\xba\x01a\n" +
+	"\x11count.valid_range\x120count must be non-negative and match data length\x1a\x1athis >= 0 && this <= 65536\x1a\x02(\x00R\x05count\x12\x10\n" +
+	"\x03eof\x18\x05 \x01(\bR\x03eof\"\xe0\x02\n" +
+	"\x13ConsoleWriteRequest\x12l\n" +
+	"\n" +
+	"session_id\x18\x01 \x01(\tBM\xbaHJ\xba\x01B\n" +
+	"\x14session_id.not_empty\x12\x1asession_id cannot be empty\x1a\x0esize(this) > 0r\x03\xb0\x01\x01R\tsessionId\x12l\n" +
+	"\n" +
+	"console_id\x18\x02 \x01(\tBM\xbaHJ\xba\x01B\n" +
+	"\x14console_id.not_empty\x12\x1aconsole_id cannot be empty\x1a\x0esize(this) > 0r\x03\xb0\x01\x01R\tconsoleId\x12m\n" +
+	"\x04data\x18\x03 \x01(\fBY\xbaHV\xba\x01K\n" +
+	"\x0edata.not_empty\x12)data cannot be empty for write operations\x1a\x0esize(this) > 0z\x06\x10\x01\x18\x80\x80\x04R\x04data\"\xb2\x02\n" +
+	"\x14ConsoleWriteResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x92\x01\n" +
+	"\x05error\x18\x02 \x01(\tB|\xbaHy\xba\x01q\n" +
+	"\x1aerror.conditional_required\x12,error must be provided when success is false\x1a%!this.success || size(this.error) > 0r\x03\x18\x80\bR\x05error\x12k\n" +
+	"\x05count\x18\x03 \x01(\x05BU\xbaHR\xba\x01K\n" +
+	"\x11count.valid_range\x12\x1acount must be non-negative\x1a\x1athis >= 0 && this <= 65536\x1a\x02(\x00R\x05count2\x8c\x02\n" +
+	"\x14PlatformProxyService\x12J\n" +
+	"\vCopyConsole\x12\x1b.runv.v1.CopyConsoleRequest\x1a\x1c.runv.v1.CopyConsoleResponse\"\x00\x12V\n" +
+	"\x0fShutdownConsole\x12\x1f.runv.v1.ShutdownConsoleRequest\x1a .runv.v1.ShutdownConsoleResponse\"\x00\x12P\n" +
+	"\rClosePlatform\x12\x1d.runv.v1.ClosePlatformRequest\x1a\x1e.runv.v1.ClosePlatformResponse\"\x002\x9f\x01\n" +
+	"\x10ConsoleIOService\x12C\n" +
+	"\x04Read\x12\x1b.runv.v1.ConsoleReadRequest\x1a\x1c.runv.v1.ConsoleReadResponse\"\x00\x12F\n" +
+	"\x05Write\x12\x1c.runv.v1.ConsoleWriteRequest\x1a\x1d.runv.v1.ConsoleWriteResponse\"\x00B\x88\x01\n" +
 	"\vcom.runv.v1B\fConsoleProtoP\x01Z&github.com/walteh/runv/proto/v1;runvv1\xa2\x02\x03RXX\xaa\x02\aRunv.V1\xca\x02\aRunv\\V1\xe2\x02\x13Runv\\V1\\GPBMetadata\xea\x02\bRunv::V1\x92\x03\x05\xd2>\x02\x10\x03b\beditionsp\xe8\a"
 
-var file_v1_console_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_v1_console_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_v1_console_proto_goTypes = []any{
-	(*PollRequest)(nil),  // 0: runv.v1.PollRequest
-	(*PollResponse)(nil), // 1: runv.v1.PollResponse
+	(*CopyConsoleRequest)(nil),      // 0: runv.v1.CopyConsoleRequest
+	(*CopyConsoleResponse)(nil),     // 1: runv.v1.CopyConsoleResponse
+	(*ShutdownConsoleRequest)(nil),  // 2: runv.v1.ShutdownConsoleRequest
+	(*ShutdownConsoleResponse)(nil), // 3: runv.v1.ShutdownConsoleResponse
+	(*ClosePlatformRequest)(nil),    // 4: runv.v1.ClosePlatformRequest
+	(*ClosePlatformResponse)(nil),   // 5: runv.v1.ClosePlatformResponse
+	(*ConsoleReadRequest)(nil),      // 6: runv.v1.ConsoleReadRequest
+	(*ConsoleReadResponse)(nil),     // 7: runv.v1.ConsoleReadResponse
+	(*ConsoleWriteRequest)(nil),     // 8: runv.v1.ConsoleWriteRequest
+	(*ConsoleWriteResponse)(nil),    // 9: runv.v1.ConsoleWriteResponse
 }
 var file_v1_console_proto_depIdxs = []int32{
-	0, // 0: runv.v1.ConsoleProxyService.Poll:input_type -> runv.v1.PollRequest
-	1, // 1: runv.v1.ConsoleProxyService.Poll:output_type -> runv.v1.PollResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
+	0, // 0: runv.v1.PlatformProxyService.CopyConsole:input_type -> runv.v1.CopyConsoleRequest
+	2, // 1: runv.v1.PlatformProxyService.ShutdownConsole:input_type -> runv.v1.ShutdownConsoleRequest
+	4, // 2: runv.v1.PlatformProxyService.ClosePlatform:input_type -> runv.v1.ClosePlatformRequest
+	6, // 3: runv.v1.ConsoleIOService.Read:input_type -> runv.v1.ConsoleReadRequest
+	8, // 4: runv.v1.ConsoleIOService.Write:input_type -> runv.v1.ConsoleWriteRequest
+	1, // 5: runv.v1.PlatformProxyService.CopyConsole:output_type -> runv.v1.CopyConsoleResponse
+	3, // 6: runv.v1.PlatformProxyService.ShutdownConsole:output_type -> runv.v1.ShutdownConsoleResponse
+	5, // 7: runv.v1.PlatformProxyService.ClosePlatform:output_type -> runv.v1.ClosePlatformResponse
+	7, // 8: runv.v1.ConsoleIOService.Read:output_type -> runv.v1.ConsoleReadResponse
+	9, // 9: runv.v1.ConsoleIOService.Write:output_type -> runv.v1.ConsoleWriteResponse
+	5, // [5:10] is the sub-list for method output_type
+	0, // [0:5] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -219,9 +1605,9 @@ func file_v1_console_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_console_proto_rawDesc), len(file_v1_console_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   10,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   2,
 		},
 		GoTypes:           file_v1_console_proto_goTypes,
 		DependencyIndexes: file_v1_console_proto_depIdxs,

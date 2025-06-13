@@ -1,0 +1,38 @@
+edition = "2023";
+
+package runv.v1;
+
+import "google/protobuf/go_features.proto";
+
+option features.(pb.go).api_level = API_OPAQUE;
+
+service PrctlService {
+	rpc Create(CreateRequest) returns (CreateResponse) {}
+
+
+	rpc ShareFrom(ShareFromRequest) returns (ShareFromResponse) {}
+}
+
+enum PrctlPidType {
+	PRCTL_PID_TYPE_UNSPECIFIED = 0;
+	PRCTL_PID_TYPE_PID         = 1;
+	PRCTL_PID_TYPE_TGID        = 2;
+	PRCTL_PID_TYPE_PGID        = 3;
+}
+
+message CreateRequest {
+	PrctlPidType pid_type = 1;
+}
+
+message CreateResponse {
+	string go_error = 1;
+}
+
+message ShareFromRequest {
+	uint64       pid      = 1;
+	PrctlPidType pid_type = 2;
+}
+
+message ShareFromResponse {
+	string go_error = 1;
+}

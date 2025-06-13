@@ -36,7 +36,7 @@ plugins:
       - prefix=TTRPC
 
   - out: .
-    local: ["go", "tool", "github.com/walteh/runv/tools/cmd/protoc-gen-go-opaque-helpers"]
+    local: ["go", "tool", "github.com/walteh/runv/tools/cmd/protoc-gen-go-opaque"]
     opt:
       - paths=source_relative
       - enable_protovalidate=true
