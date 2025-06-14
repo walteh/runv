@@ -60,15 +60,14 @@ func (c *prctlServiceClient) ShareFrom(ctx context.Context, in *ShareFromRequest
 }
 
 // PrctlServiceServer is the server API for PrctlService service.
-// All implementations must embed UnimplementedPrctlServiceServer
+// All implementations should embed UnimplementedPrctlServiceServer
 // for forward compatibility.
 type PrctlServiceServer interface {
 	Create(context.Context, *CreateRequest) (*CreateResponse, error)
 	ShareFrom(context.Context, *ShareFromRequest) (*ShareFromResponse, error)
-	mustEmbedUnimplementedPrctlServiceServer()
 }
 
-// UnimplementedPrctlServiceServer must be embedded to have
+// UnimplementedPrctlServiceServer should be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
@@ -81,8 +80,7 @@ func (UnimplementedPrctlServiceServer) Create(context.Context, *CreateRequest) (
 func (UnimplementedPrctlServiceServer) ShareFrom(context.Context, *ShareFromRequest) (*ShareFromResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ShareFrom not implemented")
 }
-func (UnimplementedPrctlServiceServer) mustEmbedUnimplementedPrctlServiceServer() {}
-func (UnimplementedPrctlServiceServer) testEmbeddedByValue()                      {}
+func (UnimplementedPrctlServiceServer) testEmbeddedByValue() {}
 
 // UnsafePrctlServiceServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to PrctlServiceServer will

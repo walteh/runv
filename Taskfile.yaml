@@ -101,54 +101,40 @@ tasks:
                         raw=$(awk "/\/\/go:mock/{getline; if(\$1==\"type\") print \$2}" "$f")
                         name=${raw%%\[*}
                         echo "$d $f $name"' || true
-            MOCKERY_GRPC_SERVER_INTERFACE_DATA:
-                sh: |-
-                    # find every *_grpc.pb.go, look for "type FooServer interface",
-                    # and print its directory, file, and interface name
-                    grep -Rl --include="*_grpc.pb.go" 'type .*Server interface' . | \
-                    xargs -I{} sh -c '
-                    f="{}"
-                    d=$(dirname "$f"); d=${d#./}
-                    name=$(awk "/type .*Server interface/ {print \$2; exit}" "$f")
-                    echo "$d $f $name"' || true
-            MOCKERY_GRPC_CLIENT_INTERFACE_DATA:
-                sh: |-
-                    # same for FooClient
-                    grep -Rl --include="*_grpc.pb.go" 'type .*Client interface' . | \
-                    xargs -I{} sh -c '
-                    f="{}"
-                    d=$(dirname "$f"); d=${d#./}
-                    name=$(awk "/type .*Client interface/ {print \$2; exit}" "$f")
-                    echo "$d $f $name"' || true
             MOCKERY_SOURCE_FILES:
                 sh: |-
                     grep -rl "//go:mock" --include="*.go" . || true
             ALL_MOCKERY_INTERFACE_DATA:
                 sh: |-
                     echo "{{.MOCKERY_INTERFACE_DATA}}"
-                    echo "{{.MOCKERY_GRPC_SERVER_INTERFACE_DATA}}"
-                    echo "{{.MOCKERY_GRPC_CLIENT_INTERFACE_DATA}}"
         sources:
           - '{{.MOCKERY_SOURCE_FILES | join ","}}'
           - .mockery.yaml
+          - proto/**/*.pb.go
         generates:
           - ./gen/mocks/**/*_mock.gen.go
         cmds:
           - cmd: mkdir -p {{.TMP_DIR}}
           - defer: rm -rf {{.TMP_DIR}}
           - cmd: cp .mockery.yaml {{.TMP_DIR}}/.mockery.yaml
+
           - for: {var: "ALL_MOCKERY_INTERFACE_DATA", split: "\n", as: ITEM}
             cmd: |-
                 set -e
                 if [ -z "{{.ITEM}}" ]; then echo "no mockery to generate"; exit 0; fi
                 yq -i ".packages.\"{{ .GO_ROOT_PKG }}/{{ splitList " " .ITEM | first }}\".interfaces.{{ splitList " " .ITEM | last }} = {}" {{.TMP_DIR}}/.mockery.yaml
+          - cmd: cat {{.TMP_DIR}}/.mockery.yaml
           - cmd: |-
-                if [ -z "{{.ALL_MOCKERY_INTERFACE_DATA}}" ]; then echo "no mockery to generate"; exit 0; fi
-                {{.GO_COMMAND}} tool github.com/vektra/mockery/v2 --config={{.TMP_DIR}}/.mockery.yaml
+                {{.GO_COMMAND}} tool github.com/vektra/mockery/v3 --config={{.TMP_DIR}}/.mockery.yaml
 
     gen:buf:
         desc: generates protobuf files
         dir: proto
+        sources:
+          - '**/*.proto'
+          - 'buf.*'
+        generates:
+          - '**/*.pb.go'
         cmds:
           - |-
             {{.GO_COMMAND}} tool github.com/bufbuild/buf/cmd/buf generate

@@ -9,6 +9,20 @@ import (
 
 type TTRPCRuncServiceService interface {
 	Ping(context.Context, *PingRequest) (*PingResponse, error)
+	List(context.Context, *RuncListRequest) (*RuncListResponse, error)
+	State(context.Context, *RuncStateRequest) (*RuncStateResponse, error)
+	Create(context.Context, *RuncCreateRequest) (*RuncCreateResponse, error)
+	Start(context.Context, *RuncStartRequest) (*RuncStartResponse, error)
+	Exec(context.Context, *RuncExecRequest) (*RuncExecResponse, error)
+	Run(context.Context, *RuncRunRequest) (*RuncRunResponse, error)
+	Delete(context.Context, *RuncDeleteRequest) (*RuncDeleteResponse, error)
+	Kill(context.Context, *RuncKillRequest) (*RuncKillResponse, error)
+	Stats(context.Context, *RuncStatsRequest) (*RuncStatsResponse, error)
+	Pause(context.Context, *RuncPauseRequest) (*RuncPauseResponse, error)
+	Resume(context.Context, *RuncResumeRequest) (*RuncResumeResponse, error)
+	Ps(context.Context, *RuncPsRequest) (*RuncPsResponse, error)
+	Top(context.Context, *RuncTopRequest) (*RuncTopResponse, error)
+	Version(context.Context, *RuncVersionRequest) (*RuncVersionResponse, error)
 }
 
 func RegisterTTRPCRuncServiceService(srv *ttrpc.Server, svc TTRPCRuncServiceService) {
@@ -20,6 +34,104 @@ func RegisterTTRPCRuncServiceService(srv *ttrpc.Server, svc TTRPCRuncServiceServ
 					return nil, err
 				}
 				return svc.Ping(ctx, &req)
+			},
+			"List": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+				var req RuncListRequest
+				if err := unmarshal(&req); err != nil {
+					return nil, err
+				}
+				return svc.List(ctx, &req)
+			},
+			"State": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+				var req RuncStateRequest
+				if err := unmarshal(&req); err != nil {
+					return nil, err
+				}
+				return svc.State(ctx, &req)
+			},
+			"Create": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+				var req RuncCreateRequest
+				if err := unmarshal(&req); err != nil {
+					return nil, err
+				}
+				return svc.Create(ctx, &req)
+			},
+			"Start": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+				var req RuncStartRequest
+				if err := unmarshal(&req); err != nil {
+					return nil, err
+				}
+				return svc.Start(ctx, &req)
+			},
+			"Exec": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+				var req RuncExecRequest
+				if err := unmarshal(&req); err != nil {
+					return nil, err
+				}
+				return svc.Exec(ctx, &req)
+			},
+			"Run": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+				var req RuncRunRequest
+				if err := unmarshal(&req); err != nil {
+					return nil, err
+				}
+				return svc.Run(ctx, &req)
+			},
+			"Delete": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+				var req RuncDeleteRequest
+				if err := unmarshal(&req); err != nil {
+					return nil, err
+				}
+				return svc.Delete(ctx, &req)
+			},
+			"Kill": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+				var req RuncKillRequest
+				if err := unmarshal(&req); err != nil {
+					return nil, err
+				}
+				return svc.Kill(ctx, &req)
+			},
+			"Stats": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+				var req RuncStatsRequest
+				if err := unmarshal(&req); err != nil {
+					return nil, err
+				}
+				return svc.Stats(ctx, &req)
+			},
+			"Pause": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+				var req RuncPauseRequest
+				if err := unmarshal(&req); err != nil {
+					return nil, err
+				}
+				return svc.Pause(ctx, &req)
+			},
+			"Resume": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+				var req RuncResumeRequest
+				if err := unmarshal(&req); err != nil {
+					return nil, err
+				}
+				return svc.Resume(ctx, &req)
+			},
+			"Ps": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+				var req RuncPsRequest
+				if err := unmarshal(&req); err != nil {
+					return nil, err
+				}
+				return svc.Ps(ctx, &req)
+			},
+			"Top": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+				var req RuncTopRequest
+				if err := unmarshal(&req); err != nil {
+					return nil, err
+				}
+				return svc.Top(ctx, &req)
+			},
+			"Version": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+				var req RuncVersionRequest
+				if err := unmarshal(&req); err != nil {
+					return nil, err
+				}
+				return svc.Version(ctx, &req)
 			},
 		},
 	})
@@ -38,6 +150,118 @@ func NewTTRPCRuncServiceClient(client *ttrpc.Client) TTRPCRuncServiceService {
 func (c *ttrpcruncserviceClient) Ping(ctx context.Context, req *PingRequest) (*PingResponse, error) {
 	var resp PingResponse
 	if err := c.client.Call(ctx, "runv.v1.RuncService", "Ping", req, &resp); err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (c *ttrpcruncserviceClient) List(ctx context.Context, req *RuncListRequest) (*RuncListResponse, error) {
+	var resp RuncListResponse
+	if err := c.client.Call(ctx, "runv.v1.RuncService", "List", req, &resp); err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (c *ttrpcruncserviceClient) State(ctx context.Context, req *RuncStateRequest) (*RuncStateResponse, error) {
+	var resp RuncStateResponse
+	if err := c.client.Call(ctx, "runv.v1.RuncService", "State", req, &resp); err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (c *ttrpcruncserviceClient) Create(ctx context.Context, req *RuncCreateRequest) (*RuncCreateResponse, error) {
+	var resp RuncCreateResponse
+	if err := c.client.Call(ctx, "runv.v1.RuncService", "Create", req, &resp); err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (c *ttrpcruncserviceClient) Start(ctx context.Context, req *RuncStartRequest) (*RuncStartResponse, error) {
+	var resp RuncStartResponse
+	if err := c.client.Call(ctx, "runv.v1.RuncService", "Start", req, &resp); err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (c *ttrpcruncserviceClient) Exec(ctx context.Context, req *RuncExecRequest) (*RuncExecResponse, error) {
+	var resp RuncExecResponse
+	if err := c.client.Call(ctx, "runv.v1.RuncService", "Exec", req, &resp); err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (c *ttrpcruncserviceClient) Run(ctx context.Context, req *RuncRunRequest) (*RuncRunResponse, error) {
+	var resp RuncRunResponse
+	if err := c.client.Call(ctx, "runv.v1.RuncService", "Run", req, &resp); err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (c *ttrpcruncserviceClient) Delete(ctx context.Context, req *RuncDeleteRequest) (*RuncDeleteResponse, error) {
+	var resp RuncDeleteResponse
+	if err := c.client.Call(ctx, "runv.v1.RuncService", "Delete", req, &resp); err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (c *ttrpcruncserviceClient) Kill(ctx context.Context, req *RuncKillRequest) (*RuncKillResponse, error) {
+	var resp RuncKillResponse
+	if err := c.client.Call(ctx, "runv.v1.RuncService", "Kill", req, &resp); err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (c *ttrpcruncserviceClient) Stats(ctx context.Context, req *RuncStatsRequest) (*RuncStatsResponse, error) {
+	var resp RuncStatsResponse
+	if err := c.client.Call(ctx, "runv.v1.RuncService", "Stats", req, &resp); err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (c *ttrpcruncserviceClient) Pause(ctx context.Context, req *RuncPauseRequest) (*RuncPauseResponse, error) {
+	var resp RuncPauseResponse
+	if err := c.client.Call(ctx, "runv.v1.RuncService", "Pause", req, &resp); err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (c *ttrpcruncserviceClient) Resume(ctx context.Context, req *RuncResumeRequest) (*RuncResumeResponse, error) {
+	var resp RuncResumeResponse
+	if err := c.client.Call(ctx, "runv.v1.RuncService", "Resume", req, &resp); err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (c *ttrpcruncserviceClient) Ps(ctx context.Context, req *RuncPsRequest) (*RuncPsResponse, error) {
+	var resp RuncPsResponse
+	if err := c.client.Call(ctx, "runv.v1.RuncService", "Ps", req, &resp); err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (c *ttrpcruncserviceClient) Top(ctx context.Context, req *RuncTopRequest) (*RuncTopResponse, error) {
+	var resp RuncTopResponse
+	if err := c.client.Call(ctx, "runv.v1.RuncService", "Top", req, &resp); err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (c *ttrpcruncserviceClient) Version(ctx context.Context, req *RuncVersionRequest) (*RuncVersionResponse, error) {
+	var resp RuncVersionResponse
+	if err := c.client.Call(ctx, "runv.v1.RuncService", "Version", req, &resp); err != nil {
 		return nil, err
 	}
 	return &resp, nil

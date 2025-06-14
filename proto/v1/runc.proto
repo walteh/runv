@@ -8,9 +8,330 @@ option features.(pb.go).api_level = API_OPAQUE;
 option features.field_presence = IMPLICIT;  // makes everything by default required, for optional set to EXPLICIT
 
 service RuncService {
+	// Ping checks if the service is alive
 	rpc Ping(PingRequest) returns (PingResponse) {}
+
+
+	// List returns all containers created inside the provided runc root directory
+	rpc List(RuncListRequest) returns (RuncListResponse) {}
+
+
+	// State returns the state for the container provided by id
+	rpc State(RuncStateRequest) returns (RuncStateResponse) {}
+
+
+	// Create creates a new container
+	rpc Create(RuncCreateRequest) returns (RuncCreateResponse) {}
+
+
+	// Start will start an already created container
+	rpc Start(RuncStartRequest) returns (RuncStartResponse) {}
+
+
+	// Exec executes an additional process inside the container
+	rpc Exec(RuncExecRequest) returns (RuncExecResponse) {}
+
+
+	// Run runs the create, start, delete lifecycle of the container
+	rpc Run(RuncRunRequest) returns (RuncRunResponse) {}
+
+
+	// Delete deletes the container
+	rpc Delete(RuncDeleteRequest) returns (RuncDeleteResponse) {}
+
+
+	// Kill sends the specified signal to the container
+	rpc Kill(RuncKillRequest) returns (RuncKillResponse) {}
+
+
+	// Stats return the stats for a container like cpu, memory, and io
+	rpc Stats(RuncStatsRequest) returns (RuncStatsResponse) {}
+
+
+	// Pause the container with the provided id
+	rpc Pause(RuncPauseRequest) returns (RuncPauseResponse) {}
+
+
+	// Resume the container with the provided id
+	rpc Resume(RuncResumeRequest) returns (RuncResumeResponse) {}
+
+
+	// Ps lists all the processes inside the container returning their pids
+	rpc Ps(RuncPsRequest) returns (RuncPsResponse) {}
+
+
+	// Top lists all the processes inside the container returning the full ps data
+	rpc Top(RuncTopRequest) returns (RuncTopResponse) {}
+
+
+	// Version returns the runc and runtime-spec versions
+	rpc Version(RuncVersionRequest) returns (RuncVersionResponse) {}
 }
 
 message PingRequest {}
 
 message PingResponse {}
+
+// List related messages
+message RuncListRequest {
+	string root = 1;
+}
+
+message RuncContainer {
+	string              id                = 1;
+	int32               pid               = 2;
+	string              status            = 3;
+	string              bundle            = 4;
+	string              rootfs            = 5;
+	int64               created_timestamp = 6;
+	map<string, string> annotations       = 7;
+}
+
+message RuncListResponse {
+	repeated RuncContainer containers = 1;
+	string                 go_error   = 2;
+}
+
+// State related messages
+message RuncStateRequest {
+	string id = 1;
+}
+
+message RuncStateResponse {
+	RuncContainer container = 1;
+	string        go_error  = 2;
+}
+
+// Create related messages
+message RuncCreateRequest {
+	string          id             = 1;
+	string          bundle         = 2;
+	bool            detach         = 3;
+	bool            no_pivot       = 4;
+	bool            no_new_keyring = 5;
+	string          pid_file       = 6;
+	repeated string extra_args     = 7;
+}
+
+message RuncCreateResponse {
+	string go_error = 1;
+}
+
+// Start related messages
+message RuncStartRequest {
+	string id = 1;
+}
+
+message RuncStartResponse {
+	string go_error = 1;
+}
+
+// Exec related messages
+message RuncProcessSpec {
+	string          terminal        = 1;
+	string          cwd             = 2;
+	repeated string args            = 3;
+	repeated string env             = 4;
+	int32           user_uid        = 5;
+	int32           user_gid        = 6;
+	repeated int32  additional_gids = 7;
+}
+
+message RuncExecRequest {
+	string          id         = 1;
+	RuncProcessSpec spec       = 2;
+	bool            detach     = 3;
+	string          pid_file   = 4;
+	repeated string extra_args = 5;
+}
+
+message RuncExecResponse {
+	string go_error = 1;
+}
+
+// Run related messages
+message RuncRunRequest {
+	string          id             = 1;
+	string          bundle         = 2;
+	bool            detach         = 3;
+	bool            no_pivot       = 4;
+	bool            no_new_keyring = 5;
+	string          pid_file       = 6;
+	repeated string extra_args     = 7;
+}
+
+message RuncRunResponse {
+	int32  status   = 1;
+	string go_error = 2;
+}
+
+// Delete related messages
+message RuncDeleteRequest {
+	string          id         = 1;
+	bool            force      = 2;
+	repeated string extra_args = 3;
+}
+
+message RuncDeleteResponse {
+	string go_error = 1;
+}
+
+// Kill related messages
+message RuncKillRequest {
+	string          id         = 1;
+	int32           signal     = 2;
+	bool            all        = 3;
+	repeated string extra_args = 4;
+}
+
+message RuncKillResponse {
+	string go_error = 1;
+}
+
+// Stats related messages
+message RuncStatsRequest {
+	string id = 1;
+}
+
+message RuncCpuUsage {
+	uint64          total  = 1;
+	repeated uint64 percpu = 2;
+	uint64          kernel = 3;
+	uint64          user   = 4;
+}
+
+message RuncThrottling {
+	uint64 periods           = 1;
+	uint64 throttled_periods = 2;
+	uint64 throttled_time    = 3;
+}
+
+message RuncCpu {
+	RuncCpuUsage   usage      = 1;
+	RuncThrottling throttling = 2;
+}
+
+message RuncMemoryEntry {
+	uint64 limit   = 1;
+	uint64 usage   = 2;
+	uint64 max     = 3;
+	uint64 failcnt = 4;
+}
+
+message RuncMemory {
+	uint64              cache      = 1;
+	RuncMemoryEntry     usage      = 2;
+	RuncMemoryEntry     swap       = 3;
+	RuncMemoryEntry     kernel     = 4;
+	RuncMemoryEntry     kernel_tcp = 5;
+	map<string, uint64> raw        = 6;
+}
+
+message RuncPids {
+	uint64 current = 1;
+	uint64 limit   = 2;
+}
+
+message RuncBlkioEntry {
+	uint64 major = 1;
+	uint64 minor = 2;
+	string op    = 3;
+	uint64 value = 4;
+}
+
+message RuncBlkio {
+	repeated RuncBlkioEntry io_service_bytes_recursive = 1;
+	repeated RuncBlkioEntry io_serviced_recursive      = 2;
+	repeated RuncBlkioEntry io_queued_recursive        = 3;
+	repeated RuncBlkioEntry io_service_time_recursive  = 4;
+	repeated RuncBlkioEntry io_wait_time_recursive     = 5;
+	repeated RuncBlkioEntry io_merged_recursive        = 6;
+	repeated RuncBlkioEntry io_time_recursive          = 7;
+	repeated RuncBlkioEntry sectors_recursive          = 8;
+}
+
+message RuncHugetlb {
+	uint64 usage   = 1;
+	uint64 max     = 2;
+	uint64 failcnt = 3;
+}
+
+message RuncNetworkInterface {
+	string name       = 1;
+	uint64 rx_bytes   = 2;
+	uint64 rx_packets = 3;
+	uint64 rx_errors  = 4;
+	uint64 rx_dropped = 5;
+	uint64 tx_bytes   = 6;
+	uint64 tx_packets = 7;
+	uint64 tx_errors  = 8;
+	uint64 tx_dropped = 9;
+}
+
+message RuncStats {
+	RuncCpu                       cpu                = 1;
+	RuncMemory                    memory             = 2;
+	RuncPids                      pids               = 3;
+	RuncBlkio                     blkio              = 4;
+	map<string, RuncHugetlb>      hugetlb            = 5;
+	repeated RuncNetworkInterface network_interfaces = 6;
+}
+
+message RuncStatsResponse {
+	RuncStats stats    = 1;
+	string    go_error = 2;
+}
+
+// Pause related messages
+message RuncPauseRequest {
+	string id = 1;
+}
+
+message RuncPauseResponse {
+	string go_error = 1;
+}
+
+// Resume related messages
+message RuncResumeRequest {
+	string id = 1;
+}
+
+message RuncResumeResponse {
+	string go_error = 1;
+}
+
+// Ps related messages
+message RuncPsRequest {
+	string id = 1;
+}
+
+message RuncPsResponse {
+	repeated int32 pids     = 1;
+	string         go_error = 2;
+}
+
+// Top related messages
+message RuncTopRequest {
+	string id         = 1;
+	string ps_options = 2;
+}
+
+message RuncTopResponse {
+	repeated string          headers   = 1;
+	repeated RuncProcessData processes = 2;
+	string                   go_error  = 3;
+}
+
+message RuncProcessData {
+	repeated string data = 1;
+}
+
+// Version related messages
+message RuncVersionRequest {}
+
+message RuncVersionResponse {
+	string runc     = 1;
+	string commit   = 2;
+	string spec     = 3;
+	string go_error = 4;
+}

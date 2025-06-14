@@ -19,14 +19,57 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	RuncService_Ping_FullMethodName = "/runv.v1.RuncService/Ping"
+	RuncService_Ping_FullMethodName    = "/runv.v1.RuncService/Ping"
+	RuncService_List_FullMethodName    = "/runv.v1.RuncService/List"
+	RuncService_State_FullMethodName   = "/runv.v1.RuncService/State"
+	RuncService_Create_FullMethodName  = "/runv.v1.RuncService/Create"
+	RuncService_Start_FullMethodName   = "/runv.v1.RuncService/Start"
+	RuncService_Exec_FullMethodName    = "/runv.v1.RuncService/Exec"
+	RuncService_Run_FullMethodName     = "/runv.v1.RuncService/Run"
+	RuncService_Delete_FullMethodName  = "/runv.v1.RuncService/Delete"
+	RuncService_Kill_FullMethodName    = "/runv.v1.RuncService/Kill"
+	RuncService_Stats_FullMethodName   = "/runv.v1.RuncService/Stats"
+	RuncService_Pause_FullMethodName   = "/runv.v1.RuncService/Pause"
+	RuncService_Resume_FullMethodName  = "/runv.v1.RuncService/Resume"
+	RuncService_Ps_FullMethodName      = "/runv.v1.RuncService/Ps"
+	RuncService_Top_FullMethodName     = "/runv.v1.RuncService/Top"
+	RuncService_Version_FullMethodName = "/runv.v1.RuncService/Version"
 )
 
 // RuncServiceClient is the client API for RuncService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RuncServiceClient interface {
+	// Ping checks if the service is alive
 	Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error)
+	// List returns all containers created inside the provided runc root directory
+	List(ctx context.Context, in *RuncListRequest, opts ...grpc.CallOption) (*RuncListResponse, error)
+	// State returns the state for the container provided by id
+	State(ctx context.Context, in *RuncStateRequest, opts ...grpc.CallOption) (*RuncStateResponse, error)
+	// Create creates a new container
+	Create(ctx context.Context, in *RuncCreateRequest, opts ...grpc.CallOption) (*RuncCreateResponse, error)
+	// Start will start an already created container
+	Start(ctx context.Context, in *RuncStartRequest, opts ...grpc.CallOption) (*RuncStartResponse, error)
+	// Exec executes an additional process inside the container
+	Exec(ctx context.Context, in *RuncExecRequest, opts ...grpc.CallOption) (*RuncExecResponse, error)
+	// Run runs the create, start, delete lifecycle of the container
+	Run(ctx context.Context, in *RuncRunRequest, opts ...grpc.CallOption) (*RuncRunResponse, error)
+	// Delete deletes the container
+	Delete(ctx context.Context, in *RuncDeleteRequest, opts ...grpc.CallOption) (*RuncDeleteResponse, error)
+	// Kill sends the specified signal to the container
+	Kill(ctx context.Context, in *RuncKillRequest, opts ...grpc.CallOption) (*RuncKillResponse, error)
+	// Stats return the stats for a container like cpu, memory, and io
+	Stats(ctx context.Context, in *RuncStatsRequest, opts ...grpc.CallOption) (*RuncStatsResponse, error)
+	// Pause the container with the provided id
+	Pause(ctx context.Context, in *RuncPauseRequest, opts ...grpc.CallOption) (*RuncPauseResponse, error)
+	// Resume the container with the provided id
+	Resume(ctx context.Context, in *RuncResumeRequest, opts ...grpc.CallOption) (*RuncResumeResponse, error)
+	// Ps lists all the processes inside the container returning their pids
+	Ps(ctx context.Context, in *RuncPsRequest, opts ...grpc.CallOption) (*RuncPsResponse, error)
+	// Top lists all the processes inside the container returning the full ps data
+	Top(ctx context.Context, in *RuncTopRequest, opts ...grpc.CallOption) (*RuncTopResponse, error)
+	// Version returns the runc and runtime-spec versions
+	Version(ctx context.Context, in *RuncVersionRequest, opts ...grpc.CallOption) (*RuncVersionResponse, error)
 }
 
 type runcServiceClient struct {
@@ -47,15 +90,183 @@ func (c *runcServiceClient) Ping(ctx context.Context, in *PingRequest, opts ...g
 	return out, nil
 }
 
-// RuncServiceServer is the server API for RuncService service.
-// All implementations must embed UnimplementedRuncServiceServer
-// for forward compatibility.
-type RuncServiceServer interface {
-	Ping(context.Context, *PingRequest) (*PingResponse, error)
-	mustEmbedUnimplementedRuncServiceServer()
+func (c *runcServiceClient) List(ctx context.Context, in *RuncListRequest, opts ...grpc.CallOption) (*RuncListResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RuncListResponse)
+	err := c.cc.Invoke(ctx, RuncService_List_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
-// UnimplementedRuncServiceServer must be embedded to have
+func (c *runcServiceClient) State(ctx context.Context, in *RuncStateRequest, opts ...grpc.CallOption) (*RuncStateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RuncStateResponse)
+	err := c.cc.Invoke(ctx, RuncService_State_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runcServiceClient) Create(ctx context.Context, in *RuncCreateRequest, opts ...grpc.CallOption) (*RuncCreateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RuncCreateResponse)
+	err := c.cc.Invoke(ctx, RuncService_Create_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runcServiceClient) Start(ctx context.Context, in *RuncStartRequest, opts ...grpc.CallOption) (*RuncStartResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RuncStartResponse)
+	err := c.cc.Invoke(ctx, RuncService_Start_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runcServiceClient) Exec(ctx context.Context, in *RuncExecRequest, opts ...grpc.CallOption) (*RuncExecResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RuncExecResponse)
+	err := c.cc.Invoke(ctx, RuncService_Exec_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runcServiceClient) Run(ctx context.Context, in *RuncRunRequest, opts ...grpc.CallOption) (*RuncRunResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RuncRunResponse)
+	err := c.cc.Invoke(ctx, RuncService_Run_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runcServiceClient) Delete(ctx context.Context, in *RuncDeleteRequest, opts ...grpc.CallOption) (*RuncDeleteResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RuncDeleteResponse)
+	err := c.cc.Invoke(ctx, RuncService_Delete_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runcServiceClient) Kill(ctx context.Context, in *RuncKillRequest, opts ...grpc.CallOption) (*RuncKillResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RuncKillResponse)
+	err := c.cc.Invoke(ctx, RuncService_Kill_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runcServiceClient) Stats(ctx context.Context, in *RuncStatsRequest, opts ...grpc.CallOption) (*RuncStatsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RuncStatsResponse)
+	err := c.cc.Invoke(ctx, RuncService_Stats_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runcServiceClient) Pause(ctx context.Context, in *RuncPauseRequest, opts ...grpc.CallOption) (*RuncPauseResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RuncPauseResponse)
+	err := c.cc.Invoke(ctx, RuncService_Pause_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runcServiceClient) Resume(ctx context.Context, in *RuncResumeRequest, opts ...grpc.CallOption) (*RuncResumeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RuncResumeResponse)
+	err := c.cc.Invoke(ctx, RuncService_Resume_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runcServiceClient) Ps(ctx context.Context, in *RuncPsRequest, opts ...grpc.CallOption) (*RuncPsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RuncPsResponse)
+	err := c.cc.Invoke(ctx, RuncService_Ps_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runcServiceClient) Top(ctx context.Context, in *RuncTopRequest, opts ...grpc.CallOption) (*RuncTopResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RuncTopResponse)
+	err := c.cc.Invoke(ctx, RuncService_Top_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runcServiceClient) Version(ctx context.Context, in *RuncVersionRequest, opts ...grpc.CallOption) (*RuncVersionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RuncVersionResponse)
+	err := c.cc.Invoke(ctx, RuncService_Version_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// RuncServiceServer is the server API for RuncService service.
+// All implementations should embed UnimplementedRuncServiceServer
+// for forward compatibility.
+type RuncServiceServer interface {
+	// Ping checks if the service is alive
+	Ping(context.Context, *PingRequest) (*PingResponse, error)
+	// List returns all containers created inside the provided runc root directory
+	List(context.Context, *RuncListRequest) (*RuncListResponse, error)
+	// State returns the state for the container provided by id
+	State(context.Context, *RuncStateRequest) (*RuncStateResponse, error)
+	// Create creates a new container
+	Create(context.Context, *RuncCreateRequest) (*RuncCreateResponse, error)
+	// Start will start an already created container
+	Start(context.Context, *RuncStartRequest) (*RuncStartResponse, error)
+	// Exec executes an additional process inside the container
+	Exec(context.Context, *RuncExecRequest) (*RuncExecResponse, error)
+	// Run runs the create, start, delete lifecycle of the container
+	Run(context.Context, *RuncRunRequest) (*RuncRunResponse, error)
+	// Delete deletes the container
+	Delete(context.Context, *RuncDeleteRequest) (*RuncDeleteResponse, error)
+	// Kill sends the specified signal to the container
+	Kill(context.Context, *RuncKillRequest) (*RuncKillResponse, error)
+	// Stats return the stats for a container like cpu, memory, and io
+	Stats(context.Context, *RuncStatsRequest) (*RuncStatsResponse, error)
+	// Pause the container with the provided id
+	Pause(context.Context, *RuncPauseRequest) (*RuncPauseResponse, error)
+	// Resume the container with the provided id
+	Resume(context.Context, *RuncResumeRequest) (*RuncResumeResponse, error)
+	// Ps lists all the processes inside the container returning their pids
+	Ps(context.Context, *RuncPsRequest) (*RuncPsResponse, error)
+	// Top lists all the processes inside the container returning the full ps data
+	Top(context.Context, *RuncTopRequest) (*RuncTopResponse, error)
+	// Version returns the runc and runtime-spec versions
+	Version(context.Context, *RuncVersionRequest) (*RuncVersionResponse, error)
+}
+
+// UnimplementedRuncServiceServer should be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
@@ -65,8 +276,49 @@ type UnimplementedRuncServiceServer struct{}
 func (UnimplementedRuncServiceServer) Ping(context.Context, *PingRequest) (*PingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
 }
-func (UnimplementedRuncServiceServer) mustEmbedUnimplementedRuncServiceServer() {}
-func (UnimplementedRuncServiceServer) testEmbeddedByValue()                     {}
+func (UnimplementedRuncServiceServer) List(context.Context, *RuncListRequest) (*RuncListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
+}
+func (UnimplementedRuncServiceServer) State(context.Context, *RuncStateRequest) (*RuncStateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method State not implemented")
+}
+func (UnimplementedRuncServiceServer) Create(context.Context, *RuncCreateRequest) (*RuncCreateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedRuncServiceServer) Start(context.Context, *RuncStartRequest) (*RuncStartResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Start not implemented")
+}
+func (UnimplementedRuncServiceServer) Exec(context.Context, *RuncExecRequest) (*RuncExecResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Exec not implemented")
+}
+func (UnimplementedRuncServiceServer) Run(context.Context, *RuncRunRequest) (*RuncRunResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Run not implemented")
+}
+func (UnimplementedRuncServiceServer) Delete(context.Context, *RuncDeleteRequest) (*RuncDeleteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedRuncServiceServer) Kill(context.Context, *RuncKillRequest) (*RuncKillResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Kill not implemented")
+}
+func (UnimplementedRuncServiceServer) Stats(context.Context, *RuncStatsRequest) (*RuncStatsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Stats not implemented")
+}
+func (UnimplementedRuncServiceServer) Pause(context.Context, *RuncPauseRequest) (*RuncPauseResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Pause not implemented")
+}
+func (UnimplementedRuncServiceServer) Resume(context.Context, *RuncResumeRequest) (*RuncResumeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Resume not implemented")
+}
+func (UnimplementedRuncServiceServer) Ps(context.Context, *RuncPsRequest) (*RuncPsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Ps not implemented")
+}
+func (UnimplementedRuncServiceServer) Top(context.Context, *RuncTopRequest) (*RuncTopResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Top not implemented")
+}
+func (UnimplementedRuncServiceServer) Version(context.Context, *RuncVersionRequest) (*RuncVersionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Version not implemented")
+}
+func (UnimplementedRuncServiceServer) testEmbeddedByValue() {}
 
 // UnsafeRuncServiceServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to RuncServiceServer will
@@ -104,6 +356,258 @@ func _RuncService_Ping_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RuncService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RuncListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuncServiceServer).List(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuncService_List_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuncServiceServer).List(ctx, req.(*RuncListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuncService_State_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RuncStateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuncServiceServer).State(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuncService_State_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuncServiceServer).State(ctx, req.(*RuncStateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuncService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RuncCreateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuncServiceServer).Create(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuncService_Create_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuncServiceServer).Create(ctx, req.(*RuncCreateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuncService_Start_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RuncStartRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuncServiceServer).Start(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuncService_Start_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuncServiceServer).Start(ctx, req.(*RuncStartRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuncService_Exec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RuncExecRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuncServiceServer).Exec(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuncService_Exec_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuncServiceServer).Exec(ctx, req.(*RuncExecRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuncService_Run_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RuncRunRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuncServiceServer).Run(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuncService_Run_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuncServiceServer).Run(ctx, req.(*RuncRunRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuncService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RuncDeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuncServiceServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuncService_Delete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuncServiceServer).Delete(ctx, req.(*RuncDeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuncService_Kill_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RuncKillRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuncServiceServer).Kill(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuncService_Kill_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuncServiceServer).Kill(ctx, req.(*RuncKillRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuncService_Stats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RuncStatsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuncServiceServer).Stats(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuncService_Stats_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuncServiceServer).Stats(ctx, req.(*RuncStatsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuncService_Pause_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RuncPauseRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuncServiceServer).Pause(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuncService_Pause_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuncServiceServer).Pause(ctx, req.(*RuncPauseRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuncService_Resume_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RuncResumeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuncServiceServer).Resume(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuncService_Resume_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuncServiceServer).Resume(ctx, req.(*RuncResumeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuncService_Ps_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RuncPsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuncServiceServer).Ps(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuncService_Ps_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuncServiceServer).Ps(ctx, req.(*RuncPsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuncService_Top_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RuncTopRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuncServiceServer).Top(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuncService_Top_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuncServiceServer).Top(ctx, req.(*RuncTopRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuncService_Version_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RuncVersionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuncServiceServer).Version(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuncService_Version_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuncServiceServer).Version(ctx, req.(*RuncVersionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RuncService_ServiceDesc is the grpc.ServiceDesc for RuncService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -114,6 +618,62 @@ var RuncService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Ping",
 			Handler:    _RuncService_Ping_Handler,
+		},
+		{
+			MethodName: "List",
+			Handler:    _RuncService_List_Handler,
+		},
+		{
+			MethodName: "State",
+			Handler:    _RuncService_State_Handler,
+		},
+		{
+			MethodName: "Create",
+			Handler:    _RuncService_Create_Handler,
+		},
+		{
+			MethodName: "Start",
+			Handler:    _RuncService_Start_Handler,
+		},
+		{
+			MethodName: "Exec",
+			Handler:    _RuncService_Exec_Handler,
+		},
+		{
+			MethodName: "Run",
+			Handler:    _RuncService_Run_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _RuncService_Delete_Handler,
+		},
+		{
+			MethodName: "Kill",
+			Handler:    _RuncService_Kill_Handler,
+		},
+		{
+			MethodName: "Stats",
+			Handler:    _RuncService_Stats_Handler,
+		},
+		{
+			MethodName: "Pause",
+			Handler:    _RuncService_Pause_Handler,
+		},
+		{
+			MethodName: "Resume",
+			Handler:    _RuncService_Resume_Handler,
+		},
+		{
+			MethodName: "Ps",
+			Handler:    _RuncService_Ps_Handler,
+		},
+		{
+			MethodName: "Top",
+			Handler:    _RuncService_Top_Handler,
+		},
+		{
+			MethodName: "Version",
+			Handler:    _RuncService_Version_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
