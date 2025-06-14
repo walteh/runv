@@ -57,15 +57,22 @@ tasks:
         cmds:
           - cmd: zellij --config-dir .zellij
 
+    gen:all:
+        desc: generates all
+        cmds:
+          - task: gen:options
+          - task: gen:buf
+          - task: gen:mockery
+
     gen:options:
         desc: generates options for structs with '//go:opts' comment
         vars:
             OPTION_GEN_DATA:
                 sh: |-
-                    grep -rl "//go:opts" --include="*.go" . | xargs -I{} bash -c 'd=$(dirname {}); d=${d#./}; awk -v d="$d {}" '\''/\/\/go:opts/ {getline; if($1=="type") print d, $2}'\'' {}'
+                    grep -rl "//go:opts" --include="*.go" . | xargs -I{} bash -c 'd=$(dirname {}); d=${d#./}; awk -v d="$d {}" '\''/\/\/go:opts/ {getline; if($1=="type") print d, $2}'\'' {}' || true
             OPTION_GEN_SOURCE_FILES:
                 sh: |-
-                    grep -rl "//go:opts" --include="*.go" .
+                    grep -rl "//go:opts" --include="*.go" . || true
         generates:
           - "**/*_opts.gen.go"
         sources:
@@ -74,6 +81,7 @@ tasks:
           - for: {var: OPTION_GEN_DATA, split: "\n"}
             cmd: |-
                 set -e
+                if [ -z "{{.OPTION_GEN_DATA}}" ]; then echo "no options to generate"; exit 0; fi
                 {{.GO_COMMAND}} tool github.com/kazhuravlev/options-gen/cmd/options-gen \
                   -out-filename={{splitList " " .ITEM | first}}/{{ splitList " " .ITEM | last | lower | trimSuffix "opts" }}_opts.gen.go \
                   -filename={{ splitList " " .ITEM | rest | first }} \
@@ -92,25 +100,50 @@ tasks:
                         d=$(dirname "$f"); d=${d#./}
                         raw=$(awk "/\/\/go:mock/{getline; if(\$1==\"type\") print \$2}" "$f")
                         name=${raw%%\[*}
-                        echo "$d $f $name"'
+                        echo "$d $f $name"' || true
+            MOCKERY_GRPC_SERVER_INTERFACE_DATA:
+                sh: |-
+                    # find every *_grpc.pb.go, look for "type FooServer interface",
+                    # and print its directory, file, and interface name
+                    grep -Rl --include="*_grpc.pb.go" 'type .*Server interface' . | \
+                    xargs -I{} sh -c '
+                    f="{}"
+                    d=$(dirname "$f"); d=${d#./}
+                    name=$(awk "/type .*Server interface/ {print \$2; exit}" "$f")
+                    echo "$d $f $name"' || true
+            MOCKERY_GRPC_CLIENT_INTERFACE_DATA:
+                sh: |-
+                    # same for FooClient
+                    grep -Rl --include="*_grpc.pb.go" 'type .*Client interface' . | \
+                    xargs -I{} sh -c '
+                    f="{}"
+                    d=$(dirname "$f"); d=${d#./}
+                    name=$(awk "/type .*Client interface/ {print \$2; exit}" "$f")
+                    echo "$d $f $name"' || true
             MOCKERY_SOURCE_FILES:
                 sh: |-
-                    grep -rl "//go:mock" --include="*.go" .
+                    grep -rl "//go:mock" --include="*.go" . || true
+            ALL_MOCKERY_INTERFACE_DATA:
+                sh: |-
+                    echo "{{.MOCKERY_INTERFACE_DATA}}"
+                    echo "{{.MOCKERY_GRPC_SERVER_INTERFACE_DATA}}"
+                    echo "{{.MOCKERY_GRPC_CLIENT_INTERFACE_DATA}}"
         sources:
           - '{{.MOCKERY_SOURCE_FILES | join ","}}'
           - .mockery.yaml
         generates:
           - ./gen/mocks/**/*_mock.gen.go
-          - ./gen/config/.mockery.yaml
         cmds:
           - cmd: mkdir -p {{.TMP_DIR}}
           - defer: rm -rf {{.TMP_DIR}}
           - cmd: cp .mockery.yaml {{.TMP_DIR}}/.mockery.yaml
-          - for: {var: "MOCKERY_INTERFACE_DATA", split: "\n", as: ITEM}
+          - for: {var: "ALL_MOCKERY_INTERFACE_DATA", split: "\n", as: ITEM}
             cmd: |-
                 set -e
+                if [ -z "{{.ITEM}}" ]; then echo "no mockery to generate"; exit 0; fi
                 yq -i ".packages.\"{{ .GO_ROOT_PKG }}/{{ splitList " " .ITEM | first }}\".interfaces.{{ splitList " " .ITEM | last }} = {}" {{.TMP_DIR}}/.mockery.yaml
           - cmd: |-
+                if [ -z "{{.ALL_MOCKERY_INTERFACE_DATA}}" ]; then echo "no mockery to generate"; exit 0; fi
                 {{.GO_COMMAND}} tool github.com/vektra/mockery/v2 --config={{.TMP_DIR}}/.mockery.yaml
 
     gen:buf:

@@ -14,6 +14,14 @@
 		// 	"path": "../gvisor-tap-vsock"
 		// },
 		{
+			"name": "runc",
+			"path": "../runc"
+		},
+		{
+			"name": "go-runc",
+			"path": "../go-runc"
+		},
+		{
 			"name": "console",
 			"path": "../console"
 		},
