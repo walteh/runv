@@ -2,6 +2,7 @@ package plug
 
 import (
 	"context"
+	"net/rpc"
 
 	"github.com/hashicorp/go-plugin"
 	"github.com/walteh/runv/core/runc/client"
@@ -20,21 +21,29 @@ var Handshake = plugin.HandshakeConfig{
 }
 
 // PluginMap is the map of plugins we can dispense.
-var PluginMap = map[string]plugin.Plugin{
+var PluginMap = map[string]plugin.GRPCPlugin{
 	"runc": &RuntimePlugin{},
 }
 
-func (p *RuntimePlugin) Server(*plugin.MuxBroker) (interface{}, error) {
-	return server.NewServer(p.Impl, nil), nil
-}
+var _ plugin.Plugin = (*RuntimePlugin)(nil)
+
+var _ plugin.GRPCPlugin = (*RuntimePlugin)(nil)
 
 // This is the implementation of plugin.GRPCPlugin so we can serve/consume this.
 type RuntimePlugin struct {
-	// GRPCPlugin must still implement the Plugin interface
-	plugin.Plugin
+
 	// Concrete implementation, written in Go. This is only used for plugins
 	// that are written in Go.
 	Impl runtime.Runtime
+}
+
+// GRPCPlugin must still implement the Plugin interface
+func (p *RuntimePlugin) Client(b *plugin.MuxBroker, c *rpc.Client) (interface{}, error) {
+	panic("unimplemented")
+}
+
+func (p *RuntimePlugin) Server(broker *plugin.MuxBroker) (interface{}, error) {
+	panic("unimplemented")
 }
 
 func (p *RuntimePlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
