@@ -41,7 +41,13 @@ var _ runtime.Runtime = &MockRuntime{}
 //			LogFilePathFunc: func() string {
 //				panic("mock out the LogFilePath method")
 //			},
-//			NewTempConsoleSocketFunc: func() (*runc.Socket, error) {
+//			NewNullIOFunc: func() (runtime.IO, error) {
+//				panic("mock out the NewNullIO method")
+//			},
+//			NewPipeIOFunc: func(ioUID int, ioGID int, opts ...runc.IOOpt) (runtime.IO, error) {
+//				panic("mock out the NewPipeIO method")
+//			},
+//			NewTempConsoleSocketFunc: func() (runtime.Socket, error) {
 //				panic("mock out the NewTempConsoleSocket method")
 //			},
 //			PauseFunc: func(ctx context.Context, id string) error {
@@ -49,6 +55,9 @@ var _ runtime.Runtime = &MockRuntime{}
 //			},
 //			PsFunc: func(ctx context.Context, id string) ([]int, error) {
 //				panic("mock out the Ps method")
+//			},
+//			ReadPidFileFunc: func(path string) (int, error) {
+//				panic("mock out the ReadPidFile method")
 //			},
 //			RestoreFunc: func(ctx context.Context, id string, bundle string, opts *runc.RestoreOpts) (int, error) {
 //				panic("mock out the Restore method")
@@ -87,14 +96,23 @@ type MockRuntime struct {
 	// LogFilePathFunc mocks the LogFilePath method.
 	LogFilePathFunc func() string
 
+	// NewNullIOFunc mocks the NewNullIO method.
+	NewNullIOFunc func() (runtime.IO, error)
+
+	// NewPipeIOFunc mocks the NewPipeIO method.
+	NewPipeIOFunc func(ioUID int, ioGID int, opts ...runc.IOOpt) (runtime.IO, error)
+
 	// NewTempConsoleSocketFunc mocks the NewTempConsoleSocket method.
-	NewTempConsoleSocketFunc func() (*runc.Socket, error)
+	NewTempConsoleSocketFunc func() (runtime.Socket, error)
 
 	// PauseFunc mocks the Pause method.
 	PauseFunc func(ctx context.Context, id string) error
 
 	// PsFunc mocks the Ps method.
 	PsFunc func(ctx context.Context, id string) ([]int, error)
+
+	// ReadPidFileFunc mocks the ReadPidFile method.
+	ReadPidFileFunc func(path string) (int, error)
 
 	// RestoreFunc mocks the Restore method.
 	RestoreFunc func(ctx context.Context, id string, bundle string, opts *runc.RestoreOpts) (int, error)
@@ -166,6 +184,18 @@ type MockRuntime struct {
 		// LogFilePath holds details about calls to the LogFilePath method.
 		LogFilePath []struct {
 		}
+		// NewNullIO holds details about calls to the NewNullIO method.
+		NewNullIO []struct {
+		}
+		// NewPipeIO holds details about calls to the NewPipeIO method.
+		NewPipeIO []struct {
+			// IoUID is the ioUID argument value.
+			IoUID int
+			// IoGID is the ioGID argument value.
+			IoGID int
+			// Opts is the opts argument value.
+			Opts []runc.IOOpt
+		}
 		// NewTempConsoleSocket holds details about calls to the NewTempConsoleSocket method.
 		NewTempConsoleSocket []struct {
 		}
@@ -182,6 +212,11 @@ type MockRuntime struct {
 			Ctx context.Context
 			// ID is the id argument value.
 			ID string
+		}
+		// ReadPidFile holds details about calls to the ReadPidFile method.
+		ReadPidFile []struct {
+			// Path is the path argument value.
+			Path string
 		}
 		// Restore holds details about calls to the Restore method.
 		Restore []struct {
@@ -224,9 +259,12 @@ type MockRuntime struct {
 	lockExec                 sync.RWMutex
 	lockKill                 sync.RWMutex
 	lockLogFilePath          sync.RWMutex
+	lockNewNullIO            sync.RWMutex
+	lockNewPipeIO            sync.RWMutex
 	lockNewTempConsoleSocket sync.RWMutex
 	lockPause                sync.RWMutex
 	lockPs                   sync.RWMutex
+	lockReadPidFile          sync.RWMutex
 	lockRestore              sync.RWMutex
 	lockResume               sync.RWMutex
 	lockStart                sync.RWMutex
@@ -476,8 +514,75 @@ func (mock *MockRuntime) LogFilePathCalls() []struct {
 	return calls
 }
 
+// NewNullIO calls NewNullIOFunc.
+func (mock *MockRuntime) NewNullIO() (runtime.IO, error) {
+	if mock.NewNullIOFunc == nil {
+		panic("MockRuntime.NewNullIOFunc: method is nil but Runtime.NewNullIO was just called")
+	}
+	callInfo := struct {
+	}{}
+	mock.lockNewNullIO.Lock()
+	mock.calls.NewNullIO = append(mock.calls.NewNullIO, callInfo)
+	mock.lockNewNullIO.Unlock()
+	return mock.NewNullIOFunc()
+}
+
+// NewNullIOCalls gets all the calls that were made to NewNullIO.
+// Check the length with:
+//
+//	len(mockedRuntime.NewNullIOCalls())
+func (mock *MockRuntime) NewNullIOCalls() []struct {
+} {
+	var calls []struct {
+	}
+	mock.lockNewNullIO.RLock()
+	calls = mock.calls.NewNullIO
+	mock.lockNewNullIO.RUnlock()
+	return calls
+}
+
+// NewPipeIO calls NewPipeIOFunc.
+func (mock *MockRuntime) NewPipeIO(ioUID int, ioGID int, opts ...runc.IOOpt) (runtime.IO, error) {
+	if mock.NewPipeIOFunc == nil {
+		panic("MockRuntime.NewPipeIOFunc: method is nil but Runtime.NewPipeIO was just called")
+	}
+	callInfo := struct {
+		IoUID int
+		IoGID int
+		Opts  []runc.IOOpt
+	}{
+		IoUID: ioUID,
+		IoGID: ioGID,
+		Opts:  opts,
+	}
+	mock.lockNewPipeIO.Lock()
+	mock.calls.NewPipeIO = append(mock.calls.NewPipeIO, callInfo)
+	mock.lockNewPipeIO.Unlock()
+	return mock.NewPipeIOFunc(ioUID, ioGID, opts...)
+}
+
+// NewPipeIOCalls gets all the calls that were made to NewPipeIO.
+// Check the length with:
+//
+//	len(mockedRuntime.NewPipeIOCalls())
+func (mock *MockRuntime) NewPipeIOCalls() []struct {
+	IoUID int
+	IoGID int
+	Opts  []runc.IOOpt
+} {
+	var calls []struct {
+		IoUID int
+		IoGID int
+		Opts  []runc.IOOpt
+	}
+	mock.lockNewPipeIO.RLock()
+	calls = mock.calls.NewPipeIO
+	mock.lockNewPipeIO.RUnlock()
+	return calls
+}
+
 // NewTempConsoleSocket calls NewTempConsoleSocketFunc.
-func (mock *MockRuntime) NewTempConsoleSocket() (*runc.Socket, error) {
+func (mock *MockRuntime) NewTempConsoleSocket() (runtime.Socket, error) {
 	if mock.NewTempConsoleSocketFunc == nil {
 		panic("MockRuntime.NewTempConsoleSocketFunc: method is nil but Runtime.NewTempConsoleSocket was just called")
 	}
@@ -572,6 +677,38 @@ func (mock *MockRuntime) PsCalls() []struct {
 	mock.lockPs.RLock()
 	calls = mock.calls.Ps
 	mock.lockPs.RUnlock()
+	return calls
+}
+
+// ReadPidFile calls ReadPidFileFunc.
+func (mock *MockRuntime) ReadPidFile(path string) (int, error) {
+	if mock.ReadPidFileFunc == nil {
+		panic("MockRuntime.ReadPidFileFunc: method is nil but Runtime.ReadPidFile was just called")
+	}
+	callInfo := struct {
+		Path string
+	}{
+		Path: path,
+	}
+	mock.lockReadPidFile.Lock()
+	mock.calls.ReadPidFile = append(mock.calls.ReadPidFile, callInfo)
+	mock.lockReadPidFile.Unlock()
+	return mock.ReadPidFileFunc(path)
+}
+
+// ReadPidFileCalls gets all the calls that were made to ReadPidFile.
+// Check the length with:
+//
+//	len(mockedRuntime.ReadPidFileCalls())
+func (mock *MockRuntime) ReadPidFileCalls() []struct {
+	Path string
+} {
+	var calls []struct {
+		Path string
+	}
+	mock.lockReadPidFile.RLock()
+	calls = mock.calls.ReadPidFile
+	mock.lockReadPidFile.RUnlock()
 	return calls
 }
 

@@ -30,7 +30,6 @@ import (
 	"time"
 
 	"github.com/containerd/errdefs"
-	runc "github.com/containerd/go-runc"
 	"github.com/walteh/runv/core/runc/runtime"
 	"golang.org/x/sys/unix"
 )
@@ -128,20 +127,23 @@ func checkKillError(err error) error {
 	return fmt.Errorf("unknown error after kill: %w", err)
 }
 
-func newPidFile(bundle string) *pidFile {
+func newPidFile(bundle string, runtime runtime.Runtime) *pidFile {
 	return &pidFile{
-		path: filepath.Join(bundle, InitPidFile),
+		path:    filepath.Join(bundle, InitPidFile),
+		runtime: runtime,
 	}
 }
 
-func newExecPidFile(bundle, id string) *pidFile {
+func newExecPidFile(bundle, id string, runtime runtime.Runtime) *pidFile {
 	return &pidFile{
-		path: filepath.Join(bundle, fmt.Sprintf("%s.pid", id)),
+		path:    filepath.Join(bundle, fmt.Sprintf("%s.pid", id)),
+		runtime: runtime,
 	}
 }
 
 type pidFile struct {
-	path string
+	path    string
+	runtime runtime.Runtime
 }
 
 func (p *pidFile) Path() string {
@@ -149,7 +151,7 @@ func (p *pidFile) Path() string {
 }
 
 func (p *pidFile) Read() (int, error) {
-	return runc.ReadPidFile(p.path)
+	return p.runtime.ReadPidFile(p.path)
 }
 
 // waitTimeout handles waiting on a waitgroup with a specified timeout.

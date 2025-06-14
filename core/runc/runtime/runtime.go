@@ -2,8 +2,11 @@ package runtime
 
 import (
 	"context"
+	"io"
+	"os/exec"
 	"time"
 
+	"github.com/containerd/console"
 	gorunc "github.com/containerd/go-runc"
 	"github.com/opencontainers/runtime-spec/specs-go"
 )
@@ -34,7 +37,24 @@ type Runtime interface {
 	Pause(ctx context.Context, id string) error
 	Resume(ctx context.Context, id string) error
 	Ps(ctx context.Context, id string) ([]int, error)
-	NewTempConsoleSocket() (*gorunc.Socket, error)
+	NewTempConsoleSocket() (Socket, error)
+	NewNullIO() (IO, error)
+	NewPipeIO(ioUID, ioGID int, opts ...gorunc.IOOpt) (IO, error)
+	ReadPidFile(path string) (int, error)
+}
+
+type Socket interface {
+	ReceiveMaster() (console.Console, error)
+	Path() string
+	Close() error
+}
+
+type IO interface {
+	Stdin() io.WriteCloser
+	Stdout() io.ReadCloser
+	Stderr() io.ReadCloser
+	Close() error
+	Set(cmd *exec.Cmd)
 }
 
 // RuncLibrary defines an interface for interacting with runc containers.

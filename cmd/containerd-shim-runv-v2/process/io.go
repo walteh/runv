@@ -35,8 +35,8 @@ import (
 	"github.com/containerd/containerd/v2/pkg/namespaces"
 	"github.com/containerd/containerd/v2/pkg/stdio"
 	"github.com/containerd/fifo"
-	gorunc "github.com/containerd/go-runc"
 	"github.com/containerd/log"
+	"github.com/walteh/runv/core/runc/runtime"
 )
 
 const binaryIOProcTermTimeout = 12 * time.Second // Give logger process solid 10 seconds for cleanup
@@ -51,7 +51,7 @@ var bufPool = sync.Pool{
 }
 
 type processIO struct {
-	io gorunc.IO
+	io runtime.IO
 
 	uri   *url.URL
 	copy  bool
@@ -65,7 +65,7 @@ func (p *processIO) Close() error {
 	return nil
 }
 
-func (p *processIO) IO() gorunc.IO {
+func (p *processIO) IO() runtime.IO {
 	return p.io
 }
 
@@ -81,12 +81,12 @@ func (p *processIO) Copy(ctx context.Context, wg *sync.WaitGroup) error {
 	return nil
 }
 
-func createIO(ctx context.Context, id string, ioUID, ioGID int, stdio stdio.Stdio) (*processIO, error) {
+func createIO(ctx context.Context, id string, ioUID, ioGID int, stdio stdio.Stdio, runtime runtime.Runtime) (*processIO, error) {
 	pio := &processIO{
 		stdio: stdio,
 	}
 	if stdio.IsNull() {
-		i, err := gorunc.NewNullIO()
+		i, err := runtime.NewNullIO()
 		if err != nil {
 			return nil, err
 		}
@@ -104,7 +104,7 @@ func createIO(ctx context.Context, id string, ioUID, ioGID int, stdio stdio.Stdi
 	switch u.Scheme {
 	case "fifo":
 		pio.copy = true
-		pio.io, err = gorunc.NewPipeIO(ioUID, ioGID, withConditionalIO(stdio))
+		pio.io, err = runtime.NewPipeIO(ioUID, ioGID, withConditionalIO(stdio))
 	case "binary":
 		pio.io, err = NewBinaryIO(ctx, id, u)
 	case "file":
@@ -121,7 +121,7 @@ func createIO(ctx context.Context, id string, ioUID, ioGID int, stdio stdio.Stdi
 		pio.stdio.Stdout = filePath
 		pio.stdio.Stderr = filePath
 		pio.copy = true
-		pio.io, err = gorunc.NewPipeIO(ioUID, ioGID, withConditionalIO(stdio))
+		pio.io, err = runtime.NewPipeIO(ioUID, ioGID, withConditionalIO(stdio))
 	default:
 		return nil, fmt.Errorf("unknown STDIO scheme %s", u.Scheme)
 	}
@@ -131,7 +131,7 @@ func createIO(ctx context.Context, id string, ioUID, ioGID int, stdio stdio.Stdi
 	return pio, nil
 }
 
-func copyPipes(ctx context.Context, rio gorunc.IO, stdin, stdout, stderr string, wg, cwg *sync.WaitGroup) error {
+func copyPipes(ctx context.Context, rio runtime.IO, stdin, stdout, stderr string, wg, cwg *sync.WaitGroup) error {
 	var sameFile *countingWriteCloser
 	for _, i := range []struct {
 		name string
@@ -254,7 +254,7 @@ func (c *countingWriteCloser) Close() error {
 }
 
 // NewBinaryIO runs a custom binary process for pluggable shim logging
-func NewBinaryIO(ctx context.Context, id string, uri *url.URL) (_ gorunc.IO, err error) {
+func NewBinaryIO(ctx context.Context, id string, uri *url.URL) (_ runtime.IO, err error) {
 	ns, err := namespaces.NamespaceRequired(ctx)
 	if err != nil {
 		return nil, err

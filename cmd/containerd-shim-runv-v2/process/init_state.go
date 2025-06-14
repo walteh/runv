@@ -24,8 +24,9 @@ import (
 	"fmt"
 
 	google_protobuf "github.com/containerd/containerd/v2/pkg/protobuf/types"
-	runc "github.com/containerd/go-runc"
+	gorunc "github.com/containerd/go-runc"
 	"github.com/containerd/log"
+	"github.com/walteh/runv/core/runc/runtime"
 )
 
 type initState interface {
@@ -111,7 +112,7 @@ func (s *createdState) Status(ctx context.Context) (string, error) {
 
 type createdCheckpointState struct {
 	p    *Init
-	opts *runc.RestoreOpts
+	opts *gorunc.RestoreOpts
 }
 
 func (s *createdCheckpointState) transition(name string) error {
@@ -150,10 +151,10 @@ func (s *createdCheckpointState) Start(ctx context.Context) error {
 
 	var (
 		err    error
-		socket *runc.Socket
+		socket runtime.Socket
 	)
 	if sio.Terminal {
-		if socket, err = runc.NewTempConsoleSocket(); err != nil {
+		if socket, err = p.runtime.NewTempConsoleSocket(); err != nil {
 			return fmt.Errorf("failed to create OCI runtime console socket: %w", err)
 		}
 		defer socket.Close()
@@ -183,7 +184,7 @@ func (s *createdCheckpointState) Start(ctx context.Context) error {
 			return fmt.Errorf("failed to start io pipe copy: %w", err)
 		}
 	}
-	pid, err := runc.ReadPidFile(s.opts.PidFile)
+	pid, err := gorunc.ReadPidFile(s.opts.PidFile)
 	if err != nil {
 		return fmt.Errorf("failed to retrieve OCI runtime container pid: %w", err)
 	}

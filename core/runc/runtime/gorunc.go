@@ -25,8 +25,20 @@ func (r *GoRuncRuntime) LogFilePath() string {
 	return r.Runc.Log
 }
 
-func (r *GoRuncRuntime) NewTempConsoleSocket() (*gorunc.Socket, error) {
+func (r *GoRuncRuntime) NewTempConsoleSocket() (Socket, error) {
 	return gorunc.NewTempConsoleSocket()
+}
+
+func (r *GoRuncRuntime) NewNullIO() (IO, error) {
+	return gorunc.NewNullIO()
+}
+
+func (r *GoRuncRuntime) NewPipeIO(ioUID, ioGID int, opts ...gorunc.IOOpt) (IO, error) {
+	return gorunc.NewPipeIO(ioUID, ioGID, opts...)
+}
+
+func (r *GoRuncRuntime) ReadPidFile(path string) (int, error) {
+	return gorunc.ReadPidFile(path)
 }
 
 type GoRuncRuntimeCreator struct{}

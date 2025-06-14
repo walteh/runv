@@ -36,6 +36,7 @@ import (
 	"github.com/containerd/fifo"
 	gorunc "github.com/containerd/go-runc"
 	specs "github.com/opencontainers/runtime-spec/specs-go"
+	"github.com/walteh/runv/core/runc/runtime"
 )
 
 type execProcess struct {
@@ -179,17 +180,17 @@ func (e *execProcess) start(ctx context.Context) (err error) {
 	defer e.pid.Unlock()
 
 	var (
-		socket  *gorunc.Socket
+		socket  runtime.Socket
 		pio     *processIO
-		pidFile = newExecPidFile(e.path, e.id)
+		pidFile = newExecPidFile(e.path, e.id, e.parent.runtime)
 	)
 	if e.stdio.Terminal {
-		if socket, err = gorunc.NewTempConsoleSocket(); err != nil {
+		if socket, err = e.parent.runtime.NewTempConsoleSocket(); err != nil {
 			return fmt.Errorf("failed to create runc console socket: %w", err)
 		}
 		defer socket.Close()
 	} else {
-		if pio, err = createIO(ctx, e.id, e.parent.IoUID, e.parent.IoGID, e.stdio); err != nil {
+		if pio, err = createIO(ctx, e.id, e.parent.IoUID, e.parent.IoGID, e.stdio, e.parent.runtime); err != nil {
 			return fmt.Errorf("failed to create init process I/O: %w", err)
 		}
 		e.io = pio

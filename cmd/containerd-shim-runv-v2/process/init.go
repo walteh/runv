@@ -96,9 +96,9 @@ func New(id string, runtime runtime.Runtime, stdio stdio.Stdio) *Init {
 func (p *Init) Create(ctx context.Context, r *CreateConfig) error {
 	var (
 		err     error
-		socket  *gorunc.Socket
+		socket  runtime.Socket
 		pio     *processIO
-		pidFile = newPidFile(p.Bundle)
+		pidFile = newPidFile(p.Bundle, p.runtime)
 	)
 
 	if r.Terminal {
@@ -107,7 +107,7 @@ func (p *Init) Create(ctx context.Context, r *CreateConfig) error {
 		}
 		defer socket.Close()
 	} else {
-		if pio, err = createIO(ctx, p.id, p.IoUID, p.IoGID, p.stdio); err != nil {
+		if pio, err = createIO(ctx, p.id, p.IoUID, p.IoGID, p.stdio, p.runtime); err != nil {
 			return fmt.Errorf("failed to create init process I/O: %w", err)
 		}
 		p.io = pio

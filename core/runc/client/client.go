@@ -26,18 +26,33 @@ type Client struct {
 	conn *grpc.ClientConn
 }
 
+// ReadPidFile implements runtime.Runtime.
+func (c *Client) ReadPidFile(path string) (int, error) {
+	panic("unimplemented")
+}
+
 // LogFilePath implements runtime.Runtime.
 func (c *Client) LogFilePath() string {
 	panic("unimplemented")
 }
 
 // NewTempConsoleSocket implements runtime.Runtime.
-func (c *Client) NewTempConsoleSocket() (*gorunc.Socket, error) {
+func (c *Client) NewTempConsoleSocket() (runtime.Socket, error) {
 	panic("unimplemented")
 }
 
 // Update implements runtime.Runtime.
 func (c *Client) Update(ctx context.Context, id string, resources *specs.LinuxResources) error {
+	panic("unimplemented")
+}
+
+// NewNullIO implements runtime.Runtime.
+func (c *Client) NewNullIO() (runtime.IO, error) {
+	panic("unimplemented")
+}
+
+// NewPipeIO implements runtime.Runtime.
+func (c *Client) NewPipeIO(ioUID, ioGID int, opts ...gorunc.IOOpt) (runtime.IO, error) {
 	panic("unimplemented")
 }
 
