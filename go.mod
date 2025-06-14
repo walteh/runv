@@ -2,8 +2,9 @@ module github.com/walteh/runv
 
 go 1.24.4
 
+replace github.com/containerd/console => ../console
+
 require (
-	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.6-20250613105001-9f2d3c737feb.1
 	buf.build/go/protovalidate v0.13.1
 	github.com/containerd/cgroups/v3 v3.0.5
 	github.com/containerd/console v1.0.5
@@ -17,9 +18,19 @@ require (
 	github.com/containerd/plugin v1.0.0
 	github.com/containerd/ttrpc v1.2.7
 	github.com/containerd/typeurl/v2 v2.2.3
+	github.com/creack/pty v1.1.24
+	github.com/kr/pty v1.1.8
 	github.com/moby/sys/userns v0.1.0
 	github.com/opencontainers/runtime-spec v1.2.1
+	github.com/stretchr/testify v1.10.0
 	google.golang.org/protobuf v1.36.6
+)
+
+require (
+	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.6-20250613105001-9f2d3c737feb.1 // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
 require (
