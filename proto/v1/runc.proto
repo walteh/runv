@@ -2,6 +2,7 @@ edition = "2023";
 
 package runv.v1;
 
+import "google/protobuf/duration.proto";
 import "google/protobuf/go_features.proto";
 
 option features.(pb.go).api_level = API_OPAQUE;
@@ -66,6 +67,22 @@ service RuncService {
 
 	// Version returns the runc and runtime-spec versions
 	rpc Version(RuncVersionRequest) returns (RuncVersionResponse) {}
+
+
+	// Checkpoint checkpoints the container
+	rpc Checkpoint(RuncCheckpointRequest) returns (RuncCheckpointResponse) {}
+
+
+	// Restore restores the container from a checkpoint
+	rpc Restore(RuncRestoreRequest) returns (RuncRestoreResponse) {}
+
+
+	// Events returns the events for the container
+	rpc Events(RuncEventsRequest) returns (stream RuncEvent) {}
+
+
+	// Update updates the container resources
+	rpc Update(RuncUpdateRequest) returns (RuncUpdateResponse) {}
 }
 
 message PingRequest {}
@@ -104,13 +121,20 @@ message RuncStateResponse {
 
 // Create related messages
 message RuncCreateRequest {
-	string          id             = 1;
-	string          bundle         = 2;
-	bool            detach         = 3;
-	bool            no_pivot       = 4;
-	bool            no_new_keyring = 5;
-	string          pid_file       = 6;
-	repeated string extra_args     = 7;
+	string            id      = 1;
+	string            bundle  = 2;
+	RuncCreateOptions options = 3;
+}
+
+message RuncCreateOptions {
+	bool              detach         = 1;
+	bool              no_pivot       = 2;
+	bool              no_new_keyring = 3;
+	string            pid_file       = 4;
+	repeated string   extra_args     = 5;
+	repeated string   extra_files    = 6;
+	RuncConsoleSocket console_socket = 7;
+	RuncIO            io             = 8;
 }
 
 message RuncCreateResponse {
@@ -127,22 +151,21 @@ message RuncStartResponse {
 }
 
 // Exec related messages
-message RuncProcessSpec {
-	string          terminal        = 1;
-	string          cwd             = 2;
-	repeated string args            = 3;
-	repeated string env             = 4;
-	int32           user_uid        = 5;
-	int32           user_gid        = 6;
-	repeated int32  additional_gids = 7;
-}
 
 message RuncExecRequest {
-	string          id         = 1;
-	RuncProcessSpec spec       = 2;
-	bool            detach     = 3;
-	string          pid_file   = 4;
-	repeated string extra_args = 5;
+	string          id      = 1;
+	RuncProcessSpec spec    = 2;
+	RuncExecOptions options = 3;
+}
+
+message RuncProcessSpec {
+	bytes raw_json = 1;
+}
+
+message RuncExecOptions {
+	bool            detach     = 1;
+	string          pid_file   = 2;
+	repeated string extra_args = 3;
 }
 
 message RuncExecResponse {
@@ -167,9 +190,13 @@ message RuncRunResponse {
 
 // Delete related messages
 message RuncDeleteRequest {
-	string          id         = 1;
-	bool            force      = 2;
-	repeated string extra_args = 3;
+	string            id      = 1;
+	RuncDeleteOptions options = 2;
+}
+
+message RuncDeleteOptions {
+	bool            force      = 1;
+	repeated string extra_args = 2;
 }
 
 message RuncDeleteResponse {
@@ -178,8 +205,12 @@ message RuncDeleteResponse {
 
 // Kill related messages
 message RuncKillRequest {
-	string          id         = 1;
-	int32           signal     = 2;
+	string          id      = 1;
+	int32           signal  = 2;
+	RuncKillOptions options = 3;
+}
+
+message RuncKillOptions {
 	bool            all        = 3;
 	repeated string extra_args = 4;
 }
@@ -334,4 +365,99 @@ message RuncVersionResponse {
 	string commit   = 2;
 	string spec     = 3;
 	string go_error = 4;
+}
+
+message RuncCheckpointAction {
+	repeated string action = 1;
+}
+
+message RuncCheckpointRequest {
+	string                        id      = 1;
+	RuncCheckpointOptions         options = 2;
+	repeated RuncCheckpointAction actions = 3;
+}
+
+message RuncConsoleSocket {
+	string path = 1;
+}
+
+message SetExecCommandOptions {
+	string              argc = 1;
+	repeated string     argv = 2;
+	map<string, string> env  = 3;
+	string              cwd  = 4;
+}
+
+message RuncIO {
+	string                stdin_path               = 1;
+	string                stdout_path              = 2;
+	string                stderr_path              = 3;
+	SetExecCommandOptions set_exec_command_options = 4;
+}
+
+message RuncCheckpointResponse {
+	string go_error = 1;
+}
+
+message RuncRestoreRequest {
+	string             id      = 1;
+	string             bundle  = 2;
+	RuncRestoreOptions options = 3;
+}
+
+message RuncRestoreResponse {
+	int32  status   = 1;
+	string go_error = 2;
+}
+
+message RuncCheckpointOptions {
+	string          image_path                  = 1;
+	string          work_dir                    = 2;
+	string          parent_path                 = 3;
+	bool            allow_open_tcp              = 4;
+	bool            allow_external_unix_sockets = 5;
+	bool            allow_terminal              = 6;
+	string          criu_page_server            = 7;
+	bool            file_locks                  = 8;
+	string          cgroups                     = 9;
+	repeated string empty_namespaces            = 10;
+	bool            lazy_pages                  = 11;
+	string          status_file                 = 12;
+	repeated string extra_args                  = 13;
+}
+
+message RuncRestoreOptions {
+	RuncCheckpointOptions checkpoint_options = 1;
+	RuncIO                io                 = 2;
+	bool                  detach             = 3;
+	string                pid_file           = 4;
+	bool                  no_subreaper       = 5;
+	bool                  no_pivot           = 6;
+	RuncConsoleSocket     console_socket     = 7;
+	repeated string       extra_args         = 8;
+}
+
+message RuncEventsRequest {
+	string                   id       = 1;
+	google.protobuf.Duration duration = 2;
+}
+
+message RuncEvent {
+	string    type  = 1;
+	string    id    = 2;
+	RuncStats stats = 3;
+	string    err   = 4;
+}
+
+message RuncUpdateRequest {
+	string             id        = 1;
+	RuncLinuxResources resources = 2;
+}
+
+message RuncUpdateResponse {
+	string go_error = 1;
+}
+
+message RuncLinuxResources {
+	bytes raw_json = 1;
 }

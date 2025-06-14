@@ -41,12 +41,13 @@ import (
 	"github.com/containerd/containerd/v2/pkg/shim"
 	"github.com/containerd/containerd/v2/version"
 	"github.com/containerd/errdefs"
-	runcC "github.com/containerd/go-runc"
+	gorunc "github.com/containerd/go-runc"
 	"github.com/containerd/log"
 	"github.com/containerd/typeurl/v2"
 	"github.com/opencontainers/runtime-spec/specs-go/features"
 	"github.com/walteh/runv/cmd/containerd-shim-runv-v2/process"
-	runc "github.com/walteh/runv/cmd/containerd-shim-runv-v2/runv"
+	"github.com/walteh/runv/cmd/containerd-shim-runv-v2/runv"
+	"github.com/walteh/runv/core/runc/runtime"
 	"golang.org/x/sys/unix"
 )
 
@@ -75,7 +76,8 @@ type spec struct {
 }
 
 type manager struct {
-	name string
+	name    string
+	creator runtime.RuntimeCreator
 }
 
 func newCommand(ctx context.Context, id, containerdAddress, containerdTTRPCAddress string, debug bool) (*exec.Cmd, error) {
@@ -282,7 +284,7 @@ func (manager) Start(ctx context.Context, id string, opts shim.StartOpts) (_ shi
 	return params, nil
 }
 
-func (manager) Stop(ctx context.Context, id string) (shim.StopStatus, error) {
+func (m manager) Stop(ctx context.Context, id string) (shim.StopStatus, error) {
 	cwd, err := os.Getwd()
 	if err != nil {
 		return shim.StopStatus{}, err
@@ -293,11 +295,11 @@ func (manager) Stop(ctx context.Context, id string) (shim.StopStatus, error) {
 	if err != nil {
 		return shim.StopStatus{}, err
 	}
-	runtime, err := runc.ReadRuntime(path)
+	runtimez, err := runv.ReadRuntime(path)
 	if err != nil && !os.IsNotExist(err) {
 		return shim.StopStatus{}, err
 	}
-	opts, err := runc.ReadOptions(path)
+	opts, err := runv.ReadOptions(path)
 	if err != nil {
 		return shim.StopStatus{}, err
 	}
@@ -306,8 +308,14 @@ func (manager) Stop(ctx context.Context, id string) (shim.StopStatus, error) {
 		root = opts.Root
 	}
 
-	r := process.NewRunc(root, path, ns, runtime, false)
-	if err := r.Delete(ctx, id, &runcC.DeleteOpts{
+	r := m.creator.Create(ctx, &runtime.RuntimeOptions{
+		Root:          root,
+		Path:          path,
+		Namespace:     ns,
+		Runtime:       runtimez,
+		SystemdCgroup: opts.SystemdCgroup,
+	})
+	if err := r.Delete(ctx, id, &gorunc.DeleteOpts{
 		Force: true,
 	}); err != nil {
 		log.G(ctx).WithError(err).Warn("failed to remove runc container")
@@ -315,7 +323,7 @@ func (manager) Stop(ctx context.Context, id string) (shim.StopStatus, error) {
 	if err := mount.UnmountRecursive(filepath.Join(path, "rootfs"), 0); err != nil {
 		log.G(ctx).WithError(err).Warn("failed to cleanup rootfs mount")
 	}
-	pid, err := runcC.ReadPidFile(filepath.Join(path, process.InitPidFile))
+	pid, err := gorunc.ReadPidFile(filepath.Join(path, process.InitPidFile))
 	if err != nil {
 		log.G(ctx).WithError(err).Warn("failed to read init pid file")
 	}
@@ -335,7 +343,7 @@ func (m manager) Info(ctx context.Context, optionsR io.Reader) (*types.RuntimeIn
 		},
 		Annotations: nil,
 	}
-	binaryName := runcC.DefaultCommand
+	binaryName := gorunc.DefaultCommand
 	opts, err := shim.ReadRuntimeOptions[*options.Options](optionsR)
 	if err != nil {
 		if !errors.Is(err, errdefs.ErrNotFound) {

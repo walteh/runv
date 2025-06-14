@@ -35,9 +35,10 @@ import (
 	google_protobuf "github.com/containerd/containerd/v2/pkg/protobuf/types"
 	"github.com/containerd/containerd/v2/pkg/stdio"
 	"github.com/containerd/fifo"
-	runc "github.com/containerd/go-runc"
+	gorunc "github.com/containerd/go-runc"
 	"github.com/containerd/log"
 	specs "github.com/opencontainers/runtime-spec/specs-go"
+	"github.com/walteh/runv/core/runc/runtime"
 	"golang.org/x/sys/unix"
 )
 
@@ -61,7 +62,7 @@ type Init struct {
 	console  console.Console
 	Platform stdio.Platform
 	io       *processIO
-	runtime  *runc.Runc
+	runtime  runtime.Runtime
 	// pausing preserves the pausing state.
 	pausing      atomic.Bool
 	status       int
@@ -78,23 +79,8 @@ type Init struct {
 	CriuWorkPath string
 }
 
-// NewRunc returns a new runc instance for a process
-func NewRunc(root, path, namespace, runtime string, systemd bool) *runc.Runc {
-	if root == "" {
-		root = RuncRoot
-	}
-	return &runc.Runc{
-		Command:       runtime,
-		Log:           filepath.Join(path, "log.json"),
-		LogFormat:     runc.JSON,
-		PdeathSignal:  unix.SIGKILL,
-		Root:          filepath.Join(root, namespace),
-		SystemdCgroup: systemd,
-	}
-}
-
 // New returns a new process
-func New(id string, runtime *runc.Runc, stdio stdio.Stdio) *Init {
+func New(id string, runtime runtime.Runtime, stdio stdio.Stdio) *Init {
 	p := &Init{
 		id:        id,
 		runtime:   runtime,
@@ -110,13 +96,13 @@ func New(id string, runtime *runc.Runc, stdio stdio.Stdio) *Init {
 func (p *Init) Create(ctx context.Context, r *CreateConfig) error {
 	var (
 		err     error
-		socket  *runc.Socket
+		socket  *gorunc.Socket
 		pio     *processIO
 		pidFile = newPidFile(p.Bundle)
 	)
 
 	if r.Terminal {
-		if socket, err = runc.NewTempConsoleSocket(); err != nil {
+		if socket, err = p.runtime.NewTempConsoleSocket(); err != nil {
 			return fmt.Errorf("failed to create OCI runtime console socket: %w", err)
 		}
 		defer socket.Close()
@@ -129,7 +115,7 @@ func (p *Init) Create(ctx context.Context, r *CreateConfig) error {
 	if r.Checkpoint != "" {
 		return p.createCheckpointedState(r, pidFile)
 	}
-	opts := &runc.CreateOpts{
+	opts := &gorunc.CreateOpts{
 		PidFile:      pidFile.Path(),
 		NoPivot:      p.NoPivotRoot,
 		NoNewKeyring: p.NoNewKeyring,
@@ -141,6 +127,7 @@ func (p *Init) Create(ctx context.Context, r *CreateConfig) error {
 		opts.ConsoleSocket = socket
 	}
 
+	// gorunc:call Create
 	if err := p.runtime.Create(ctx, r.ID, r.Bundle, opts); err != nil {
 		return p.runtimeError(err, "OCI runtime create failed")
 	}
@@ -185,8 +172,8 @@ func (p *Init) openStdin(path string) error {
 }
 
 func (p *Init) createCheckpointedState(r *CreateConfig, pidFile *pidFile) error {
-	opts := &runc.RestoreOpts{
-		CheckpointOpts: runc.CheckpointOpts{
+	opts := &gorunc.RestoreOpts{
+		CheckpointOpts: gorunc.CheckpointOpts{
 			ImagePath:  r.Checkpoint,
 			WorkDir:    p.CriuWorkPath,
 			ParentPath: r.ParentCheckpoint,
@@ -353,7 +340,7 @@ func (p *Init) Kill(ctx context.Context, signal uint32, all bool) error {
 }
 
 func (p *Init) kill(ctx context.Context, signal uint32, all bool) error {
-	err := p.runtime.Kill(ctx, p.id, int(signal), &runc.KillOpts{
+	err := p.runtime.Kill(ctx, p.id, int(signal), &gorunc.KillOpts{
 		All: all,
 	})
 	return checkKillError(err)
@@ -364,7 +351,8 @@ func (p *Init) KillAll(ctx context.Context) error {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
-	err := p.runtime.Kill(ctx, p.id, int(unix.SIGKILL), &runc.KillOpts{
+	// gorunc:call Kill
+	err := p.runtime.Kill(ctx, p.id, int(unix.SIGKILL), &gorunc.KillOpts{
 		All: true,
 	})
 	return p.runtimeError(err, "OCI runtime killall failed")
@@ -376,7 +364,7 @@ func (p *Init) Stdin() io.Closer {
 }
 
 // Runtime returns the OCI runtime configured for the init process
-func (p *Init) Runtime() *runc.Runc {
+func (p *Init) Runtime() runtime.Runtime {
 	return p.runtime
 }
 
@@ -423,9 +411,9 @@ func (p *Init) Checkpoint(ctx context.Context, r *CheckpointConfig) error {
 }
 
 func (p *Init) checkpoint(ctx context.Context, r *CheckpointConfig) error {
-	var actions []runc.CheckpointAction
+	var actions []gorunc.CheckpointAction
 	if !r.Exit {
-		actions = append(actions, runc.LeaveRunning)
+		actions = append(actions, gorunc.LeaveRunning)
 	}
 	// keep criu work directory if criu work dir is set
 	work := r.WorkDir
@@ -433,7 +421,8 @@ func (p *Init) checkpoint(ctx context.Context, r *CheckpointConfig) error {
 		work = filepath.Join(p.WorkDir, "criu-work")
 		defer os.RemoveAll(work)
 	}
-	if err := p.runtime.Checkpoint(ctx, p.id, &runc.CheckpointOpts{
+	// gorunc:call Checkpoint
+	if err := p.runtime.Checkpoint(ctx, p.id, &gorunc.CheckpointOpts{
 		WorkDir:                  work,
 		ImagePath:                r.Path,
 		AllowOpenTCP:             r.AllowOpenTCP,
@@ -488,8 +477,8 @@ func (p *Init) runtimeError(rErr error, msg string) error {
 	}
 }
 
-func withConditionalIO(c stdio.Stdio) runc.IOOpt {
-	return func(o *runc.IOOption) {
+func withConditionalIO(c stdio.Stdio) gorunc.IOOpt {
+	return func(o *gorunc.IOOption) {
 		o.OpenStdin = c.Stdin != ""
 		o.OpenStdout = c.Stdout != ""
 		o.OpenStderr = c.Stderr != ""

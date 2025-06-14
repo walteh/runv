@@ -22,11 +22,17 @@ var _ runvv1.RuncServiceClient = &MockRuncServiceClient{}
 //
 //		// make and configure a mocked runvv1.RuncServiceClient
 //		mockedRuncServiceClient := &MockRuncServiceClient{
+//			CheckpointFunc: func(ctx context.Context, in *runvv1.RuncCheckpointRequest, opts ...grpc.CallOption) (*runvv1.RuncCheckpointResponse, error) {
+//				panic("mock out the Checkpoint method")
+//			},
 //			CreateFunc: func(ctx context.Context, in *runvv1.RuncCreateRequest, opts ...grpc.CallOption) (*runvv1.RuncCreateResponse, error) {
 //				panic("mock out the Create method")
 //			},
 //			DeleteFunc: func(ctx context.Context, in *runvv1.RuncDeleteRequest, opts ...grpc.CallOption) (*runvv1.RuncDeleteResponse, error) {
 //				panic("mock out the Delete method")
+//			},
+//			EventsFunc: func(ctx context.Context, in *runvv1.RuncEventsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[runvv1.RuncEvent], error) {
+//				panic("mock out the Events method")
 //			},
 //			ExecFunc: func(ctx context.Context, in *runvv1.RuncExecRequest, opts ...grpc.CallOption) (*runvv1.RuncExecResponse, error) {
 //				panic("mock out the Exec method")
@@ -46,6 +52,9 @@ var _ runvv1.RuncServiceClient = &MockRuncServiceClient{}
 //			PsFunc: func(ctx context.Context, in *runvv1.RuncPsRequest, opts ...grpc.CallOption) (*runvv1.RuncPsResponse, error) {
 //				panic("mock out the Ps method")
 //			},
+//			RestoreFunc: func(ctx context.Context, in *runvv1.RuncRestoreRequest, opts ...grpc.CallOption) (*runvv1.RuncRestoreResponse, error) {
+//				panic("mock out the Restore method")
+//			},
 //			ResumeFunc: func(ctx context.Context, in *runvv1.RuncResumeRequest, opts ...grpc.CallOption) (*runvv1.RuncResumeResponse, error) {
 //				panic("mock out the Resume method")
 //			},
@@ -64,6 +73,9 @@ var _ runvv1.RuncServiceClient = &MockRuncServiceClient{}
 //			TopFunc: func(ctx context.Context, in *runvv1.RuncTopRequest, opts ...grpc.CallOption) (*runvv1.RuncTopResponse, error) {
 //				panic("mock out the Top method")
 //			},
+//			UpdateFunc: func(ctx context.Context, in *runvv1.RuncUpdateRequest, opts ...grpc.CallOption) (*runvv1.RuncUpdateResponse, error) {
+//				panic("mock out the Update method")
+//			},
 //			VersionFunc: func(ctx context.Context, in *runvv1.RuncVersionRequest, opts ...grpc.CallOption) (*runvv1.RuncVersionResponse, error) {
 //				panic("mock out the Version method")
 //			},
@@ -74,11 +86,17 @@ var _ runvv1.RuncServiceClient = &MockRuncServiceClient{}
 //
 //	}
 type MockRuncServiceClient struct {
+	// CheckpointFunc mocks the Checkpoint method.
+	CheckpointFunc func(ctx context.Context, in *runvv1.RuncCheckpointRequest, opts ...grpc.CallOption) (*runvv1.RuncCheckpointResponse, error)
+
 	// CreateFunc mocks the Create method.
 	CreateFunc func(ctx context.Context, in *runvv1.RuncCreateRequest, opts ...grpc.CallOption) (*runvv1.RuncCreateResponse, error)
 
 	// DeleteFunc mocks the Delete method.
 	DeleteFunc func(ctx context.Context, in *runvv1.RuncDeleteRequest, opts ...grpc.CallOption) (*runvv1.RuncDeleteResponse, error)
+
+	// EventsFunc mocks the Events method.
+	EventsFunc func(ctx context.Context, in *runvv1.RuncEventsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[runvv1.RuncEvent], error)
 
 	// ExecFunc mocks the Exec method.
 	ExecFunc func(ctx context.Context, in *runvv1.RuncExecRequest, opts ...grpc.CallOption) (*runvv1.RuncExecResponse, error)
@@ -98,6 +116,9 @@ type MockRuncServiceClient struct {
 	// PsFunc mocks the Ps method.
 	PsFunc func(ctx context.Context, in *runvv1.RuncPsRequest, opts ...grpc.CallOption) (*runvv1.RuncPsResponse, error)
 
+	// RestoreFunc mocks the Restore method.
+	RestoreFunc func(ctx context.Context, in *runvv1.RuncRestoreRequest, opts ...grpc.CallOption) (*runvv1.RuncRestoreResponse, error)
+
 	// ResumeFunc mocks the Resume method.
 	ResumeFunc func(ctx context.Context, in *runvv1.RuncResumeRequest, opts ...grpc.CallOption) (*runvv1.RuncResumeResponse, error)
 
@@ -116,11 +137,23 @@ type MockRuncServiceClient struct {
 	// TopFunc mocks the Top method.
 	TopFunc func(ctx context.Context, in *runvv1.RuncTopRequest, opts ...grpc.CallOption) (*runvv1.RuncTopResponse, error)
 
+	// UpdateFunc mocks the Update method.
+	UpdateFunc func(ctx context.Context, in *runvv1.RuncUpdateRequest, opts ...grpc.CallOption) (*runvv1.RuncUpdateResponse, error)
+
 	// VersionFunc mocks the Version method.
 	VersionFunc func(ctx context.Context, in *runvv1.RuncVersionRequest, opts ...grpc.CallOption) (*runvv1.RuncVersionResponse, error)
 
 	// calls tracks calls to the methods.
 	calls struct {
+		// Checkpoint holds details about calls to the Checkpoint method.
+		Checkpoint []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+			// In is the in argument value.
+			In *runvv1.RuncCheckpointRequest
+			// Opts is the opts argument value.
+			Opts []grpc.CallOption
+		}
 		// Create holds details about calls to the Create method.
 		Create []struct {
 			// Ctx is the ctx argument value.
@@ -136,6 +169,15 @@ type MockRuncServiceClient struct {
 			Ctx context.Context
 			// In is the in argument value.
 			In *runvv1.RuncDeleteRequest
+			// Opts is the opts argument value.
+			Opts []grpc.CallOption
+		}
+		// Events holds details about calls to the Events method.
+		Events []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+			// In is the in argument value.
+			In *runvv1.RuncEventsRequest
 			// Opts is the opts argument value.
 			Opts []grpc.CallOption
 		}
@@ -193,6 +235,15 @@ type MockRuncServiceClient struct {
 			// Opts is the opts argument value.
 			Opts []grpc.CallOption
 		}
+		// Restore holds details about calls to the Restore method.
+		Restore []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+			// In is the in argument value.
+			In *runvv1.RuncRestoreRequest
+			// Opts is the opts argument value.
+			Opts []grpc.CallOption
+		}
 		// Resume holds details about calls to the Resume method.
 		Resume []struct {
 			// Ctx is the ctx argument value.
@@ -247,6 +298,15 @@ type MockRuncServiceClient struct {
 			// Opts is the opts argument value.
 			Opts []grpc.CallOption
 		}
+		// Update holds details about calls to the Update method.
+		Update []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+			// In is the in argument value.
+			In *runvv1.RuncUpdateRequest
+			// Opts is the opts argument value.
+			Opts []grpc.CallOption
+		}
 		// Version holds details about calls to the Version method.
 		Version []struct {
 			// Ctx is the ctx argument value.
@@ -257,21 +317,65 @@ type MockRuncServiceClient struct {
 			Opts []grpc.CallOption
 		}
 	}
-	lockCreate  sync.RWMutex
-	lockDelete  sync.RWMutex
-	lockExec    sync.RWMutex
-	lockKill    sync.RWMutex
-	lockList    sync.RWMutex
-	lockPause   sync.RWMutex
-	lockPing    sync.RWMutex
-	lockPs      sync.RWMutex
-	lockResume  sync.RWMutex
-	lockRun     sync.RWMutex
-	lockStart   sync.RWMutex
-	lockState   sync.RWMutex
-	lockStats   sync.RWMutex
-	lockTop     sync.RWMutex
-	lockVersion sync.RWMutex
+	lockCheckpoint sync.RWMutex
+	lockCreate     sync.RWMutex
+	lockDelete     sync.RWMutex
+	lockEvents     sync.RWMutex
+	lockExec       sync.RWMutex
+	lockKill       sync.RWMutex
+	lockList       sync.RWMutex
+	lockPause      sync.RWMutex
+	lockPing       sync.RWMutex
+	lockPs         sync.RWMutex
+	lockRestore    sync.RWMutex
+	lockResume     sync.RWMutex
+	lockRun        sync.RWMutex
+	lockStart      sync.RWMutex
+	lockState      sync.RWMutex
+	lockStats      sync.RWMutex
+	lockTop        sync.RWMutex
+	lockUpdate     sync.RWMutex
+	lockVersion    sync.RWMutex
+}
+
+// Checkpoint calls CheckpointFunc.
+func (mock *MockRuncServiceClient) Checkpoint(ctx context.Context, in *runvv1.RuncCheckpointRequest, opts ...grpc.CallOption) (*runvv1.RuncCheckpointResponse, error) {
+	if mock.CheckpointFunc == nil {
+		panic("MockRuncServiceClient.CheckpointFunc: method is nil but RuncServiceClient.Checkpoint was just called")
+	}
+	callInfo := struct {
+		Ctx  context.Context
+		In   *runvv1.RuncCheckpointRequest
+		Opts []grpc.CallOption
+	}{
+		Ctx:  ctx,
+		In:   in,
+		Opts: opts,
+	}
+	mock.lockCheckpoint.Lock()
+	mock.calls.Checkpoint = append(mock.calls.Checkpoint, callInfo)
+	mock.lockCheckpoint.Unlock()
+	return mock.CheckpointFunc(ctx, in, opts...)
+}
+
+// CheckpointCalls gets all the calls that were made to Checkpoint.
+// Check the length with:
+//
+//	len(mockedRuncServiceClient.CheckpointCalls())
+func (mock *MockRuncServiceClient) CheckpointCalls() []struct {
+	Ctx  context.Context
+	In   *runvv1.RuncCheckpointRequest
+	Opts []grpc.CallOption
+} {
+	var calls []struct {
+		Ctx  context.Context
+		In   *runvv1.RuncCheckpointRequest
+		Opts []grpc.CallOption
+	}
+	mock.lockCheckpoint.RLock()
+	calls = mock.calls.Checkpoint
+	mock.lockCheckpoint.RUnlock()
+	return calls
 }
 
 // Create calls CreateFunc.
@@ -351,6 +455,46 @@ func (mock *MockRuncServiceClient) DeleteCalls() []struct {
 	mock.lockDelete.RLock()
 	calls = mock.calls.Delete
 	mock.lockDelete.RUnlock()
+	return calls
+}
+
+// Events calls EventsFunc.
+func (mock *MockRuncServiceClient) Events(ctx context.Context, in *runvv1.RuncEventsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[runvv1.RuncEvent], error) {
+	if mock.EventsFunc == nil {
+		panic("MockRuncServiceClient.EventsFunc: method is nil but RuncServiceClient.Events was just called")
+	}
+	callInfo := struct {
+		Ctx  context.Context
+		In   *runvv1.RuncEventsRequest
+		Opts []grpc.CallOption
+	}{
+		Ctx:  ctx,
+		In:   in,
+		Opts: opts,
+	}
+	mock.lockEvents.Lock()
+	mock.calls.Events = append(mock.calls.Events, callInfo)
+	mock.lockEvents.Unlock()
+	return mock.EventsFunc(ctx, in, opts...)
+}
+
+// EventsCalls gets all the calls that were made to Events.
+// Check the length with:
+//
+//	len(mockedRuncServiceClient.EventsCalls())
+func (mock *MockRuncServiceClient) EventsCalls() []struct {
+	Ctx  context.Context
+	In   *runvv1.RuncEventsRequest
+	Opts []grpc.CallOption
+} {
+	var calls []struct {
+		Ctx  context.Context
+		In   *runvv1.RuncEventsRequest
+		Opts []grpc.CallOption
+	}
+	mock.lockEvents.RLock()
+	calls = mock.calls.Events
+	mock.lockEvents.RUnlock()
 	return calls
 }
 
@@ -594,6 +738,46 @@ func (mock *MockRuncServiceClient) PsCalls() []struct {
 	return calls
 }
 
+// Restore calls RestoreFunc.
+func (mock *MockRuncServiceClient) Restore(ctx context.Context, in *runvv1.RuncRestoreRequest, opts ...grpc.CallOption) (*runvv1.RuncRestoreResponse, error) {
+	if mock.RestoreFunc == nil {
+		panic("MockRuncServiceClient.RestoreFunc: method is nil but RuncServiceClient.Restore was just called")
+	}
+	callInfo := struct {
+		Ctx  context.Context
+		In   *runvv1.RuncRestoreRequest
+		Opts []grpc.CallOption
+	}{
+		Ctx:  ctx,
+		In:   in,
+		Opts: opts,
+	}
+	mock.lockRestore.Lock()
+	mock.calls.Restore = append(mock.calls.Restore, callInfo)
+	mock.lockRestore.Unlock()
+	return mock.RestoreFunc(ctx, in, opts...)
+}
+
+// RestoreCalls gets all the calls that were made to Restore.
+// Check the length with:
+//
+//	len(mockedRuncServiceClient.RestoreCalls())
+func (mock *MockRuncServiceClient) RestoreCalls() []struct {
+	Ctx  context.Context
+	In   *runvv1.RuncRestoreRequest
+	Opts []grpc.CallOption
+} {
+	var calls []struct {
+		Ctx  context.Context
+		In   *runvv1.RuncRestoreRequest
+		Opts []grpc.CallOption
+	}
+	mock.lockRestore.RLock()
+	calls = mock.calls.Restore
+	mock.lockRestore.RUnlock()
+	return calls
+}
+
 // Resume calls ResumeFunc.
 func (mock *MockRuncServiceClient) Resume(ctx context.Context, in *runvv1.RuncResumeRequest, opts ...grpc.CallOption) (*runvv1.RuncResumeResponse, error) {
 	if mock.ResumeFunc == nil {
@@ -831,6 +1015,46 @@ func (mock *MockRuncServiceClient) TopCalls() []struct {
 	mock.lockTop.RLock()
 	calls = mock.calls.Top
 	mock.lockTop.RUnlock()
+	return calls
+}
+
+// Update calls UpdateFunc.
+func (mock *MockRuncServiceClient) Update(ctx context.Context, in *runvv1.RuncUpdateRequest, opts ...grpc.CallOption) (*runvv1.RuncUpdateResponse, error) {
+	if mock.UpdateFunc == nil {
+		panic("MockRuncServiceClient.UpdateFunc: method is nil but RuncServiceClient.Update was just called")
+	}
+	callInfo := struct {
+		Ctx  context.Context
+		In   *runvv1.RuncUpdateRequest
+		Opts []grpc.CallOption
+	}{
+		Ctx:  ctx,
+		In:   in,
+		Opts: opts,
+	}
+	mock.lockUpdate.Lock()
+	mock.calls.Update = append(mock.calls.Update, callInfo)
+	mock.lockUpdate.Unlock()
+	return mock.UpdateFunc(ctx, in, opts...)
+}
+
+// UpdateCalls gets all the calls that were made to Update.
+// Check the length with:
+//
+//	len(mockedRuncServiceClient.UpdateCalls())
+func (mock *MockRuncServiceClient) UpdateCalls() []struct {
+	Ctx  context.Context
+	In   *runvv1.RuncUpdateRequest
+	Opts []grpc.CallOption
+} {
+	var calls []struct {
+		Ctx  context.Context
+		In   *runvv1.RuncUpdateRequest
+		Opts []grpc.CallOption
+	}
+	mock.lockUpdate.RLock()
+	calls = mock.calls.Update
+	mock.lockUpdate.RUnlock()
 	return calls
 }
 

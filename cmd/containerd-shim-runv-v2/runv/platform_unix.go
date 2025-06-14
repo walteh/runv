@@ -16,7 +16,7 @@
    limitations under the License.
 */
 
-package runc
+package runv
 
 import (
 	"fmt"

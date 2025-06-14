@@ -33,13 +33,14 @@ import (
 	"github.com/containerd/containerd/api/types/task"
 	"github.com/containerd/errdefs"
 	"github.com/containerd/errdefs/pkg/errgrpc"
-	runcC "github.com/containerd/go-runc"
+	gorunc "github.com/containerd/go-runc"
 	"github.com/containerd/log"
 	"github.com/containerd/ttrpc"
 	"github.com/containerd/typeurl/v2"
 
-	"github.com/containerd/containerd/v2/core/runtime"
+	containerdruntime "github.com/containerd/containerd/v2/core/runtime"
 	"github.com/containerd/containerd/v2/pkg/namespaces"
+	"github.com/walteh/runv/core/runc/runtime"
 	"github.com/walteh/runv/pkg/oom"
 
 	// oomv1 "github.com/walteh/runv/pkg/oom/v1"
@@ -50,7 +51,7 @@ import (
 	"github.com/containerd/containerd/v2/pkg/stdio"
 	"github.com/containerd/containerd/v2/pkg/sys/reaper"
 	"github.com/walteh/runv/cmd/containerd-shim-runv-v2/process"
-	runc "github.com/walteh/runv/cmd/containerd-shim-runv-v2/runv"
+	"github.com/walteh/runv/cmd/containerd-shim-runv-v2/runv"
 	oomv2 "github.com/walteh/runv/pkg/oom/v2"
 )
 
@@ -81,15 +82,15 @@ func NewTaskService(ctx context.Context, publisher shim.Publisher, sd shutdown.S
 		ec:                   reaper.Default.Subscribe(),
 		ep:                   ep,
 		shutdown:             sd,
-		containers:           make(map[string]*runc.Container),
+		containers:           make(map[string]*runv.Container),
 		running:              make(map[int][]containerProcess),
-		runningExecs:         make(map[*runc.Container]int),
-		execCountSubscribers: make(map[*runc.Container]chan<- int),
-		containerInitExit:    make(map[*runc.Container]runcC.Exit),
-		exitSubscribers:      make(map[*map[int][]runcC.Exit]struct{}),
+		runningExecs:         make(map[*runv.Container]int),
+		execCountSubscribers: make(map[*runv.Container]chan<- int),
+		containerInitExit:    make(map[*runv.Container]gorunc.Exit),
+		exitSubscribers:      make(map[*map[int][]gorunc.Exit]struct{}),
 	}
 	go s.processExits()
-	runcC.Monitor = reaper.Default
+	gorunc.Monitor = reaper.Default
 	if err := s.initPlatform(); err != nil {
 		return nil, fmt.Errorf("failed to initialized platform behavior: %w", err)
 	}
@@ -114,17 +115,17 @@ type service struct {
 	context  context.Context
 	events   chan interface{}
 	platform stdio.Platform
-	ec       chan runcC.Exit
+	ec       chan gorunc.Exit
 	ep       oom.Watcher
 
-	containers map[string]*runc.Container
+	containers map[string]*runv.Container
 
 	lifecycleMu  sync.Mutex
 	running      map[int][]containerProcess // pid -> running process, guarded by lifecycleMu
-	runningExecs map[*runc.Container]int    // container -> num running execs, guarded by lifecycleMu
+	runningExecs map[*runv.Container]int    // container -> num running execs, guarded by lifecycleMu
 	// container -> subscription to exec exits/changes to s.runningExecs[container],
 	// guarded by lifecycleMu
-	execCountSubscribers map[*runc.Container]chan<- int
+	execCountSubscribers map[*runv.Container]chan<- int
 	// container -> init exits, guarded by lifecycleMu
 	// Used to stash container init process exits, so that we can hold them
 	// until after we've made sure to publish all the container's exec exits.
@@ -133,17 +134,19 @@ type service struct {
 	// reaped by the shim.
 	// Note that this flag gets updated before the container's [process.Init.Status]
 	// is transitioned to "stopped".
-	containerInitExit map[*runc.Container]runcC.Exit
+	containerInitExit map[*runv.Container]gorunc.Exit
 	// Subscriptions to exits for PIDs. Adding/deleting subscriptions and
 	// dereferencing the subscription pointers must only be done while holding
 	// lifecycleMu.
-	exitSubscribers map[*map[int][]runcC.Exit]struct{}
+	exitSubscribers map[*map[int][]gorunc.Exit]struct{}
 
 	shutdown shutdown.Service
+
+	creator runtime.RuntimeCreator
 }
 
 type containerProcess struct {
-	Container *runc.Container
+	Container *runv.Container
 	Process   process.Process
 }
 
@@ -162,8 +165,8 @@ type containerProcess struct {
 // The returned cleanup closure releases resources used to handle early exits.
 // It must be called before the caller of preStart returns, otherwise severe
 // memory leaks will occur.
-func (s *service) preStart(c *runc.Container) (handleStarted func(*runc.Container, process.Process), cleanup func()) {
-	exits := make(map[int][]runcC.Exit)
+func (s *service) preStart(c *runv.Container) (handleStarted func(*runv.Container, process.Process), cleanup func()) {
+	exits := make(map[int][]gorunc.Exit)
 	s.exitSubscribers[&exits] = struct{}{}
 
 	if c != nil {
@@ -183,7 +186,7 @@ func (s *service) preStart(c *runc.Container) (handleStarted func(*runc.Containe
 		}
 	}
 
-	handleStarted = func(c *runc.Container, p process.Process) {
+	handleStarted = func(c *runv.Container, p process.Process) {
 		var pid int
 		if p != nil {
 			pid = p.Pid()
@@ -230,7 +233,7 @@ func (s *service) Create(ctx context.Context, r *taskAPI.CreateTaskRequest) (_ *
 	s.lifecycleMu.Unlock()
 	defer cleanup()
 
-	container, err := runc.NewContainer(ctx, s.platform, r)
+	container, err := runv.NewContainer(ctx, s.platform, r, s.creator)
 	if err != nil {
 		return nil, err
 	}
@@ -274,7 +277,7 @@ func (s *service) Start(ctx context.Context, r *taskAPI.StartRequest) (*taskAPI.
 		return nil, err
 	}
 
-	var cinit *runc.Container
+	var cinit *runv.Container
 	s.lifecycleMu.Lock()
 	if r.ExecID == "" {
 		cinit = container
@@ -703,9 +706,9 @@ func (s *service) send(evt interface{}) {
 // namespace, otherwise all other processes have been reaped already).
 // - waiting for the container's running exec counter to reach 0.
 // - finally, publishing the init exit.
-func (s *service) handleInitExit(e runcC.Exit, c *runc.Container, p *process.Init) {
+func (s *service) handleInitExit(e gorunc.Exit, c *runv.Container, p *process.Init) {
 	// kill all running container processes
-	if runc.ShouldKillAllOnExit(s.context, c.Bundle) {
+	if runv.ShouldKillAllOnExit(s.context, c.Bundle) {
 		if err := p.KillAll(s.context); err != nil {
 			log.G(s.context).WithError(err).WithField("id", p.ID()).
 				Error("failed to kill init's children")
@@ -747,7 +750,7 @@ func (s *service) handleInitExit(e runcC.Exit, c *runc.Container, p *process.Ini
 	}()
 }
 
-func (s *service) handleProcessExit(e runcC.Exit, c *runc.Container, p process.Process) {
+func (s *service) handleProcessExit(e gorunc.Exit, c *runv.Container, p process.Process) {
 	p.SetExited(e.Status)
 	s.send(&eventstypes.TaskExit{
 		ContainerID: c.ID,
@@ -766,7 +769,7 @@ func (s *service) handleProcessExit(e runcC.Exit, c *runc.Container, p process.P
 	}
 }
 
-func (s *service) getContainerPids(ctx context.Context, container *runc.Container) ([]uint32, error) {
+func (s *service) getContainerPids(ctx context.Context, container *runv.Container) ([]uint32, error) {
 	p, err := container.Process("")
 	if err != nil {
 		return nil, errgrpc.ToGRPC(err)
@@ -786,7 +789,7 @@ func (s *service) forward(ctx context.Context, publisher shim.Publisher) {
 	ns, _ := namespaces.Namespace(ctx)
 	ctx = namespaces.WithNamespace(context.Background(), ns)
 	for e := range s.events {
-		err := publisher.Publish(ctx, runtime.GetTopic(e), e)
+		err := publisher.Publish(ctx, containerdruntime.GetTopic(e), e)
 		if err != nil {
 			log.G(ctx).WithError(err).Error("post event")
 		}
@@ -794,7 +797,7 @@ func (s *service) forward(ctx context.Context, publisher shim.Publisher) {
 	publisher.Close()
 }
 
-func (s *service) getContainer(id string) (*runc.Container, error) {
+func (s *service) getContainer(id string) (*runv.Container, error) {
 	s.mu.Lock()
 	container := s.containers[id]
 	s.mu.Unlock()
@@ -810,7 +813,7 @@ func (s *service) initPlatform() error {
 	if s.platform != nil {
 		return nil
 	}
-	p, err := runc.NewPlatform()
+	p, err := runv.NewPlatform()
 	if err != nil {
 		return err
 	}

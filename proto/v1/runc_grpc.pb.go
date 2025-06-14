@@ -19,21 +19,25 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	RuncService_Ping_FullMethodName    = "/runv.v1.RuncService/Ping"
-	RuncService_List_FullMethodName    = "/runv.v1.RuncService/List"
-	RuncService_State_FullMethodName   = "/runv.v1.RuncService/State"
-	RuncService_Create_FullMethodName  = "/runv.v1.RuncService/Create"
-	RuncService_Start_FullMethodName   = "/runv.v1.RuncService/Start"
-	RuncService_Exec_FullMethodName    = "/runv.v1.RuncService/Exec"
-	RuncService_Run_FullMethodName     = "/runv.v1.RuncService/Run"
-	RuncService_Delete_FullMethodName  = "/runv.v1.RuncService/Delete"
-	RuncService_Kill_FullMethodName    = "/runv.v1.RuncService/Kill"
-	RuncService_Stats_FullMethodName   = "/runv.v1.RuncService/Stats"
-	RuncService_Pause_FullMethodName   = "/runv.v1.RuncService/Pause"
-	RuncService_Resume_FullMethodName  = "/runv.v1.RuncService/Resume"
-	RuncService_Ps_FullMethodName      = "/runv.v1.RuncService/Ps"
-	RuncService_Top_FullMethodName     = "/runv.v1.RuncService/Top"
-	RuncService_Version_FullMethodName = "/runv.v1.RuncService/Version"
+	RuncService_Ping_FullMethodName       = "/runv.v1.RuncService/Ping"
+	RuncService_List_FullMethodName       = "/runv.v1.RuncService/List"
+	RuncService_State_FullMethodName      = "/runv.v1.RuncService/State"
+	RuncService_Create_FullMethodName     = "/runv.v1.RuncService/Create"
+	RuncService_Start_FullMethodName      = "/runv.v1.RuncService/Start"
+	RuncService_Exec_FullMethodName       = "/runv.v1.RuncService/Exec"
+	RuncService_Run_FullMethodName        = "/runv.v1.RuncService/Run"
+	RuncService_Delete_FullMethodName     = "/runv.v1.RuncService/Delete"
+	RuncService_Kill_FullMethodName       = "/runv.v1.RuncService/Kill"
+	RuncService_Stats_FullMethodName      = "/runv.v1.RuncService/Stats"
+	RuncService_Pause_FullMethodName      = "/runv.v1.RuncService/Pause"
+	RuncService_Resume_FullMethodName     = "/runv.v1.RuncService/Resume"
+	RuncService_Ps_FullMethodName         = "/runv.v1.RuncService/Ps"
+	RuncService_Top_FullMethodName        = "/runv.v1.RuncService/Top"
+	RuncService_Version_FullMethodName    = "/runv.v1.RuncService/Version"
+	RuncService_Checkpoint_FullMethodName = "/runv.v1.RuncService/Checkpoint"
+	RuncService_Restore_FullMethodName    = "/runv.v1.RuncService/Restore"
+	RuncService_Events_FullMethodName     = "/runv.v1.RuncService/Events"
+	RuncService_Update_FullMethodName     = "/runv.v1.RuncService/Update"
 )
 
 // RuncServiceClient is the client API for RuncService service.
@@ -70,6 +74,14 @@ type RuncServiceClient interface {
 	Top(ctx context.Context, in *RuncTopRequest, opts ...grpc.CallOption) (*RuncTopResponse, error)
 	// Version returns the runc and runtime-spec versions
 	Version(ctx context.Context, in *RuncVersionRequest, opts ...grpc.CallOption) (*RuncVersionResponse, error)
+	// Checkpoint checkpoints the container
+	Checkpoint(ctx context.Context, in *RuncCheckpointRequest, opts ...grpc.CallOption) (*RuncCheckpointResponse, error)
+	// Restore restores the container from a checkpoint
+	Restore(ctx context.Context, in *RuncRestoreRequest, opts ...grpc.CallOption) (*RuncRestoreResponse, error)
+	// Events returns the events for the container
+	Events(ctx context.Context, in *RuncEventsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[RuncEvent], error)
+	// Update updates the container resources
+	Update(ctx context.Context, in *RuncUpdateRequest, opts ...grpc.CallOption) (*RuncUpdateResponse, error)
 }
 
 type runcServiceClient struct {
@@ -230,6 +242,55 @@ func (c *runcServiceClient) Version(ctx context.Context, in *RuncVersionRequest,
 	return out, nil
 }
 
+func (c *runcServiceClient) Checkpoint(ctx context.Context, in *RuncCheckpointRequest, opts ...grpc.CallOption) (*RuncCheckpointResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RuncCheckpointResponse)
+	err := c.cc.Invoke(ctx, RuncService_Checkpoint_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runcServiceClient) Restore(ctx context.Context, in *RuncRestoreRequest, opts ...grpc.CallOption) (*RuncRestoreResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RuncRestoreResponse)
+	err := c.cc.Invoke(ctx, RuncService_Restore_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *runcServiceClient) Events(ctx context.Context, in *RuncEventsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[RuncEvent], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &RuncService_ServiceDesc.Streams[0], RuncService_Events_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[RuncEventsRequest, RuncEvent]{ClientStream: stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type RuncService_EventsClient = grpc.ServerStreamingClient[RuncEvent]
+
+func (c *runcServiceClient) Update(ctx context.Context, in *RuncUpdateRequest, opts ...grpc.CallOption) (*RuncUpdateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RuncUpdateResponse)
+	err := c.cc.Invoke(ctx, RuncService_Update_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RuncServiceServer is the server API for RuncService service.
 // All implementations should embed UnimplementedRuncServiceServer
 // for forward compatibility.
@@ -264,6 +325,14 @@ type RuncServiceServer interface {
 	Top(context.Context, *RuncTopRequest) (*RuncTopResponse, error)
 	// Version returns the runc and runtime-spec versions
 	Version(context.Context, *RuncVersionRequest) (*RuncVersionResponse, error)
+	// Checkpoint checkpoints the container
+	Checkpoint(context.Context, *RuncCheckpointRequest) (*RuncCheckpointResponse, error)
+	// Restore restores the container from a checkpoint
+	Restore(context.Context, *RuncRestoreRequest) (*RuncRestoreResponse, error)
+	// Events returns the events for the container
+	Events(*RuncEventsRequest, grpc.ServerStreamingServer[RuncEvent]) error
+	// Update updates the container resources
+	Update(context.Context, *RuncUpdateRequest) (*RuncUpdateResponse, error)
 }
 
 // UnimplementedRuncServiceServer should be embedded to have
@@ -317,6 +386,18 @@ func (UnimplementedRuncServiceServer) Top(context.Context, *RuncTopRequest) (*Ru
 }
 func (UnimplementedRuncServiceServer) Version(context.Context, *RuncVersionRequest) (*RuncVersionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Version not implemented")
+}
+func (UnimplementedRuncServiceServer) Checkpoint(context.Context, *RuncCheckpointRequest) (*RuncCheckpointResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Checkpoint not implemented")
+}
+func (UnimplementedRuncServiceServer) Restore(context.Context, *RuncRestoreRequest) (*RuncRestoreResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Restore not implemented")
+}
+func (UnimplementedRuncServiceServer) Events(*RuncEventsRequest, grpc.ServerStreamingServer[RuncEvent]) error {
+	return status.Errorf(codes.Unimplemented, "method Events not implemented")
+}
+func (UnimplementedRuncServiceServer) Update(context.Context, *RuncUpdateRequest) (*RuncUpdateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
 func (UnimplementedRuncServiceServer) testEmbeddedByValue() {}
 
@@ -608,6 +689,71 @@ func _RuncService_Version_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RuncService_Checkpoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RuncCheckpointRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuncServiceServer).Checkpoint(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuncService_Checkpoint_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuncServiceServer).Checkpoint(ctx, req.(*RuncCheckpointRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuncService_Restore_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RuncRestoreRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuncServiceServer).Restore(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuncService_Restore_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuncServiceServer).Restore(ctx, req.(*RuncRestoreRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuncService_Events_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(RuncEventsRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(RuncServiceServer).Events(m, &grpc.GenericServerStream[RuncEventsRequest, RuncEvent]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type RuncService_EventsServer = grpc.ServerStreamingServer[RuncEvent]
+
+func _RuncService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RuncUpdateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuncServiceServer).Update(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuncService_Update_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuncServiceServer).Update(ctx, req.(*RuncUpdateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RuncService_ServiceDesc is the grpc.ServiceDesc for RuncService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -675,7 +821,25 @@ var RuncService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "Version",
 			Handler:    _RuncService_Version_Handler,
 		},
+		{
+			MethodName: "Checkpoint",
+			Handler:    _RuncService_Checkpoint_Handler,
+		},
+		{
+			MethodName: "Restore",
+			Handler:    _RuncService_Restore_Handler,
+		},
+		{
+			MethodName: "Update",
+			Handler:    _RuncService_Update_Handler,
+		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "Events",
+			Handler:       _RuncService_Events_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "v1/runc.proto",
 }

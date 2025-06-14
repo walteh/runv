@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-package runc
+package runv
 
 import (
 	"context"
@@ -39,10 +39,11 @@ import (
 	"github.com/containerd/containerd/v2/pkg/namespaces"
 	"github.com/containerd/containerd/v2/pkg/stdio"
 	"github.com/walteh/runv/cmd/containerd-shim-runv-v2/process"
+	"github.com/walteh/runv/core/runc/runtime"
 )
 
 // NewContainer returns a new runc container
-func NewContainer(ctx context.Context, platform stdio.Platform, r *task.CreateTaskRequest) (_ *Container, retErr error) {
+func NewContainer(ctx context.Context, platform stdio.Platform, r *task.CreateTaskRequest, creator runtime.RuntimeCreator) (_ *Container, retErr error) {
 	ns, err := namespaces.NamespaceRequired(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("create namespace: %w", err)
@@ -128,6 +129,7 @@ func NewContainer(ctx context.Context, platform stdio.Platform, r *task.CreateTa
 		config,
 		opts,
 		rootfs,
+		creator,
 	)
 	if err != nil {
 		return nil, errgrpc.ToGRPC(err)
@@ -198,9 +200,22 @@ func WriteRuntime(path, runtime string) error {
 	return os.WriteFile(filepath.Join(path, "runtime"), []byte(runtime), 0600)
 }
 
-func newInit(ctx context.Context, path, workDir, namespace string, platform stdio.Platform,
-	r *process.CreateConfig, options *options.Options, rootfs string) (*process.Init, error) {
-	runtime := process.NewRunc(options.Root, path, namespace, options.BinaryName, options.SystemdCgroup)
+func newInit(
+	ctx context.Context,
+	path, workDir, namespace string,
+	platform stdio.Platform,
+	r *process.CreateConfig,
+	options *options.Options,
+	rootfs string,
+	creator runtime.RuntimeCreator,
+) (*process.Init, error) {
+	runtime := creator.Create(ctx, &runtime.RuntimeOptions{
+		Root:          options.Root,
+		Path:          path,
+		Namespace:     namespace,
+		Runtime:       options.BinaryName,
+		SystemdCgroup: options.SystemdCgroup,
+	})
 	p := process.New(r.ID, runtime, stdio.Stdio{
 		Stdin:    r.Stdin,
 		Stdout:   r.Stdout,

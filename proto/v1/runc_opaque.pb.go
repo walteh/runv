@@ -119,6 +119,20 @@ func NewRuncCreateRequestE(b *RuncCreateRequest_builder) (*RuncCreateRequest, er
 	return m, nil
 }
 
+// NewRuncCreateOptions creates a new RuncCreateOptions using the builder
+func NewRuncCreateOptions(b *RuncCreateOptions_builder) *RuncCreateOptions {
+	return b.Build()
+}
+
+// NewRuncCreateOptionsE creates a new RuncCreateOptions using the builder with validation
+func NewRuncCreateOptionsE(b *RuncCreateOptions_builder) (*RuncCreateOptions, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // NewRuncCreateResponse creates a new RuncCreateResponse using the builder
 func NewRuncCreateResponse(b *RuncCreateResponse_builder) *RuncCreateResponse {
 	return b.Build()
@@ -161,6 +175,20 @@ func NewRuncStartResponseE(b *RuncStartResponse_builder) (*RuncStartResponse, er
 	return m, nil
 }
 
+// NewRuncExecRequest creates a new RuncExecRequest using the builder
+func NewRuncExecRequest(b *RuncExecRequest_builder) *RuncExecRequest {
+	return b.Build()
+}
+
+// NewRuncExecRequestE creates a new RuncExecRequest using the builder with validation
+func NewRuncExecRequestE(b *RuncExecRequest_builder) (*RuncExecRequest, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // NewRuncProcessSpec creates a new RuncProcessSpec using the builder
 func NewRuncProcessSpec(b *RuncProcessSpec_builder) *RuncProcessSpec {
 	return b.Build()
@@ -175,13 +203,13 @@ func NewRuncProcessSpecE(b *RuncProcessSpec_builder) (*RuncProcessSpec, error) {
 	return m, nil
 }
 
-// NewRuncExecRequest creates a new RuncExecRequest using the builder
-func NewRuncExecRequest(b *RuncExecRequest_builder) *RuncExecRequest {
+// NewRuncExecOptions creates a new RuncExecOptions using the builder
+func NewRuncExecOptions(b *RuncExecOptions_builder) *RuncExecOptions {
 	return b.Build()
 }
 
-// NewRuncExecRequestE creates a new RuncExecRequest using the builder with validation
-func NewRuncExecRequestE(b *RuncExecRequest_builder) (*RuncExecRequest, error) {
+// NewRuncExecOptionsE creates a new RuncExecOptions using the builder with validation
+func NewRuncExecOptionsE(b *RuncExecOptions_builder) (*RuncExecOptions, error) {
 	m := b.Build()
 	if err := protovalidate.Validate(m); err != nil {
 		return nil, err
@@ -245,6 +273,20 @@ func NewRuncDeleteRequestE(b *RuncDeleteRequest_builder) (*RuncDeleteRequest, er
 	return m, nil
 }
 
+// NewRuncDeleteOptions creates a new RuncDeleteOptions using the builder
+func NewRuncDeleteOptions(b *RuncDeleteOptions_builder) *RuncDeleteOptions {
+	return b.Build()
+}
+
+// NewRuncDeleteOptionsE creates a new RuncDeleteOptions using the builder with validation
+func NewRuncDeleteOptionsE(b *RuncDeleteOptions_builder) (*RuncDeleteOptions, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // NewRuncDeleteResponse creates a new RuncDeleteResponse using the builder
 func NewRuncDeleteResponse(b *RuncDeleteResponse_builder) *RuncDeleteResponse {
 	return b.Build()
@@ -266,6 +308,20 @@ func NewRuncKillRequest(b *RuncKillRequest_builder) *RuncKillRequest {
 
 // NewRuncKillRequestE creates a new RuncKillRequest using the builder with validation
 func NewRuncKillRequestE(b *RuncKillRequest_builder) (*RuncKillRequest, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// NewRuncKillOptions creates a new RuncKillOptions using the builder
+func NewRuncKillOptions(b *RuncKillOptions_builder) *RuncKillOptions {
+	return b.Build()
+}
+
+// NewRuncKillOptionsE creates a new RuncKillOptions using the builder with validation
+func NewRuncKillOptionsE(b *RuncKillOptions_builder) (*RuncKillOptions, error) {
 	m := b.Build()
 	if err := protovalidate.Validate(m); err != nil {
 		return nil, err
@@ -616,6 +672,216 @@ func NewRuncVersionResponse(b *RuncVersionResponse_builder) *RuncVersionResponse
 
 // NewRuncVersionResponseE creates a new RuncVersionResponse using the builder with validation
 func NewRuncVersionResponseE(b *RuncVersionResponse_builder) (*RuncVersionResponse, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// NewRuncCheckpointAction creates a new RuncCheckpointAction using the builder
+func NewRuncCheckpointAction(b *RuncCheckpointAction_builder) *RuncCheckpointAction {
+	return b.Build()
+}
+
+// NewRuncCheckpointActionE creates a new RuncCheckpointAction using the builder with validation
+func NewRuncCheckpointActionE(b *RuncCheckpointAction_builder) (*RuncCheckpointAction, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// NewRuncCheckpointRequest creates a new RuncCheckpointRequest using the builder
+func NewRuncCheckpointRequest(b *RuncCheckpointRequest_builder) *RuncCheckpointRequest {
+	return b.Build()
+}
+
+// NewRuncCheckpointRequestE creates a new RuncCheckpointRequest using the builder with validation
+func NewRuncCheckpointRequestE(b *RuncCheckpointRequest_builder) (*RuncCheckpointRequest, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// NewRuncConsoleSocket creates a new RuncConsoleSocket using the builder
+func NewRuncConsoleSocket(b *RuncConsoleSocket_builder) *RuncConsoleSocket {
+	return b.Build()
+}
+
+// NewRuncConsoleSocketE creates a new RuncConsoleSocket using the builder with validation
+func NewRuncConsoleSocketE(b *RuncConsoleSocket_builder) (*RuncConsoleSocket, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// NewSetExecCommandOptions creates a new SetExecCommandOptions using the builder
+func NewSetExecCommandOptions(b *SetExecCommandOptions_builder) *SetExecCommandOptions {
+	return b.Build()
+}
+
+// NewSetExecCommandOptionsE creates a new SetExecCommandOptions using the builder with validation
+func NewSetExecCommandOptionsE(b *SetExecCommandOptions_builder) (*SetExecCommandOptions, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// NewRuncIO creates a new RuncIO using the builder
+func NewRuncIO(b *RuncIO_builder) *RuncIO {
+	return b.Build()
+}
+
+// NewRuncIOE creates a new RuncIO using the builder with validation
+func NewRuncIOE(b *RuncIO_builder) (*RuncIO, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// NewRuncCheckpointResponse creates a new RuncCheckpointResponse using the builder
+func NewRuncCheckpointResponse(b *RuncCheckpointResponse_builder) *RuncCheckpointResponse {
+	return b.Build()
+}
+
+// NewRuncCheckpointResponseE creates a new RuncCheckpointResponse using the builder with validation
+func NewRuncCheckpointResponseE(b *RuncCheckpointResponse_builder) (*RuncCheckpointResponse, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// NewRuncRestoreRequest creates a new RuncRestoreRequest using the builder
+func NewRuncRestoreRequest(b *RuncRestoreRequest_builder) *RuncRestoreRequest {
+	return b.Build()
+}
+
+// NewRuncRestoreRequestE creates a new RuncRestoreRequest using the builder with validation
+func NewRuncRestoreRequestE(b *RuncRestoreRequest_builder) (*RuncRestoreRequest, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// NewRuncRestoreResponse creates a new RuncRestoreResponse using the builder
+func NewRuncRestoreResponse(b *RuncRestoreResponse_builder) *RuncRestoreResponse {
+	return b.Build()
+}
+
+// NewRuncRestoreResponseE creates a new RuncRestoreResponse using the builder with validation
+func NewRuncRestoreResponseE(b *RuncRestoreResponse_builder) (*RuncRestoreResponse, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// NewRuncCheckpointOptions creates a new RuncCheckpointOptions using the builder
+func NewRuncCheckpointOptions(b *RuncCheckpointOptions_builder) *RuncCheckpointOptions {
+	return b.Build()
+}
+
+// NewRuncCheckpointOptionsE creates a new RuncCheckpointOptions using the builder with validation
+func NewRuncCheckpointOptionsE(b *RuncCheckpointOptions_builder) (*RuncCheckpointOptions, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// NewRuncRestoreOptions creates a new RuncRestoreOptions using the builder
+func NewRuncRestoreOptions(b *RuncRestoreOptions_builder) *RuncRestoreOptions {
+	return b.Build()
+}
+
+// NewRuncRestoreOptionsE creates a new RuncRestoreOptions using the builder with validation
+func NewRuncRestoreOptionsE(b *RuncRestoreOptions_builder) (*RuncRestoreOptions, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// NewRuncEventsRequest creates a new RuncEventsRequest using the builder
+func NewRuncEventsRequest(b *RuncEventsRequest_builder) *RuncEventsRequest {
+	return b.Build()
+}
+
+// NewRuncEventsRequestE creates a new RuncEventsRequest using the builder with validation
+func NewRuncEventsRequestE(b *RuncEventsRequest_builder) (*RuncEventsRequest, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// NewRuncEvent creates a new RuncEvent using the builder
+func NewRuncEvent(b *RuncEvent_builder) *RuncEvent {
+	return b.Build()
+}
+
+// NewRuncEventE creates a new RuncEvent using the builder with validation
+func NewRuncEventE(b *RuncEvent_builder) (*RuncEvent, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// NewRuncUpdateRequest creates a new RuncUpdateRequest using the builder
+func NewRuncUpdateRequest(b *RuncUpdateRequest_builder) *RuncUpdateRequest {
+	return b.Build()
+}
+
+// NewRuncUpdateRequestE creates a new RuncUpdateRequest using the builder with validation
+func NewRuncUpdateRequestE(b *RuncUpdateRequest_builder) (*RuncUpdateRequest, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// NewRuncUpdateResponse creates a new RuncUpdateResponse using the builder
+func NewRuncUpdateResponse(b *RuncUpdateResponse_builder) *RuncUpdateResponse {
+	return b.Build()
+}
+
+// NewRuncUpdateResponseE creates a new RuncUpdateResponse using the builder with validation
+func NewRuncUpdateResponseE(b *RuncUpdateResponse_builder) (*RuncUpdateResponse, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// NewRuncLinuxResources creates a new RuncLinuxResources using the builder
+func NewRuncLinuxResources(b *RuncLinuxResources_builder) *RuncLinuxResources {
+	return b.Build()
+}
+
+// NewRuncLinuxResourcesE creates a new RuncLinuxResources using the builder with validation
+func NewRuncLinuxResourcesE(b *RuncLinuxResources_builder) (*RuncLinuxResources, error) {
 	m := b.Build()
 	if err := protovalidate.Validate(m); err != nil {
 		return nil, err

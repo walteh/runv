@@ -34,7 +34,7 @@ import (
 	"github.com/containerd/containerd/v2/pkg/stdio"
 	"github.com/containerd/errdefs"
 	"github.com/containerd/fifo"
-	runc "github.com/containerd/go-runc"
+	gorunc "github.com/containerd/go-runc"
 	specs "github.com/opencontainers/runtime-spec/specs-go"
 )
 
@@ -179,12 +179,12 @@ func (e *execProcess) start(ctx context.Context) (err error) {
 	defer e.pid.Unlock()
 
 	var (
-		socket  *runc.Socket
+		socket  *gorunc.Socket
 		pio     *processIO
 		pidFile = newExecPidFile(e.path, e.id)
 	)
 	if e.stdio.Terminal {
-		if socket, err = runc.NewTempConsoleSocket(); err != nil {
+		if socket, err = gorunc.NewTempConsoleSocket(); err != nil {
 			return fmt.Errorf("failed to create runc console socket: %w", err)
 		}
 		defer socket.Close()
@@ -194,7 +194,7 @@ func (e *execProcess) start(ctx context.Context) (err error) {
 		}
 		e.io = pio
 	}
-	opts := &runc.ExecOpts{
+	opts := &gorunc.ExecOpts{
 		PidFile: pidFile.Path(),
 		Detach:  true,
 	}
@@ -204,6 +204,7 @@ func (e *execProcess) start(ctx context.Context) (err error) {
 	if socket != nil {
 		opts.ConsoleSocket = socket
 	}
+	// gorunc:call Exec
 	if err := e.parent.runtime.Exec(ctx, e.parent.id, e.spec, opts); err != nil {
 		close(e.waitBlock)
 		return e.parent.runtimeError(err, "OCI runtime exec failed")

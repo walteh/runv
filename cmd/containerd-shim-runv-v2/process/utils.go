@@ -31,6 +31,7 @@ import (
 
 	"github.com/containerd/errdefs"
 	runc "github.com/containerd/go-runc"
+	"github.com/walteh/runv/core/runc/runtime"
 	"golang.org/x/sys/unix"
 )
 
@@ -54,12 +55,12 @@ func (s *safePid) get() int {
 }
 
 // TODO(mlaventure): move to runc package?
-func getLastRuntimeError(r *runc.Runc) (string, error) {
-	if r.Log == "" {
+func getLastRuntimeError(r runtime.Runtime) (string, error) {
+	if r.LogFilePath() == "" {
 		return "", nil
 	}
 
-	f, err := os.OpenFile(r.Log, os.O_RDONLY, 0400)
+	f, err := os.OpenFile(r.LogFilePath(), os.O_RDONLY, 0400)
 	if err != nil {
 		return "", err
 	}
