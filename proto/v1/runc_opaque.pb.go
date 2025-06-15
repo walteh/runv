@@ -7,6 +7,34 @@ import (
 	protovalidate "buf.build/go/protovalidate"
 )
 
+// NewRuncLogFilePathRequest creates a new RuncLogFilePathRequest using the builder
+func NewRuncLogFilePathRequest(b *RuncLogFilePathRequest_builder) *RuncLogFilePathRequest {
+	return b.Build()
+}
+
+// NewRuncLogFilePathRequestE creates a new RuncLogFilePathRequest using the builder with validation
+func NewRuncLogFilePathRequestE(b *RuncLogFilePathRequest_builder) (*RuncLogFilePathRequest, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// NewRuncLogFilePathResponse creates a new RuncLogFilePathResponse using the builder
+func NewRuncLogFilePathResponse(b *RuncLogFilePathResponse_builder) *RuncLogFilePathResponse {
+	return b.Build()
+}
+
+// NewRuncLogFilePathResponseE creates a new RuncLogFilePathResponse using the builder with validation
+func NewRuncLogFilePathResponseE(b *RuncLogFilePathResponse_builder) (*RuncLogFilePathResponse, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // NewPingRequest creates a new PingRequest using the builder
 func NewPingRequest(b *PingRequest_builder) *PingRequest {
 	return b.Build()

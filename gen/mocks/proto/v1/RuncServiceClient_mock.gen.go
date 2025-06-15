@@ -43,6 +43,9 @@ var _ runvv1.RuncServiceClient = &MockRuncServiceClient{}
 //			ListFunc: func(ctx context.Context, in *runvv1.RuncListRequest, opts ...grpc.CallOption) (*runvv1.RuncListResponse, error) {
 //				panic("mock out the List method")
 //			},
+//			LogFilePathFunc: func(ctx context.Context, in *runvv1.RuncLogFilePathRequest, opts ...grpc.CallOption) (*runvv1.RuncLogFilePathResponse, error) {
+//				panic("mock out the LogFilePath method")
+//			},
 //			PauseFunc: func(ctx context.Context, in *runvv1.RuncPauseRequest, opts ...grpc.CallOption) (*runvv1.RuncPauseResponse, error) {
 //				panic("mock out the Pause method")
 //			},
@@ -106,6 +109,9 @@ type MockRuncServiceClient struct {
 
 	// ListFunc mocks the List method.
 	ListFunc func(ctx context.Context, in *runvv1.RuncListRequest, opts ...grpc.CallOption) (*runvv1.RuncListResponse, error)
+
+	// LogFilePathFunc mocks the LogFilePath method.
+	LogFilePathFunc func(ctx context.Context, in *runvv1.RuncLogFilePathRequest, opts ...grpc.CallOption) (*runvv1.RuncLogFilePathResponse, error)
 
 	// PauseFunc mocks the Pause method.
 	PauseFunc func(ctx context.Context, in *runvv1.RuncPauseRequest, opts ...grpc.CallOption) (*runvv1.RuncPauseResponse, error)
@@ -205,6 +211,15 @@ type MockRuncServiceClient struct {
 			Ctx context.Context
 			// In is the in argument value.
 			In *runvv1.RuncListRequest
+			// Opts is the opts argument value.
+			Opts []grpc.CallOption
+		}
+		// LogFilePath holds details about calls to the LogFilePath method.
+		LogFilePath []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+			// In is the in argument value.
+			In *runvv1.RuncLogFilePathRequest
 			// Opts is the opts argument value.
 			Opts []grpc.CallOption
 		}
@@ -317,25 +332,26 @@ type MockRuncServiceClient struct {
 			Opts []grpc.CallOption
 		}
 	}
-	lockCheckpoint sync.RWMutex
-	lockCreate     sync.RWMutex
-	lockDelete     sync.RWMutex
-	lockEvents     sync.RWMutex
-	lockExec       sync.RWMutex
-	lockKill       sync.RWMutex
-	lockList       sync.RWMutex
-	lockPause      sync.RWMutex
-	lockPing       sync.RWMutex
-	lockPs         sync.RWMutex
-	lockRestore    sync.RWMutex
-	lockResume     sync.RWMutex
-	lockRun        sync.RWMutex
-	lockStart      sync.RWMutex
-	lockState      sync.RWMutex
-	lockStats      sync.RWMutex
-	lockTop        sync.RWMutex
-	lockUpdate     sync.RWMutex
-	lockVersion    sync.RWMutex
+	lockCheckpoint  sync.RWMutex
+	lockCreate      sync.RWMutex
+	lockDelete      sync.RWMutex
+	lockEvents      sync.RWMutex
+	lockExec        sync.RWMutex
+	lockKill        sync.RWMutex
+	lockList        sync.RWMutex
+	lockLogFilePath sync.RWMutex
+	lockPause       sync.RWMutex
+	lockPing        sync.RWMutex
+	lockPs          sync.RWMutex
+	lockRestore     sync.RWMutex
+	lockResume      sync.RWMutex
+	lockRun         sync.RWMutex
+	lockStart       sync.RWMutex
+	lockState       sync.RWMutex
+	lockStats       sync.RWMutex
+	lockTop         sync.RWMutex
+	lockUpdate      sync.RWMutex
+	lockVersion     sync.RWMutex
 }
 
 // Checkpoint calls CheckpointFunc.
@@ -615,6 +631,46 @@ func (mock *MockRuncServiceClient) ListCalls() []struct {
 	mock.lockList.RLock()
 	calls = mock.calls.List
 	mock.lockList.RUnlock()
+	return calls
+}
+
+// LogFilePath calls LogFilePathFunc.
+func (mock *MockRuncServiceClient) LogFilePath(ctx context.Context, in *runvv1.RuncLogFilePathRequest, opts ...grpc.CallOption) (*runvv1.RuncLogFilePathResponse, error) {
+	if mock.LogFilePathFunc == nil {
+		panic("MockRuncServiceClient.LogFilePathFunc: method is nil but RuncServiceClient.LogFilePath was just called")
+	}
+	callInfo := struct {
+		Ctx  context.Context
+		In   *runvv1.RuncLogFilePathRequest
+		Opts []grpc.CallOption
+	}{
+		Ctx:  ctx,
+		In:   in,
+		Opts: opts,
+	}
+	mock.lockLogFilePath.Lock()
+	mock.calls.LogFilePath = append(mock.calls.LogFilePath, callInfo)
+	mock.lockLogFilePath.Unlock()
+	return mock.LogFilePathFunc(ctx, in, opts...)
+}
+
+// LogFilePathCalls gets all the calls that were made to LogFilePath.
+// Check the length with:
+//
+//	len(mockedRuncServiceClient.LogFilePathCalls())
+func (mock *MockRuncServiceClient) LogFilePathCalls() []struct {
+	Ctx  context.Context
+	In   *runvv1.RuncLogFilePathRequest
+	Opts []grpc.CallOption
+} {
+	var calls []struct {
+		Ctx  context.Context
+		In   *runvv1.RuncLogFilePathRequest
+		Opts []grpc.CallOption
+	}
+	mock.lockLogFilePath.RLock()
+	calls = mock.calls.LogFilePath
+	mock.lockLogFilePath.RUnlock()
 	return calls
 }
 

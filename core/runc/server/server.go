@@ -15,6 +15,13 @@ type Server struct {
 	runtimeExtras runtime.RuntimeExtras
 }
 
+// LogFilePath implements runvv1.RuncServiceServer.
+func (s *Server) LogFilePath(context.Context, *runvv1.RuncLogFilePathRequest) (*runvv1.RuncLogFilePathResponse, error) {
+	resp := &runvv1.RuncLogFilePathResponse{}
+	resp.SetPath(s.runtime.LogFilePath())
+	return resp, nil
+}
+
 func NewServer(runtime runtime.Runtime, runtimeExtras runtime.RuntimeExtras) *Server {
 	srv := &Server{
 		runtime:       runtime,

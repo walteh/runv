@@ -83,6 +83,15 @@ service RuncService {
 
 	// Update updates the container resources
 	rpc Update(RuncUpdateRequest) returns (RuncUpdateResponse) {}
+
+
+	rpc LogFilePath(RuncLogFilePathRequest) returns (RuncLogFilePathResponse) {}
+}
+
+message RuncLogFilePathRequest {}
+
+message RuncLogFilePathResponse {
+	string path = 1;
 }
 
 message PingRequest {}

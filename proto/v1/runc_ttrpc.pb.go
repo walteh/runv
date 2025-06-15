@@ -27,6 +27,7 @@ type TTRPCRuncServiceService interface {
 	Restore(context.Context, *RuncRestoreRequest) (*RuncRestoreResponse, error)
 	Events(context.Context, *RuncEventsRequest, TTRPCRuncService_EventsServer) error
 	Update(context.Context, *RuncUpdateRequest) (*RuncUpdateResponse, error)
+	LogFilePath(context.Context, *RuncLogFilePathRequest) (*RuncLogFilePathResponse, error)
 }
 
 type TTRPCRuncService_EventsServer interface {
@@ -171,6 +172,13 @@ func RegisterTTRPCRuncServiceService(srv *ttrpc.Server, svc TTRPCRuncServiceServ
 				}
 				return svc.Update(ctx, &req)
 			},
+			"LogFilePath": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+				var req RuncLogFilePathRequest
+				if err := unmarshal(&req); err != nil {
+					return nil, err
+				}
+				return svc.LogFilePath(ctx, &req)
+			},
 		},
 		Streams: map[string]ttrpc.Stream{
 			"Events": {
@@ -208,6 +216,7 @@ type TTRPCRuncServiceClient interface {
 	Restore(context.Context, *RuncRestoreRequest) (*RuncRestoreResponse, error)
 	Events(context.Context, *RuncEventsRequest) (TTRPCRuncService_EventsClient, error)
 	Update(context.Context, *RuncUpdateRequest) (*RuncUpdateResponse, error)
+	LogFilePath(context.Context, *RuncLogFilePathRequest) (*RuncLogFilePathResponse, error)
 }
 
 type ttrpcruncserviceClient struct {
@@ -388,6 +397,14 @@ func (x *ttrpcruncserviceEventsClient) Recv() (*RuncEvent, error) {
 func (c *ttrpcruncserviceClient) Update(ctx context.Context, req *RuncUpdateRequest) (*RuncUpdateResponse, error) {
 	var resp RuncUpdateResponse
 	if err := c.client.Call(ctx, "runv.v1.RuncService", "Update", req, &resp); err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (c *ttrpcruncserviceClient) LogFilePath(ctx context.Context, req *RuncLogFilePathRequest) (*RuncLogFilePathResponse, error) {
+	var resp RuncLogFilePathResponse
+	if err := c.client.Call(ctx, "runv.v1.RuncService", "LogFilePath", req, &resp); err != nil {
 		return nil, err
 	}
 	return &resp, nil

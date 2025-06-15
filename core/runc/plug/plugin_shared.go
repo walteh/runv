@@ -21,8 +21,20 @@ var Handshake = plugin.HandshakeConfig{
 }
 
 // PluginMap is the map of plugins we can dispense.
-var PluginMap = map[string]plugin.GRPCPlugin{
+var PluginMap = plugin.PluginSet{
 	"runc": &RuntimePlugin{},
+}
+
+const (
+	PluginName = "runc"
+)
+
+func NewRuntimePluginSet(impl runtime.Runtime) plugin.PluginSet {
+	return plugin.PluginSet{
+		PluginName: &RuntimePlugin{
+			Impl: impl,
+		},
+	}
 }
 
 var _ plugin.Plugin = (*RuntimePlugin)(nil)
@@ -39,11 +51,11 @@ type RuntimePlugin struct {
 
 // GRPCPlugin must still implement the Plugin interface
 func (p *RuntimePlugin) Client(b *plugin.MuxBroker, c *rpc.Client) (interface{}, error) {
-	panic("unimplemented")
+	panic(runtime.ReflectNotImplementedError())
 }
 
 func (p *RuntimePlugin) Server(broker *plugin.MuxBroker) (interface{}, error) {
-	panic("unimplemented")
+	panic(runtime.ReflectNotImplementedError())
 }
 
 func (p *RuntimePlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {

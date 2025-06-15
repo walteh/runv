@@ -19,25 +19,26 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	RuncService_Ping_FullMethodName       = "/runv.v1.RuncService/Ping"
-	RuncService_List_FullMethodName       = "/runv.v1.RuncService/List"
-	RuncService_State_FullMethodName      = "/runv.v1.RuncService/State"
-	RuncService_Create_FullMethodName     = "/runv.v1.RuncService/Create"
-	RuncService_Start_FullMethodName      = "/runv.v1.RuncService/Start"
-	RuncService_Exec_FullMethodName       = "/runv.v1.RuncService/Exec"
-	RuncService_Run_FullMethodName        = "/runv.v1.RuncService/Run"
-	RuncService_Delete_FullMethodName     = "/runv.v1.RuncService/Delete"
-	RuncService_Kill_FullMethodName       = "/runv.v1.RuncService/Kill"
-	RuncService_Stats_FullMethodName      = "/runv.v1.RuncService/Stats"
-	RuncService_Pause_FullMethodName      = "/runv.v1.RuncService/Pause"
-	RuncService_Resume_FullMethodName     = "/runv.v1.RuncService/Resume"
-	RuncService_Ps_FullMethodName         = "/runv.v1.RuncService/Ps"
-	RuncService_Top_FullMethodName        = "/runv.v1.RuncService/Top"
-	RuncService_Version_FullMethodName    = "/runv.v1.RuncService/Version"
-	RuncService_Checkpoint_FullMethodName = "/runv.v1.RuncService/Checkpoint"
-	RuncService_Restore_FullMethodName    = "/runv.v1.RuncService/Restore"
-	RuncService_Events_FullMethodName     = "/runv.v1.RuncService/Events"
-	RuncService_Update_FullMethodName     = "/runv.v1.RuncService/Update"
+	RuncService_Ping_FullMethodName        = "/runv.v1.RuncService/Ping"
+	RuncService_List_FullMethodName        = "/runv.v1.RuncService/List"
+	RuncService_State_FullMethodName       = "/runv.v1.RuncService/State"
+	RuncService_Create_FullMethodName      = "/runv.v1.RuncService/Create"
+	RuncService_Start_FullMethodName       = "/runv.v1.RuncService/Start"
+	RuncService_Exec_FullMethodName        = "/runv.v1.RuncService/Exec"
+	RuncService_Run_FullMethodName         = "/runv.v1.RuncService/Run"
+	RuncService_Delete_FullMethodName      = "/runv.v1.RuncService/Delete"
+	RuncService_Kill_FullMethodName        = "/runv.v1.RuncService/Kill"
+	RuncService_Stats_FullMethodName       = "/runv.v1.RuncService/Stats"
+	RuncService_Pause_FullMethodName       = "/runv.v1.RuncService/Pause"
+	RuncService_Resume_FullMethodName      = "/runv.v1.RuncService/Resume"
+	RuncService_Ps_FullMethodName          = "/runv.v1.RuncService/Ps"
+	RuncService_Top_FullMethodName         = "/runv.v1.RuncService/Top"
+	RuncService_Version_FullMethodName     = "/runv.v1.RuncService/Version"
+	RuncService_Checkpoint_FullMethodName  = "/runv.v1.RuncService/Checkpoint"
+	RuncService_Restore_FullMethodName     = "/runv.v1.RuncService/Restore"
+	RuncService_Events_FullMethodName      = "/runv.v1.RuncService/Events"
+	RuncService_Update_FullMethodName      = "/runv.v1.RuncService/Update"
+	RuncService_LogFilePath_FullMethodName = "/runv.v1.RuncService/LogFilePath"
 )
 
 // RuncServiceClient is the client API for RuncService service.
@@ -82,6 +83,7 @@ type RuncServiceClient interface {
 	Events(ctx context.Context, in *RuncEventsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[RuncEvent], error)
 	// Update updates the container resources
 	Update(ctx context.Context, in *RuncUpdateRequest, opts ...grpc.CallOption) (*RuncUpdateResponse, error)
+	LogFilePath(ctx context.Context, in *RuncLogFilePathRequest, opts ...grpc.CallOption) (*RuncLogFilePathResponse, error)
 }
 
 type runcServiceClient struct {
@@ -291,6 +293,16 @@ func (c *runcServiceClient) Update(ctx context.Context, in *RuncUpdateRequest, o
 	return out, nil
 }
 
+func (c *runcServiceClient) LogFilePath(ctx context.Context, in *RuncLogFilePathRequest, opts ...grpc.CallOption) (*RuncLogFilePathResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RuncLogFilePathResponse)
+	err := c.cc.Invoke(ctx, RuncService_LogFilePath_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RuncServiceServer is the server API for RuncService service.
 // All implementations should embed UnimplementedRuncServiceServer
 // for forward compatibility.
@@ -333,6 +345,7 @@ type RuncServiceServer interface {
 	Events(*RuncEventsRequest, grpc.ServerStreamingServer[RuncEvent]) error
 	// Update updates the container resources
 	Update(context.Context, *RuncUpdateRequest) (*RuncUpdateResponse, error)
+	LogFilePath(context.Context, *RuncLogFilePathRequest) (*RuncLogFilePathResponse, error)
 }
 
 // UnimplementedRuncServiceServer should be embedded to have
@@ -398,6 +411,9 @@ func (UnimplementedRuncServiceServer) Events(*RuncEventsRequest, grpc.ServerStre
 }
 func (UnimplementedRuncServiceServer) Update(context.Context, *RuncUpdateRequest) (*RuncUpdateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+}
+func (UnimplementedRuncServiceServer) LogFilePath(context.Context, *RuncLogFilePathRequest) (*RuncLogFilePathResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LogFilePath not implemented")
 }
 func (UnimplementedRuncServiceServer) testEmbeddedByValue() {}
 
@@ -754,6 +770,24 @@ func _RuncService_Update_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RuncService_LogFilePath_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RuncLogFilePathRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuncServiceServer).LogFilePath(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuncService_LogFilePath_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuncServiceServer).LogFilePath(ctx, req.(*RuncLogFilePathRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RuncService_ServiceDesc is the grpc.ServiceDesc for RuncService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -832,6 +866,10 @@ var RuncService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Update",
 			Handler:    _RuncService_Update_Handler,
+		},
+		{
+			MethodName: "LogFilePath",
+			Handler:    _RuncService_LogFilePath_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

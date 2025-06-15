@@ -33,7 +33,11 @@ func (c *Client) ReadPidFile(path string) (int, error) {
 
 // LogFilePath implements runtime.Runtime.
 func (c *Client) LogFilePath() string {
-	panic("unimplemented")
+	resp, err := c.rpc.LogFilePath(context.Background(), &runvv1.RuncLogFilePathRequest{})
+	if err != nil {
+		return ""
+	}
+	return resp.GetPath()
 }
 
 // NewTempConsoleSocket implements runtime.Runtime.
