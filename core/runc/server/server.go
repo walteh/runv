@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"log/slog"
 
 	runc "github.com/containerd/go-runc"
 	"github.com/walteh/runv/core/runc/conversion"
@@ -18,7 +19,8 @@ type Server struct {
 // LogFilePath implements runvv1.RuncServiceServer.
 func (s *Server) LogFilePath(context.Context, *runvv1.RuncLogFilePathRequest) (*runvv1.RuncLogFilePathResponse, error) {
 	resp := &runvv1.RuncLogFilePathResponse{}
-	resp.SetPath(s.runtime.LogFilePath())
+	resp.SetPath(s.runtime.LogFilePath() + "hi")
+	slog.Info("LogFilePath", "path", resp.GetPath())
 	return resp, nil
 }
 

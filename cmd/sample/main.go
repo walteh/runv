@@ -4,13 +4,16 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
+	"net"
 	"os"
 	"os/exec"
 
+	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"github.com/walteh/runv/core/runc/plug"
 	"github.com/walteh/runv/core/runc/runtime"
+	"github.com/walteh/runv/pkg/logging"
 
 	runtimemock "github.com/walteh/runv/gen/mocks/core/runc/runtime"
 )
@@ -22,12 +25,18 @@ var mockRuntime = &runtimemock.MockRuntime{
 	},
 }
 
-func server(ctx context.Context) error {
+func server(ctx context.Context, logPath string) error {
+	proxySock, err := setupServerLogProxy(ctx, logPath)
+	if err != nil {
+		return err
+	}
+
+	logging.NewDefaultDevLogger("server", proxySock)
 
 	plugin.Serve(&plugin.ServeConfig{
 		HandshakeConfig: plug.Handshake,
+		Logger:          hclog.Default(),
 		Plugins:         plug.NewRuntimePluginSet(mockRuntime),
-
 		// A non-nil value here enables gRPC serving for this plugin...
 		GRPCServer: plugin.DefaultGRPCServer,
 	})
@@ -36,6 +45,13 @@ func server(ctx context.Context) error {
 }
 
 func client(ctx context.Context, command string) error {
+	logging.NewDefaultDevLogger("client", os.Stdout)
+
+	proxySock, err := setupClientLogProxy(ctx, os.Stdout)
+	if err != nil {
+		return err
+	}
+
 	execuable, err := os.Executable()
 	if err != nil {
 		return err
@@ -45,7 +61,8 @@ func client(ctx context.Context, command string) error {
 	client := plugin.NewClient(&plugin.ClientConfig{
 		HandshakeConfig:  plug.Handshake,
 		Plugins:          plug.PluginMap,
-		Cmd:              exec.Command(execuable, "server"),
+		Logger:           hclog.Default(),
+		Cmd:              exec.Command(execuable, "server", proxySock),
 		AllowedProtocols: []plugin.Protocol{plugin.ProtocolGRPC},
 	})
 	defer client.Kill()
@@ -78,13 +95,16 @@ func client(ctx context.Context, command string) error {
 
 func main() {
 	// We don't want to see the plugin logs.
-	log.SetOutput(io.Discard)
 
 	ctx := context.Background()
 
 	arg := os.Args[1]
 	if arg == "server" {
-		if err := server(ctx); err != nil {
+		if len(os.Args) < 3 {
+			fmt.Printf("usage: %s server <log-path>\n", os.Args[0])
+			os.Exit(1)
+		}
+		if err := server(ctx, os.Args[2]); err != nil {
 			fmt.Printf("error: %+v\n", err)
 			os.Exit(1)
 		}
@@ -97,4 +117,45 @@ func main() {
 	}
 
 	os.Exit(0)
+}
+
+func setupServerLogProxy(ctx context.Context, path string) (io.Writer, error) {
+	proxySock, err := net.Dial("unix", path)
+	if err != nil {
+		return nil, err
+	}
+
+	return proxySock, nil
+}
+func setupClientLogProxy(ctx context.Context, w io.Writer) (string, error) {
+	tmpFile, err := os.CreateTemp("", "log-proxy-socket")
+	if err != nil {
+		return "", err
+	}
+	tmpFile.Close()
+	os.Remove(tmpFile.Name())
+
+	proxySock, err := net.Listen("unix", tmpFile.Name())
+	if err != nil {
+		return "", err
+	}
+
+	// fwd logs from the proxy socket to stdout
+	go func() {
+		defer proxySock.Close()
+		for {
+			if ctx.Err() != nil {
+				return
+			}
+			conn, err := proxySock.Accept()
+			if err != nil {
+				slog.Error("Failed to accept log proxy connection", "error", err)
+				return
+			}
+			defer conn.Close()
+			go func() { _, _ = io.Copy(w, conn) }()
+		}
+	}()
+
+	return tmpFile.Name(), nil
 }

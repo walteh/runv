@@ -37,6 +37,11 @@ plugins:
       - paths=source_relative
       - enable_protovalidate=true
 
+  - out: .
+    local: ["go", "tool", "github.com/walteh/runv/tools/cmd/protoc-gen-go-slog"]
+    opt:
+      - paths=source_relative
+
     # TO ENABLE CUSTOM VALIDATION GENERATION:
     # 1. comment the following to buf.yaml:
     #   - "buf.build/bufbuild/protovalidate"
