@@ -25,11 +25,26 @@ type RuntimeCreator interface {
 
 //go:mock
 type Runtime interface {
+	// io: yes
+	NewPipeIO(ioUID, ioGID int, opts ...gorunc.IOOpt) (IO, error)
+	// io: yes
+	NewTempConsoleSocket() (Socket, error)
+	// io: yes
+	NewNullIO() (IO, error)
+	// io: yes
+	// console: yes
+	// channel: yes
+	// fd: yes
 	Create(ctx context.Context, id, bundle string, opts *gorunc.CreateOpts) error
+	// io: yes
+	// console: yes
+	// channel: yes
 	Exec(ctx context.Context, id string, spec specs.Process, opts *gorunc.ExecOpts) error
-	Kill(ctx context.Context, id string, signal int, opts *gorunc.KillOpts) error
+	// fd: yes
 	Checkpoint(ctx context.Context, id string, opts *gorunc.CheckpointOpts, actions ...gorunc.CheckpointAction) error
+	// io: yes
 	Restore(ctx context.Context, id, bundle string, opts *gorunc.RestoreOpts) (int, error)
+	Kill(ctx context.Context, id string, signal int, opts *gorunc.KillOpts) error
 	Start(ctx context.Context, id string) error
 	Delete(ctx context.Context, id string, opts *gorunc.DeleteOpts) error
 	Update(ctx context.Context, id string, resources *specs.LinuxResources) error
@@ -37,9 +52,6 @@ type Runtime interface {
 	Pause(ctx context.Context, id string) error
 	Resume(ctx context.Context, id string) error
 	Ps(ctx context.Context, id string) ([]int, error)
-	NewTempConsoleSocket() (Socket, error)
-	NewNullIO() (IO, error)
-	NewPipeIO(ioUID, ioGID int, opts ...gorunc.IOOpt) (IO, error)
 	ReadPidFile(path string) (int, error)
 }
 
@@ -54,6 +66,7 @@ type IO interface {
 	Stdout() io.ReadCloser
 	Stderr() io.ReadCloser
 	Close() error
+	// unused
 	Set(cmd *exec.Cmd)
 }
 

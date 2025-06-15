@@ -25,6 +25,9 @@ var _ runvv1.RuncServiceServer = &MockRuncServiceServer{}
 //			CheckpointFunc: func(context1 context.Context, runcCheckpointRequest *runvv1.RuncCheckpointRequest) (*runvv1.RuncCheckpointResponse, error) {
 //				panic("mock out the Checkpoint method")
 //			},
+//			CloseIOFunc: func(context1 context.Context, runcCloseIORequest *runvv1.RuncCloseIORequest) (*runvv1.RuncCloseIOResponse, error) {
+//				panic("mock out the CloseIO method")
+//			},
 //			CreateFunc: func(context1 context.Context, runcCreateRequest *runvv1.RuncCreateRequest) (*runvv1.RuncCreateResponse, error) {
 //				panic("mock out the Create method")
 //			},
@@ -92,6 +95,9 @@ type MockRuncServiceServer struct {
 	// CheckpointFunc mocks the Checkpoint method.
 	CheckpointFunc func(context1 context.Context, runcCheckpointRequest *runvv1.RuncCheckpointRequest) (*runvv1.RuncCheckpointResponse, error)
 
+	// CloseIOFunc mocks the CloseIO method.
+	CloseIOFunc func(context1 context.Context, runcCloseIORequest *runvv1.RuncCloseIORequest) (*runvv1.RuncCloseIOResponse, error)
+
 	// CreateFunc mocks the Create method.
 	CreateFunc func(context1 context.Context, runcCreateRequest *runvv1.RuncCreateRequest) (*runvv1.RuncCreateResponse, error)
 
@@ -157,6 +163,13 @@ type MockRuncServiceServer struct {
 			Context1 context.Context
 			// RuncCheckpointRequest is the runcCheckpointRequest argument value.
 			RuncCheckpointRequest *runvv1.RuncCheckpointRequest
+		}
+		// CloseIO holds details about calls to the CloseIO method.
+		CloseIO []struct {
+			// Context1 is the context1 argument value.
+			Context1 context.Context
+			// RuncCloseIORequest is the runcCloseIORequest argument value.
+			RuncCloseIORequest *runvv1.RuncCloseIORequest
 		}
 		// Create holds details about calls to the Create method.
 		Create []struct {
@@ -293,6 +306,7 @@ type MockRuncServiceServer struct {
 		}
 	}
 	lockCheckpoint  sync.RWMutex
+	lockCloseIO     sync.RWMutex
 	lockCreate      sync.RWMutex
 	lockDelete      sync.RWMutex
 	lockEvents      sync.RWMutex
@@ -347,6 +361,42 @@ func (mock *MockRuncServiceServer) CheckpointCalls() []struct {
 	mock.lockCheckpoint.RLock()
 	calls = mock.calls.Checkpoint
 	mock.lockCheckpoint.RUnlock()
+	return calls
+}
+
+// CloseIO calls CloseIOFunc.
+func (mock *MockRuncServiceServer) CloseIO(context1 context.Context, runcCloseIORequest *runvv1.RuncCloseIORequest) (*runvv1.RuncCloseIOResponse, error) {
+	if mock.CloseIOFunc == nil {
+		panic("MockRuncServiceServer.CloseIOFunc: method is nil but RuncServiceServer.CloseIO was just called")
+	}
+	callInfo := struct {
+		Context1           context.Context
+		RuncCloseIORequest *runvv1.RuncCloseIORequest
+	}{
+		Context1:           context1,
+		RuncCloseIORequest: runcCloseIORequest,
+	}
+	mock.lockCloseIO.Lock()
+	mock.calls.CloseIO = append(mock.calls.CloseIO, callInfo)
+	mock.lockCloseIO.Unlock()
+	return mock.CloseIOFunc(context1, runcCloseIORequest)
+}
+
+// CloseIOCalls gets all the calls that were made to CloseIO.
+// Check the length with:
+//
+//	len(mockedRuncServiceServer.CloseIOCalls())
+func (mock *MockRuncServiceServer) CloseIOCalls() []struct {
+	Context1           context.Context
+	RuncCloseIORequest *runvv1.RuncCloseIORequest
+} {
+	var calls []struct {
+		Context1           context.Context
+		RuncCloseIORequest *runvv1.RuncCloseIORequest
+	}
+	mock.lockCloseIO.RLock()
+	calls = mock.calls.CloseIO
+	mock.lockCloseIO.RUnlock()
 	return calls
 }
 

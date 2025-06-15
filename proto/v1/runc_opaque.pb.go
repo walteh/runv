@@ -7,6 +7,34 @@ import (
 	protovalidate "buf.build/go/protovalidate"
 )
 
+// NewRuncCloseIORequest creates a new RuncCloseIORequest using the builder
+func NewRuncCloseIORequest(b *RuncCloseIORequest_builder) *RuncCloseIORequest {
+	return b.Build()
+}
+
+// NewRuncCloseIORequestE creates a new RuncCloseIORequest using the builder with validation
+func NewRuncCloseIORequestE(b *RuncCloseIORequest_builder) (*RuncCloseIORequest, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// NewRuncCloseIOResponse creates a new RuncCloseIOResponse using the builder
+func NewRuncCloseIOResponse(b *RuncCloseIOResponse_builder) *RuncCloseIOResponse {
+	return b.Build()
+}
+
+// NewRuncCloseIOResponseE creates a new RuncCloseIOResponse using the builder with validation
+func NewRuncCloseIOResponseE(b *RuncCloseIOResponse_builder) (*RuncCloseIOResponse, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // NewRuncLogFilePathRequest creates a new RuncLogFilePathRequest using the builder
 func NewRuncLogFilePathRequest(b *RuncLogFilePathRequest_builder) *RuncLogFilePathRequest {
 	return b.Build()
@@ -385,146 +413,6 @@ func NewRuncStatsRequestE(b *RuncStatsRequest_builder) (*RuncStatsRequest, error
 	return m, nil
 }
 
-// NewRuncCpuUsage creates a new RuncCpuUsage using the builder
-func NewRuncCpuUsage(b *RuncCpuUsage_builder) *RuncCpuUsage {
-	return b.Build()
-}
-
-// NewRuncCpuUsageE creates a new RuncCpuUsage using the builder with validation
-func NewRuncCpuUsageE(b *RuncCpuUsage_builder) (*RuncCpuUsage, error) {
-	m := b.Build()
-	if err := protovalidate.Validate(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-// NewRuncThrottling creates a new RuncThrottling using the builder
-func NewRuncThrottling(b *RuncThrottling_builder) *RuncThrottling {
-	return b.Build()
-}
-
-// NewRuncThrottlingE creates a new RuncThrottling using the builder with validation
-func NewRuncThrottlingE(b *RuncThrottling_builder) (*RuncThrottling, error) {
-	m := b.Build()
-	if err := protovalidate.Validate(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-// NewRuncCpu creates a new RuncCpu using the builder
-func NewRuncCpu(b *RuncCpu_builder) *RuncCpu {
-	return b.Build()
-}
-
-// NewRuncCpuE creates a new RuncCpu using the builder with validation
-func NewRuncCpuE(b *RuncCpu_builder) (*RuncCpu, error) {
-	m := b.Build()
-	if err := protovalidate.Validate(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-// NewRuncMemoryEntry creates a new RuncMemoryEntry using the builder
-func NewRuncMemoryEntry(b *RuncMemoryEntry_builder) *RuncMemoryEntry {
-	return b.Build()
-}
-
-// NewRuncMemoryEntryE creates a new RuncMemoryEntry using the builder with validation
-func NewRuncMemoryEntryE(b *RuncMemoryEntry_builder) (*RuncMemoryEntry, error) {
-	m := b.Build()
-	if err := protovalidate.Validate(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-// NewRuncMemory creates a new RuncMemory using the builder
-func NewRuncMemory(b *RuncMemory_builder) *RuncMemory {
-	return b.Build()
-}
-
-// NewRuncMemoryE creates a new RuncMemory using the builder with validation
-func NewRuncMemoryE(b *RuncMemory_builder) (*RuncMemory, error) {
-	m := b.Build()
-	if err := protovalidate.Validate(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-// NewRuncPids creates a new RuncPids using the builder
-func NewRuncPids(b *RuncPids_builder) *RuncPids {
-	return b.Build()
-}
-
-// NewRuncPidsE creates a new RuncPids using the builder with validation
-func NewRuncPidsE(b *RuncPids_builder) (*RuncPids, error) {
-	m := b.Build()
-	if err := protovalidate.Validate(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-// NewRuncBlkioEntry creates a new RuncBlkioEntry using the builder
-func NewRuncBlkioEntry(b *RuncBlkioEntry_builder) *RuncBlkioEntry {
-	return b.Build()
-}
-
-// NewRuncBlkioEntryE creates a new RuncBlkioEntry using the builder with validation
-func NewRuncBlkioEntryE(b *RuncBlkioEntry_builder) (*RuncBlkioEntry, error) {
-	m := b.Build()
-	if err := protovalidate.Validate(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-// NewRuncBlkio creates a new RuncBlkio using the builder
-func NewRuncBlkio(b *RuncBlkio_builder) *RuncBlkio {
-	return b.Build()
-}
-
-// NewRuncBlkioE creates a new RuncBlkio using the builder with validation
-func NewRuncBlkioE(b *RuncBlkio_builder) (*RuncBlkio, error) {
-	m := b.Build()
-	if err := protovalidate.Validate(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-// NewRuncHugetlb creates a new RuncHugetlb using the builder
-func NewRuncHugetlb(b *RuncHugetlb_builder) *RuncHugetlb {
-	return b.Build()
-}
-
-// NewRuncHugetlbE creates a new RuncHugetlb using the builder with validation
-func NewRuncHugetlbE(b *RuncHugetlb_builder) (*RuncHugetlb, error) {
-	m := b.Build()
-	if err := protovalidate.Validate(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-// NewRuncNetworkInterface creates a new RuncNetworkInterface using the builder
-func NewRuncNetworkInterface(b *RuncNetworkInterface_builder) *RuncNetworkInterface {
-	return b.Build()
-}
-
-// NewRuncNetworkInterfaceE creates a new RuncNetworkInterface using the builder with validation
-func NewRuncNetworkInterfaceE(b *RuncNetworkInterface_builder) (*RuncNetworkInterface, error) {
-	m := b.Build()
-	if err := protovalidate.Validate(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
 // NewRuncStats creates a new RuncStats using the builder
 func NewRuncStats(b *RuncStats_builder) *RuncStats {
 	return b.Build()
@@ -763,6 +651,34 @@ func NewSetExecCommandOptionsE(b *SetExecCommandOptions_builder) (*SetExecComman
 	return m, nil
 }
 
+// NewRuncVsockIO creates a new RuncVsockIO using the builder
+func NewRuncVsockIO(b *RuncVsockIO_builder) *RuncVsockIO {
+	return b.Build()
+}
+
+// NewRuncVsockIOE creates a new RuncVsockIO using the builder with validation
+func NewRuncVsockIOE(b *RuncVsockIO_builder) (*RuncVsockIO, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// NewRuncUnixIO creates a new RuncUnixIO using the builder
+func NewRuncUnixIO(b *RuncUnixIO_builder) *RuncUnixIO {
+	return b.Build()
+}
+
+// NewRuncUnixIOE creates a new RuncUnixIO using the builder with validation
+func NewRuncUnixIOE(b *RuncUnixIO_builder) (*RuncUnixIO, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // NewRuncIO creates a new RuncIO using the builder
 func NewRuncIO(b *RuncIO_builder) *RuncIO {
 	return b.Build()
@@ -771,6 +687,52 @@ func NewRuncIO(b *RuncIO_builder) *RuncIO {
 // NewRuncIOE creates a new RuncIO using the builder with validation
 func NewRuncIOE(b *RuncIO_builder) (*RuncIO, error) {
 	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// NewRuncIO_WithVsock creates a new RuncIO with the Vsock field set using the builder
+func NewRuncIO_WithVsock(innerBuilder *RuncVsockIO_builder) *RuncIO {
+	inner := NewRuncVsockIO(innerBuilder)
+	return NewRuncIO(&RuncIO_builder{
+		Vsock: inner,
+	})
+}
+
+// NewRuncIO_WithVsockE creates a new RuncIO with the Vsock field set using the builder with validation
+func NewRuncIO_WithVsockE(innerBuilder *RuncVsockIO_builder) (*RuncIO, error) {
+	inner, err := NewRuncVsockIOE(innerBuilder)
+	if err != nil {
+		return nil, err
+	}
+	m := NewRuncIO(&RuncIO_builder{
+		Vsock: inner,
+	})
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// NewRuncIO_WithUnix creates a new RuncIO with the Unix field set using the builder
+func NewRuncIO_WithUnix(innerBuilder *RuncUnixIO_builder) *RuncIO {
+	inner := NewRuncUnixIO(innerBuilder)
+	return NewRuncIO(&RuncIO_builder{
+		Unix: inner,
+	})
+}
+
+// NewRuncIO_WithUnixE creates a new RuncIO with the Unix field set using the builder with validation
+func NewRuncIO_WithUnixE(innerBuilder *RuncUnixIO_builder) (*RuncIO, error) {
+	inner, err := NewRuncUnixIOE(innerBuilder)
+	if err != nil {
+		return nil, err
+	}
+	m := NewRuncIO(&RuncIO_builder{
+		Unix: inner,
+	})
 	if err := protovalidate.Validate(m); err != nil {
 		return nil, err
 	}

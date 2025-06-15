@@ -25,6 +25,9 @@ var _ runvv1.RuncServiceClient = &MockRuncServiceClient{}
 //			CheckpointFunc: func(ctx context.Context, in *runvv1.RuncCheckpointRequest, opts ...grpc.CallOption) (*runvv1.RuncCheckpointResponse, error) {
 //				panic("mock out the Checkpoint method")
 //			},
+//			CloseIOFunc: func(ctx context.Context, in *runvv1.RuncCloseIORequest, opts ...grpc.CallOption) (*runvv1.RuncCloseIOResponse, error) {
+//				panic("mock out the CloseIO method")
+//			},
 //			CreateFunc: func(ctx context.Context, in *runvv1.RuncCreateRequest, opts ...grpc.CallOption) (*runvv1.RuncCreateResponse, error) {
 //				panic("mock out the Create method")
 //			},
@@ -92,6 +95,9 @@ type MockRuncServiceClient struct {
 	// CheckpointFunc mocks the Checkpoint method.
 	CheckpointFunc func(ctx context.Context, in *runvv1.RuncCheckpointRequest, opts ...grpc.CallOption) (*runvv1.RuncCheckpointResponse, error)
 
+	// CloseIOFunc mocks the CloseIO method.
+	CloseIOFunc func(ctx context.Context, in *runvv1.RuncCloseIORequest, opts ...grpc.CallOption) (*runvv1.RuncCloseIOResponse, error)
+
 	// CreateFunc mocks the Create method.
 	CreateFunc func(ctx context.Context, in *runvv1.RuncCreateRequest, opts ...grpc.CallOption) (*runvv1.RuncCreateResponse, error)
 
@@ -157,6 +163,15 @@ type MockRuncServiceClient struct {
 			Ctx context.Context
 			// In is the in argument value.
 			In *runvv1.RuncCheckpointRequest
+			// Opts is the opts argument value.
+			Opts []grpc.CallOption
+		}
+		// CloseIO holds details about calls to the CloseIO method.
+		CloseIO []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+			// In is the in argument value.
+			In *runvv1.RuncCloseIORequest
 			// Opts is the opts argument value.
 			Opts []grpc.CallOption
 		}
@@ -333,6 +348,7 @@ type MockRuncServiceClient struct {
 		}
 	}
 	lockCheckpoint  sync.RWMutex
+	lockCloseIO     sync.RWMutex
 	lockCreate      sync.RWMutex
 	lockDelete      sync.RWMutex
 	lockEvents      sync.RWMutex
@@ -391,6 +407,46 @@ func (mock *MockRuncServiceClient) CheckpointCalls() []struct {
 	mock.lockCheckpoint.RLock()
 	calls = mock.calls.Checkpoint
 	mock.lockCheckpoint.RUnlock()
+	return calls
+}
+
+// CloseIO calls CloseIOFunc.
+func (mock *MockRuncServiceClient) CloseIO(ctx context.Context, in *runvv1.RuncCloseIORequest, opts ...grpc.CallOption) (*runvv1.RuncCloseIOResponse, error) {
+	if mock.CloseIOFunc == nil {
+		panic("MockRuncServiceClient.CloseIOFunc: method is nil but RuncServiceClient.CloseIO was just called")
+	}
+	callInfo := struct {
+		Ctx  context.Context
+		In   *runvv1.RuncCloseIORequest
+		Opts []grpc.CallOption
+	}{
+		Ctx:  ctx,
+		In:   in,
+		Opts: opts,
+	}
+	mock.lockCloseIO.Lock()
+	mock.calls.CloseIO = append(mock.calls.CloseIO, callInfo)
+	mock.lockCloseIO.Unlock()
+	return mock.CloseIOFunc(ctx, in, opts...)
+}
+
+// CloseIOCalls gets all the calls that were made to CloseIO.
+// Check the length with:
+//
+//	len(mockedRuncServiceClient.CloseIOCalls())
+func (mock *MockRuncServiceClient) CloseIOCalls() []struct {
+	Ctx  context.Context
+	In   *runvv1.RuncCloseIORequest
+	Opts []grpc.CallOption
+} {
+	var calls []struct {
+		Ctx  context.Context
+		In   *runvv1.RuncCloseIORequest
+		Opts []grpc.CallOption
+	}
+	mock.lockCloseIO.RLock()
+	calls = mock.calls.CloseIO
+	mock.lockCloseIO.RUnlock()
 	return calls
 }
 

@@ -62,7 +62,22 @@ func generateMessage(g *protogen.GeneratedFile, m *protogen.Message) {
 	g.P("}")
 
 	g.P("attrs := make([]", g.QualifiedGoIdent(slogPkg.Ident("Attr")), ", 0, ", len(m.Fields), ")")
+
+	// Process oneofs first to avoid duplicating fields
+	oneofFields := make(map[*protogen.Oneof]bool)
 	for _, f := range m.Fields {
+		if f.Oneof != nil {
+			oneofFields[f.Oneof] = true
+		}
+	}
+
+	// Process regular fields
+	for _, f := range m.Fields {
+		if f.Oneof != nil {
+			// Skip oneof fields here, they're handled separately
+			continue
+		}
+
 		if debugRedact(f.Desc.Options().(*descriptorpb.FieldOptions)) {
 			g.P("attrs = append(attrs, ", g.QualifiedGoIdent(slogPkg.Ident(`String("`)), f.Desc.Name(), `", "[REDACTED]"))`)
 		} else if f.Desc.IsList() {
@@ -73,6 +88,12 @@ func generateMessage(g *protogen.GeneratedFile, m *protogen.Message) {
 			handleExplicitPresence(g, f, generatePrimitiveField)
 		}
 	}
+
+	// Process oneofs
+	for oneof := range oneofFields {
+		generateOneofField(g, oneof)
+	}
+
 	g.P("return ", g.QualifiedGoIdent(slogPkg.Ident("GroupValue(attrs...)")))
 	g.P("}")
 	g.P()
@@ -85,20 +106,70 @@ func generateMessage(g *protogen.GeneratedFile, m *protogen.Message) {
 	}
 }
 
+func generateOneofField(g *protogen.GeneratedFile, oneof *protogen.Oneof) {
+	// For each oneof field, generate a switch statement to handle the different types
+	oneofName := oneof.GoName
+
+	g.P("// Handle oneof field: ", oneofName)
+	g.P("switch x.Which", oneofName, "() {")
+
+	for _, f := range oneof.Fields {
+		fieldName := f.Desc.Name()
+		parentMsg := f.Parent.GoIdent
+		g.P("case ", g.QualifiedGoIdent(parentMsg), "_", f.GoName, "_case:")
+
+		if debugRedact(f.Desc.Options().(*descriptorpb.FieldOptions)) {
+			g.P("attrs = append(attrs, ", g.QualifiedGoIdent(slogPkg.Ident(`String("`)), fieldName, `", "[REDACTED]"))`)
+		} else {
+			switch f.Desc.Kind() {
+			case protoreflect.BoolKind:
+				g.P("attrs = append(attrs, ", g.QualifiedGoIdent(slogPkg.Ident(`Bool("`)), fieldName, `", x.Get`, f.GoName, "()))")
+			case protoreflect.BytesKind:
+				g.P("attrs = append(attrs, ", g.QualifiedGoIdent(slogPkg.Ident(`Any("`)), fieldName, `", x.Get`, f.GoName, "()))")
+			case protoreflect.DoubleKind:
+				g.P("attrs = append(attrs, ", g.QualifiedGoIdent(slogPkg.Ident(`Float64("`)), fieldName, `", x.Get`, f.GoName, "()))")
+			case protoreflect.EnumKind:
+				g.P("attrs = append(attrs, ", g.QualifiedGoIdent(slogPkg.Ident(`String("`)), fieldName, `", x.Get`, f.GoName, "().String()))")
+			case protoreflect.Fixed32Kind, protoreflect.Uint32Kind:
+				g.P("attrs = append(attrs, ", g.QualifiedGoIdent(slogPkg.Ident(`Uint64("`)), fieldName, `", uint64(x.Get`, f.GoName, "())))")
+			case protoreflect.Fixed64Kind, protoreflect.Uint64Kind:
+				g.P("attrs = append(attrs, ", g.QualifiedGoIdent(slogPkg.Ident(`Uint64("`)), fieldName, `", x.Get`, f.GoName, "()))")
+			case protoreflect.FloatKind:
+				g.P("_fmt_", fieldName, " := ", g.QualifiedGoIdent(strconvPkg.Ident("FormatFloat(float64(x.Get")), f.GoName, "()), 'f', -1, 32)")
+				g.P("_", fieldName, ", _ := ", g.QualifiedGoIdent(strconvPkg.Ident("ParseFloat(")), "_fmt_", fieldName, ", 64)")
+				g.P("attrs = append(attrs, ", g.QualifiedGoIdent(slogPkg.Ident(`Float64("`)), fieldName, `", _`, fieldName, "))")
+			case protoreflect.Int32Kind, protoreflect.Sfixed32Kind, protoreflect.Sint32Kind:
+				g.P("attrs = append(attrs, ", g.QualifiedGoIdent(slogPkg.Ident(`Int64("`)), fieldName, `", int64(x.Get`, f.GoName, "())))")
+			case protoreflect.Int64Kind, protoreflect.Sfixed64Kind, protoreflect.Sint64Kind:
+				g.P("attrs = append(attrs, ", g.QualifiedGoIdent(slogPkg.Ident(`Int64("`)), fieldName, `", x.Get`, f.GoName, "()))")
+			case protoreflect.GroupKind:
+				g.P("attrs = append(attrs, ", g.QualifiedGoIdent(slogPkg.Ident(`Any("`)), fieldName, `", x.Get`, f.GoName, "()))")
+			case protoreflect.MessageKind:
+				g.P("if msgValue, ok := interface{}(x.Get", f.GoName, "()).(", g.QualifiedGoIdent(slogPkg.Ident("LogValuer")), "); ok {")
+				g.P("attrs = append(attrs, ", g.QualifiedGoIdent(slogPkg.Ident(`Attr{Key: "`)), fieldName, `", Value: msgValue.LogValue()})`)
+				g.P("} else {")
+				g.P("attrs = append(attrs, ", g.QualifiedGoIdent(slogPkg.Ident(`Any("`)), fieldName, `", x.Get`, f.GoName, "()))")
+				g.P("}")
+			case protoreflect.StringKind:
+				g.P("attrs = append(attrs, ", g.QualifiedGoIdent(slogPkg.Ident(`String("`)), fieldName, `", x.Get`, f.GoName, "()))")
+			default:
+				g.P("attrs = append(attrs, ", g.QualifiedGoIdent(slogPkg.Ident(`Any("`)), fieldName, `", x.Get`, f.GoName, "()))")
+			}
+		}
+	}
+	g.P("}")
+}
+
 func handleExplicitPresence(g *protogen.GeneratedFile, f *protogen.Field, generateFunc func(*protogen.GeneratedFile, *protogen.Field)) {
 	// Omit the fields that are defined as `Explicit Presence` and the value is not present.
 	// https://protobuf.dev/programming-guides/field_presence/#presence-in-proto3-apis
 	switch {
-	case f.Oneof != nil && f.Desc.HasOptionalKeyword():
-		// handle optional fields
+	case f.Desc.HasOptionalKeyword():
+		// Handle optional fields
 		g.P("if x.Has", f.GoName, "() {")
 		defer g.P("}")
-	case f.Oneof != nil && !f.Desc.HasOptionalKeyword():
-		// handle oneof fields
-		g.P("if _, ok := x.Get", f.Oneof.GoName, "().(*", f.GoIdent, "); ok {")
-		defer g.P("}")
 	case f.Desc.Kind() == protoreflect.MessageKind || f.Desc.Kind() == protoreflect.GroupKind:
-		// handle message fields
+		// Handle message fields
 		g.P("if x.Get", f.GoName, "() != nil {")
 		defer g.P("}")
 	}

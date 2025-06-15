@@ -86,7 +86,16 @@ service RuncService {
 
 
 	rpc LogFilePath(RuncLogFilePathRequest) returns (RuncLogFilePathResponse) {}
+
+
+	rpc CloseIO(RuncCloseIORequest) returns (RuncCloseIOResponse) {}
 }
+
+message RuncCloseIORequest {
+	uint64 io_reference_id = 1;
+}
+
+message RuncCloseIOResponse {}
 
 message RuncLogFilePathRequest {}
 
@@ -233,88 +242,8 @@ message RuncStatsRequest {
 	string id = 1;
 }
 
-message RuncCpuUsage {
-	uint64          total  = 1;
-	repeated uint64 percpu = 2;
-	uint64          kernel = 3;
-	uint64          user   = 4;
-}
-
-message RuncThrottling {
-	uint64 periods           = 1;
-	uint64 throttled_periods = 2;
-	uint64 throttled_time    = 3;
-}
-
-message RuncCpu {
-	RuncCpuUsage   usage      = 1;
-	RuncThrottling throttling = 2;
-}
-
-message RuncMemoryEntry {
-	uint64 limit   = 1;
-	uint64 usage   = 2;
-	uint64 max     = 3;
-	uint64 failcnt = 4;
-}
-
-message RuncMemory {
-	uint64              cache      = 1;
-	RuncMemoryEntry     usage      = 2;
-	RuncMemoryEntry     swap       = 3;
-	RuncMemoryEntry     kernel     = 4;
-	RuncMemoryEntry     kernel_tcp = 5;
-	map<string, uint64> raw        = 6;
-}
-
-message RuncPids {
-	uint64 current = 1;
-	uint64 limit   = 2;
-}
-
-message RuncBlkioEntry {
-	uint64 major = 1;
-	uint64 minor = 2;
-	string op    = 3;
-	uint64 value = 4;
-}
-
-message RuncBlkio {
-	repeated RuncBlkioEntry io_service_bytes_recursive = 1;
-	repeated RuncBlkioEntry io_serviced_recursive      = 2;
-	repeated RuncBlkioEntry io_queued_recursive        = 3;
-	repeated RuncBlkioEntry io_service_time_recursive  = 4;
-	repeated RuncBlkioEntry io_wait_time_recursive     = 5;
-	repeated RuncBlkioEntry io_merged_recursive        = 6;
-	repeated RuncBlkioEntry io_time_recursive          = 7;
-	repeated RuncBlkioEntry sectors_recursive          = 8;
-}
-
-message RuncHugetlb {
-	uint64 usage   = 1;
-	uint64 max     = 2;
-	uint64 failcnt = 3;
-}
-
-message RuncNetworkInterface {
-	string name       = 1;
-	uint64 rx_bytes   = 2;
-	uint64 rx_packets = 3;
-	uint64 rx_errors  = 4;
-	uint64 rx_dropped = 5;
-	uint64 tx_bytes   = 6;
-	uint64 tx_packets = 7;
-	uint64 tx_errors  = 8;
-	uint64 tx_dropped = 9;
-}
-
 message RuncStats {
-	RuncCpu                       cpu                = 1;
-	RuncMemory                    memory             = 2;
-	RuncPids                      pids               = 3;
-	RuncBlkio                     blkio              = 4;
-	map<string, RuncHugetlb>      hugetlb            = 5;
-	repeated RuncNetworkInterface network_interfaces = 6;
+	bytes raw_json = 1;
 }
 
 message RuncStatsResponse {
@@ -397,11 +326,25 @@ message SetExecCommandOptions {
 	string              cwd  = 4;
 }
 
+message RuncVsockIO {
+	uint64 stdin_vsock_port  = 1;
+	uint64 stdout_vsock_port = 2;
+	uint64 stderr_vsock_port = 3;
+	uint32 vsock_context_id  = 4;
+}
+
+message RuncUnixIO {
+	string stdin_path  = 1;
+	string stdout_path = 2;
+	string stderr_path = 3;
+}
+
 message RuncIO {
-	string                stdin_path               = 1;
-	string                stdout_path              = 2;
-	string                stderr_path              = 3;
-	SetExecCommandOptions set_exec_command_options = 4;
+	uint64 io_reference_id = 1;
+	oneof io {
+		RuncVsockIO vsock = 2;
+		RuncUnixIO  unix  = 3;
+	}
 }
 
 message RuncCheckpointResponse {

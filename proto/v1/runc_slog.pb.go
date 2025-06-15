@@ -9,6 +9,23 @@ import (
 	slog "log/slog"
 )
 
+func (x *RuncCloseIORequest) LogValue() slog.Value {
+	if x == nil {
+		return slog.AnyValue(nil)
+	}
+	attrs := make([]slog.Attr, 0, 1)
+	attrs = append(attrs, slog.Uint64("io_reference_id", x.GetIoReferenceId()))
+	return slog.GroupValue(attrs...)
+}
+
+func (x *RuncCloseIOResponse) LogValue() slog.Value {
+	if x == nil {
+		return slog.AnyValue(nil)
+	}
+	attrs := make([]slog.Attr, 0, 0)
+	return slog.GroupValue(attrs...)
+}
+
 func (x *RuncLogFilePathRequest) LogValue() slog.Value {
 	if x == nil {
 		return slog.AnyValue(nil)
@@ -382,314 +399,12 @@ func (x *RuncStatsRequest) LogValue() slog.Value {
 	return slog.GroupValue(attrs...)
 }
 
-func (x *RuncCpuUsage) LogValue() slog.Value {
-	if x == nil {
-		return slog.AnyValue(nil)
-	}
-	attrs := make([]slog.Attr, 0, 4)
-	attrs = append(attrs, slog.Uint64("total", x.GetTotal()))
-	if len(x.GetPercpu()) != 0 {
-		attrs1 := make([]slog.Attr, 0, len(x.GetPercpu()))
-		for i, v := range x.GetPercpu() {
-			attrs1 = append(attrs1, slog.Uint64(fmt.Sprintf("%d", i), v))
-		}
-		attrs = append(attrs, slog.Any("percpu", attrs1))
-	}
-	attrs = append(attrs, slog.Uint64("kernel", x.GetKernel()))
-	attrs = append(attrs, slog.Uint64("user", x.GetUser()))
-	return slog.GroupValue(attrs...)
-}
-
-func (x *RuncThrottling) LogValue() slog.Value {
-	if x == nil {
-		return slog.AnyValue(nil)
-	}
-	attrs := make([]slog.Attr, 0, 3)
-	attrs = append(attrs, slog.Uint64("periods", x.GetPeriods()))
-	attrs = append(attrs, slog.Uint64("throttled_periods", x.GetThrottledPeriods()))
-	attrs = append(attrs, slog.Uint64("throttled_time", x.GetThrottledTime()))
-	return slog.GroupValue(attrs...)
-}
-
-func (x *RuncCpu) LogValue() slog.Value {
-	if x == nil {
-		return slog.AnyValue(nil)
-	}
-	attrs := make([]slog.Attr, 0, 2)
-	if x.GetUsage() != nil {
-		if v, ok := interface{}(x.GetUsage()).(slog.LogValuer); ok {
-			attrs = append(attrs, slog.Attr{Key: "usage", Value: v.LogValue()})
-		} else {
-			attrs = append(attrs, slog.Any("usage", x.GetUsage()))
-		}
-	}
-	if x.GetThrottling() != nil {
-		if v, ok := interface{}(x.GetThrottling()).(slog.LogValuer); ok {
-			attrs = append(attrs, slog.Attr{Key: "throttling", Value: v.LogValue()})
-		} else {
-			attrs = append(attrs, slog.Any("throttling", x.GetThrottling()))
-		}
-	}
-	return slog.GroupValue(attrs...)
-}
-
-func (x *RuncMemoryEntry) LogValue() slog.Value {
-	if x == nil {
-		return slog.AnyValue(nil)
-	}
-	attrs := make([]slog.Attr, 0, 4)
-	attrs = append(attrs, slog.Uint64("limit", x.GetLimit()))
-	attrs = append(attrs, slog.Uint64("usage", x.GetUsage()))
-	attrs = append(attrs, slog.Uint64("max", x.GetMax()))
-	attrs = append(attrs, slog.Uint64("failcnt", x.GetFailcnt()))
-	return slog.GroupValue(attrs...)
-}
-
-func (x *RuncMemory) LogValue() slog.Value {
-	if x == nil {
-		return slog.AnyValue(nil)
-	}
-	attrs := make([]slog.Attr, 0, 6)
-	attrs = append(attrs, slog.Uint64("cache", x.GetCache()))
-	if x.GetUsage() != nil {
-		if v, ok := interface{}(x.GetUsage()).(slog.LogValuer); ok {
-			attrs = append(attrs, slog.Attr{Key: "usage", Value: v.LogValue()})
-		} else {
-			attrs = append(attrs, slog.Any("usage", x.GetUsage()))
-		}
-	}
-	if x.GetSwap() != nil {
-		if v, ok := interface{}(x.GetSwap()).(slog.LogValuer); ok {
-			attrs = append(attrs, slog.Attr{Key: "swap", Value: v.LogValue()})
-		} else {
-			attrs = append(attrs, slog.Any("swap", x.GetSwap()))
-		}
-	}
-	if x.GetKernel() != nil {
-		if v, ok := interface{}(x.GetKernel()).(slog.LogValuer); ok {
-			attrs = append(attrs, slog.Attr{Key: "kernel", Value: v.LogValue()})
-		} else {
-			attrs = append(attrs, slog.Any("kernel", x.GetKernel()))
-		}
-	}
-	if x.GetKernelTcp() != nil {
-		if v, ok := interface{}(x.GetKernelTcp()).(slog.LogValuer); ok {
-			attrs = append(attrs, slog.Attr{Key: "kernel_tcp", Value: v.LogValue()})
-		} else {
-			attrs = append(attrs, slog.Any("kernel_tcp", x.GetKernelTcp()))
-		}
-	}
-	if len(x.GetRaw()) != 0 {
-		attrs5 := make([]slog.Attr, 0, len(x.GetRaw()))
-		for k, v := range x.GetRaw() {
-			attrs5 = append(attrs5, slog.Uint64(fmt.Sprintf("%v", k), v))
-		}
-		attrs = append(attrs, slog.Any("raw", attrs5))
-	}
-	return slog.GroupValue(attrs...)
-}
-
-func (x *RuncPids) LogValue() slog.Value {
-	if x == nil {
-		return slog.AnyValue(nil)
-	}
-	attrs := make([]slog.Attr, 0, 2)
-	attrs = append(attrs, slog.Uint64("current", x.GetCurrent()))
-	attrs = append(attrs, slog.Uint64("limit", x.GetLimit()))
-	return slog.GroupValue(attrs...)
-}
-
-func (x *RuncBlkioEntry) LogValue() slog.Value {
-	if x == nil {
-		return slog.AnyValue(nil)
-	}
-	attrs := make([]slog.Attr, 0, 4)
-	attrs = append(attrs, slog.Uint64("major", x.GetMajor()))
-	attrs = append(attrs, slog.Uint64("minor", x.GetMinor()))
-	attrs = append(attrs, slog.String("op", x.GetOp()))
-	attrs = append(attrs, slog.Uint64("value", x.GetValue()))
-	return slog.GroupValue(attrs...)
-}
-
-func (x *RuncBlkio) LogValue() slog.Value {
-	if x == nil {
-		return slog.AnyValue(nil)
-	}
-	attrs := make([]slog.Attr, 0, 8)
-	if len(x.GetIoServiceBytesRecursive()) != 0 {
-		attrs0 := make([]slog.Attr, 0, len(x.GetIoServiceBytesRecursive()))
-		for i, v := range x.GetIoServiceBytesRecursive() {
-			if v, ok := interface{}(v).(slog.LogValuer); ok {
-				attrs0 = append(attrs0, slog.Attr{Key: fmt.Sprintf("%d", i), Value: v.LogValue()})
-			} else {
-				attrs0 = append(attrs0, slog.Any(fmt.Sprintf("%d", i), v))
-			}
-		}
-		attrs = append(attrs, slog.Any("io_service_bytes_recursive", attrs0))
-	}
-	if len(x.GetIoServicedRecursive()) != 0 {
-		attrs1 := make([]slog.Attr, 0, len(x.GetIoServicedRecursive()))
-		for i, v := range x.GetIoServicedRecursive() {
-			if v, ok := interface{}(v).(slog.LogValuer); ok {
-				attrs1 = append(attrs1, slog.Attr{Key: fmt.Sprintf("%d", i), Value: v.LogValue()})
-			} else {
-				attrs1 = append(attrs1, slog.Any(fmt.Sprintf("%d", i), v))
-			}
-		}
-		attrs = append(attrs, slog.Any("io_serviced_recursive", attrs1))
-	}
-	if len(x.GetIoQueuedRecursive()) != 0 {
-		attrs2 := make([]slog.Attr, 0, len(x.GetIoQueuedRecursive()))
-		for i, v := range x.GetIoQueuedRecursive() {
-			if v, ok := interface{}(v).(slog.LogValuer); ok {
-				attrs2 = append(attrs2, slog.Attr{Key: fmt.Sprintf("%d", i), Value: v.LogValue()})
-			} else {
-				attrs2 = append(attrs2, slog.Any(fmt.Sprintf("%d", i), v))
-			}
-		}
-		attrs = append(attrs, slog.Any("io_queued_recursive", attrs2))
-	}
-	if len(x.GetIoServiceTimeRecursive()) != 0 {
-		attrs3 := make([]slog.Attr, 0, len(x.GetIoServiceTimeRecursive()))
-		for i, v := range x.GetIoServiceTimeRecursive() {
-			if v, ok := interface{}(v).(slog.LogValuer); ok {
-				attrs3 = append(attrs3, slog.Attr{Key: fmt.Sprintf("%d", i), Value: v.LogValue()})
-			} else {
-				attrs3 = append(attrs3, slog.Any(fmt.Sprintf("%d", i), v))
-			}
-		}
-		attrs = append(attrs, slog.Any("io_service_time_recursive", attrs3))
-	}
-	if len(x.GetIoWaitTimeRecursive()) != 0 {
-		attrs4 := make([]slog.Attr, 0, len(x.GetIoWaitTimeRecursive()))
-		for i, v := range x.GetIoWaitTimeRecursive() {
-			if v, ok := interface{}(v).(slog.LogValuer); ok {
-				attrs4 = append(attrs4, slog.Attr{Key: fmt.Sprintf("%d", i), Value: v.LogValue()})
-			} else {
-				attrs4 = append(attrs4, slog.Any(fmt.Sprintf("%d", i), v))
-			}
-		}
-		attrs = append(attrs, slog.Any("io_wait_time_recursive", attrs4))
-	}
-	if len(x.GetIoMergedRecursive()) != 0 {
-		attrs5 := make([]slog.Attr, 0, len(x.GetIoMergedRecursive()))
-		for i, v := range x.GetIoMergedRecursive() {
-			if v, ok := interface{}(v).(slog.LogValuer); ok {
-				attrs5 = append(attrs5, slog.Attr{Key: fmt.Sprintf("%d", i), Value: v.LogValue()})
-			} else {
-				attrs5 = append(attrs5, slog.Any(fmt.Sprintf("%d", i), v))
-			}
-		}
-		attrs = append(attrs, slog.Any("io_merged_recursive", attrs5))
-	}
-	if len(x.GetIoTimeRecursive()) != 0 {
-		attrs6 := make([]slog.Attr, 0, len(x.GetIoTimeRecursive()))
-		for i, v := range x.GetIoTimeRecursive() {
-			if v, ok := interface{}(v).(slog.LogValuer); ok {
-				attrs6 = append(attrs6, slog.Attr{Key: fmt.Sprintf("%d", i), Value: v.LogValue()})
-			} else {
-				attrs6 = append(attrs6, slog.Any(fmt.Sprintf("%d", i), v))
-			}
-		}
-		attrs = append(attrs, slog.Any("io_time_recursive", attrs6))
-	}
-	if len(x.GetSectorsRecursive()) != 0 {
-		attrs7 := make([]slog.Attr, 0, len(x.GetSectorsRecursive()))
-		for i, v := range x.GetSectorsRecursive() {
-			if v, ok := interface{}(v).(slog.LogValuer); ok {
-				attrs7 = append(attrs7, slog.Attr{Key: fmt.Sprintf("%d", i), Value: v.LogValue()})
-			} else {
-				attrs7 = append(attrs7, slog.Any(fmt.Sprintf("%d", i), v))
-			}
-		}
-		attrs = append(attrs, slog.Any("sectors_recursive", attrs7))
-	}
-	return slog.GroupValue(attrs...)
-}
-
-func (x *RuncHugetlb) LogValue() slog.Value {
-	if x == nil {
-		return slog.AnyValue(nil)
-	}
-	attrs := make([]slog.Attr, 0, 3)
-	attrs = append(attrs, slog.Uint64("usage", x.GetUsage()))
-	attrs = append(attrs, slog.Uint64("max", x.GetMax()))
-	attrs = append(attrs, slog.Uint64("failcnt", x.GetFailcnt()))
-	return slog.GroupValue(attrs...)
-}
-
-func (x *RuncNetworkInterface) LogValue() slog.Value {
-	if x == nil {
-		return slog.AnyValue(nil)
-	}
-	attrs := make([]slog.Attr, 0, 9)
-	attrs = append(attrs, slog.String("name", x.GetName()))
-	attrs = append(attrs, slog.Uint64("rx_bytes", x.GetRxBytes()))
-	attrs = append(attrs, slog.Uint64("rx_packets", x.GetRxPackets()))
-	attrs = append(attrs, slog.Uint64("rx_errors", x.GetRxErrors()))
-	attrs = append(attrs, slog.Uint64("rx_dropped", x.GetRxDropped()))
-	attrs = append(attrs, slog.Uint64("tx_bytes", x.GetTxBytes()))
-	attrs = append(attrs, slog.Uint64("tx_packets", x.GetTxPackets()))
-	attrs = append(attrs, slog.Uint64("tx_errors", x.GetTxErrors()))
-	attrs = append(attrs, slog.Uint64("tx_dropped", x.GetTxDropped()))
-	return slog.GroupValue(attrs...)
-}
-
 func (x *RuncStats) LogValue() slog.Value {
 	if x == nil {
 		return slog.AnyValue(nil)
 	}
-	attrs := make([]slog.Attr, 0, 6)
-	if x.GetCpu() != nil {
-		if v, ok := interface{}(x.GetCpu()).(slog.LogValuer); ok {
-			attrs = append(attrs, slog.Attr{Key: "cpu", Value: v.LogValue()})
-		} else {
-			attrs = append(attrs, slog.Any("cpu", x.GetCpu()))
-		}
-	}
-	if x.GetMemory() != nil {
-		if v, ok := interface{}(x.GetMemory()).(slog.LogValuer); ok {
-			attrs = append(attrs, slog.Attr{Key: "memory", Value: v.LogValue()})
-		} else {
-			attrs = append(attrs, slog.Any("memory", x.GetMemory()))
-		}
-	}
-	if x.GetPids() != nil {
-		if v, ok := interface{}(x.GetPids()).(slog.LogValuer); ok {
-			attrs = append(attrs, slog.Attr{Key: "pids", Value: v.LogValue()})
-		} else {
-			attrs = append(attrs, slog.Any("pids", x.GetPids()))
-		}
-	}
-	if x.GetBlkio() != nil {
-		if v, ok := interface{}(x.GetBlkio()).(slog.LogValuer); ok {
-			attrs = append(attrs, slog.Attr{Key: "blkio", Value: v.LogValue()})
-		} else {
-			attrs = append(attrs, slog.Any("blkio", x.GetBlkio()))
-		}
-	}
-	if len(x.GetHugetlb()) != 0 {
-		attrs4 := make([]slog.Attr, 0, len(x.GetHugetlb()))
-		for k, v := range x.GetHugetlb() {
-			if vv, ok := interface{}(v).(slog.LogValuer); ok {
-				attrs4 = append(attrs4, slog.Attr{Key: fmt.Sprintf("%v", k), Value: vv.LogValue()})
-			} else {
-				attrs4 = append(attrs4, slog.Any(fmt.Sprintf("%v", k), v))
-			}
-		}
-		attrs = append(attrs, slog.Any("hugetlb", attrs4))
-	}
-	if len(x.GetNetworkInterfaces()) != 0 {
-		attrs5 := make([]slog.Attr, 0, len(x.GetNetworkInterfaces()))
-		for i, v := range x.GetNetworkInterfaces() {
-			if v, ok := interface{}(v).(slog.LogValuer); ok {
-				attrs5 = append(attrs5, slog.Attr{Key: fmt.Sprintf("%d", i), Value: v.LogValue()})
-			} else {
-				attrs5 = append(attrs5, slog.Any(fmt.Sprintf("%d", i), v))
-			}
-		}
-		attrs = append(attrs, slog.Any("network_interfaces", attrs5))
-	}
+	attrs := make([]slog.Attr, 0, 1)
+	attrs = append(attrs, slog.Any("raw_json", x.GetRawJson()))
 	return slog.GroupValue(attrs...)
 }
 
@@ -917,19 +632,48 @@ func (x *SetExecCommandOptions) LogValue() slog.Value {
 	return slog.GroupValue(attrs...)
 }
 
-func (x *RuncIO) LogValue() slog.Value {
+func (x *RuncVsockIO) LogValue() slog.Value {
 	if x == nil {
 		return slog.AnyValue(nil)
 	}
 	attrs := make([]slog.Attr, 0, 4)
+	attrs = append(attrs, slog.Uint64("stdin_vsock_port", x.GetStdinVsockPort()))
+	attrs = append(attrs, slog.Uint64("stdout_vsock_port", x.GetStdoutVsockPort()))
+	attrs = append(attrs, slog.Uint64("stderr_vsock_port", x.GetStderrVsockPort()))
+	attrs = append(attrs, slog.Uint64("vsock_context_id", uint64(x.GetVsockContextId())))
+	return slog.GroupValue(attrs...)
+}
+
+func (x *RuncUnixIO) LogValue() slog.Value {
+	if x == nil {
+		return slog.AnyValue(nil)
+	}
+	attrs := make([]slog.Attr, 0, 3)
 	attrs = append(attrs, slog.String("stdin_path", x.GetStdinPath()))
 	attrs = append(attrs, slog.String("stdout_path", x.GetStdoutPath()))
 	attrs = append(attrs, slog.String("stderr_path", x.GetStderrPath()))
-	if x.GetSetExecCommandOptions() != nil {
-		if v, ok := interface{}(x.GetSetExecCommandOptions()).(slog.LogValuer); ok {
-			attrs = append(attrs, slog.Attr{Key: "set_exec_command_options", Value: v.LogValue()})
+	return slog.GroupValue(attrs...)
+}
+
+func (x *RuncIO) LogValue() slog.Value {
+	if x == nil {
+		return slog.AnyValue(nil)
+	}
+	attrs := make([]slog.Attr, 0, 3)
+	attrs = append(attrs, slog.Uint64("io_reference_id", x.GetIoReferenceId()))
+	// Handle oneof field: Io
+	switch x.WhichIo() {
+	case RuncIO_Vsock_case:
+		if msgValue, ok := interface{}(x.GetVsock()).(slog.LogValuer); ok {
+			attrs = append(attrs, slog.Attr{Key: "vsock", Value: msgValue.LogValue()})
 		} else {
-			attrs = append(attrs, slog.Any("set_exec_command_options", x.GetSetExecCommandOptions()))
+			attrs = append(attrs, slog.Any("vsock", x.GetVsock()))
+		}
+	case RuncIO_Unix_case:
+		if msgValue, ok := interface{}(x.GetUnix()).(slog.LogValuer); ok {
+			attrs = append(attrs, slog.Attr{Key: "unix", Value: msgValue.LogValue()})
+		} else {
+			attrs = append(attrs, slog.Any("unix", x.GetUnix()))
 		}
 	}
 	return slog.GroupValue(attrs...)

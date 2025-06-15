@@ -111,9 +111,15 @@ func (c *Client) State(ctx context.Context, id string) (*gorunc.Container, error
 
 // Create creates a new container.
 func (c *Client) Create(ctx context.Context, id, bundle string, options *gorunc.CreateOpts) error {
+	conv, err := conversion.ConvertCreateOptsOut(ctx, options)
+	if err != nil {
+		return err
+	}
+
 	req := &runvv1.RuncCreateRequest{}
 	req.SetId(id)
 	req.SetBundle(bundle)
+	req.SetOptions(conv)
 
 	resp, err := c.rpc.Create(ctx, req)
 	if err != nil {

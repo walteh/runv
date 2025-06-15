@@ -2,7 +2,9 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
+	"sync"
 
 	runc "github.com/containerd/go-runc"
 	"github.com/walteh/runv/core/runc/conversion"
@@ -11,9 +13,27 @@ import (
 	"google.golang.org/grpc"
 )
 
+var _ runvv1.RuncServiceServer = (*Server)(nil)
+
 type Server struct {
 	runtime       runtime.Runtime
 	runtimeExtras runtime.RuntimeExtras
+
+	ioMap      map[uint64]runtime.IO
+	ioMapMutex sync.Mutex
+}
+
+// CloseIO implements runvv1.RuncServiceServer.
+func (s *Server) CloseIO(ctx context.Context, req *runvv1.RuncCloseIORequest) (*runvv1.RuncCloseIOResponse, error) {
+	s.ioMapMutex.Lock()
+	defer s.ioMapMutex.Unlock()
+	io, ok := s.ioMap[req.GetIoReferenceId()]
+	if !ok {
+		return nil, fmt.Errorf("io not found")
+	}
+	_ = io.Close()
+	delete(s.ioMap, req.GetIoReferenceId())
+	return &runvv1.RuncCloseIOResponse{}, nil
 }
 
 // LogFilePath implements runvv1.RuncServiceServer.
@@ -30,13 +50,6 @@ func NewServer(runtime runtime.Runtime, runtimeExtras runtime.RuntimeExtras) *Se
 		runtimeExtras: runtimeExtras,
 	}
 	return srv
-}
-
-var _ runvv1.RuncServiceServer = (*Server)(nil)
-
-// Register registers the server with a gRPC server.
-func (s *Server) Register(grpcServer *grpc.Server) {
-	runvv1.RegisterRuncServiceServer(grpcServer, s)
 }
 
 // Ping implements the RuncServiceServer Ping method.
@@ -99,10 +112,14 @@ func (s *Server) State(ctx context.Context, req *runvv1.RuncStateRequest) (*runv
 func (s *Server) Create(ctx context.Context, req *runvv1.RuncCreateRequest) (*runvv1.RuncCreateResponse, error) {
 	resp := &runvv1.RuncCreateResponse{}
 
-	opts, err := conversion.ConvertCreateOptsIn(req.GetOptions())
+	opts, err := conversion.ConvertCreateOptsIn(ctx, req.GetOptions())
 	if err != nil {
 		return nil, err
 	}
+
+	s.ioMapMutex.Lock()
+	s.ioMap[req.GetOptions().GetIo().GetIoReferenceId()] = opts.IO
+	s.ioMapMutex.Unlock()
 
 	err = s.runtime.Create(ctx, req.GetId(), req.GetBundle(), opts)
 	if err != nil {
@@ -181,7 +198,11 @@ func (s *Server) Stats(ctx context.Context, req *runvv1.RuncStatsRequest) (*runv
 		return resp, nil
 	}
 
-	runcStats := conversion.ConvertStatsIn(stats)
+	runcStats, err := conversion.ConvertStatsIn(stats)
+	if err != nil {
+		resp.SetGoError(err.Error())
+		return resp, nil
+	}
 	resp.SetStats(runcStats)
 	return resp, nil
 }

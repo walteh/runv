@@ -28,6 +28,7 @@ type TTRPCRuncServiceService interface {
 	Events(context.Context, *RuncEventsRequest, TTRPCRuncService_EventsServer) error
 	Update(context.Context, *RuncUpdateRequest) (*RuncUpdateResponse, error)
 	LogFilePath(context.Context, *RuncLogFilePathRequest) (*RuncLogFilePathResponse, error)
+	CloseIO(context.Context, *RuncCloseIORequest) (*RuncCloseIOResponse, error)
 }
 
 type TTRPCRuncService_EventsServer interface {
@@ -179,6 +180,13 @@ func RegisterTTRPCRuncServiceService(srv *ttrpc.Server, svc TTRPCRuncServiceServ
 				}
 				return svc.LogFilePath(ctx, &req)
 			},
+			"CloseIO": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+				var req RuncCloseIORequest
+				if err := unmarshal(&req); err != nil {
+					return nil, err
+				}
+				return svc.CloseIO(ctx, &req)
+			},
 		},
 		Streams: map[string]ttrpc.Stream{
 			"Events": {
@@ -217,6 +225,7 @@ type TTRPCRuncServiceClient interface {
 	Events(context.Context, *RuncEventsRequest) (TTRPCRuncService_EventsClient, error)
 	Update(context.Context, *RuncUpdateRequest) (*RuncUpdateResponse, error)
 	LogFilePath(context.Context, *RuncLogFilePathRequest) (*RuncLogFilePathResponse, error)
+	CloseIO(context.Context, *RuncCloseIORequest) (*RuncCloseIOResponse, error)
 }
 
 type ttrpcruncserviceClient struct {
@@ -405,6 +414,14 @@ func (c *ttrpcruncserviceClient) Update(ctx context.Context, req *RuncUpdateRequ
 func (c *ttrpcruncserviceClient) LogFilePath(ctx context.Context, req *RuncLogFilePathRequest) (*RuncLogFilePathResponse, error) {
 	var resp RuncLogFilePathResponse
 	if err := c.client.Call(ctx, "runv.v1.RuncService", "LogFilePath", req, &resp); err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (c *ttrpcruncserviceClient) CloseIO(ctx context.Context, req *RuncCloseIORequest) (*RuncCloseIOResponse, error) {
+	var resp RuncCloseIOResponse
+	if err := c.client.Call(ctx, "runv.v1.RuncService", "CloseIO", req, &resp); err != nil {
 		return nil, err
 	}
 	return &resp, nil

@@ -39,6 +39,7 @@ const (
 	RuncService_Events_FullMethodName      = "/runv.v1.RuncService/Events"
 	RuncService_Update_FullMethodName      = "/runv.v1.RuncService/Update"
 	RuncService_LogFilePath_FullMethodName = "/runv.v1.RuncService/LogFilePath"
+	RuncService_CloseIO_FullMethodName     = "/runv.v1.RuncService/CloseIO"
 )
 
 // RuncServiceClient is the client API for RuncService service.
@@ -84,6 +85,7 @@ type RuncServiceClient interface {
 	// Update updates the container resources
 	Update(ctx context.Context, in *RuncUpdateRequest, opts ...grpc.CallOption) (*RuncUpdateResponse, error)
 	LogFilePath(ctx context.Context, in *RuncLogFilePathRequest, opts ...grpc.CallOption) (*RuncLogFilePathResponse, error)
+	CloseIO(ctx context.Context, in *RuncCloseIORequest, opts ...grpc.CallOption) (*RuncCloseIOResponse, error)
 }
 
 type runcServiceClient struct {
@@ -303,6 +305,16 @@ func (c *runcServiceClient) LogFilePath(ctx context.Context, in *RuncLogFilePath
 	return out, nil
 }
 
+func (c *runcServiceClient) CloseIO(ctx context.Context, in *RuncCloseIORequest, opts ...grpc.CallOption) (*RuncCloseIOResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RuncCloseIOResponse)
+	err := c.cc.Invoke(ctx, RuncService_CloseIO_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RuncServiceServer is the server API for RuncService service.
 // All implementations should embed UnimplementedRuncServiceServer
 // for forward compatibility.
@@ -346,6 +358,7 @@ type RuncServiceServer interface {
 	// Update updates the container resources
 	Update(context.Context, *RuncUpdateRequest) (*RuncUpdateResponse, error)
 	LogFilePath(context.Context, *RuncLogFilePathRequest) (*RuncLogFilePathResponse, error)
+	CloseIO(context.Context, *RuncCloseIORequest) (*RuncCloseIOResponse, error)
 }
 
 // UnimplementedRuncServiceServer should be embedded to have
@@ -414,6 +427,9 @@ func (UnimplementedRuncServiceServer) Update(context.Context, *RuncUpdateRequest
 }
 func (UnimplementedRuncServiceServer) LogFilePath(context.Context, *RuncLogFilePathRequest) (*RuncLogFilePathResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LogFilePath not implemented")
+}
+func (UnimplementedRuncServiceServer) CloseIO(context.Context, *RuncCloseIORequest) (*RuncCloseIOResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CloseIO not implemented")
 }
 func (UnimplementedRuncServiceServer) testEmbeddedByValue() {}
 
@@ -788,6 +804,24 @@ func _RuncService_LogFilePath_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RuncService_CloseIO_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RuncCloseIORequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuncServiceServer).CloseIO(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuncService_CloseIO_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuncServiceServer).CloseIO(ctx, req.(*RuncCloseIORequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RuncService_ServiceDesc is the grpc.ServiceDesc for RuncService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -870,6 +904,10 @@ var RuncService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "LogFilePath",
 			Handler:    _RuncService_LogFilePath_Handler,
+		},
+		{
+			MethodName: "CloseIO",
+			Handler:    _RuncService_CloseIO_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
