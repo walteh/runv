@@ -2,11 +2,11 @@ package server
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/walteh/runv/core/runc/runtime"
 	runvv1 "github.com/walteh/runv/proto/v1"
+	"gitlab.com/tozd/go/errors"
 )
 
 var _ runvv1.SocketAllocatorServiceServer = (*Server)(nil)
@@ -32,11 +32,15 @@ func (s *Server) AllocateSocketStream(req *runvv1.AllocateSocketStreamRequest, s
 
 	select {
 	case <-stream.Context().Done():
-		return fmt.Errorf("context done before socket was ready: %w", stream.Context().Err())
+		return errors.Errorf("context done before socket was ready: %w", stream.Context().Err())
 	case <-time.After(10 * time.Second):
-		return fmt.Errorf("timeout waiting for socket to be ready")
+		return errors.Errorf("timeout waiting for socket to be ready")
 	case err := <-ready:
-		return err
+		if err != nil {
+			return errors.Errorf("socket not ready: %w", err)
+		}
+		s.state.StoreOpenSocket(referenceId, as)
+		return nil
 	}
 }
 
@@ -44,7 +48,7 @@ func (s *Server) AllocateConsole(ctx context.Context, req *runvv1.AllocateConsol
 	referenceId := runtime.NewConsoleReferenceId()
 	cs, err := s.runtime.NewTempConsoleSocket(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.Errorf("failed to allocate console: %w", err)
 	}
 	s.state.StoreOpenConsole(referenceId, cs)
 	res := &runvv1.AllocateConsoleResponse{}
@@ -56,7 +60,7 @@ func (s *Server) AllocateIO(ctx context.Context, req *runvv1.AllocateIORequest) 
 	ioref := runtime.NewIoReferenceId()
 	pio, err := s.runtime.NewPipeIO(ctx, 0, 0)
 	if err != nil {
-		return nil, err
+		return nil, errors.Errorf("failed to allocate io: %w", err)
 	}
 	s.state.StoreOpenIO(ioref, pio)
 	res := &runvv1.AllocateIOResponse{}
@@ -68,7 +72,7 @@ func (s *Server) AllocateIO(ctx context.Context, req *runvv1.AllocateIORequest) 
 func (s *Server) AllocateSocket(ctx context.Context, req *runvv1.AllocateSocketRequest) (*runvv1.AllocateSocketResponse, error) {
 	as, err := s.socketAllocator.AllocateSocket(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.Errorf("failed to allocate socket: %w", err)
 	}
 
 	referenceId := runtime.NewSocketReferenceId(as)
@@ -95,7 +99,7 @@ func (s *Server) AllocateSockets(ctx context.Context, req *runvv1.AllocateSocket
 	for i := 0; i < int(req.GetCount()); i++ {
 		as, err := s.socketAllocator.AllocateSocket(ctx)
 		if err != nil {
-			return nil, err
+			return nil, errors.Errorf("failed to allocate socket: %w", err)
 		}
 		socksToClean = append(socksToClean, as)
 	}
@@ -118,11 +122,12 @@ func (s *Server) AllocateSockets(ctx context.Context, req *runvv1.AllocateSocket
 func (s *Server) BindConsoleToSocket(ctx context.Context, req *runvv1.BindConsoleToSocketRequest) (*runvv1.BindConsoleToSocketResponse, error) {
 	cs, ok := s.state.GetOpenConsole(req.GetConsoleReferenceId())
 	if !ok {
-		return nil, fmt.Errorf("console not found")
+		return nil, errors.Errorf("cannot bind console to socket: console not found")
 	}
+
 	as, ok := s.state.GetOpenSocket(req.GetSocketReferenceId())
 	if !ok {
-		return nil, fmt.Errorf("socket not found")
+		return nil, errors.Errorf("cannot bind console to socket: socket '%s' not found", req.GetSocketReferenceId())
 	}
 
 	err := runtime.BindConsoleToSocket(ctx, cs, as)
@@ -137,7 +142,7 @@ func (s *Server) BindConsoleToSocket(ctx context.Context, req *runvv1.BindConsol
 func (s *Server) BindIOToSockets(ctx context.Context, req *runvv1.BindIOToSocketsRequest) (*runvv1.BindIOToSocketsResponse, error) {
 	io, ok := s.state.GetOpenIO(req.GetIoReferenceId())
 	if !ok {
-		return nil, fmt.Errorf("io not found")
+		return nil, errors.Errorf("io not found")
 	}
 
 	iosocks := [3]runtime.AllocatedSocket{}
@@ -145,21 +150,21 @@ func (s *Server) BindIOToSockets(ctx context.Context, req *runvv1.BindIOToSocket
 	if req.GetStdinSocketReferenceId() != "" {
 		sock, ok := s.state.GetOpenSocket(req.GetStdinSocketReferenceId())
 		if !ok {
-			return nil, fmt.Errorf("stdin socket not found")
+			return nil, errors.Errorf("stdin socket not found")
 		}
 		iosocks[0] = sock
 	}
 	if req.GetStdoutSocketReferenceId() != "" {
 		sock, ok := s.state.GetOpenSocket(req.GetStdoutSocketReferenceId())
 		if !ok {
-			return nil, fmt.Errorf("stdout socket not found")
+			return nil, errors.Errorf("stdout socket not found")
 		}
 		iosocks[1] = sock
 	}
 	if req.GetStderrSocketReferenceId() != "" {
 		sock, ok := s.state.GetOpenSocket(req.GetStderrSocketReferenceId())
 		if !ok {
-			return nil, fmt.Errorf("stderr socket not found")
+			return nil, errors.Errorf("stderr socket not found")
 		}
 		iosocks[2] = sock
 	}
@@ -176,7 +181,7 @@ func (s *Server) BindIOToSockets(ctx context.Context, req *runvv1.BindIOToSocket
 func (s *Server) CloseConsole(ctx context.Context, req *runvv1.CloseConsoleRequest) (*runvv1.CloseConsoleResponse, error) {
 	val, ok := s.state.GetOpenConsole(req.GetConsoleReferenceId())
 	if !ok {
-		return nil, fmt.Errorf("console not found")
+		return nil, errors.Errorf("console not found")
 	}
 	val.Close()
 	s.state.DeleteOpenConsole(req.GetConsoleReferenceId())
@@ -187,7 +192,7 @@ func (s *Server) CloseConsole(ctx context.Context, req *runvv1.CloseConsoleReque
 func (s *Server) CloseIO(ctx context.Context, req *runvv1.CloseIORequest) (*runvv1.CloseIOResponse, error) {
 	val, ok := s.state.GetOpenIO(req.GetIoReferenceId())
 	if !ok {
-		return nil, fmt.Errorf("io not found")
+		return nil, errors.Errorf("io not found")
 	}
 	val.Close()
 	s.state.DeleteOpenIO(req.GetIoReferenceId())
@@ -198,7 +203,7 @@ func (s *Server) CloseIO(ctx context.Context, req *runvv1.CloseIORequest) (*runv
 func (s *Server) CloseSocket(ctx context.Context, req *runvv1.CloseSocketRequest) (*runvv1.CloseSocketResponse, error) {
 	val, ok := s.state.GetOpenSocket(req.GetSocketReferenceId())
 	if !ok {
-		return nil, fmt.Errorf("socket not found")
+		return nil, errors.Errorf("socket not found")
 	}
 	val.Close()
 	s.state.DeleteOpenSocket(req.GetSocketReferenceId())
@@ -210,7 +215,7 @@ func (s *Server) CloseSockets(ctx context.Context, req *runvv1.CloseSocketsReque
 	for _, ref := range req.GetSocketReferenceIds() {
 		val, ok := s.state.GetOpenSocket(ref)
 		if !ok {
-			return nil, fmt.Errorf("socket not found")
+			return nil, errors.Errorf("socket not found")
 		}
 		val.Close()
 	}

@@ -3,8 +3,6 @@ package conversion
 import (
 	"context"
 	"encoding/json"
-	"errors"
-	"fmt"
 	"os"
 	"time"
 
@@ -12,6 +10,8 @@ import (
 	"github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/walteh/runv/core/runc/runtime"
 	runvv1 "github.com/walteh/runv/proto/v1"
+
+	"gitlab.com/tozd/go/errors"
 )
 
 func ConvertStatsFromProto(stats *runvv1.RuncStats) (*gorunc.Stats, error) {
@@ -45,12 +45,12 @@ func ConvertCreateOptsFromProto(ctx context.Context, opts *runvv1.RuncCreateOpti
 
 	io, ok := state.GetOpenIO(opts.GetIoReferenceId())
 	if !ok {
-		return nil, fmt.Errorf("io not found")
+		return nil, errors.Errorf("io not found")
 	}
 
 	cs, ok := state.GetOpenConsole(opts.GetConsoleReferenceId())
 	if !ok {
-		return nil, fmt.Errorf("console not found")
+		return nil, errors.Errorf("console not found")
 	}
 
 	return &gorunc.CreateOpts{
@@ -69,12 +69,12 @@ func ConvertCreateOptsToProto(ctx context.Context, opts *gorunc.CreateOpts) (*ru
 
 	ioz, ok := opts.IO.(runtime.ReferableByReferenceId)
 	if !ok {
-		return nil, fmt.Errorf("io is not a referable by reference id")
+		return nil, errors.Errorf("io is not a referable by reference id")
 	}
 
 	csz, ok := opts.ConsoleSocket.(runtime.ReferableByReferenceId)
 	if !ok {
-		return nil, fmt.Errorf("console socket is not a referable by reference id")
+		return nil, errors.Errorf("console socket is not a referable by reference id")
 	}
 
 	// for now panic if we see extra files, we shouldnt see any but they are not hanlded
@@ -102,12 +102,12 @@ func ConvertCreateOptsToProto(ctx context.Context, opts *gorunc.CreateOpts) (*ru
 func ConvertExecOptsFromProto(opts *runvv1.RuncExecOptions, state runtime.ServerStateGetter) (*gorunc.ExecOpts, error) {
 	io, ok := state.GetOpenIO(opts.GetIoReferenceId())
 	if !ok {
-		return nil, fmt.Errorf("io not found")
+		return nil, errors.Errorf("io not found")
 	}
 
 	cs, ok := state.GetOpenConsole(opts.GetConsoleReferenceId())
 	if !ok {
-		return nil, fmt.Errorf("console not found")
+		return nil, errors.Errorf("console not found")
 	}
 
 	return &gorunc.ExecOpts{

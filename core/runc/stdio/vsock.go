@@ -2,10 +2,10 @@ package stdio
 
 import (
 	"context"
-	"fmt"
 	"net"
 
 	"github.com/mdlayher/vsock"
+	"github.com/pkg/errors"
 )
 
 type vsockForwarder struct {
@@ -48,7 +48,7 @@ func NewVsockForwarder(
 	listenFunc func(context.Context, uint32, uint64) (net.Listener, error),
 ) (*vsockForwarder, error) {
 	if ctxId == 0 {
-		return nil, fmt.Errorf("vsock context id is required, you likely meant to set it to '2' for the mvp")
+		return nil, errors.Errorf("vsock context id is required, you likely meant to set it to '2' for the mvp")
 	}
 
 	return &vsockForwarder{

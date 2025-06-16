@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log/slog"
 	"net"
+	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -12,6 +14,7 @@ import (
 	"syscall"
 
 	"github.com/mdlayher/vsock"
+	"gitlab.com/tozd/go/errors"
 	"go.uber.org/atomic"
 )
 
@@ -61,6 +64,7 @@ func NewHostAllocatedUnixSocket(ctx context.Context, path string, refId string) 
 	if err != nil {
 		return nil, err
 	}
+	slog.InfoContext(ctx, "new host allocated unix socket", "path", path, "refId", refId)
 	return &HostAllocatedSocket{conn: conn, path: path, referenceId: refId}, nil
 }
 
@@ -76,15 +80,36 @@ func NewHostAllocatedSocketFromId(ctx context.Context, id string, proxier VsockP
 		path := strings.TrimPrefix(id, "socket:unix:")
 		return NewHostAllocatedUnixSocket(ctx, path, id)
 	}
-	return nil, fmt.Errorf("invalid socket type: %s", id)
+	return nil, errors.Errorf("invalid socket type: %s", id)
 }
 
+func debugReader(ctx context.Context, name string, r io.Reader) io.Reader {
+	pr, pw := io.Pipe()
+	tr := io.TeeReader(r, pw)
+	// reaqd one byte at a time from r and print it to stdout
+	go func() {
+		slog.InfoContext(ctx, "starting debugReader", "name", name)
+		for ctx.Err() == nil {
+
+			buf := make([]byte, 1)
+			_, err := pr.Read(buf)
+			if err != nil {
+				return
+			}
+			slog.InfoContext(ctx, "captured byte", "name", name, "byte", buf[0])
+		}
+	}()
+	return tr
+}
+
+// runc.ConsoleSocket -> console.Console -> my.Socket
 // BindConsoleToSocket implements runtime.SocketAllocator.
 func BindConsoleToSocket(ctx context.Context, cons ConsoleSocket, sock AllocatedSocket) error {
-	// open up the console socket path, and create a pipe to it
+
+	// // open up the console socket path, and create a pipe to it
 	consConn, err := net.DialUnix("unix", nil, &net.UnixAddr{Name: cons.Path(), Net: "unix"})
 	if err != nil {
-		return err
+		return errors.Errorf("failed to dial console socket: %w", err)
 	}
 	sockConn := sock.Conn()
 
@@ -94,15 +119,13 @@ func BindConsoleToSocket(ctx context.Context, cons ConsoleSocket, sock Allocated
 	// create a goroutine to read from the pipe and write to the socket
 	go func() {
 		defer wg.Done()
-		wg.Add(1)
-		io.Copy(consConn, sockConn)
+		io.Copy(consConn, debugReader(ctx, "consConn", sockConn))
 	}()
 
 	// create a goroutine to read from the socket and write to the console
 	go func() {
 		defer wg.Done()
-		wg.Add(1)
-		io.Copy(sockConn, consConn)
+		io.Copy(sockConn, debugReader(ctx, "sockConn", consConn))
 	}()
 
 	go func() {
@@ -114,6 +137,43 @@ func BindConsoleToSocket(ctx context.Context, cons ConsoleSocket, sock Allocated
 	// return the pipe
 	return nil
 }
+
+// func BindConsoleToSocket(ctx context.Context, cons ConsoleSocket, sock AllocatedSocket) error {
+
+// 	// 1) Create a listener on the path your ConsoleSocket exposes:
+// 	l, err := net.ListenUnix("unix", &net.UnixAddr{Name: cons.Path(), Net: "unix"})
+// 	if err != nil {
+// 		return errors.Errorf("failed to listen on console socket: %w", err)
+// 	}
+// 	defer l.Close()
+
+// 	go func() {
+
+// 		for {
+// 			// 2) Accept each new incoming connection:
+// 			clientConn, err := l.AcceptUnix()
+// 			if err != nil {
+// 				slog.ErrorContext(ctx, "failed to accept console connection", "error", err)
+// 				return
+// 			}
+
+// 			// 3) Dial the other side (vsock, etc.):
+// 			serverConn := sock.Conn()
+
+// 			// 4) Proxy bi-directionally:
+// 			go func() {
+// 				io.Copy(serverConn, clientConn) // client → server
+// 				serverConn.Close()
+// 			}()
+// 			go func() {
+// 				io.Copy(clientConn, serverConn) // server → client
+// 				clientConn.Close()
+// 			}()
+// 		}
+// 	}()
+
+// 	return nil
+// }
 
 // BindIOToSockets implements SocketAllocator.
 func BindIOToSockets(ctx context.Context, ios IO, stdin, stdout, stderr AllocatedSocket) error {
@@ -152,7 +212,7 @@ func (g *GuestAllocatedUnixSocket) Close() error {
 	return g.conn.Close()
 }
 
-func (g *GuestAllocatedUnixSocket) Conn() *net.UnixConn {
+func (g *GuestAllocatedUnixSocket) Conn() FileConn {
 	return g.conn
 }
 
@@ -258,10 +318,12 @@ var guestUnixSocketCounter = atomic.NewInt64(0)
 func (g *GuestUnixSocketAllocator) AllocateSocket(ctx context.Context) (AllocatedSocket, error) {
 
 	unixSockPath := filepath.Join(g.socketDir, fmt.Sprintf("runv-%02d.sock", guestUnixSocketCounter.Add(1)))
-	rid := NewUnixSocketReferenceId(unixSockPath)
-	unixSock, err := NewHostAllocatedUnixSocket(ctx, unixSockPath, rid)
+
+	os.MkdirAll(filepath.Dir(unixSockPath), 0755)
+
+	unixSock, err := NewGuestAllocatedUnixSocket(ctx, unixSockPath)
 	if err != nil {
-		return nil, err
+		return nil, errors.Errorf("failed to allocate unix socket: %w", err)
 	}
 	return unixSock, nil
 }

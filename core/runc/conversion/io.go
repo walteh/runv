@@ -2,11 +2,11 @@ package conversion
 
 import (
 	"context"
-	"fmt"
 	"net"
 
 	gorunc "github.com/containerd/go-runc"
 	"github.com/mdlayher/vsock"
+	"github.com/pkg/errors"
 	"github.com/walteh/runv/core/runc/runtime"
 	"github.com/walteh/runv/core/runc/stdio"
 	runvv1 "github.com/walteh/runv/proto/v1"
@@ -36,7 +36,7 @@ func ConvertIOToProto(ctx context.Context, rvio runtime.IO) (*runvv1.RuncIO, err
 	case *stdio.HostNullIo:
 		res.SetNull(&runvv1.RuncNullIO{})
 	default:
-		return nil, fmt.Errorf("io is not a vsock proxy io")
+		return nil, errors.Errorf("io is not a vsock proxy io")
 	}
 
 	return res, nil
@@ -82,7 +82,7 @@ func NewServerIOFromClient(ctx context.Context, rvio *runvv1.RuncIO) (runtime.IO
 		// no need to forward null io
 		return gorunc.NewNullIO()
 	default:
-		return nil, fmt.Errorf("unknown io type: %v", rvio.WhichIo())
+		return nil, errors.Errorf("unknown io type: %v", rvio.WhichIo())
 	}
 	if err != nil {
 		return nil, err

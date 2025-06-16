@@ -2,11 +2,16 @@ package server
 
 import (
 	"context"
-	"fmt"
+	"log/slog"
+	"net"
+	"time"
 
+	"github.com/kr/pty"
 	"github.com/walteh/runv/core/runc/conversion"
 	"github.com/walteh/runv/core/runc/runtime"
 	runvv1 "github.com/walteh/runv/proto/v1"
+	"gitlab.com/tozd/go/errors"
+	"golang.org/x/sys/unix"
 )
 
 var _ runvv1.RuncServiceServer = (*Server)(nil)
@@ -16,15 +21,46 @@ func (s *Server) Ping(ctx context.Context, req *runvv1.PingRequest) (*runvv1.Pin
 	return &runvv1.PingResponse{}, nil
 }
 
+func simulatePty(ctx context.Context, sock string) error {
+
+	time.Sleep(1 * time.Second)
+	master, slave, err := pty.Open()
+	if err != nil {
+		slog.Error("open pty", "error", err)
+		return err
+	}
+	defer master.Close()
+	defer slave.Close()
+
+	conn, err := net.Dial("unix", sock)
+	if err != nil {
+		slog.Error("dial socket", "path", sock, "error", err)
+		return err
+	}
+	defer conn.Close()
+
+	// Build the control message carrying our master FD
+	rights := unix.UnixRights(int(master.Fd()))
+	n, oobn, err := conn.(*net.UnixConn).
+		WriteMsgUnix(nil, rights, nil)
+	slog.Info("sent FD", "socket", sock, "n", n, "oobn", oobn, "error", err)
+	<-ctx.Done()
+	return nil
+}
+
 func (s *Server) NewTempConsoleSocket(ctx context.Context, req *runvv1.RuncNewTempConsoleSocketRequest) (*runvv1.RuncNewTempConsoleSocketResponse, error) {
+
+	slog.InfoContext(ctx, "new temp console socket - A")
 
 	socket, err := s.runtime.NewTempConsoleSocket(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.Errorf("failed to create temp console socket: %w", err)
 	}
 
 	referenceId := runtime.NewConsoleReferenceId()
 	s.state.StoreOpenConsole(referenceId, socket)
+
+	go simulatePty(ctx, socket.Path())
 
 	resp := &runvv1.RuncNewTempConsoleSocketResponse{}
 	resp.SetConsoleReferenceId(referenceId)
@@ -36,7 +72,7 @@ func (s *Server) ReadPidFile(ctx context.Context, req *runvv1.RuncReadPidFileReq
 
 	pid, err := s.runtime.ReadPidFile(ctx, req.GetPath())
 	if err != nil {
-		return nil, err
+		return nil, errors.Errorf("failed to read pid file: %w", err)
 	}
 	resp.SetPid(int32(pid))
 	return resp, nil
@@ -48,7 +84,7 @@ func (s *Server) Create(ctx context.Context, req *runvv1.RuncCreateRequest) (*ru
 
 	opts, err := conversion.ConvertCreateOptsFromProto(ctx, req.GetOptions(), s.state)
 	if err != nil {
-		return nil, err
+		return nil, errors.Errorf("failed to convert create opts: %w", err)
 	}
 
 	err = s.runtime.Create(ctx, req.GetId(), req.GetBundle(), opts)
@@ -143,7 +179,7 @@ func (s *Server) Exec(ctx context.Context, req *runvv1.RuncExecRequest) (*runvv1
 	resp := &runvv1.RuncExecResponse{}
 
 	if req.GetSpec() == nil {
-		return nil, fmt.Errorf("spec is required")
+		return nil, errors.Errorf("spec is required")
 	}
 
 	processSpec, err := conversion.ConvertProcessSpecFromProto(req.GetSpec())

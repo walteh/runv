@@ -12,10 +12,12 @@ import (
 
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
+	"github.com/kr/pty"
 	"github.com/walteh/runv/core/runc/runtime"
 	goruncruntime "github.com/walteh/runv/core/runc/runtime/gorunc"
 	"github.com/walteh/runv/core/runc/runtime/plug"
 	"github.com/walteh/runv/pkg/logging"
+	"golang.org/x/sys/unix"
 
 	server "github.com/walteh/runv/core/runc/server"
 
@@ -73,6 +75,8 @@ func newRealServer(ctx context.Context) *server.Server {
 	return server.NewServer(realRuntime, mockRuntimeExtras, realSocketAllocator)
 }
 
+var realServer *server.Server
+
 func serverz(ctx context.Context, logPath string) error {
 	proxySock, err := setupServerLogProxy(ctx, logPath)
 	if err != nil {
@@ -84,16 +88,41 @@ func serverz(ctx context.Context, logPath string) error {
 		logging.WithValue(slog.Int("ppid", os.Getppid())),
 	)
 
-	srv := newRealServer(ctx)
+	realServer = newRealServer(ctx)
 
 	plugin.Serve(&plugin.ServeConfig{
 		HandshakeConfig: plug.Handshake,
 		Logger:          hclog.Default(),
-		Plugins:         plug.NewRuntimePluginSet(srv),
+		Plugins:         plug.NewRuntimePluginSet(realServer),
 		// A non-nil value here enables gRPC serving for this plugin...
 		GRPCServer: plugin.DefaultGRPCServer,
 	})
 
+	return nil
+}
+
+func simulatePty(ctx context.Context, sock string) error {
+	master, slave, err := pty.Open()
+	if err != nil {
+		slog.Error("open pty", "error", err)
+		return err
+	}
+	defer master.Close()
+	defer slave.Close()
+
+	conn, err := net.Dial("unix", sock)
+	if err != nil {
+		slog.Error("dial socket", "path", sock, "error", err)
+		return err
+	}
+	defer conn.Close()
+
+	// Build the control message carrying our master FD
+	rights := unix.UnixRights(int(master.Fd()))
+	n, oobn, err := conn.(*net.UnixConn).
+		WriteMsgUnix(nil, rights, nil)
+	slog.Info("sent FD", "socket", sock, "n", n, "oobn", oobn, "error", err)
+	<-ctx.Done()
 	return nil
 }
 
@@ -153,6 +182,9 @@ func client(ctx context.Context, command string) error {
 		if err != nil {
 			return err
 		}
+
+		// go simulatePty(ctx, "/tmp/runv-sample/console.sock")
+
 		zd.ReceiveMaster()
 		fmt.Println("pong")
 	default:

@@ -1,13 +1,13 @@
 package grpcruntime
 
 import (
-	"fmt"
-
 	"github.com/walteh/runv/core/runc/runtime"
 	"github.com/walteh/runv/core/runc/state"
 	runvv1 "github.com/walteh/runv/proto/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+
+	"gitlab.com/tozd/go/errors"
 )
 
 // Client is a client for the runc service.
@@ -33,7 +33,7 @@ func NewGRPCClientRuntime(target string, opts ...grpc.DialOption) (*GRPCClientRu
 
 	conn, err := grpc.NewClient(target, opts...)
 	if err != nil {
-		return nil, fmt.Errorf("failed to connect to runc service: %w", err)
+		return nil, errors.Errorf("failed to connect to runc service: %w", err)
 	}
 
 	return NewGRPCClientRuntimeFromConn(conn)
