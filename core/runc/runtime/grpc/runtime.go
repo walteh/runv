@@ -1,4 +1,4 @@
-package client
+package grpcruntime
 
 import (
 	"context"
@@ -12,16 +12,16 @@ import (
 	runvv1 "github.com/walteh/runv/proto/v1"
 )
 
-var _ runtime.Runtime = (*Client)(nil)
+var _ runtime.Runtime = (*GRPCClientRuntime)(nil)
 
 // Ping checks if the runc service is alive.
-func (c *Client) Ping(ctx context.Context) error {
+func (c *GRPCClientRuntime) Ping(ctx context.Context) error {
 	_, err := c.runtime.Ping(ctx, &runvv1.PingRequest{})
 	return err
 }
 
 // NewTempConsoleSocket implements runtime.Runtime.
-func (c *Client) NewTempConsoleSocket(ctx context.Context) (runtime.ConsoleSocket, error) {
+func (c *GRPCClientRuntime) NewTempConsoleSocket(ctx context.Context) (runtime.ConsoleSocket, error) {
 
 	cons, err := c.runtime.NewTempConsoleSocket(ctx, &runvv1.RuncNewTempConsoleSocketRequest{})
 	if err != nil {
@@ -67,12 +67,12 @@ func (c *Client) NewTempConsoleSocket(ctx context.Context) (runtime.ConsoleSocke
 }
 
 // ReadPidFile implements runtime.Runtime.
-func (c *Client) ReadPidFile(path string) (int, error) {
+func (c *GRPCClientRuntime) ReadPidFile(path string) (int, error) {
 	panic("unimplemented")
 }
 
 // LogFilePath implements runtime.Runtime.
-func (c *Client) LogFilePath() string {
+func (c *GRPCClientRuntime) LogFilePath() string {
 	resp, err := c.runtime.LogFilePath(context.Background(), &runvv1.RuncLogFilePathRequest{})
 	if err != nil {
 		return ""
@@ -81,22 +81,22 @@ func (c *Client) LogFilePath() string {
 }
 
 // Update implements runtime.Runtime.
-func (c *Client) Update(ctx context.Context, id string, resources *specs.LinuxResources) error {
+func (c *GRPCClientRuntime) Update(ctx context.Context, id string, resources *specs.LinuxResources) error {
 	panic("unimplemented")
 }
 
 // NewNullIO implements runtime.Runtime.
-func (c *Client) NewNullIO() (runtime.IO, error) {
+func (c *GRPCClientRuntime) NewNullIO() (runtime.IO, error) {
 	return stdio.NewHostNullIo()
 }
 
 // NewPipeIO implements runtime.Runtime.
-func (c *Client) NewPipeIO(ioUID, ioGID int, opts ...gorunc.IOOpt) (runtime.IO, error) {
+func (c *GRPCClientRuntime) NewPipeIO(ioUID, ioGID int, opts ...gorunc.IOOpt) (runtime.IO, error) {
 	return stdio.NewHostVsockProxyIo(context.Background(), opts...)
 }
 
 // Create creates a new container.
-func (c *Client) Create(ctx context.Context, id, bundle string, options *gorunc.CreateOpts) error {
+func (c *GRPCClientRuntime) Create(ctx context.Context, id, bundle string, options *gorunc.CreateOpts) error {
 	conv, err := conversion.ConvertCreateOptsToProto(ctx, options)
 	if err != nil {
 		return err
@@ -118,7 +118,7 @@ func (c *Client) Create(ctx context.Context, id, bundle string, options *gorunc.
 }
 
 // Start starts an already created container.
-func (c *Client) Start(ctx context.Context, id string) error {
+func (c *GRPCClientRuntime) Start(ctx context.Context, id string) error {
 	req := &runvv1.RuncStartRequest{}
 	req.SetId(id)
 
@@ -133,7 +133,7 @@ func (c *Client) Start(ctx context.Context, id string) error {
 }
 
 // Delete deletes a container.
-func (c *Client) Delete(ctx context.Context, id string, opts *gorunc.DeleteOpts) error {
+func (c *GRPCClientRuntime) Delete(ctx context.Context, id string, opts *gorunc.DeleteOpts) error {
 	req := &runvv1.RuncDeleteRequest{}
 	req.SetId(id)
 	req.SetOptions(conversion.ConvertDeleteOptsToProto(opts))
@@ -149,7 +149,7 @@ func (c *Client) Delete(ctx context.Context, id string, opts *gorunc.DeleteOpts)
 }
 
 // Kill sends the specified signal to the container.
-func (c *Client) Kill(ctx context.Context, id string, signal int, opts *gorunc.KillOpts) error {
+func (c *GRPCClientRuntime) Kill(ctx context.Context, id string, signal int, opts *gorunc.KillOpts) error {
 	req := &runvv1.RuncKillRequest{}
 	req.SetId(id)
 	req.SetSignal(int32(signal))
@@ -166,7 +166,7 @@ func (c *Client) Kill(ctx context.Context, id string, signal int, opts *gorunc.K
 }
 
 // Pause pauses the container with the provided id.
-func (c *Client) Pause(ctx context.Context, id string) error {
+func (c *GRPCClientRuntime) Pause(ctx context.Context, id string) error {
 	req := &runvv1.RuncPauseRequest{}
 	req.SetId(id)
 
@@ -181,7 +181,7 @@ func (c *Client) Pause(ctx context.Context, id string) error {
 }
 
 // Resume resumes the container with the provided id.
-func (c *Client) Resume(ctx context.Context, id string) error {
+func (c *GRPCClientRuntime) Resume(ctx context.Context, id string) error {
 	req := &runvv1.RuncResumeRequest{}
 	req.SetId(id)
 
@@ -196,7 +196,7 @@ func (c *Client) Resume(ctx context.Context, id string) error {
 }
 
 // Ps lists all the processes inside the container returning their pids.
-func (c *Client) Ps(ctx context.Context, id string) ([]int, error) {
+func (c *GRPCClientRuntime) Ps(ctx context.Context, id string) ([]int, error) {
 	req := &runvv1.RuncPsRequest{}
 	req.SetId(id)
 
@@ -215,7 +215,7 @@ func (c *Client) Ps(ctx context.Context, id string) ([]int, error) {
 }
 
 // Exec executes an additional process inside the container.
-func (c *Client) Exec(ctx context.Context, id string, spec specs.Process, options *gorunc.ExecOpts) error {
+func (c *GRPCClientRuntime) Exec(ctx context.Context, id string, spec specs.Process, options *gorunc.ExecOpts) error {
 	req := &runvv1.RuncExecRequest{}
 	req.SetId(id)
 
@@ -237,7 +237,7 @@ func (c *Client) Exec(ctx context.Context, id string, spec specs.Process, option
 	return nil
 }
 
-func (c *Client) Checkpoint(ctx context.Context, id string, options *gorunc.CheckpointOpts, actions ...gorunc.CheckpointAction) error {
+func (c *GRPCClientRuntime) Checkpoint(ctx context.Context, id string, options *gorunc.CheckpointOpts, actions ...gorunc.CheckpointAction) error {
 	req := &runvv1.RuncCheckpointRequest{}
 	req.SetId(id)
 	req.SetOptions(conversion.ConvertCheckpointOptsToProto(options))
@@ -253,7 +253,7 @@ func (c *Client) Checkpoint(ctx context.Context, id string, options *gorunc.Chec
 	return nil
 }
 
-func (c *Client) Restore(ctx context.Context, id, bundle string, options *gorunc.RestoreOpts) (int, error) {
+func (c *GRPCClientRuntime) Restore(ctx context.Context, id, bundle string, options *gorunc.RestoreOpts) (int, error) {
 	req := &runvv1.RuncRestoreRequest{}
 	req.SetId(id)
 	req.SetBundle(bundle)

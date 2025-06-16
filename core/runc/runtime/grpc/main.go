@@ -1,4 +1,4 @@
-package client
+package grpcruntime
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ import (
 
 // Client is a client for the runc service.
 
-type Client struct {
+type GRPCClientRuntime struct {
 	runtime         runvv1.RuncServiceClient
 	runtimeExtras   runvv1.RuncExtrasServiceClient
 	socketAllocator runvv1.SocketAllocatorServiceClient
@@ -25,7 +25,7 @@ type Client struct {
 }
 
 // NewRuncClient creates a new client for the runc service.
-func NewClient(target string, opts ...grpc.DialOption) (*Client, error) {
+func NewGRPCClientRuntime(target string, opts ...grpc.DialOption) (*GRPCClientRuntime, error) {
 	if len(opts) == 0 {
 		opts = []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
 	}
@@ -35,13 +35,13 @@ func NewClient(target string, opts ...grpc.DialOption) (*Client, error) {
 		return nil, fmt.Errorf("failed to connect to runc service: %w", err)
 	}
 
-	return NewClientFromConn(conn)
+	return NewGRPCClientRuntimeFromConn(conn)
 }
 
 // NewClientFromConn creates a new client from an existing connection.
-func NewClientFromConn(conn *grpc.ClientConn) (*Client, error) {
+func NewGRPCClientRuntimeFromConn(conn *grpc.ClientConn) (*GRPCClientRuntime, error) {
 
-	client := &Client{
+	client := &GRPCClientRuntime{
 		runtime:         runvv1.NewRuncServiceClient(conn),
 		runtimeExtras:   runvv1.NewRuncExtrasServiceClient(conn),
 		socketAllocator: runvv1.NewSocketAllocatorServiceClient(conn),
@@ -53,7 +53,7 @@ func NewClientFromConn(conn *grpc.ClientConn) (*Client, error) {
 }
 
 // Close closes the client connection.
-func (c *Client) Close() error {
+func (c *GRPCClientRuntime) Close() error {
 	if c.conn != nil {
 		return c.conn.Close()
 	}

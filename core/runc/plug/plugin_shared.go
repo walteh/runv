@@ -5,8 +5,8 @@ import (
 	"net/rpc"
 
 	"github.com/hashicorp/go-plugin"
-	"github.com/walteh/runv/core/runc/client"
 	"github.com/walteh/runv/core/runc/runtime"
+	grpcruntime "github.com/walteh/runv/core/runc/runtime/grpc"
 	"github.com/walteh/runv/core/runc/server"
 	runvv1 "github.com/walteh/runv/proto/v1"
 	"google.golang.org/grpc"
@@ -65,5 +65,5 @@ func (p *RuntimePlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) er
 }
 
 func (p *RuntimePlugin) GRPCClient(ctx context.Context, broker *plugin.GRPCBroker, c *grpc.ClientConn) (interface{}, error) {
-	return client.NewClientFromConn(c)
+	return grpcruntime.NewGRPCClientRuntimeFromConn(c)
 }

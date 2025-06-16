@@ -9,7 +9,7 @@ import (
 	gorunc "github.com/containerd/go-runc"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/walteh/runv/core/runc/client"
+	grpcruntime "github.com/walteh/runv/core/runc/runtime/grpc"
 	"github.com/walteh/runv/core/runc/server"
 	runtimemock "github.com/walteh/runv/gen/mocks/core/runc/runtime"
 	runvv1 "github.com/walteh/runv/proto/v1"
@@ -59,7 +59,7 @@ func TestBasicClientServer(t *testing.T) {
 	defer conn.Close()
 
 	// Create a client
-	runcClient, err := client.NewClientFromConn(conn)
+	runcClient, err := grpcruntime.NewGRPCClientRuntimeFromConn(conn)
 	require.NoError(t, err)
 	defer runcClient.Close()
 
