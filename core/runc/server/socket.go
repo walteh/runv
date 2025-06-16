@@ -22,9 +22,9 @@ func (s *Server) AllocateConsole(ctx context.Context, req *runvv1.AllocateConsol
 	return res, nil
 }
 
-func (s *Server) AllocateIO(context.Context, *runvv1.AllocateIORequest) (*runvv1.AllocateIOResponse, error) {
+func (s *Server) AllocateIO(ctx context.Context, req *runvv1.AllocateIORequest) (*runvv1.AllocateIOResponse, error) {
 	ioref := runtime.NewIoReferenceId()
-	pio, err := s.runtime.NewPipeIO(0, 0)
+	pio, err := s.runtime.NewPipeIO(ctx, 0, 0)
 	if err != nil {
 		return nil, err
 	}

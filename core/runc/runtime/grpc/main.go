@@ -17,7 +17,8 @@ type GRPCClientRuntime struct {
 	runtimeExtras   runvv1.RuncExtrasServiceClient
 	socketAllocator runvv1.SocketAllocatorServiceClient
 
-	vsockProxier runtime.VsockProxier
+	vsockProxier        runtime.VsockProxier
+	sharedDirPathPrefix string
 
 	conn *grpc.ClientConn
 

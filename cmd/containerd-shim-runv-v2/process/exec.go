@@ -182,7 +182,7 @@ func (e *execProcess) start(ctx context.Context) (err error) {
 	var (
 		socket  runtime.ConsoleSocket
 		pio     *processIO
-		pidFile = newExecPidFile(e.path, e.id, e.parent.runtime)
+		pidFile = newExecPidFile(e.path, e.id)
 	)
 	if e.stdio.Terminal {
 		if socket, err = e.parent.runtime.NewTempConsoleSocket(ctx); err != nil {
@@ -208,7 +208,7 @@ func (e *execProcess) start(ctx context.Context) (err error) {
 	// gorunc:call Exec
 	if err := e.parent.runtime.Exec(ctx, e.parent.id, e.spec, opts); err != nil {
 		close(e.waitBlock)
-		return e.parent.runtimeError(err, "OCI runtime exec failed")
+		return e.parent.runtimeError(ctx, err, "OCI runtime exec failed")
 	}
 	if e.stdio.Stdin != "" {
 		if err := e.openStdin(e.stdio.Stdin); err != nil {
@@ -230,9 +230,9 @@ func (e *execProcess) start(ctx context.Context) (err error) {
 			return fmt.Errorf("failed to start io pipe copy: %w", err)
 		}
 	}
-	pid, err := pidFile.Read()
+	pid, err := e.parent.runtime.ReadPidFile(ctx, pidFile.Path())
 	if err != nil {
-		return fmt.Errorf("failed to retrieve OCI runtime exec pi: %wd", err)
+		return fmt.Errorf("failed to retrieve OCI runtime exec pid: %w", err)
 	}
 	e.pid.pid = pid
 	return nil

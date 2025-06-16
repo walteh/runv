@@ -23,9 +23,12 @@ const (
 )
 
 type AllocateIORequest struct {
-	state         protoimpl.MessageState `protogen:"opaque.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                 protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_OpenStdin  bool                   `protobuf:"varint,1,opt,name=open_stdin,json=openStdin"`
+	xxx_hidden_OpenStdout bool                   `protobuf:"varint,2,opt,name=open_stdout,json=openStdout"`
+	xxx_hidden_OpenStderr bool                   `protobuf:"varint,3,opt,name=open_stderr,json=openStderr"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
 }
 
 func (x *AllocateIORequest) Reset() {
@@ -53,15 +56,54 @@ func (x *AllocateIORequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
+func (x *AllocateIORequest) GetOpenStdin() bool {
+	if x != nil {
+		return x.xxx_hidden_OpenStdin
+	}
+	return false
+}
+
+func (x *AllocateIORequest) GetOpenStdout() bool {
+	if x != nil {
+		return x.xxx_hidden_OpenStdout
+	}
+	return false
+}
+
+func (x *AllocateIORequest) GetOpenStderr() bool {
+	if x != nil {
+		return x.xxx_hidden_OpenStderr
+	}
+	return false
+}
+
+func (x *AllocateIORequest) SetOpenStdin(v bool) {
+	x.xxx_hidden_OpenStdin = v
+}
+
+func (x *AllocateIORequest) SetOpenStdout(v bool) {
+	x.xxx_hidden_OpenStdout = v
+}
+
+func (x *AllocateIORequest) SetOpenStderr(v bool) {
+	x.xxx_hidden_OpenStderr = v
+}
+
 type AllocateIORequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
+	OpenStdin  bool
+	OpenStdout bool
+	OpenStderr bool
 }
 
 func (b0 AllocateIORequest_builder) Build() *AllocateIORequest {
 	m0 := &AllocateIORequest{}
 	b, x := &b0, m0
 	_, _ = b, x
+	x.xxx_hidden_OpenStdin = b.OpenStdin
+	x.xxx_hidden_OpenStdout = b.OpenStdout
+	x.xxx_hidden_OpenStderr = b.OpenStderr
 	return m0
 }
 
@@ -1124,8 +1166,14 @@ var File_v1_socket_proto protoreflect.FileDescriptor
 
 const file_v1_socket_proto_rawDesc = "" +
 	"\n" +
-	"\x0fv1/socket.proto\x12\arunv.v1\x1a\x1egoogle/protobuf/duration.proto\x1a!google/protobuf/go_features.proto\"\x13\n" +
-	"\x11AllocateIORequest\"<\n" +
+	"\x0fv1/socket.proto\x12\arunv.v1\x1a\x1egoogle/protobuf/duration.proto\x1a!google/protobuf/go_features.proto\"t\n" +
+	"\x11AllocateIORequest\x12\x1d\n" +
+	"\n" +
+	"open_stdin\x18\x01 \x01(\bR\topenStdin\x12\x1f\n" +
+	"\vopen_stdout\x18\x02 \x01(\bR\n" +
+	"openStdout\x12\x1f\n" +
+	"\vopen_stderr\x18\x03 \x01(\bR\n" +
+	"openStderr\"<\n" +
 	"\x12AllocateIOResponse\x12&\n" +
 	"\x0fio_reference_id\x18\x01 \x01(\tR\rioReferenceId\"\x18\n" +
 	"\x16AllocateConsoleRequest\"K\n" +

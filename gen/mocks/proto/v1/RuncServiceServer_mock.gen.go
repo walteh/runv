@@ -36,9 +36,6 @@ var _ runvv1.RuncServiceServer = &MockRuncServiceServer{}
 //			KillFunc: func(context1 context.Context, runcKillRequest *runvv1.RuncKillRequest) (*runvv1.RuncKillResponse, error) {
 //				panic("mock out the Kill method")
 //			},
-//			LogFilePathFunc: func(context1 context.Context, runcLogFilePathRequest *runvv1.RuncLogFilePathRequest) (*runvv1.RuncLogFilePathResponse, error) {
-//				panic("mock out the LogFilePath method")
-//			},
 //			NewTempConsoleSocketFunc: func(context1 context.Context, runcNewTempConsoleSocketRequest *runvv1.RuncNewTempConsoleSocketRequest) (*runvv1.RuncNewTempConsoleSocketResponse, error) {
 //				panic("mock out the NewTempConsoleSocket method")
 //			},
@@ -50,6 +47,9 @@ var _ runvv1.RuncServiceServer = &MockRuncServiceServer{}
 //			},
 //			PsFunc: func(context1 context.Context, runcPsRequest *runvv1.RuncPsRequest) (*runvv1.RuncPsResponse, error) {
 //				panic("mock out the Ps method")
+//			},
+//			ReadPidFileFunc: func(context1 context.Context, runcReadPidFileRequest *runvv1.RuncReadPidFileRequest) (*runvv1.RuncReadPidFileResponse, error) {
+//				panic("mock out the ReadPidFile method")
 //			},
 //			RestoreFunc: func(context1 context.Context, runcRestoreRequest *runvv1.RuncRestoreRequest) (*runvv1.RuncRestoreResponse, error) {
 //				panic("mock out the Restore method")
@@ -85,9 +85,6 @@ type MockRuncServiceServer struct {
 	// KillFunc mocks the Kill method.
 	KillFunc func(context1 context.Context, runcKillRequest *runvv1.RuncKillRequest) (*runvv1.RuncKillResponse, error)
 
-	// LogFilePathFunc mocks the LogFilePath method.
-	LogFilePathFunc func(context1 context.Context, runcLogFilePathRequest *runvv1.RuncLogFilePathRequest) (*runvv1.RuncLogFilePathResponse, error)
-
 	// NewTempConsoleSocketFunc mocks the NewTempConsoleSocket method.
 	NewTempConsoleSocketFunc func(context1 context.Context, runcNewTempConsoleSocketRequest *runvv1.RuncNewTempConsoleSocketRequest) (*runvv1.RuncNewTempConsoleSocketResponse, error)
 
@@ -99,6 +96,9 @@ type MockRuncServiceServer struct {
 
 	// PsFunc mocks the Ps method.
 	PsFunc func(context1 context.Context, runcPsRequest *runvv1.RuncPsRequest) (*runvv1.RuncPsResponse, error)
+
+	// ReadPidFileFunc mocks the ReadPidFile method.
+	ReadPidFileFunc func(context1 context.Context, runcReadPidFileRequest *runvv1.RuncReadPidFileRequest) (*runvv1.RuncReadPidFileResponse, error)
 
 	// RestoreFunc mocks the Restore method.
 	RestoreFunc func(context1 context.Context, runcRestoreRequest *runvv1.RuncRestoreRequest) (*runvv1.RuncRestoreResponse, error)
@@ -149,13 +149,6 @@ type MockRuncServiceServer struct {
 			// RuncKillRequest is the runcKillRequest argument value.
 			RuncKillRequest *runvv1.RuncKillRequest
 		}
-		// LogFilePath holds details about calls to the LogFilePath method.
-		LogFilePath []struct {
-			// Context1 is the context1 argument value.
-			Context1 context.Context
-			// RuncLogFilePathRequest is the runcLogFilePathRequest argument value.
-			RuncLogFilePathRequest *runvv1.RuncLogFilePathRequest
-		}
 		// NewTempConsoleSocket holds details about calls to the NewTempConsoleSocket method.
 		NewTempConsoleSocket []struct {
 			// Context1 is the context1 argument value.
@@ -183,6 +176,13 @@ type MockRuncServiceServer struct {
 			Context1 context.Context
 			// RuncPsRequest is the runcPsRequest argument value.
 			RuncPsRequest *runvv1.RuncPsRequest
+		}
+		// ReadPidFile holds details about calls to the ReadPidFile method.
+		ReadPidFile []struct {
+			// Context1 is the context1 argument value.
+			Context1 context.Context
+			// RuncReadPidFileRequest is the runcReadPidFileRequest argument value.
+			RuncReadPidFileRequest *runvv1.RuncReadPidFileRequest
 		}
 		// Restore holds details about calls to the Restore method.
 		Restore []struct {
@@ -218,11 +218,11 @@ type MockRuncServiceServer struct {
 	lockDelete               sync.RWMutex
 	lockExec                 sync.RWMutex
 	lockKill                 sync.RWMutex
-	lockLogFilePath          sync.RWMutex
 	lockNewTempConsoleSocket sync.RWMutex
 	lockPause                sync.RWMutex
 	lockPing                 sync.RWMutex
 	lockPs                   sync.RWMutex
+	lockReadPidFile          sync.RWMutex
 	lockRestore              sync.RWMutex
 	lockResume               sync.RWMutex
 	lockStart                sync.RWMutex
@@ -409,42 +409,6 @@ func (mock *MockRuncServiceServer) KillCalls() []struct {
 	return calls
 }
 
-// LogFilePath calls LogFilePathFunc.
-func (mock *MockRuncServiceServer) LogFilePath(context1 context.Context, runcLogFilePathRequest *runvv1.RuncLogFilePathRequest) (*runvv1.RuncLogFilePathResponse, error) {
-	if mock.LogFilePathFunc == nil {
-		panic("MockRuncServiceServer.LogFilePathFunc: method is nil but RuncServiceServer.LogFilePath was just called")
-	}
-	callInfo := struct {
-		Context1               context.Context
-		RuncLogFilePathRequest *runvv1.RuncLogFilePathRequest
-	}{
-		Context1:               context1,
-		RuncLogFilePathRequest: runcLogFilePathRequest,
-	}
-	mock.lockLogFilePath.Lock()
-	mock.calls.LogFilePath = append(mock.calls.LogFilePath, callInfo)
-	mock.lockLogFilePath.Unlock()
-	return mock.LogFilePathFunc(context1, runcLogFilePathRequest)
-}
-
-// LogFilePathCalls gets all the calls that were made to LogFilePath.
-// Check the length with:
-//
-//	len(mockedRuncServiceServer.LogFilePathCalls())
-func (mock *MockRuncServiceServer) LogFilePathCalls() []struct {
-	Context1               context.Context
-	RuncLogFilePathRequest *runvv1.RuncLogFilePathRequest
-} {
-	var calls []struct {
-		Context1               context.Context
-		RuncLogFilePathRequest *runvv1.RuncLogFilePathRequest
-	}
-	mock.lockLogFilePath.RLock()
-	calls = mock.calls.LogFilePath
-	mock.lockLogFilePath.RUnlock()
-	return calls
-}
-
 // NewTempConsoleSocket calls NewTempConsoleSocketFunc.
 func (mock *MockRuncServiceServer) NewTempConsoleSocket(context1 context.Context, runcNewTempConsoleSocketRequest *runvv1.RuncNewTempConsoleSocketRequest) (*runvv1.RuncNewTempConsoleSocketResponse, error) {
 	if mock.NewTempConsoleSocketFunc == nil {
@@ -586,6 +550,42 @@ func (mock *MockRuncServiceServer) PsCalls() []struct {
 	mock.lockPs.RLock()
 	calls = mock.calls.Ps
 	mock.lockPs.RUnlock()
+	return calls
+}
+
+// ReadPidFile calls ReadPidFileFunc.
+func (mock *MockRuncServiceServer) ReadPidFile(context1 context.Context, runcReadPidFileRequest *runvv1.RuncReadPidFileRequest) (*runvv1.RuncReadPidFileResponse, error) {
+	if mock.ReadPidFileFunc == nil {
+		panic("MockRuncServiceServer.ReadPidFileFunc: method is nil but RuncServiceServer.ReadPidFile was just called")
+	}
+	callInfo := struct {
+		Context1               context.Context
+		RuncReadPidFileRequest *runvv1.RuncReadPidFileRequest
+	}{
+		Context1:               context1,
+		RuncReadPidFileRequest: runcReadPidFileRequest,
+	}
+	mock.lockReadPidFile.Lock()
+	mock.calls.ReadPidFile = append(mock.calls.ReadPidFile, callInfo)
+	mock.lockReadPidFile.Unlock()
+	return mock.ReadPidFileFunc(context1, runcReadPidFileRequest)
+}
+
+// ReadPidFileCalls gets all the calls that were made to ReadPidFile.
+// Check the length with:
+//
+//	len(mockedRuncServiceServer.ReadPidFileCalls())
+func (mock *MockRuncServiceServer) ReadPidFileCalls() []struct {
+	Context1               context.Context
+	RuncReadPidFileRequest *runvv1.RuncReadPidFileRequest
+} {
+	var calls []struct {
+		Context1               context.Context
+		RuncReadPidFileRequest *runvv1.RuncReadPidFileRequest
+	}
+	mock.lockReadPidFile.RLock()
+	calls = mock.calls.ReadPidFile
+	mock.lockReadPidFile.RUnlock()
 	return calls
 }
 

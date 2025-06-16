@@ -37,9 +37,6 @@ var _ runvv1.RuncServiceClient = &MockRuncServiceClient{}
 //			KillFunc: func(ctx context.Context, in *runvv1.RuncKillRequest, opts ...grpc.CallOption) (*runvv1.RuncKillResponse, error) {
 //				panic("mock out the Kill method")
 //			},
-//			LogFilePathFunc: func(ctx context.Context, in *runvv1.RuncLogFilePathRequest, opts ...grpc.CallOption) (*runvv1.RuncLogFilePathResponse, error) {
-//				panic("mock out the LogFilePath method")
-//			},
 //			NewTempConsoleSocketFunc: func(ctx context.Context, in *runvv1.RuncNewTempConsoleSocketRequest, opts ...grpc.CallOption) (*runvv1.RuncNewTempConsoleSocketResponse, error) {
 //				panic("mock out the NewTempConsoleSocket method")
 //			},
@@ -51,6 +48,9 @@ var _ runvv1.RuncServiceClient = &MockRuncServiceClient{}
 //			},
 //			PsFunc: func(ctx context.Context, in *runvv1.RuncPsRequest, opts ...grpc.CallOption) (*runvv1.RuncPsResponse, error) {
 //				panic("mock out the Ps method")
+//			},
+//			ReadPidFileFunc: func(ctx context.Context, in *runvv1.RuncReadPidFileRequest, opts ...grpc.CallOption) (*runvv1.RuncReadPidFileResponse, error) {
+//				panic("mock out the ReadPidFile method")
 //			},
 //			RestoreFunc: func(ctx context.Context, in *runvv1.RuncRestoreRequest, opts ...grpc.CallOption) (*runvv1.RuncRestoreResponse, error) {
 //				panic("mock out the Restore method")
@@ -86,9 +86,6 @@ type MockRuncServiceClient struct {
 	// KillFunc mocks the Kill method.
 	KillFunc func(ctx context.Context, in *runvv1.RuncKillRequest, opts ...grpc.CallOption) (*runvv1.RuncKillResponse, error)
 
-	// LogFilePathFunc mocks the LogFilePath method.
-	LogFilePathFunc func(ctx context.Context, in *runvv1.RuncLogFilePathRequest, opts ...grpc.CallOption) (*runvv1.RuncLogFilePathResponse, error)
-
 	// NewTempConsoleSocketFunc mocks the NewTempConsoleSocket method.
 	NewTempConsoleSocketFunc func(ctx context.Context, in *runvv1.RuncNewTempConsoleSocketRequest, opts ...grpc.CallOption) (*runvv1.RuncNewTempConsoleSocketResponse, error)
 
@@ -100,6 +97,9 @@ type MockRuncServiceClient struct {
 
 	// PsFunc mocks the Ps method.
 	PsFunc func(ctx context.Context, in *runvv1.RuncPsRequest, opts ...grpc.CallOption) (*runvv1.RuncPsResponse, error)
+
+	// ReadPidFileFunc mocks the ReadPidFile method.
+	ReadPidFileFunc func(ctx context.Context, in *runvv1.RuncReadPidFileRequest, opts ...grpc.CallOption) (*runvv1.RuncReadPidFileResponse, error)
 
 	// RestoreFunc mocks the Restore method.
 	RestoreFunc func(ctx context.Context, in *runvv1.RuncRestoreRequest, opts ...grpc.CallOption) (*runvv1.RuncRestoreResponse, error)
@@ -160,15 +160,6 @@ type MockRuncServiceClient struct {
 			// Opts is the opts argument value.
 			Opts []grpc.CallOption
 		}
-		// LogFilePath holds details about calls to the LogFilePath method.
-		LogFilePath []struct {
-			// Ctx is the ctx argument value.
-			Ctx context.Context
-			// In is the in argument value.
-			In *runvv1.RuncLogFilePathRequest
-			// Opts is the opts argument value.
-			Opts []grpc.CallOption
-		}
 		// NewTempConsoleSocket holds details about calls to the NewTempConsoleSocket method.
 		NewTempConsoleSocket []struct {
 			// Ctx is the ctx argument value.
@@ -202,6 +193,15 @@ type MockRuncServiceClient struct {
 			Ctx context.Context
 			// In is the in argument value.
 			In *runvv1.RuncPsRequest
+			// Opts is the opts argument value.
+			Opts []grpc.CallOption
+		}
+		// ReadPidFile holds details about calls to the ReadPidFile method.
+		ReadPidFile []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+			// In is the in argument value.
+			In *runvv1.RuncReadPidFileRequest
 			// Opts is the opts argument value.
 			Opts []grpc.CallOption
 		}
@@ -247,11 +247,11 @@ type MockRuncServiceClient struct {
 	lockDelete               sync.RWMutex
 	lockExec                 sync.RWMutex
 	lockKill                 sync.RWMutex
-	lockLogFilePath          sync.RWMutex
 	lockNewTempConsoleSocket sync.RWMutex
 	lockPause                sync.RWMutex
 	lockPing                 sync.RWMutex
 	lockPs                   sync.RWMutex
+	lockReadPidFile          sync.RWMutex
 	lockRestore              sync.RWMutex
 	lockResume               sync.RWMutex
 	lockStart                sync.RWMutex
@@ -458,46 +458,6 @@ func (mock *MockRuncServiceClient) KillCalls() []struct {
 	return calls
 }
 
-// LogFilePath calls LogFilePathFunc.
-func (mock *MockRuncServiceClient) LogFilePath(ctx context.Context, in *runvv1.RuncLogFilePathRequest, opts ...grpc.CallOption) (*runvv1.RuncLogFilePathResponse, error) {
-	if mock.LogFilePathFunc == nil {
-		panic("MockRuncServiceClient.LogFilePathFunc: method is nil but RuncServiceClient.LogFilePath was just called")
-	}
-	callInfo := struct {
-		Ctx  context.Context
-		In   *runvv1.RuncLogFilePathRequest
-		Opts []grpc.CallOption
-	}{
-		Ctx:  ctx,
-		In:   in,
-		Opts: opts,
-	}
-	mock.lockLogFilePath.Lock()
-	mock.calls.LogFilePath = append(mock.calls.LogFilePath, callInfo)
-	mock.lockLogFilePath.Unlock()
-	return mock.LogFilePathFunc(ctx, in, opts...)
-}
-
-// LogFilePathCalls gets all the calls that were made to LogFilePath.
-// Check the length with:
-//
-//	len(mockedRuncServiceClient.LogFilePathCalls())
-func (mock *MockRuncServiceClient) LogFilePathCalls() []struct {
-	Ctx  context.Context
-	In   *runvv1.RuncLogFilePathRequest
-	Opts []grpc.CallOption
-} {
-	var calls []struct {
-		Ctx  context.Context
-		In   *runvv1.RuncLogFilePathRequest
-		Opts []grpc.CallOption
-	}
-	mock.lockLogFilePath.RLock()
-	calls = mock.calls.LogFilePath
-	mock.lockLogFilePath.RUnlock()
-	return calls
-}
-
 // NewTempConsoleSocket calls NewTempConsoleSocketFunc.
 func (mock *MockRuncServiceClient) NewTempConsoleSocket(ctx context.Context, in *runvv1.RuncNewTempConsoleSocketRequest, opts ...grpc.CallOption) (*runvv1.RuncNewTempConsoleSocketResponse, error) {
 	if mock.NewTempConsoleSocketFunc == nil {
@@ -655,6 +615,46 @@ func (mock *MockRuncServiceClient) PsCalls() []struct {
 	mock.lockPs.RLock()
 	calls = mock.calls.Ps
 	mock.lockPs.RUnlock()
+	return calls
+}
+
+// ReadPidFile calls ReadPidFileFunc.
+func (mock *MockRuncServiceClient) ReadPidFile(ctx context.Context, in *runvv1.RuncReadPidFileRequest, opts ...grpc.CallOption) (*runvv1.RuncReadPidFileResponse, error) {
+	if mock.ReadPidFileFunc == nil {
+		panic("MockRuncServiceClient.ReadPidFileFunc: method is nil but RuncServiceClient.ReadPidFile was just called")
+	}
+	callInfo := struct {
+		Ctx  context.Context
+		In   *runvv1.RuncReadPidFileRequest
+		Opts []grpc.CallOption
+	}{
+		Ctx:  ctx,
+		In:   in,
+		Opts: opts,
+	}
+	mock.lockReadPidFile.Lock()
+	mock.calls.ReadPidFile = append(mock.calls.ReadPidFile, callInfo)
+	mock.lockReadPidFile.Unlock()
+	return mock.ReadPidFileFunc(ctx, in, opts...)
+}
+
+// ReadPidFileCalls gets all the calls that were made to ReadPidFile.
+// Check the length with:
+//
+//	len(mockedRuncServiceClient.ReadPidFileCalls())
+func (mock *MockRuncServiceClient) ReadPidFileCalls() []struct {
+	Ctx  context.Context
+	In   *runvv1.RuncReadPidFileRequest
+	Opts []grpc.CallOption
+} {
+	var calls []struct {
+		Ctx  context.Context
+		In   *runvv1.RuncReadPidFileRequest
+		Opts []grpc.CallOption
+	}
+	mock.lockReadPidFile.RLock()
+	calls = mock.calls.ReadPidFile
+	mock.lockReadPidFile.RUnlock()
 	return calls
 }
 

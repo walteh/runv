@@ -54,12 +54,9 @@ func (s *safePid) get() int {
 }
 
 // TODO(mlaventure): move to runc package?
-func getLastRuntimeError(r runtime.Runtime) (string, error) {
-	if r.LogFilePath() == "" {
-		return "", nil
-	}
-
-	f, err := os.OpenFile(r.LogFilePath(), os.O_RDONLY, 0400)
+func getLastRuntimeError(ctx context.Context, r runtime.Runtime) (string, error) {
+	logPath := filepath.Join(r.SharedDir(), runtime.LogFileBase)
+	f, err := os.OpenFile(logPath, os.O_RDONLY, 0400)
 	if err != nil {
 		return "", err
 	}
@@ -127,32 +124,33 @@ func checkKillError(err error) error {
 	return fmt.Errorf("unknown error after kill: %w", err)
 }
 
-func newPidFile(bundle string, runtime runtime.Runtime) *pidFile {
+func newPidFile(bundle string) *pidFile {
 	return &pidFile{
-		path:    filepath.Join(bundle, InitPidFile),
-		runtime: runtime,
+		path: filepath.Join(bundle, InitPidFile),
 	}
 }
 
-func newExecPidFile(bundle, id string, runtime runtime.Runtime) *pidFile {
+func newExecPidFile(bundle, id string) *pidFile {
 	return &pidFile{
-		path:    filepath.Join(bundle, fmt.Sprintf("%s.pid", id)),
-		runtime: runtime,
+		path: filepath.Join(bundle, fmt.Sprintf("%s.pid", id)),
 	}
 }
 
 type pidFile struct {
-	path    string
-	runtime runtime.Runtime
+	path string
 }
 
 func (p *pidFile) Path() string {
 	return p.path
 }
 
-func (p *pidFile) Read() (int, error) {
-	return p.runtime.ReadPidFile(p.path)
-}
+// func (p *pidFile) Read() (int, error) {
+// 	path, err := p.runtime.ResolvePidFilePath(context.Background(), p.path)
+// 	if err != nil {
+// 		return -1, err
+// 	}
+// 	return p.runtime.ReadPidFile(context.Background(), path)
+// }
 
 // waitTimeout handles waiting on a waitgroup with a specified timeout.
 // this is commonly used for waiting on IO to finish after a process has exited

@@ -38,13 +38,10 @@ var _ runtime.Runtime = &MockRuntime{}
 //			KillFunc: func(ctx context.Context, id string, signal int, opts *runc.KillOpts) error {
 //				panic("mock out the Kill method")
 //			},
-//			LogFilePathFunc: func() string {
-//				panic("mock out the LogFilePath method")
-//			},
 //			NewNullIOFunc: func() (runtime.IO, error) {
 //				panic("mock out the NewNullIO method")
 //			},
-//			NewPipeIOFunc: func(ioUID int, ioGID int, opts ...runc.IOOpt) (runtime.IO, error) {
+//			NewPipeIOFunc: func(ctx context.Context, cioUID int, ioGID int, opts ...runc.IOOpt) (runtime.IO, error) {
 //				panic("mock out the NewPipeIO method")
 //			},
 //			NewTempConsoleSocketFunc: func(ctx context.Context) (runtime.ConsoleSocket, error) {
@@ -56,7 +53,7 @@ var _ runtime.Runtime = &MockRuntime{}
 //			PsFunc: func(ctx context.Context, id string) ([]int, error) {
 //				panic("mock out the Ps method")
 //			},
-//			ReadPidFileFunc: func(path string) (int, error) {
+//			ReadPidFileFunc: func(ctx context.Context, path string) (int, error) {
 //				panic("mock out the ReadPidFile method")
 //			},
 //			RestoreFunc: func(ctx context.Context, id string, bundle string, opts *runc.RestoreOpts) (int, error) {
@@ -64,6 +61,9 @@ var _ runtime.Runtime = &MockRuntime{}
 //			},
 //			ResumeFunc: func(ctx context.Context, id string) error {
 //				panic("mock out the Resume method")
+//			},
+//			SharedDirFunc: func() string {
+//				panic("mock out the SharedDir method")
 //			},
 //			StartFunc: func(ctx context.Context, id string) error {
 //				panic("mock out the Start method")
@@ -93,14 +93,11 @@ type MockRuntime struct {
 	// KillFunc mocks the Kill method.
 	KillFunc func(ctx context.Context, id string, signal int, opts *runc.KillOpts) error
 
-	// LogFilePathFunc mocks the LogFilePath method.
-	LogFilePathFunc func() string
-
 	// NewNullIOFunc mocks the NewNullIO method.
 	NewNullIOFunc func() (runtime.IO, error)
 
 	// NewPipeIOFunc mocks the NewPipeIO method.
-	NewPipeIOFunc func(ioUID int, ioGID int, opts ...runc.IOOpt) (runtime.IO, error)
+	NewPipeIOFunc func(ctx context.Context, cioUID int, ioGID int, opts ...runc.IOOpt) (runtime.IO, error)
 
 	// NewTempConsoleSocketFunc mocks the NewTempConsoleSocket method.
 	NewTempConsoleSocketFunc func(ctx context.Context) (runtime.ConsoleSocket, error)
@@ -112,13 +109,16 @@ type MockRuntime struct {
 	PsFunc func(ctx context.Context, id string) ([]int, error)
 
 	// ReadPidFileFunc mocks the ReadPidFile method.
-	ReadPidFileFunc func(path string) (int, error)
+	ReadPidFileFunc func(ctx context.Context, path string) (int, error)
 
 	// RestoreFunc mocks the Restore method.
 	RestoreFunc func(ctx context.Context, id string, bundle string, opts *runc.RestoreOpts) (int, error)
 
 	// ResumeFunc mocks the Resume method.
 	ResumeFunc func(ctx context.Context, id string) error
+
+	// SharedDirFunc mocks the SharedDir method.
+	SharedDirFunc func() string
 
 	// StartFunc mocks the Start method.
 	StartFunc func(ctx context.Context, id string) error
@@ -181,16 +181,15 @@ type MockRuntime struct {
 			// Opts is the opts argument value.
 			Opts *runc.KillOpts
 		}
-		// LogFilePath holds details about calls to the LogFilePath method.
-		LogFilePath []struct {
-		}
 		// NewNullIO holds details about calls to the NewNullIO method.
 		NewNullIO []struct {
 		}
 		// NewPipeIO holds details about calls to the NewPipeIO method.
 		NewPipeIO []struct {
-			// IoUID is the ioUID argument value.
-			IoUID int
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+			// CioUID is the cioUID argument value.
+			CioUID int
 			// IoGID is the ioGID argument value.
 			IoGID int
 			// Opts is the opts argument value.
@@ -217,6 +216,8 @@ type MockRuntime struct {
 		}
 		// ReadPidFile holds details about calls to the ReadPidFile method.
 		ReadPidFile []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
 			// Path is the path argument value.
 			Path string
 		}
@@ -237,6 +238,9 @@ type MockRuntime struct {
 			Ctx context.Context
 			// ID is the id argument value.
 			ID string
+		}
+		// SharedDir holds details about calls to the SharedDir method.
+		SharedDir []struct {
 		}
 		// Start holds details about calls to the Start method.
 		Start []struct {
@@ -260,7 +264,6 @@ type MockRuntime struct {
 	lockDelete               sync.RWMutex
 	lockExec                 sync.RWMutex
 	lockKill                 sync.RWMutex
-	lockLogFilePath          sync.RWMutex
 	lockNewNullIO            sync.RWMutex
 	lockNewPipeIO            sync.RWMutex
 	lockNewTempConsoleSocket sync.RWMutex
@@ -269,6 +272,7 @@ type MockRuntime struct {
 	lockReadPidFile          sync.RWMutex
 	lockRestore              sync.RWMutex
 	lockResume               sync.RWMutex
+	lockSharedDir            sync.RWMutex
 	lockStart                sync.RWMutex
 	lockUpdate               sync.RWMutex
 }
@@ -489,33 +493,6 @@ func (mock *MockRuntime) KillCalls() []struct {
 	return calls
 }
 
-// LogFilePath calls LogFilePathFunc.
-func (mock *MockRuntime) LogFilePath() string {
-	if mock.LogFilePathFunc == nil {
-		panic("MockRuntime.LogFilePathFunc: method is nil but Runtime.LogFilePath was just called")
-	}
-	callInfo := struct {
-	}{}
-	mock.lockLogFilePath.Lock()
-	mock.calls.LogFilePath = append(mock.calls.LogFilePath, callInfo)
-	mock.lockLogFilePath.Unlock()
-	return mock.LogFilePathFunc()
-}
-
-// LogFilePathCalls gets all the calls that were made to LogFilePath.
-// Check the length with:
-//
-//	len(mockedRuntime.LogFilePathCalls())
-func (mock *MockRuntime) LogFilePathCalls() []struct {
-} {
-	var calls []struct {
-	}
-	mock.lockLogFilePath.RLock()
-	calls = mock.calls.LogFilePath
-	mock.lockLogFilePath.RUnlock()
-	return calls
-}
-
 // NewNullIO calls NewNullIOFunc.
 func (mock *MockRuntime) NewNullIO() (runtime.IO, error) {
 	if mock.NewNullIOFunc == nil {
@@ -544,23 +521,25 @@ func (mock *MockRuntime) NewNullIOCalls() []struct {
 }
 
 // NewPipeIO calls NewPipeIOFunc.
-func (mock *MockRuntime) NewPipeIO(ioUID int, ioGID int, opts ...runc.IOOpt) (runtime.IO, error) {
+func (mock *MockRuntime) NewPipeIO(ctx context.Context, cioUID int, ioGID int, opts ...runc.IOOpt) (runtime.IO, error) {
 	if mock.NewPipeIOFunc == nil {
 		panic("MockRuntime.NewPipeIOFunc: method is nil but Runtime.NewPipeIO was just called")
 	}
 	callInfo := struct {
-		IoUID int
-		IoGID int
-		Opts  []runc.IOOpt
+		Ctx    context.Context
+		CioUID int
+		IoGID  int
+		Opts   []runc.IOOpt
 	}{
-		IoUID: ioUID,
-		IoGID: ioGID,
-		Opts:  opts,
+		Ctx:    ctx,
+		CioUID: cioUID,
+		IoGID:  ioGID,
+		Opts:   opts,
 	}
 	mock.lockNewPipeIO.Lock()
 	mock.calls.NewPipeIO = append(mock.calls.NewPipeIO, callInfo)
 	mock.lockNewPipeIO.Unlock()
-	return mock.NewPipeIOFunc(ioUID, ioGID, opts...)
+	return mock.NewPipeIOFunc(ctx, cioUID, ioGID, opts...)
 }
 
 // NewPipeIOCalls gets all the calls that were made to NewPipeIO.
@@ -568,14 +547,16 @@ func (mock *MockRuntime) NewPipeIO(ioUID int, ioGID int, opts ...runc.IOOpt) (ru
 //
 //	len(mockedRuntime.NewPipeIOCalls())
 func (mock *MockRuntime) NewPipeIOCalls() []struct {
-	IoUID int
-	IoGID int
-	Opts  []runc.IOOpt
+	Ctx    context.Context
+	CioUID int
+	IoGID  int
+	Opts   []runc.IOOpt
 } {
 	var calls []struct {
-		IoUID int
-		IoGID int
-		Opts  []runc.IOOpt
+		Ctx    context.Context
+		CioUID int
+		IoGID  int
+		Opts   []runc.IOOpt
 	}
 	mock.lockNewPipeIO.RLock()
 	calls = mock.calls.NewPipeIO
@@ -688,19 +669,21 @@ func (mock *MockRuntime) PsCalls() []struct {
 }
 
 // ReadPidFile calls ReadPidFileFunc.
-func (mock *MockRuntime) ReadPidFile(path string) (int, error) {
+func (mock *MockRuntime) ReadPidFile(ctx context.Context, path string) (int, error) {
 	if mock.ReadPidFileFunc == nil {
 		panic("MockRuntime.ReadPidFileFunc: method is nil but Runtime.ReadPidFile was just called")
 	}
 	callInfo := struct {
+		Ctx  context.Context
 		Path string
 	}{
+		Ctx:  ctx,
 		Path: path,
 	}
 	mock.lockReadPidFile.Lock()
 	mock.calls.ReadPidFile = append(mock.calls.ReadPidFile, callInfo)
 	mock.lockReadPidFile.Unlock()
-	return mock.ReadPidFileFunc(path)
+	return mock.ReadPidFileFunc(ctx, path)
 }
 
 // ReadPidFileCalls gets all the calls that were made to ReadPidFile.
@@ -708,9 +691,11 @@ func (mock *MockRuntime) ReadPidFile(path string) (int, error) {
 //
 //	len(mockedRuntime.ReadPidFileCalls())
 func (mock *MockRuntime) ReadPidFileCalls() []struct {
+	Ctx  context.Context
 	Path string
 } {
 	var calls []struct {
+		Ctx  context.Context
 		Path string
 	}
 	mock.lockReadPidFile.RLock()
@@ -796,6 +781,33 @@ func (mock *MockRuntime) ResumeCalls() []struct {
 	mock.lockResume.RLock()
 	calls = mock.calls.Resume
 	mock.lockResume.RUnlock()
+	return calls
+}
+
+// SharedDir calls SharedDirFunc.
+func (mock *MockRuntime) SharedDir() string {
+	if mock.SharedDirFunc == nil {
+		panic("MockRuntime.SharedDirFunc: method is nil but Runtime.SharedDir was just called")
+	}
+	callInfo := struct {
+	}{}
+	mock.lockSharedDir.Lock()
+	mock.calls.SharedDir = append(mock.calls.SharedDir, callInfo)
+	mock.lockSharedDir.Unlock()
+	return mock.SharedDirFunc()
+}
+
+// SharedDirCalls gets all the calls that were made to SharedDir.
+// Check the length with:
+//
+//	len(mockedRuntime.SharedDirCalls())
+func (mock *MockRuntime) SharedDirCalls() []struct {
+} {
+	var calls []struct {
+	}
+	mock.lockSharedDir.RLock()
+	calls = mock.calls.SharedDir
+	mock.lockSharedDir.RUnlock()
 	return calls
 }
 

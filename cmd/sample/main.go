@@ -19,9 +19,11 @@ import (
 )
 
 var mockRuntime = &runtimemock.MockRuntime{
-	LogFilePathFunc: func() string {
-		fmt.Println("LogFilePathFunc called")
-		return "/tmp/runc.log"
+	ReadPidFileFunc: func(ctx context.Context, path string) (int, error) {
+		return 1234, nil
+	},
+	SharedDirFunc: func() string {
+		return "/runv/shared"
 	},
 }
 
@@ -93,7 +95,11 @@ func client(ctx context.Context, command string) error {
 
 	switch command {
 	case "ping":
-		fmt.Println("log file path: ", kv.LogFilePath())
+		pid, err := kv.ReadPidFile(ctx, "/proc/1234/status")
+		if err != nil {
+			return err
+		}
+		fmt.Println("pid: ", pid)
 	default:
 		return fmt.Errorf("please only use 'ping', given: %q", os.Args[0])
 	}

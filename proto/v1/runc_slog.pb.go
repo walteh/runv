@@ -9,6 +9,25 @@ import (
 	slog "log/slog"
 )
 
+func (x *RuncReadPidFileRequest) LogValue() slog.Value {
+	if x == nil {
+		return slog.AnyValue(nil)
+	}
+	attrs := make([]slog.Attr, 0, 1)
+	attrs = append(attrs, slog.String("path", x.GetPath()))
+	return slog.GroupValue(attrs...)
+}
+
+func (x *RuncReadPidFileResponse) LogValue() slog.Value {
+	if x == nil {
+		return slog.AnyValue(nil)
+	}
+	attrs := make([]slog.Attr, 0, 2)
+	attrs = append(attrs, slog.Int64("pid", int64(x.GetPid())))
+	attrs = append(attrs, slog.String("go_error", x.GetGoError()))
+	return slog.GroupValue(attrs...)
+}
+
 func (x *RuncNewTempConsoleSocketRequest) LogValue() slog.Value {
 	if x == nil {
 		return slog.AnyValue(nil)

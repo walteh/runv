@@ -41,7 +41,11 @@ service SocketAllocatorService {
 	rpc CloseConsole(CloseConsoleRequest) returns (CloseConsoleResponse) {}
 }
 
-message AllocateIORequest {}
+message AllocateIORequest {
+	bool open_stdin  = 1;
+	bool open_stdout = 2;
+	bool open_stderr = 3;
+}
 
 message AllocateIOResponse {
 	string io_reference_id = 1;

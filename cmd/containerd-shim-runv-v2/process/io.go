@@ -104,7 +104,7 @@ func createIO(ctx context.Context, id string, ioUID, ioGID int, stdio stdio.Stdi
 	switch u.Scheme {
 	case "fifo":
 		pio.copy = true
-		pio.io, err = runtime.NewPipeIO(ioUID, ioGID, withConditionalIO(stdio))
+		pio.io, err = runtime.NewPipeIO(ctx, ioUID, ioGID, withConditionalIO(stdio))
 	case "binary":
 		pio.io, err = NewBinaryIO(ctx, id, u)
 	case "file":
@@ -121,7 +121,7 @@ func createIO(ctx context.Context, id string, ioUID, ioGID int, stdio stdio.Stdi
 		pio.stdio.Stdout = filePath
 		pio.stdio.Stderr = filePath
 		pio.copy = true
-		pio.io, err = runtime.NewPipeIO(ioUID, ioGID, withConditionalIO(stdio))
+		pio.io, err = runtime.NewPipeIO(ctx, ioUID, ioGID, withConditionalIO(stdio))
 	default:
 		return nil, fmt.Errorf("unknown STDIO scheme %s", u.Scheme)
 	}

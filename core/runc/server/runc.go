@@ -32,6 +32,17 @@ func (s *Server) NewTempConsoleSocket(ctx context.Context, req *runvv1.RuncNewTe
 	return resp, nil
 }
 
+func (s *Server) ReadPidFile(ctx context.Context, req *runvv1.RuncReadPidFileRequest) (*runvv1.RuncReadPidFileResponse, error) {
+	resp := &runvv1.RuncReadPidFileResponse{}
+
+	pid, err := s.runtime.ReadPidFile(ctx, req.GetPath())
+	if err != nil {
+		return nil, err
+	}
+	resp.SetPid(int32(pid))
+	return resp, nil
+}
+
 func NewServer(r runtime.Runtime, runtimeExtras runtime.RuntimeExtras) *Server {
 	srv := &Server{
 		runtime:       r,

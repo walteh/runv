@@ -162,7 +162,7 @@ func (s *createdCheckpointState) Start(ctx context.Context) error {
 	}
 
 	if _, err := s.p.runtime.Restore(ctx, p.id, p.Bundle, s.opts); err != nil {
-		return p.runtimeError(err, "OCI runtime restore failed")
+		return p.runtimeError(ctx, err, "OCI runtime restore failed")
 	}
 	if sio.Stdin != "" {
 		if err := p.openStdin(sio.Stdin); err != nil {
@@ -244,7 +244,7 @@ func (s *runningState) Pause(ctx context.Context) error {
 	defer s.p.pausing.Store(false)
 
 	if err := s.p.runtime.Pause(ctx, s.p.id); err != nil {
-		return s.p.runtimeError(err, "OCI runtime pause failed")
+		return s.p.runtimeError(ctx, err, "OCI runtime pause failed")
 	}
 
 	return s.transition("paused")
@@ -312,7 +312,7 @@ func (s *pausedState) Pause(ctx context.Context) error {
 
 func (s *pausedState) Resume(ctx context.Context) error {
 	if err := s.p.runtime.Resume(ctx, s.p.id); err != nil {
-		return s.p.runtimeError(err, "OCI runtime resume failed")
+		return s.p.runtimeError(ctx, err, "OCI runtime resume failed")
 	}
 
 	return s.transition("running")

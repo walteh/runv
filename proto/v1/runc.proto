@@ -57,10 +57,10 @@ service RuncService {
 	rpc Update(RuncUpdateRequest) returns (RuncUpdateResponse) {}
 
 
-	rpc LogFilePath(RuncLogFilePathRequest) returns (RuncLogFilePathResponse) {}
-
-
 	rpc NewTempConsoleSocket(RuncNewTempConsoleSocketRequest) returns (RuncNewTempConsoleSocketResponse) {}
+
+
+	rpc ReadPidFile(RuncReadPidFileRequest) returns (RuncReadPidFileResponse) {}
 }
 
 service RuncExtrasService {
@@ -83,6 +83,15 @@ service RuncExtrasService {
 
 
 	rpc Top(RuncTopRequest) returns (RuncTopResponse) {}
+}
+
+message RuncReadPidFileRequest {
+	string path = 1;
+}
+
+message RuncReadPidFileResponse {
+	int32  pid      = 1;
+	string go_error = 2;
 }
 
 message RuncNewTempConsoleSocketRequest {}

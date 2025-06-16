@@ -31,8 +31,8 @@ const (
 	RuncService_Checkpoint_FullMethodName           = "/runv.v1.RuncService/Checkpoint"
 	RuncService_Restore_FullMethodName              = "/runv.v1.RuncService/Restore"
 	RuncService_Update_FullMethodName               = "/runv.v1.RuncService/Update"
-	RuncService_LogFilePath_FullMethodName          = "/runv.v1.RuncService/LogFilePath"
 	RuncService_NewTempConsoleSocket_FullMethodName = "/runv.v1.RuncService/NewTempConsoleSocket"
+	RuncService_ReadPidFile_FullMethodName          = "/runv.v1.RuncService/ReadPidFile"
 )
 
 // RuncServiceClient is the client API for RuncService service.
@@ -63,8 +63,8 @@ type RuncServiceClient interface {
 	Restore(ctx context.Context, in *RuncRestoreRequest, opts ...grpc.CallOption) (*RuncRestoreResponse, error)
 	// Update updates the container resources
 	Update(ctx context.Context, in *RuncUpdateRequest, opts ...grpc.CallOption) (*RuncUpdateResponse, error)
-	LogFilePath(ctx context.Context, in *RuncLogFilePathRequest, opts ...grpc.CallOption) (*RuncLogFilePathResponse, error)
 	NewTempConsoleSocket(ctx context.Context, in *RuncNewTempConsoleSocketRequest, opts ...grpc.CallOption) (*RuncNewTempConsoleSocketResponse, error)
+	ReadPidFile(ctx context.Context, in *RuncReadPidFileRequest, opts ...grpc.CallOption) (*RuncReadPidFileResponse, error)
 }
 
 type runcServiceClient struct {
@@ -195,20 +195,20 @@ func (c *runcServiceClient) Update(ctx context.Context, in *RuncUpdateRequest, o
 	return out, nil
 }
 
-func (c *runcServiceClient) LogFilePath(ctx context.Context, in *RuncLogFilePathRequest, opts ...grpc.CallOption) (*RuncLogFilePathResponse, error) {
+func (c *runcServiceClient) NewTempConsoleSocket(ctx context.Context, in *RuncNewTempConsoleSocketRequest, opts ...grpc.CallOption) (*RuncNewTempConsoleSocketResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RuncLogFilePathResponse)
-	err := c.cc.Invoke(ctx, RuncService_LogFilePath_FullMethodName, in, out, cOpts...)
+	out := new(RuncNewTempConsoleSocketResponse)
+	err := c.cc.Invoke(ctx, RuncService_NewTempConsoleSocket_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *runcServiceClient) NewTempConsoleSocket(ctx context.Context, in *RuncNewTempConsoleSocketRequest, opts ...grpc.CallOption) (*RuncNewTempConsoleSocketResponse, error) {
+func (c *runcServiceClient) ReadPidFile(ctx context.Context, in *RuncReadPidFileRequest, opts ...grpc.CallOption) (*RuncReadPidFileResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RuncNewTempConsoleSocketResponse)
-	err := c.cc.Invoke(ctx, RuncService_NewTempConsoleSocket_FullMethodName, in, out, cOpts...)
+	out := new(RuncReadPidFileResponse)
+	err := c.cc.Invoke(ctx, RuncService_ReadPidFile_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -243,8 +243,8 @@ type RuncServiceServer interface {
 	Restore(context.Context, *RuncRestoreRequest) (*RuncRestoreResponse, error)
 	// Update updates the container resources
 	Update(context.Context, *RuncUpdateRequest) (*RuncUpdateResponse, error)
-	LogFilePath(context.Context, *RuncLogFilePathRequest) (*RuncLogFilePathResponse, error)
 	NewTempConsoleSocket(context.Context, *RuncNewTempConsoleSocketRequest) (*RuncNewTempConsoleSocketResponse, error)
+	ReadPidFile(context.Context, *RuncReadPidFileRequest) (*RuncReadPidFileResponse, error)
 }
 
 // UnimplementedRuncServiceServer should be embedded to have
@@ -290,11 +290,11 @@ func (UnimplementedRuncServiceServer) Restore(context.Context, *RuncRestoreReque
 func (UnimplementedRuncServiceServer) Update(context.Context, *RuncUpdateRequest) (*RuncUpdateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
-func (UnimplementedRuncServiceServer) LogFilePath(context.Context, *RuncLogFilePathRequest) (*RuncLogFilePathResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method LogFilePath not implemented")
-}
 func (UnimplementedRuncServiceServer) NewTempConsoleSocket(context.Context, *RuncNewTempConsoleSocketRequest) (*RuncNewTempConsoleSocketResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method NewTempConsoleSocket not implemented")
+}
+func (UnimplementedRuncServiceServer) ReadPidFile(context.Context, *RuncReadPidFileRequest) (*RuncReadPidFileResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReadPidFile not implemented")
 }
 func (UnimplementedRuncServiceServer) testEmbeddedByValue() {}
 
@@ -532,24 +532,6 @@ func _RuncService_Update_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuncService_LogFilePath_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RuncLogFilePathRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RuncServiceServer).LogFilePath(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: RuncService_LogFilePath_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RuncServiceServer).LogFilePath(ctx, req.(*RuncLogFilePathRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _RuncService_NewTempConsoleSocket_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RuncNewTempConsoleSocketRequest)
 	if err := dec(in); err != nil {
@@ -564,6 +546,24 @@ func _RuncService_NewTempConsoleSocket_Handler(srv interface{}, ctx context.Cont
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RuncServiceServer).NewTempConsoleSocket(ctx, req.(*RuncNewTempConsoleSocketRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RuncService_ReadPidFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RuncReadPidFileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuncServiceServer).ReadPidFile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuncService_ReadPidFile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuncServiceServer).ReadPidFile(ctx, req.(*RuncReadPidFileRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -624,12 +624,12 @@ var RuncService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _RuncService_Update_Handler,
 		},
 		{
-			MethodName: "LogFilePath",
-			Handler:    _RuncService_LogFilePath_Handler,
-		},
-		{
 			MethodName: "NewTempConsoleSocket",
 			Handler:    _RuncService_NewTempConsoleSocket_Handler,
+		},
+		{
+			MethodName: "ReadPidFile",
+			Handler:    _RuncService_ReadPidFile_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

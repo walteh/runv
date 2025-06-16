@@ -13,7 +13,10 @@ func (x *AllocateIORequest) LogValue() slog.Value {
 	if x == nil {
 		return slog.AnyValue(nil)
 	}
-	attrs := make([]slog.Attr, 0, 0)
+	attrs := make([]slog.Attr, 0, 3)
+	attrs = append(attrs, slog.Bool("open_stdin", x.GetOpenStdin()))
+	attrs = append(attrs, slog.Bool("open_stdout", x.GetOpenStdout()))
+	attrs = append(attrs, slog.Bool("open_stderr", x.GetOpenStderr()))
 	return slog.GroupValue(attrs...)
 }
 

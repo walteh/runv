@@ -3,16 +3,20 @@ package grpcruntime
 import (
 	"context"
 	"errors"
+	"path/filepath"
 
 	gorunc "github.com/containerd/go-runc"
 	"github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/walteh/runv/core/runc/conversion"
 	"github.com/walteh/runv/core/runc/runtime"
-	"github.com/walteh/runv/core/runc/stdio"
 	runvv1 "github.com/walteh/runv/proto/v1"
 )
 
 var _ runtime.Runtime = (*GRPCClientRuntime)(nil)
+
+func (c *GRPCClientRuntime) SharedDir() string {
+	return c.sharedDirPathPrefix
+}
 
 // Ping checks if the runc service is alive.
 func (c *GRPCClientRuntime) Ping(ctx context.Context) error {
@@ -67,17 +71,22 @@ func (c *GRPCClientRuntime) NewTempConsoleSocket(ctx context.Context) (runtime.C
 }
 
 // ReadPidFile implements runtime.Runtime.
-func (c *GRPCClientRuntime) ReadPidFile(path string) (int, error) {
-	panic("unimplemented")
+func (c *GRPCClientRuntime) ReadPidFile(ctx context.Context, path string) (int, error) {
+	req := &runvv1.RuncReadPidFileRequest{}
+	req.SetPath(path)
+	resp, err := c.runtime.ReadPidFile(ctx, req)
+	if err != nil {
+		return -1, err
+	}
+	if resp.GetGoError() != "" {
+		return -1, errors.New(resp.GetGoError())
+	}
+	return int(resp.GetPid()), nil
 }
 
 // LogFilePath implements runtime.Runtime.
-func (c *GRPCClientRuntime) LogFilePath() string {
-	resp, err := c.runtime.LogFilePath(context.Background(), &runvv1.RuncLogFilePathRequest{})
-	if err != nil {
-		return ""
-	}
-	return resp.GetPath()
+func (c *GRPCClientRuntime) LogFilePath(ctx context.Context) (string, error) {
+	return filepath.Join(c.sharedDirPathPrefix, runtime.LogFileBase), nil
 }
 
 // Update implements runtime.Runtime.
@@ -87,12 +96,110 @@ func (c *GRPCClientRuntime) Update(ctx context.Context, id string, resources *sp
 
 // NewNullIO implements runtime.Runtime.
 func (c *GRPCClientRuntime) NewNullIO() (runtime.IO, error) {
-	return stdio.NewHostNullIo()
+	return runtime.NewHostNullIo()
 }
 
 // NewPipeIO implements runtime.Runtime.
-func (c *GRPCClientRuntime) NewPipeIO(ioUID, ioGID int, opts ...gorunc.IOOpt) (runtime.IO, error) {
-	return stdio.NewHostVsockProxyIo(context.Background(), opts...)
+func (c *GRPCClientRuntime) NewPipeIO(ctx context.Context, ioUID, ioGID int, opts ...gorunc.IOOpt) (runtime.IO, error) {
+
+	ropts := gorunc.IOOption{}
+	for _, opt := range opts {
+		opt(&ropts)
+	}
+
+	count := 0
+	if ropts.OpenStderr {
+		count++
+	}
+	if ropts.OpenStdout {
+		count++
+	}
+	if ropts.OpenStdin {
+		count++
+	}
+
+	if count == 0 {
+		return nil, errors.New("no sockets to allocate")
+	}
+
+	req := &runvv1.AllocateSocketsRequest{}
+	req.SetCount(uint32(count))
+
+	iov, err := c.socketAllocator.AllocateSockets(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	ioReq := &runvv1.AllocateIORequest{}
+	ioReq.SetOpenStdin(ropts.OpenStdin)
+	ioReq.SetOpenStdout(ropts.OpenStdout)
+	ioReq.SetOpenStderr(ropts.OpenStderr)
+
+	sock, err := c.socketAllocator.AllocateIO(ctx, ioReq)
+	if err != nil {
+		return nil, err
+	}
+
+	count2 := 0
+
+	bindReq := &runvv1.BindIOToSocketsRequest{}
+	bindReq.SetIoReferenceId(sock.GetIoReferenceId())
+
+	if ropts.OpenStdin {
+		bindReq.SetStdinSocketReferenceId(iov.GetSocketReferenceIds()[count2])
+		count2++
+	}
+	if ropts.OpenStdout {
+		bindReq.SetStdoutSocketReferenceId(iov.GetSocketReferenceIds()[count2])
+		count2++
+	}
+	if ropts.OpenStderr {
+		bindReq.SetStderrSocketReferenceId(iov.GetSocketReferenceIds()[count2])
+	}
+
+	_, err = c.socketAllocator.BindIOToSockets(ctx, bindReq)
+	if err != nil {
+		return nil, err
+	}
+
+	var stdinRef, stdoutRef, stderrRef string
+
+	if ropts.OpenStdin {
+		stdinRef = bindReq.GetStdinSocketReferenceId()
+	}
+	if ropts.OpenStdout {
+		stdoutRef = bindReq.GetStdoutSocketReferenceId()
+	}
+	if ropts.OpenStderr {
+		stderrRef = bindReq.GetStderrSocketReferenceId()
+	}
+
+	var stdinAllocated, stdoutAllocated, stderrAllocated runtime.AllocatedSocket
+
+	if stdinRef != "" {
+		stdinAllocated, err = runtime.NewHostAllocatedSocketFromId(ctx, stdinRef, c.vsockProxier)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if stdoutRef != "" {
+		stdoutAllocated, err = runtime.NewHostAllocatedSocketFromId(ctx, stdoutRef, c.vsockProxier)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if stderrRef != "" {
+		stderrAllocated, err = runtime.NewHostAllocatedSocketFromId(ctx, stderrRef, c.vsockProxier)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	ioz := runtime.NewHostUnixProxyIo(ctx, stdinAllocated, stdoutAllocated, stderrAllocated)
+
+	return ioz, nil
 }
 
 // Create creates a new container.

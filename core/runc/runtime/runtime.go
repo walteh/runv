@@ -12,6 +12,11 @@ import (
 	"github.com/opencontainers/runtime-spec/specs-go"
 )
 
+const (
+	GuestSharedDir = "/runv/shared"
+	LogFileBase    = "runv.log"
+)
+
 type RuntimeOptions struct {
 	Root          string
 	Path          string
@@ -32,9 +37,10 @@ type SocketAllocator interface {
 
 //go:mock
 type Runtime interface {
+	SharedDir() string
 	// io: yes
 	// ✅
-	NewPipeIO(ioUID, ioGID int, opts ...gorunc.IOOpt) (IO, error)
+	NewPipeIO(ctx context.Context, cioUID, ioGID int, opts ...gorunc.IOOpt) (IO, error)
 	// io: yes
 	NewTempConsoleSocket(ctx context.Context) (ConsoleSocket, error)
 	// io: yes
@@ -60,11 +66,10 @@ type Runtime interface {
 	Delete(ctx context.Context, id string, opts *gorunc.DeleteOpts) error
 	// ✅
 	Update(ctx context.Context, id string, resources *specs.LinuxResources) error
-	LogFilePath() string
 	Pause(ctx context.Context, id string) error
 	Resume(ctx context.Context, id string) error
 	Ps(ctx context.Context, id string) ([]int, error)
-	ReadPidFile(path string) (int, error)
+	ReadPidFile(ctx context.Context, path string) (int, error)
 }
 
 type ConsoleSocket interface {

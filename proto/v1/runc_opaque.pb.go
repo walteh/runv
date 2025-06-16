@@ -7,6 +7,34 @@ import (
 	protovalidate "buf.build/go/protovalidate"
 )
 
+// NewRuncReadPidFileRequest creates a new RuncReadPidFileRequest using the builder
+func NewRuncReadPidFileRequest(b *RuncReadPidFileRequest_builder) *RuncReadPidFileRequest {
+	return b.Build()
+}
+
+// NewRuncReadPidFileRequestE creates a new RuncReadPidFileRequest using the builder with validation
+func NewRuncReadPidFileRequestE(b *RuncReadPidFileRequest_builder) (*RuncReadPidFileRequest, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// NewRuncReadPidFileResponse creates a new RuncReadPidFileResponse using the builder
+func NewRuncReadPidFileResponse(b *RuncReadPidFileResponse_builder) *RuncReadPidFileResponse {
+	return b.Build()
+}
+
+// NewRuncReadPidFileResponseE creates a new RuncReadPidFileResponse using the builder with validation
+func NewRuncReadPidFileResponseE(b *RuncReadPidFileResponse_builder) (*RuncReadPidFileResponse, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // NewRuncNewTempConsoleSocketRequest creates a new RuncNewTempConsoleSocketRequest using the builder
 func NewRuncNewTempConsoleSocketRequest(b *RuncNewTempConsoleSocketRequest_builder) *RuncNewTempConsoleSocketRequest {
 	return b.Build()

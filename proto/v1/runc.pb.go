@@ -22,6 +22,134 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type RuncReadPidFileRequest struct {
+	state           protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Path string                 `protobuf:"bytes,1,opt,name=path"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *RuncReadPidFileRequest) Reset() {
+	*x = RuncReadPidFileRequest{}
+	mi := &file_v1_runc_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RuncReadPidFileRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RuncReadPidFileRequest) ProtoMessage() {}
+
+func (x *RuncReadPidFileRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_runc_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *RuncReadPidFileRequest) GetPath() string {
+	if x != nil {
+		return x.xxx_hidden_Path
+	}
+	return ""
+}
+
+func (x *RuncReadPidFileRequest) SetPath(v string) {
+	x.xxx_hidden_Path = v
+}
+
+type RuncReadPidFileRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Path string
+}
+
+func (b0 RuncReadPidFileRequest_builder) Build() *RuncReadPidFileRequest {
+	m0 := &RuncReadPidFileRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Path = b.Path
+	return m0
+}
+
+type RuncReadPidFileResponse struct {
+	state              protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Pid     int32                  `protobuf:"varint,1,opt,name=pid"`
+	xxx_hidden_GoError string                 `protobuf:"bytes,2,opt,name=go_error,json=goError"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
+}
+
+func (x *RuncReadPidFileResponse) Reset() {
+	*x = RuncReadPidFileResponse{}
+	mi := &file_v1_runc_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RuncReadPidFileResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RuncReadPidFileResponse) ProtoMessage() {}
+
+func (x *RuncReadPidFileResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_runc_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *RuncReadPidFileResponse) GetPid() int32 {
+	if x != nil {
+		return x.xxx_hidden_Pid
+	}
+	return 0
+}
+
+func (x *RuncReadPidFileResponse) GetGoError() string {
+	if x != nil {
+		return x.xxx_hidden_GoError
+	}
+	return ""
+}
+
+func (x *RuncReadPidFileResponse) SetPid(v int32) {
+	x.xxx_hidden_Pid = v
+}
+
+func (x *RuncReadPidFileResponse) SetGoError(v string) {
+	x.xxx_hidden_GoError = v
+}
+
+type RuncReadPidFileResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pid     int32
+	GoError string
+}
+
+func (b0 RuncReadPidFileResponse_builder) Build() *RuncReadPidFileResponse {
+	m0 := &RuncReadPidFileResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Pid = b.Pid
+	x.xxx_hidden_GoError = b.GoError
+	return m0
+}
+
 type RuncNewTempConsoleSocketRequest struct {
 	state         protoimpl.MessageState `protogen:"opaque.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -30,7 +158,7 @@ type RuncNewTempConsoleSocketRequest struct {
 
 func (x *RuncNewTempConsoleSocketRequest) Reset() {
 	*x = RuncNewTempConsoleSocketRequest{}
-	mi := &file_v1_runc_proto_msgTypes[0]
+	mi := &file_v1_runc_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -42,7 +170,7 @@ func (x *RuncNewTempConsoleSocketRequest) String() string {
 func (*RuncNewTempConsoleSocketRequest) ProtoMessage() {}
 
 func (x *RuncNewTempConsoleSocketRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[0]
+	mi := &file_v1_runc_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -75,7 +203,7 @@ type RuncNewTempConsoleSocketResponse struct {
 
 func (x *RuncNewTempConsoleSocketResponse) Reset() {
 	*x = RuncNewTempConsoleSocketResponse{}
-	mi := &file_v1_runc_proto_msgTypes[1]
+	mi := &file_v1_runc_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -87,7 +215,7 @@ func (x *RuncNewTempConsoleSocketResponse) String() string {
 func (*RuncNewTempConsoleSocketResponse) ProtoMessage() {}
 
 func (x *RuncNewTempConsoleSocketResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[1]
+	mi := &file_v1_runc_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -145,7 +273,7 @@ type RuncCloseIORequest struct {
 
 func (x *RuncCloseIORequest) Reset() {
 	*x = RuncCloseIORequest{}
-	mi := &file_v1_runc_proto_msgTypes[2]
+	mi := &file_v1_runc_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -157,7 +285,7 @@ func (x *RuncCloseIORequest) String() string {
 func (*RuncCloseIORequest) ProtoMessage() {}
 
 func (x *RuncCloseIORequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[2]
+	mi := &file_v1_runc_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -201,7 +329,7 @@ type RuncCloseIOResponse struct {
 
 func (x *RuncCloseIOResponse) Reset() {
 	*x = RuncCloseIOResponse{}
-	mi := &file_v1_runc_proto_msgTypes[3]
+	mi := &file_v1_runc_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -213,7 +341,7 @@ func (x *RuncCloseIOResponse) String() string {
 func (*RuncCloseIOResponse) ProtoMessage() {}
 
 func (x *RuncCloseIOResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[3]
+	mi := &file_v1_runc_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -244,7 +372,7 @@ type RuncLogFilePathRequest struct {
 
 func (x *RuncLogFilePathRequest) Reset() {
 	*x = RuncLogFilePathRequest{}
-	mi := &file_v1_runc_proto_msgTypes[4]
+	mi := &file_v1_runc_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -256,7 +384,7 @@ func (x *RuncLogFilePathRequest) String() string {
 func (*RuncLogFilePathRequest) ProtoMessage() {}
 
 func (x *RuncLogFilePathRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[4]
+	mi := &file_v1_runc_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -288,7 +416,7 @@ type RuncLogFilePathResponse struct {
 
 func (x *RuncLogFilePathResponse) Reset() {
 	*x = RuncLogFilePathResponse{}
-	mi := &file_v1_runc_proto_msgTypes[5]
+	mi := &file_v1_runc_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -300,7 +428,7 @@ func (x *RuncLogFilePathResponse) String() string {
 func (*RuncLogFilePathResponse) ProtoMessage() {}
 
 func (x *RuncLogFilePathResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[5]
+	mi := &file_v1_runc_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -344,7 +472,7 @@ type PingRequest struct {
 
 func (x *PingRequest) Reset() {
 	*x = PingRequest{}
-	mi := &file_v1_runc_proto_msgTypes[6]
+	mi := &file_v1_runc_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -356,7 +484,7 @@ func (x *PingRequest) String() string {
 func (*PingRequest) ProtoMessage() {}
 
 func (x *PingRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[6]
+	mi := &file_v1_runc_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -387,7 +515,7 @@ type PingResponse struct {
 
 func (x *PingResponse) Reset() {
 	*x = PingResponse{}
-	mi := &file_v1_runc_proto_msgTypes[7]
+	mi := &file_v1_runc_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -399,7 +527,7 @@ func (x *PingResponse) String() string {
 func (*PingResponse) ProtoMessage() {}
 
 func (x *PingResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[7]
+	mi := &file_v1_runc_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -432,7 +560,7 @@ type RuncListRequest struct {
 
 func (x *RuncListRequest) Reset() {
 	*x = RuncListRequest{}
-	mi := &file_v1_runc_proto_msgTypes[8]
+	mi := &file_v1_runc_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -444,7 +572,7 @@ func (x *RuncListRequest) String() string {
 func (*RuncListRequest) ProtoMessage() {}
 
 func (x *RuncListRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[8]
+	mi := &file_v1_runc_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -495,7 +623,7 @@ type RuncContainer struct {
 
 func (x *RuncContainer) Reset() {
 	*x = RuncContainer{}
-	mi := &file_v1_runc_proto_msgTypes[9]
+	mi := &file_v1_runc_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -507,7 +635,7 @@ func (x *RuncContainer) String() string {
 func (*RuncContainer) ProtoMessage() {}
 
 func (x *RuncContainer) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[9]
+	mi := &file_v1_runc_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -631,7 +759,7 @@ type RuncListResponse struct {
 
 func (x *RuncListResponse) Reset() {
 	*x = RuncListResponse{}
-	mi := &file_v1_runc_proto_msgTypes[10]
+	mi := &file_v1_runc_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -643,7 +771,7 @@ func (x *RuncListResponse) String() string {
 func (*RuncListResponse) ProtoMessage() {}
 
 func (x *RuncListResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[10]
+	mi := &file_v1_runc_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -704,7 +832,7 @@ type RuncStateRequest struct {
 
 func (x *RuncStateRequest) Reset() {
 	*x = RuncStateRequest{}
-	mi := &file_v1_runc_proto_msgTypes[11]
+	mi := &file_v1_runc_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -716,7 +844,7 @@ func (x *RuncStateRequest) String() string {
 func (*RuncStateRequest) ProtoMessage() {}
 
 func (x *RuncStateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[11]
+	mi := &file_v1_runc_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -762,7 +890,7 @@ type RuncStateResponse struct {
 
 func (x *RuncStateResponse) Reset() {
 	*x = RuncStateResponse{}
-	mi := &file_v1_runc_proto_msgTypes[12]
+	mi := &file_v1_runc_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -774,7 +902,7 @@ func (x *RuncStateResponse) String() string {
 func (*RuncStateResponse) ProtoMessage() {}
 
 func (x *RuncStateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[12]
+	mi := &file_v1_runc_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -846,7 +974,7 @@ type RuncCreateRequest struct {
 
 func (x *RuncCreateRequest) Reset() {
 	*x = RuncCreateRequest{}
-	mi := &file_v1_runc_proto_msgTypes[13]
+	mi := &file_v1_runc_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -858,7 +986,7 @@ func (x *RuncCreateRequest) String() string {
 func (*RuncCreateRequest) ProtoMessage() {}
 
 func (x *RuncCreateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[13]
+	mi := &file_v1_runc_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -947,7 +1075,7 @@ type RuncCreateOptions struct {
 
 func (x *RuncCreateOptions) Reset() {
 	*x = RuncCreateOptions{}
-	mi := &file_v1_runc_proto_msgTypes[14]
+	mi := &file_v1_runc_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -959,7 +1087,7 @@ func (x *RuncCreateOptions) String() string {
 func (*RuncCreateOptions) ProtoMessage() {}
 
 func (x *RuncCreateOptions) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[14]
+	mi := &file_v1_runc_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1095,7 +1223,7 @@ type RuncCreateResponse struct {
 
 func (x *RuncCreateResponse) Reset() {
 	*x = RuncCreateResponse{}
-	mi := &file_v1_runc_proto_msgTypes[15]
+	mi := &file_v1_runc_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1107,7 +1235,7 @@ func (x *RuncCreateResponse) String() string {
 func (*RuncCreateResponse) ProtoMessage() {}
 
 func (x *RuncCreateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[15]
+	mi := &file_v1_runc_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1153,7 +1281,7 @@ type RuncStartRequest struct {
 
 func (x *RuncStartRequest) Reset() {
 	*x = RuncStartRequest{}
-	mi := &file_v1_runc_proto_msgTypes[16]
+	mi := &file_v1_runc_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1165,7 +1293,7 @@ func (x *RuncStartRequest) String() string {
 func (*RuncStartRequest) ProtoMessage() {}
 
 func (x *RuncStartRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[16]
+	mi := &file_v1_runc_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1210,7 +1338,7 @@ type RuncStartResponse struct {
 
 func (x *RuncStartResponse) Reset() {
 	*x = RuncStartResponse{}
-	mi := &file_v1_runc_proto_msgTypes[17]
+	mi := &file_v1_runc_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1222,7 +1350,7 @@ func (x *RuncStartResponse) String() string {
 func (*RuncStartResponse) ProtoMessage() {}
 
 func (x *RuncStartResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[17]
+	mi := &file_v1_runc_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1269,7 +1397,7 @@ type RuncExecRequest struct {
 
 func (x *RuncExecRequest) Reset() {
 	*x = RuncExecRequest{}
-	mi := &file_v1_runc_proto_msgTypes[18]
+	mi := &file_v1_runc_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1281,7 +1409,7 @@ func (x *RuncExecRequest) String() string {
 func (*RuncExecRequest) ProtoMessage() {}
 
 func (x *RuncExecRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[18]
+	mi := &file_v1_runc_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1374,7 +1502,7 @@ type RuncProcessSpec struct {
 
 func (x *RuncProcessSpec) Reset() {
 	*x = RuncProcessSpec{}
-	mi := &file_v1_runc_proto_msgTypes[19]
+	mi := &file_v1_runc_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1386,7 +1514,7 @@ func (x *RuncProcessSpec) String() string {
 func (*RuncProcessSpec) ProtoMessage() {}
 
 func (x *RuncProcessSpec) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[19]
+	mi := &file_v1_runc_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1438,7 +1566,7 @@ type RuncExecOptions struct {
 
 func (x *RuncExecOptions) Reset() {
 	*x = RuncExecOptions{}
-	mi := &file_v1_runc_proto_msgTypes[20]
+	mi := &file_v1_runc_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1450,7 +1578,7 @@ func (x *RuncExecOptions) String() string {
 func (*RuncExecOptions) ProtoMessage() {}
 
 func (x *RuncExecOptions) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[20]
+	mi := &file_v1_runc_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1547,7 +1675,7 @@ type RuncExecResponse struct {
 
 func (x *RuncExecResponse) Reset() {
 	*x = RuncExecResponse{}
-	mi := &file_v1_runc_proto_msgTypes[21]
+	mi := &file_v1_runc_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1559,7 +1687,7 @@ func (x *RuncExecResponse) String() string {
 func (*RuncExecResponse) ProtoMessage() {}
 
 func (x *RuncExecResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[21]
+	mi := &file_v1_runc_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1607,7 +1735,7 @@ type RuncRunRequest struct {
 
 func (x *RuncRunRequest) Reset() {
 	*x = RuncRunRequest{}
-	mi := &file_v1_runc_proto_msgTypes[22]
+	mi := &file_v1_runc_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1619,7 +1747,7 @@ func (x *RuncRunRequest) String() string {
 func (*RuncRunRequest) ProtoMessage() {}
 
 func (x *RuncRunRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[22]
+	mi := &file_v1_runc_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1702,7 +1830,7 @@ type RuncRunResponse struct {
 
 func (x *RuncRunResponse) Reset() {
 	*x = RuncRunResponse{}
-	mi := &file_v1_runc_proto_msgTypes[23]
+	mi := &file_v1_runc_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1714,7 +1842,7 @@ func (x *RuncRunResponse) String() string {
 func (*RuncRunResponse) ProtoMessage() {}
 
 func (x *RuncRunResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[23]
+	mi := &file_v1_runc_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1774,7 +1902,7 @@ type RuncDeleteRequest struct {
 
 func (x *RuncDeleteRequest) Reset() {
 	*x = RuncDeleteRequest{}
-	mi := &file_v1_runc_proto_msgTypes[24]
+	mi := &file_v1_runc_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1786,7 +1914,7 @@ func (x *RuncDeleteRequest) String() string {
 func (*RuncDeleteRequest) ProtoMessage() {}
 
 func (x *RuncDeleteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[24]
+	mi := &file_v1_runc_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1856,7 +1984,7 @@ type RuncDeleteOptions struct {
 
 func (x *RuncDeleteOptions) Reset() {
 	*x = RuncDeleteOptions{}
-	mi := &file_v1_runc_proto_msgTypes[25]
+	mi := &file_v1_runc_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1868,7 +1996,7 @@ func (x *RuncDeleteOptions) String() string {
 func (*RuncDeleteOptions) ProtoMessage() {}
 
 func (x *RuncDeleteOptions) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[25]
+	mi := &file_v1_runc_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1926,7 +2054,7 @@ type RuncDeleteResponse struct {
 
 func (x *RuncDeleteResponse) Reset() {
 	*x = RuncDeleteResponse{}
-	mi := &file_v1_runc_proto_msgTypes[26]
+	mi := &file_v1_runc_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1938,7 +2066,7 @@ func (x *RuncDeleteResponse) String() string {
 func (*RuncDeleteResponse) ProtoMessage() {}
 
 func (x *RuncDeleteResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[26]
+	mi := &file_v1_runc_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1986,7 +2114,7 @@ type RuncKillRequest struct {
 
 func (x *RuncKillRequest) Reset() {
 	*x = RuncKillRequest{}
-	mi := &file_v1_runc_proto_msgTypes[27]
+	mi := &file_v1_runc_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1998,7 +2126,7 @@ func (x *RuncKillRequest) String() string {
 func (*RuncKillRequest) ProtoMessage() {}
 
 func (x *RuncKillRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[27]
+	mi := &file_v1_runc_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2081,7 +2209,7 @@ type RuncKillOptions struct {
 
 func (x *RuncKillOptions) Reset() {
 	*x = RuncKillOptions{}
-	mi := &file_v1_runc_proto_msgTypes[28]
+	mi := &file_v1_runc_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2093,7 +2221,7 @@ func (x *RuncKillOptions) String() string {
 func (*RuncKillOptions) ProtoMessage() {}
 
 func (x *RuncKillOptions) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[28]
+	mi := &file_v1_runc_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2151,7 +2279,7 @@ type RuncKillResponse struct {
 
 func (x *RuncKillResponse) Reset() {
 	*x = RuncKillResponse{}
-	mi := &file_v1_runc_proto_msgTypes[29]
+	mi := &file_v1_runc_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2163,7 +2291,7 @@ func (x *RuncKillResponse) String() string {
 func (*RuncKillResponse) ProtoMessage() {}
 
 func (x *RuncKillResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[29]
+	mi := &file_v1_runc_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2209,7 +2337,7 @@ type RuncStatsRequest struct {
 
 func (x *RuncStatsRequest) Reset() {
 	*x = RuncStatsRequest{}
-	mi := &file_v1_runc_proto_msgTypes[30]
+	mi := &file_v1_runc_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2221,7 +2349,7 @@ func (x *RuncStatsRequest) String() string {
 func (*RuncStatsRequest) ProtoMessage() {}
 
 func (x *RuncStatsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[30]
+	mi := &file_v1_runc_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2266,7 +2394,7 @@ type RuncStats struct {
 
 func (x *RuncStats) Reset() {
 	*x = RuncStats{}
-	mi := &file_v1_runc_proto_msgTypes[31]
+	mi := &file_v1_runc_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2278,7 +2406,7 @@ func (x *RuncStats) String() string {
 func (*RuncStats) ProtoMessage() {}
 
 func (x *RuncStats) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[31]
+	mi := &file_v1_runc_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2327,7 +2455,7 @@ type RuncStatsResponse struct {
 
 func (x *RuncStatsResponse) Reset() {
 	*x = RuncStatsResponse{}
-	mi := &file_v1_runc_proto_msgTypes[32]
+	mi := &file_v1_runc_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2339,7 +2467,7 @@ func (x *RuncStatsResponse) String() string {
 func (*RuncStatsResponse) ProtoMessage() {}
 
 func (x *RuncStatsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[32]
+	mi := &file_v1_runc_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2409,7 +2537,7 @@ type RuncPauseRequest struct {
 
 func (x *RuncPauseRequest) Reset() {
 	*x = RuncPauseRequest{}
-	mi := &file_v1_runc_proto_msgTypes[33]
+	mi := &file_v1_runc_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2421,7 +2549,7 @@ func (x *RuncPauseRequest) String() string {
 func (*RuncPauseRequest) ProtoMessage() {}
 
 func (x *RuncPauseRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[33]
+	mi := &file_v1_runc_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2466,7 +2594,7 @@ type RuncPauseResponse struct {
 
 func (x *RuncPauseResponse) Reset() {
 	*x = RuncPauseResponse{}
-	mi := &file_v1_runc_proto_msgTypes[34]
+	mi := &file_v1_runc_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2478,7 +2606,7 @@ func (x *RuncPauseResponse) String() string {
 func (*RuncPauseResponse) ProtoMessage() {}
 
 func (x *RuncPauseResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[34]
+	mi := &file_v1_runc_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2524,7 +2652,7 @@ type RuncResumeRequest struct {
 
 func (x *RuncResumeRequest) Reset() {
 	*x = RuncResumeRequest{}
-	mi := &file_v1_runc_proto_msgTypes[35]
+	mi := &file_v1_runc_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2536,7 +2664,7 @@ func (x *RuncResumeRequest) String() string {
 func (*RuncResumeRequest) ProtoMessage() {}
 
 func (x *RuncResumeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[35]
+	mi := &file_v1_runc_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2581,7 +2709,7 @@ type RuncResumeResponse struct {
 
 func (x *RuncResumeResponse) Reset() {
 	*x = RuncResumeResponse{}
-	mi := &file_v1_runc_proto_msgTypes[36]
+	mi := &file_v1_runc_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2593,7 +2721,7 @@ func (x *RuncResumeResponse) String() string {
 func (*RuncResumeResponse) ProtoMessage() {}
 
 func (x *RuncResumeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[36]
+	mi := &file_v1_runc_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2639,7 +2767,7 @@ type RuncPsRequest struct {
 
 func (x *RuncPsRequest) Reset() {
 	*x = RuncPsRequest{}
-	mi := &file_v1_runc_proto_msgTypes[37]
+	mi := &file_v1_runc_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2651,7 +2779,7 @@ func (x *RuncPsRequest) String() string {
 func (*RuncPsRequest) ProtoMessage() {}
 
 func (x *RuncPsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[37]
+	mi := &file_v1_runc_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2697,7 +2825,7 @@ type RuncPsResponse struct {
 
 func (x *RuncPsResponse) Reset() {
 	*x = RuncPsResponse{}
-	mi := &file_v1_runc_proto_msgTypes[38]
+	mi := &file_v1_runc_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2709,7 +2837,7 @@ func (x *RuncPsResponse) String() string {
 func (*RuncPsResponse) ProtoMessage() {}
 
 func (x *RuncPsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[38]
+	mi := &file_v1_runc_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2767,7 +2895,7 @@ type RuncVersionRequest struct {
 
 func (x *RuncVersionRequest) Reset() {
 	*x = RuncVersionRequest{}
-	mi := &file_v1_runc_proto_msgTypes[39]
+	mi := &file_v1_runc_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2779,7 +2907,7 @@ func (x *RuncVersionRequest) String() string {
 func (*RuncVersionRequest) ProtoMessage() {}
 
 func (x *RuncVersionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[39]
+	mi := &file_v1_runc_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2814,7 +2942,7 @@ type RuncVersionResponse struct {
 
 func (x *RuncVersionResponse) Reset() {
 	*x = RuncVersionResponse{}
-	mi := &file_v1_runc_proto_msgTypes[40]
+	mi := &file_v1_runc_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2826,7 +2954,7 @@ func (x *RuncVersionResponse) String() string {
 func (*RuncVersionResponse) ProtoMessage() {}
 
 func (x *RuncVersionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[40]
+	mi := &file_v1_runc_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2910,7 +3038,7 @@ type RuncCheckpointAction struct {
 
 func (x *RuncCheckpointAction) Reset() {
 	*x = RuncCheckpointAction{}
-	mi := &file_v1_runc_proto_msgTypes[41]
+	mi := &file_v1_runc_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2922,7 +3050,7 @@ func (x *RuncCheckpointAction) String() string {
 func (*RuncCheckpointAction) ProtoMessage() {}
 
 func (x *RuncCheckpointAction) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[41]
+	mi := &file_v1_runc_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2969,7 +3097,7 @@ type RuncCheckpointRequest struct {
 
 func (x *RuncCheckpointRequest) Reset() {
 	*x = RuncCheckpointRequest{}
-	mi := &file_v1_runc_proto_msgTypes[42]
+	mi := &file_v1_runc_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2981,7 +3109,7 @@ func (x *RuncCheckpointRequest) String() string {
 func (*RuncCheckpointRequest) ProtoMessage() {}
 
 func (x *RuncCheckpointRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[42]
+	mi := &file_v1_runc_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3065,7 +3193,7 @@ type RuncConsoleSocket struct {
 
 func (x *RuncConsoleSocket) Reset() {
 	*x = RuncConsoleSocket{}
-	mi := &file_v1_runc_proto_msgTypes[43]
+	mi := &file_v1_runc_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3077,7 +3205,7 @@ func (x *RuncConsoleSocket) String() string {
 func (*RuncConsoleSocket) ProtoMessage() {}
 
 func (x *RuncConsoleSocket) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[43]
+	mi := &file_v1_runc_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3125,7 +3253,7 @@ type SetExecCommandOptions struct {
 
 func (x *SetExecCommandOptions) Reset() {
 	*x = SetExecCommandOptions{}
-	mi := &file_v1_runc_proto_msgTypes[44]
+	mi := &file_v1_runc_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3137,7 +3265,7 @@ func (x *SetExecCommandOptions) String() string {
 func (*SetExecCommandOptions) ProtoMessage() {}
 
 func (x *SetExecCommandOptions) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[44]
+	mi := &file_v1_runc_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3224,7 +3352,7 @@ type RuncVsockIO struct {
 
 func (x *RuncVsockIO) Reset() {
 	*x = RuncVsockIO{}
-	mi := &file_v1_runc_proto_msgTypes[45]
+	mi := &file_v1_runc_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3236,7 +3364,7 @@ func (x *RuncVsockIO) String() string {
 func (*RuncVsockIO) ProtoMessage() {}
 
 func (x *RuncVsockIO) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[45]
+	mi := &file_v1_runc_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3322,7 +3450,7 @@ type RuncUnixIO struct {
 
 func (x *RuncUnixIO) Reset() {
 	*x = RuncUnixIO{}
-	mi := &file_v1_runc_proto_msgTypes[46]
+	mi := &file_v1_runc_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3334,7 +3462,7 @@ func (x *RuncUnixIO) String() string {
 func (*RuncUnixIO) ProtoMessage() {}
 
 func (x *RuncUnixIO) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[46]
+	mi := &file_v1_runc_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3404,7 +3532,7 @@ type RuncNullIO struct {
 
 func (x *RuncNullIO) Reset() {
 	*x = RuncNullIO{}
-	mi := &file_v1_runc_proto_msgTypes[47]
+	mi := &file_v1_runc_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3416,7 +3544,7 @@ func (x *RuncNullIO) String() string {
 func (*RuncNullIO) ProtoMessage() {}
 
 func (x *RuncNullIO) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[47]
+	mi := &file_v1_runc_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3449,7 +3577,7 @@ type RuncIO struct {
 
 func (x *RuncIO) Reset() {
 	*x = RuncIO{}
-	mi := &file_v1_runc_proto_msgTypes[48]
+	mi := &file_v1_runc_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3461,7 +3589,7 @@ func (x *RuncIO) String() string {
 func (*RuncIO) ProtoMessage() {}
 
 func (x *RuncIO) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[48]
+	mi := &file_v1_runc_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3639,7 +3767,7 @@ func (b0 RuncIO_builder) Build() *RuncIO {
 type case_RuncIO_Io protoreflect.FieldNumber
 
 func (x case_RuncIO_Io) String() string {
-	md := file_v1_runc_proto_msgTypes[48].Descriptor()
+	md := file_v1_runc_proto_msgTypes[50].Descriptor()
 	if x == 0 {
 		return "not set"
 	}
@@ -3677,7 +3805,7 @@ type RuncCheckpointResponse struct {
 
 func (x *RuncCheckpointResponse) Reset() {
 	*x = RuncCheckpointResponse{}
-	mi := &file_v1_runc_proto_msgTypes[49]
+	mi := &file_v1_runc_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3689,7 +3817,7 @@ func (x *RuncCheckpointResponse) String() string {
 func (*RuncCheckpointResponse) ProtoMessage() {}
 
 func (x *RuncCheckpointResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[49]
+	mi := &file_v1_runc_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3736,7 +3864,7 @@ type RuncRestoreRequest struct {
 
 func (x *RuncRestoreRequest) Reset() {
 	*x = RuncRestoreRequest{}
-	mi := &file_v1_runc_proto_msgTypes[50]
+	mi := &file_v1_runc_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3748,7 +3876,7 @@ func (x *RuncRestoreRequest) String() string {
 func (*RuncRestoreRequest) ProtoMessage() {}
 
 func (x *RuncRestoreRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[50]
+	mi := &file_v1_runc_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3831,7 +3959,7 @@ type RuncRestoreResponse struct {
 
 func (x *RuncRestoreResponse) Reset() {
 	*x = RuncRestoreResponse{}
-	mi := &file_v1_runc_proto_msgTypes[51]
+	mi := &file_v1_runc_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3843,7 +3971,7 @@ func (x *RuncRestoreResponse) String() string {
 func (*RuncRestoreResponse) ProtoMessage() {}
 
 func (x *RuncRestoreResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[51]
+	mi := &file_v1_runc_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3913,7 +4041,7 @@ type RuncCheckpointOptions struct {
 
 func (x *RuncCheckpointOptions) Reset() {
 	*x = RuncCheckpointOptions{}
-	mi := &file_v1_runc_proto_msgTypes[52]
+	mi := &file_v1_runc_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3925,7 +4053,7 @@ func (x *RuncCheckpointOptions) String() string {
 func (*RuncCheckpointOptions) ProtoMessage() {}
 
 func (x *RuncCheckpointOptions) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[52]
+	mi := &file_v1_runc_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4133,7 +4261,7 @@ type RuncRestoreOptions struct {
 
 func (x *RuncRestoreOptions) Reset() {
 	*x = RuncRestoreOptions{}
-	mi := &file_v1_runc_proto_msgTypes[53]
+	mi := &file_v1_runc_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4145,7 +4273,7 @@ func (x *RuncRestoreOptions) String() string {
 func (*RuncRestoreOptions) ProtoMessage() {}
 
 func (x *RuncRestoreOptions) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[53]
+	mi := &file_v1_runc_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4293,7 +4421,7 @@ type RuncEventsRequest struct {
 
 func (x *RuncEventsRequest) Reset() {
 	*x = RuncEventsRequest{}
-	mi := &file_v1_runc_proto_msgTypes[54]
+	mi := &file_v1_runc_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4305,7 +4433,7 @@ func (x *RuncEventsRequest) String() string {
 func (*RuncEventsRequest) ProtoMessage() {}
 
 func (x *RuncEventsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[54]
+	mi := &file_v1_runc_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4377,7 +4505,7 @@ type RuncEvent struct {
 
 func (x *RuncEvent) Reset() {
 	*x = RuncEvent{}
-	mi := &file_v1_runc_proto_msgTypes[55]
+	mi := &file_v1_runc_proto_msgTypes[57]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4389,7 +4517,7 @@ func (x *RuncEvent) String() string {
 func (*RuncEvent) ProtoMessage() {}
 
 func (x *RuncEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[55]
+	mi := &file_v1_runc_proto_msgTypes[57]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4485,7 +4613,7 @@ type RuncUpdateRequest struct {
 
 func (x *RuncUpdateRequest) Reset() {
 	*x = RuncUpdateRequest{}
-	mi := &file_v1_runc_proto_msgTypes[56]
+	mi := &file_v1_runc_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4497,7 +4625,7 @@ func (x *RuncUpdateRequest) String() string {
 func (*RuncUpdateRequest) ProtoMessage() {}
 
 func (x *RuncUpdateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[56]
+	mi := &file_v1_runc_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4566,7 +4694,7 @@ type RuncUpdateResponse struct {
 
 func (x *RuncUpdateResponse) Reset() {
 	*x = RuncUpdateResponse{}
-	mi := &file_v1_runc_proto_msgTypes[57]
+	mi := &file_v1_runc_proto_msgTypes[59]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4578,7 +4706,7 @@ func (x *RuncUpdateResponse) String() string {
 func (*RuncUpdateResponse) ProtoMessage() {}
 
 func (x *RuncUpdateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[57]
+	mi := &file_v1_runc_proto_msgTypes[59]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4623,7 +4751,7 @@ type RuncLinuxResources struct {
 
 func (x *RuncLinuxResources) Reset() {
 	*x = RuncLinuxResources{}
-	mi := &file_v1_runc_proto_msgTypes[58]
+	mi := &file_v1_runc_proto_msgTypes[60]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4635,7 +4763,7 @@ func (x *RuncLinuxResources) String() string {
 func (*RuncLinuxResources) ProtoMessage() {}
 
 func (x *RuncLinuxResources) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[58]
+	mi := &file_v1_runc_proto_msgTypes[60]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4684,7 +4812,7 @@ type RuncTopRequest struct {
 
 func (x *RuncTopRequest) Reset() {
 	*x = RuncTopRequest{}
-	mi := &file_v1_runc_proto_msgTypes[59]
+	mi := &file_v1_runc_proto_msgTypes[61]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4696,7 +4824,7 @@ func (x *RuncTopRequest) String() string {
 func (*RuncTopRequest) ProtoMessage() {}
 
 func (x *RuncTopRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[59]
+	mi := &file_v1_runc_proto_msgTypes[61]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4755,7 +4883,7 @@ type RuncTopResponse struct {
 
 func (x *RuncTopResponse) Reset() {
 	*x = RuncTopResponse{}
-	mi := &file_v1_runc_proto_msgTypes[60]
+	mi := &file_v1_runc_proto_msgTypes[62]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4767,7 +4895,7 @@ func (x *RuncTopResponse) String() string {
 func (*RuncTopResponse) ProtoMessage() {}
 
 func (x *RuncTopResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[60]
+	mi := &file_v1_runc_proto_msgTypes[62]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4837,7 +4965,7 @@ type RuncTopResults struct {
 
 func (x *RuncTopResults) Reset() {
 	*x = RuncTopResults{}
-	mi := &file_v1_runc_proto_msgTypes[61]
+	mi := &file_v1_runc_proto_msgTypes[63]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4849,7 +4977,7 @@ func (x *RuncTopResults) String() string {
 func (*RuncTopResults) ProtoMessage() {}
 
 func (x *RuncTopResults) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[61]
+	mi := &file_v1_runc_proto_msgTypes[63]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4909,7 +5037,7 @@ type RuncTopProcesses struct {
 
 func (x *RuncTopProcesses) Reset() {
 	*x = RuncTopProcesses{}
-	mi := &file_v1_runc_proto_msgTypes[62]
+	mi := &file_v1_runc_proto_msgTypes[64]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4921,7 +5049,7 @@ func (x *RuncTopProcesses) String() string {
 func (*RuncTopProcesses) ProtoMessage() {}
 
 func (x *RuncTopProcesses) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_runc_proto_msgTypes[62]
+	mi := &file_v1_runc_proto_msgTypes[64]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4961,7 +5089,12 @@ var File_v1_runc_proto protoreflect.FileDescriptor
 
 const file_v1_runc_proto_rawDesc = "" +
 	"\n" +
-	"\rv1/runc.proto\x12\arunv.v1\x1a\x1egoogle/protobuf/duration.proto\x1a!google/protobuf/go_features.proto\"!\n" +
+	"\rv1/runc.proto\x12\arunv.v1\x1a\x1egoogle/protobuf/duration.proto\x1a!google/protobuf/go_features.proto\",\n" +
+	"\x16RuncReadPidFileRequest\x12\x12\n" +
+	"\x04path\x18\x01 \x01(\tR\x04path\"F\n" +
+	"\x17RuncReadPidFileResponse\x12\x10\n" +
+	"\x03pid\x18\x01 \x01(\x05R\x03pid\x12\x19\n" +
+	"\bgo_error\x18\x02 \x01(\tR\agoError\"!\n" +
 	"\x1fRuncNewTempConsoleSocketRequest\"o\n" +
 	" RuncNewTempConsoleSocketResponse\x120\n" +
 	"\x14console_reference_id\x18\x01 \x01(\tR\x12consoleReferenceId\x12\x19\n" +
@@ -5202,9 +5335,9 @@ const file_v1_runc_proto_rawDesc = "" +
 	"\n" +
 	"Checkpoint\x12\x1e.runv.v1.RuncCheckpointRequest\x1a\x1f.runv.v1.RuncCheckpointResponse\"\x00\x12F\n" +
 	"\aRestore\x12\x1b.runv.v1.RuncRestoreRequest\x1a\x1c.runv.v1.RuncRestoreResponse\"\x00\x12C\n" +
-	"\x06Update\x12\x1a.runv.v1.RuncUpdateRequest\x1a\x1b.runv.v1.RuncUpdateResponse\"\x00\x12R\n" +
-	"\vLogFilePath\x12\x1f.runv.v1.RuncLogFilePathRequest\x1a .runv.v1.RuncLogFilePathResponse\"\x00\x12m\n" +
-	"\x14NewTempConsoleSocket\x12(.runv.v1.RuncNewTempConsoleSocketRequest\x1a).runv.v1.RuncNewTempConsoleSocketResponse\"\x002\xd4\x03\n" +
+	"\x06Update\x12\x1a.runv.v1.RuncUpdateRequest\x1a\x1b.runv.v1.RuncUpdateResponse\"\x00\x12m\n" +
+	"\x14NewTempConsoleSocket\x12(.runv.v1.RuncNewTempConsoleSocketRequest\x1a).runv.v1.RuncNewTempConsoleSocketResponse\"\x00\x12R\n" +
+	"\vReadPidFile\x12\x1f.runv.v1.RuncReadPidFileRequest\x1a .runv.v1.RuncReadPidFileResponse\"\x002\xd4\x03\n" +
 	"\x11RuncExtrasService\x12@\n" +
 	"\x05State\x12\x19.runv.v1.RuncStateRequest\x1a\x1a.runv.v1.RuncStateResponse\"\x00\x12:\n" +
 	"\x03Run\x12\x17.runv.v1.RuncRunRequest\x1a\x18.runv.v1.RuncRunResponse\"\x00\x12@\n" +
@@ -5215,141 +5348,143 @@ const file_v1_runc_proto_rawDesc = "" +
 	"\x03Top\x12\x17.runv.v1.RuncTopRequest\x1a\x18.runv.v1.RuncTopResponse\"\x00B\x87\x01\n" +
 	"\vcom.runv.v1B\tRuncProtoP\x01Z&github.com/walteh/runv/proto/v1;runvv1\xa2\x02\x03RXX\xaa\x02\aRunv.V1\xca\x02\aRunv\\V1\xe2\x02\x13Runv\\V1\\GPBMetadata\xea\x02\bRunv::V1\x92\x03\a\xd2>\x02\x10\x03\b\x02b\beditionsp\xe8\a"
 
-var file_v1_runc_proto_msgTypes = make([]protoimpl.MessageInfo, 65)
+var file_v1_runc_proto_msgTypes = make([]protoimpl.MessageInfo, 67)
 var file_v1_runc_proto_goTypes = []any{
-	(*RuncNewTempConsoleSocketRequest)(nil),  // 0: runv.v1.RuncNewTempConsoleSocketRequest
-	(*RuncNewTempConsoleSocketResponse)(nil), // 1: runv.v1.RuncNewTempConsoleSocketResponse
-	(*RuncCloseIORequest)(nil),               // 2: runv.v1.RuncCloseIORequest
-	(*RuncCloseIOResponse)(nil),              // 3: runv.v1.RuncCloseIOResponse
-	(*RuncLogFilePathRequest)(nil),           // 4: runv.v1.RuncLogFilePathRequest
-	(*RuncLogFilePathResponse)(nil),          // 5: runv.v1.RuncLogFilePathResponse
-	(*PingRequest)(nil),                      // 6: runv.v1.PingRequest
-	(*PingResponse)(nil),                     // 7: runv.v1.PingResponse
-	(*RuncListRequest)(nil),                  // 8: runv.v1.RuncListRequest
-	(*RuncContainer)(nil),                    // 9: runv.v1.RuncContainer
-	(*RuncListResponse)(nil),                 // 10: runv.v1.RuncListResponse
-	(*RuncStateRequest)(nil),                 // 11: runv.v1.RuncStateRequest
-	(*RuncStateResponse)(nil),                // 12: runv.v1.RuncStateResponse
-	(*RuncCreateRequest)(nil),                // 13: runv.v1.RuncCreateRequest
-	(*RuncCreateOptions)(nil),                // 14: runv.v1.RuncCreateOptions
-	(*RuncCreateResponse)(nil),               // 15: runv.v1.RuncCreateResponse
-	(*RuncStartRequest)(nil),                 // 16: runv.v1.RuncStartRequest
-	(*RuncStartResponse)(nil),                // 17: runv.v1.RuncStartResponse
-	(*RuncExecRequest)(nil),                  // 18: runv.v1.RuncExecRequest
-	(*RuncProcessSpec)(nil),                  // 19: runv.v1.RuncProcessSpec
-	(*RuncExecOptions)(nil),                  // 20: runv.v1.RuncExecOptions
-	(*RuncExecResponse)(nil),                 // 21: runv.v1.RuncExecResponse
-	(*RuncRunRequest)(nil),                   // 22: runv.v1.RuncRunRequest
-	(*RuncRunResponse)(nil),                  // 23: runv.v1.RuncRunResponse
-	(*RuncDeleteRequest)(nil),                // 24: runv.v1.RuncDeleteRequest
-	(*RuncDeleteOptions)(nil),                // 25: runv.v1.RuncDeleteOptions
-	(*RuncDeleteResponse)(nil),               // 26: runv.v1.RuncDeleteResponse
-	(*RuncKillRequest)(nil),                  // 27: runv.v1.RuncKillRequest
-	(*RuncKillOptions)(nil),                  // 28: runv.v1.RuncKillOptions
-	(*RuncKillResponse)(nil),                 // 29: runv.v1.RuncKillResponse
-	(*RuncStatsRequest)(nil),                 // 30: runv.v1.RuncStatsRequest
-	(*RuncStats)(nil),                        // 31: runv.v1.RuncStats
-	(*RuncStatsResponse)(nil),                // 32: runv.v1.RuncStatsResponse
-	(*RuncPauseRequest)(nil),                 // 33: runv.v1.RuncPauseRequest
-	(*RuncPauseResponse)(nil),                // 34: runv.v1.RuncPauseResponse
-	(*RuncResumeRequest)(nil),                // 35: runv.v1.RuncResumeRequest
-	(*RuncResumeResponse)(nil),               // 36: runv.v1.RuncResumeResponse
-	(*RuncPsRequest)(nil),                    // 37: runv.v1.RuncPsRequest
-	(*RuncPsResponse)(nil),                   // 38: runv.v1.RuncPsResponse
-	(*RuncVersionRequest)(nil),               // 39: runv.v1.RuncVersionRequest
-	(*RuncVersionResponse)(nil),              // 40: runv.v1.RuncVersionResponse
-	(*RuncCheckpointAction)(nil),             // 41: runv.v1.RuncCheckpointAction
-	(*RuncCheckpointRequest)(nil),            // 42: runv.v1.RuncCheckpointRequest
-	(*RuncConsoleSocket)(nil),                // 43: runv.v1.RuncConsoleSocket
-	(*SetExecCommandOptions)(nil),            // 44: runv.v1.SetExecCommandOptions
-	(*RuncVsockIO)(nil),                      // 45: runv.v1.RuncVsockIO
-	(*RuncUnixIO)(nil),                       // 46: runv.v1.RuncUnixIO
-	(*RuncNullIO)(nil),                       // 47: runv.v1.RuncNullIO
-	(*RuncIO)(nil),                           // 48: runv.v1.RuncIO
-	(*RuncCheckpointResponse)(nil),           // 49: runv.v1.RuncCheckpointResponse
-	(*RuncRestoreRequest)(nil),               // 50: runv.v1.RuncRestoreRequest
-	(*RuncRestoreResponse)(nil),              // 51: runv.v1.RuncRestoreResponse
-	(*RuncCheckpointOptions)(nil),            // 52: runv.v1.RuncCheckpointOptions
-	(*RuncRestoreOptions)(nil),               // 53: runv.v1.RuncRestoreOptions
-	(*RuncEventsRequest)(nil),                // 54: runv.v1.RuncEventsRequest
-	(*RuncEvent)(nil),                        // 55: runv.v1.RuncEvent
-	(*RuncUpdateRequest)(nil),                // 56: runv.v1.RuncUpdateRequest
-	(*RuncUpdateResponse)(nil),               // 57: runv.v1.RuncUpdateResponse
-	(*RuncLinuxResources)(nil),               // 58: runv.v1.RuncLinuxResources
-	(*RuncTopRequest)(nil),                   // 59: runv.v1.RuncTopRequest
-	(*RuncTopResponse)(nil),                  // 60: runv.v1.RuncTopResponse
-	(*RuncTopResults)(nil),                   // 61: runv.v1.RuncTopResults
-	(*RuncTopProcesses)(nil),                 // 62: runv.v1.RuncTopProcesses
-	nil,                                      // 63: runv.v1.RuncContainer.AnnotationsEntry
-	nil,                                      // 64: runv.v1.SetExecCommandOptions.EnvEntry
-	(*durationpb.Duration)(nil),              // 65: google.protobuf.Duration
+	(*RuncReadPidFileRequest)(nil),           // 0: runv.v1.RuncReadPidFileRequest
+	(*RuncReadPidFileResponse)(nil),          // 1: runv.v1.RuncReadPidFileResponse
+	(*RuncNewTempConsoleSocketRequest)(nil),  // 2: runv.v1.RuncNewTempConsoleSocketRequest
+	(*RuncNewTempConsoleSocketResponse)(nil), // 3: runv.v1.RuncNewTempConsoleSocketResponse
+	(*RuncCloseIORequest)(nil),               // 4: runv.v1.RuncCloseIORequest
+	(*RuncCloseIOResponse)(nil),              // 5: runv.v1.RuncCloseIOResponse
+	(*RuncLogFilePathRequest)(nil),           // 6: runv.v1.RuncLogFilePathRequest
+	(*RuncLogFilePathResponse)(nil),          // 7: runv.v1.RuncLogFilePathResponse
+	(*PingRequest)(nil),                      // 8: runv.v1.PingRequest
+	(*PingResponse)(nil),                     // 9: runv.v1.PingResponse
+	(*RuncListRequest)(nil),                  // 10: runv.v1.RuncListRequest
+	(*RuncContainer)(nil),                    // 11: runv.v1.RuncContainer
+	(*RuncListResponse)(nil),                 // 12: runv.v1.RuncListResponse
+	(*RuncStateRequest)(nil),                 // 13: runv.v1.RuncStateRequest
+	(*RuncStateResponse)(nil),                // 14: runv.v1.RuncStateResponse
+	(*RuncCreateRequest)(nil),                // 15: runv.v1.RuncCreateRequest
+	(*RuncCreateOptions)(nil),                // 16: runv.v1.RuncCreateOptions
+	(*RuncCreateResponse)(nil),               // 17: runv.v1.RuncCreateResponse
+	(*RuncStartRequest)(nil),                 // 18: runv.v1.RuncStartRequest
+	(*RuncStartResponse)(nil),                // 19: runv.v1.RuncStartResponse
+	(*RuncExecRequest)(nil),                  // 20: runv.v1.RuncExecRequest
+	(*RuncProcessSpec)(nil),                  // 21: runv.v1.RuncProcessSpec
+	(*RuncExecOptions)(nil),                  // 22: runv.v1.RuncExecOptions
+	(*RuncExecResponse)(nil),                 // 23: runv.v1.RuncExecResponse
+	(*RuncRunRequest)(nil),                   // 24: runv.v1.RuncRunRequest
+	(*RuncRunResponse)(nil),                  // 25: runv.v1.RuncRunResponse
+	(*RuncDeleteRequest)(nil),                // 26: runv.v1.RuncDeleteRequest
+	(*RuncDeleteOptions)(nil),                // 27: runv.v1.RuncDeleteOptions
+	(*RuncDeleteResponse)(nil),               // 28: runv.v1.RuncDeleteResponse
+	(*RuncKillRequest)(nil),                  // 29: runv.v1.RuncKillRequest
+	(*RuncKillOptions)(nil),                  // 30: runv.v1.RuncKillOptions
+	(*RuncKillResponse)(nil),                 // 31: runv.v1.RuncKillResponse
+	(*RuncStatsRequest)(nil),                 // 32: runv.v1.RuncStatsRequest
+	(*RuncStats)(nil),                        // 33: runv.v1.RuncStats
+	(*RuncStatsResponse)(nil),                // 34: runv.v1.RuncStatsResponse
+	(*RuncPauseRequest)(nil),                 // 35: runv.v1.RuncPauseRequest
+	(*RuncPauseResponse)(nil),                // 36: runv.v1.RuncPauseResponse
+	(*RuncResumeRequest)(nil),                // 37: runv.v1.RuncResumeRequest
+	(*RuncResumeResponse)(nil),               // 38: runv.v1.RuncResumeResponse
+	(*RuncPsRequest)(nil),                    // 39: runv.v1.RuncPsRequest
+	(*RuncPsResponse)(nil),                   // 40: runv.v1.RuncPsResponse
+	(*RuncVersionRequest)(nil),               // 41: runv.v1.RuncVersionRequest
+	(*RuncVersionResponse)(nil),              // 42: runv.v1.RuncVersionResponse
+	(*RuncCheckpointAction)(nil),             // 43: runv.v1.RuncCheckpointAction
+	(*RuncCheckpointRequest)(nil),            // 44: runv.v1.RuncCheckpointRequest
+	(*RuncConsoleSocket)(nil),                // 45: runv.v1.RuncConsoleSocket
+	(*SetExecCommandOptions)(nil),            // 46: runv.v1.SetExecCommandOptions
+	(*RuncVsockIO)(nil),                      // 47: runv.v1.RuncVsockIO
+	(*RuncUnixIO)(nil),                       // 48: runv.v1.RuncUnixIO
+	(*RuncNullIO)(nil),                       // 49: runv.v1.RuncNullIO
+	(*RuncIO)(nil),                           // 50: runv.v1.RuncIO
+	(*RuncCheckpointResponse)(nil),           // 51: runv.v1.RuncCheckpointResponse
+	(*RuncRestoreRequest)(nil),               // 52: runv.v1.RuncRestoreRequest
+	(*RuncRestoreResponse)(nil),              // 53: runv.v1.RuncRestoreResponse
+	(*RuncCheckpointOptions)(nil),            // 54: runv.v1.RuncCheckpointOptions
+	(*RuncRestoreOptions)(nil),               // 55: runv.v1.RuncRestoreOptions
+	(*RuncEventsRequest)(nil),                // 56: runv.v1.RuncEventsRequest
+	(*RuncEvent)(nil),                        // 57: runv.v1.RuncEvent
+	(*RuncUpdateRequest)(nil),                // 58: runv.v1.RuncUpdateRequest
+	(*RuncUpdateResponse)(nil),               // 59: runv.v1.RuncUpdateResponse
+	(*RuncLinuxResources)(nil),               // 60: runv.v1.RuncLinuxResources
+	(*RuncTopRequest)(nil),                   // 61: runv.v1.RuncTopRequest
+	(*RuncTopResponse)(nil),                  // 62: runv.v1.RuncTopResponse
+	(*RuncTopResults)(nil),                   // 63: runv.v1.RuncTopResults
+	(*RuncTopProcesses)(nil),                 // 64: runv.v1.RuncTopProcesses
+	nil,                                      // 65: runv.v1.RuncContainer.AnnotationsEntry
+	nil,                                      // 66: runv.v1.SetExecCommandOptions.EnvEntry
+	(*durationpb.Duration)(nil),              // 67: google.protobuf.Duration
 }
 var file_v1_runc_proto_depIdxs = []int32{
-	63, // 0: runv.v1.RuncContainer.annotations:type_name -> runv.v1.RuncContainer.AnnotationsEntry
-	9,  // 1: runv.v1.RuncListResponse.containers:type_name -> runv.v1.RuncContainer
-	9,  // 2: runv.v1.RuncStateResponse.container:type_name -> runv.v1.RuncContainer
-	14, // 3: runv.v1.RuncCreateRequest.options:type_name -> runv.v1.RuncCreateOptions
-	19, // 4: runv.v1.RuncExecRequest.spec:type_name -> runv.v1.RuncProcessSpec
-	20, // 5: runv.v1.RuncExecRequest.options:type_name -> runv.v1.RuncExecOptions
-	14, // 6: runv.v1.RuncRunRequest.options:type_name -> runv.v1.RuncCreateOptions
-	25, // 7: runv.v1.RuncDeleteRequest.options:type_name -> runv.v1.RuncDeleteOptions
-	28, // 8: runv.v1.RuncKillRequest.options:type_name -> runv.v1.RuncKillOptions
-	31, // 9: runv.v1.RuncStatsResponse.stats:type_name -> runv.v1.RuncStats
-	52, // 10: runv.v1.RuncCheckpointRequest.options:type_name -> runv.v1.RuncCheckpointOptions
-	41, // 11: runv.v1.RuncCheckpointRequest.actions:type_name -> runv.v1.RuncCheckpointAction
-	64, // 12: runv.v1.SetExecCommandOptions.env:type_name -> runv.v1.SetExecCommandOptions.EnvEntry
-	45, // 13: runv.v1.RuncIO.vsock:type_name -> runv.v1.RuncVsockIO
-	46, // 14: runv.v1.RuncIO.unix:type_name -> runv.v1.RuncUnixIO
-	47, // 15: runv.v1.RuncIO.null:type_name -> runv.v1.RuncNullIO
-	53, // 16: runv.v1.RuncRestoreRequest.options:type_name -> runv.v1.RuncRestoreOptions
-	52, // 17: runv.v1.RuncRestoreOptions.checkpoint_options:type_name -> runv.v1.RuncCheckpointOptions
-	65, // 18: runv.v1.RuncEventsRequest.duration:type_name -> google.protobuf.Duration
-	31, // 19: runv.v1.RuncEvent.stats:type_name -> runv.v1.RuncStats
-	58, // 20: runv.v1.RuncUpdateRequest.resources:type_name -> runv.v1.RuncLinuxResources
-	61, // 21: runv.v1.RuncTopResponse.results:type_name -> runv.v1.RuncTopResults
-	62, // 22: runv.v1.RuncTopResults.processes:type_name -> runv.v1.RuncTopProcesses
-	6,  // 23: runv.v1.RuncService.Ping:input_type -> runv.v1.PingRequest
-	13, // 24: runv.v1.RuncService.Create:input_type -> runv.v1.RuncCreateRequest
-	16, // 25: runv.v1.RuncService.Start:input_type -> runv.v1.RuncStartRequest
-	18, // 26: runv.v1.RuncService.Exec:input_type -> runv.v1.RuncExecRequest
-	24, // 27: runv.v1.RuncService.Delete:input_type -> runv.v1.RuncDeleteRequest
-	27, // 28: runv.v1.RuncService.Kill:input_type -> runv.v1.RuncKillRequest
-	33, // 29: runv.v1.RuncService.Pause:input_type -> runv.v1.RuncPauseRequest
-	35, // 30: runv.v1.RuncService.Resume:input_type -> runv.v1.RuncResumeRequest
-	37, // 31: runv.v1.RuncService.Ps:input_type -> runv.v1.RuncPsRequest
-	42, // 32: runv.v1.RuncService.Checkpoint:input_type -> runv.v1.RuncCheckpointRequest
-	50, // 33: runv.v1.RuncService.Restore:input_type -> runv.v1.RuncRestoreRequest
-	56, // 34: runv.v1.RuncService.Update:input_type -> runv.v1.RuncUpdateRequest
-	4,  // 35: runv.v1.RuncService.LogFilePath:input_type -> runv.v1.RuncLogFilePathRequest
-	0,  // 36: runv.v1.RuncService.NewTempConsoleSocket:input_type -> runv.v1.RuncNewTempConsoleSocketRequest
-	11, // 37: runv.v1.RuncExtrasService.State:input_type -> runv.v1.RuncStateRequest
-	22, // 38: runv.v1.RuncExtrasService.Run:input_type -> runv.v1.RuncRunRequest
-	30, // 39: runv.v1.RuncExtrasService.Stats:input_type -> runv.v1.RuncStatsRequest
-	54, // 40: runv.v1.RuncExtrasService.Events:input_type -> runv.v1.RuncEventsRequest
-	8,  // 41: runv.v1.RuncExtrasService.List:input_type -> runv.v1.RuncListRequest
-	39, // 42: runv.v1.RuncExtrasService.Version:input_type -> runv.v1.RuncVersionRequest
-	59, // 43: runv.v1.RuncExtrasService.Top:input_type -> runv.v1.RuncTopRequest
-	7,  // 44: runv.v1.RuncService.Ping:output_type -> runv.v1.PingResponse
-	15, // 45: runv.v1.RuncService.Create:output_type -> runv.v1.RuncCreateResponse
-	17, // 46: runv.v1.RuncService.Start:output_type -> runv.v1.RuncStartResponse
-	21, // 47: runv.v1.RuncService.Exec:output_type -> runv.v1.RuncExecResponse
-	26, // 48: runv.v1.RuncService.Delete:output_type -> runv.v1.RuncDeleteResponse
-	29, // 49: runv.v1.RuncService.Kill:output_type -> runv.v1.RuncKillResponse
-	34, // 50: runv.v1.RuncService.Pause:output_type -> runv.v1.RuncPauseResponse
-	36, // 51: runv.v1.RuncService.Resume:output_type -> runv.v1.RuncResumeResponse
-	38, // 52: runv.v1.RuncService.Ps:output_type -> runv.v1.RuncPsResponse
-	49, // 53: runv.v1.RuncService.Checkpoint:output_type -> runv.v1.RuncCheckpointResponse
-	51, // 54: runv.v1.RuncService.Restore:output_type -> runv.v1.RuncRestoreResponse
-	57, // 55: runv.v1.RuncService.Update:output_type -> runv.v1.RuncUpdateResponse
-	5,  // 56: runv.v1.RuncService.LogFilePath:output_type -> runv.v1.RuncLogFilePathResponse
-	1,  // 57: runv.v1.RuncService.NewTempConsoleSocket:output_type -> runv.v1.RuncNewTempConsoleSocketResponse
-	12, // 58: runv.v1.RuncExtrasService.State:output_type -> runv.v1.RuncStateResponse
-	23, // 59: runv.v1.RuncExtrasService.Run:output_type -> runv.v1.RuncRunResponse
-	32, // 60: runv.v1.RuncExtrasService.Stats:output_type -> runv.v1.RuncStatsResponse
-	55, // 61: runv.v1.RuncExtrasService.Events:output_type -> runv.v1.RuncEvent
-	10, // 62: runv.v1.RuncExtrasService.List:output_type -> runv.v1.RuncListResponse
-	40, // 63: runv.v1.RuncExtrasService.Version:output_type -> runv.v1.RuncVersionResponse
-	60, // 64: runv.v1.RuncExtrasService.Top:output_type -> runv.v1.RuncTopResponse
+	65, // 0: runv.v1.RuncContainer.annotations:type_name -> runv.v1.RuncContainer.AnnotationsEntry
+	11, // 1: runv.v1.RuncListResponse.containers:type_name -> runv.v1.RuncContainer
+	11, // 2: runv.v1.RuncStateResponse.container:type_name -> runv.v1.RuncContainer
+	16, // 3: runv.v1.RuncCreateRequest.options:type_name -> runv.v1.RuncCreateOptions
+	21, // 4: runv.v1.RuncExecRequest.spec:type_name -> runv.v1.RuncProcessSpec
+	22, // 5: runv.v1.RuncExecRequest.options:type_name -> runv.v1.RuncExecOptions
+	16, // 6: runv.v1.RuncRunRequest.options:type_name -> runv.v1.RuncCreateOptions
+	27, // 7: runv.v1.RuncDeleteRequest.options:type_name -> runv.v1.RuncDeleteOptions
+	30, // 8: runv.v1.RuncKillRequest.options:type_name -> runv.v1.RuncKillOptions
+	33, // 9: runv.v1.RuncStatsResponse.stats:type_name -> runv.v1.RuncStats
+	54, // 10: runv.v1.RuncCheckpointRequest.options:type_name -> runv.v1.RuncCheckpointOptions
+	43, // 11: runv.v1.RuncCheckpointRequest.actions:type_name -> runv.v1.RuncCheckpointAction
+	66, // 12: runv.v1.SetExecCommandOptions.env:type_name -> runv.v1.SetExecCommandOptions.EnvEntry
+	47, // 13: runv.v1.RuncIO.vsock:type_name -> runv.v1.RuncVsockIO
+	48, // 14: runv.v1.RuncIO.unix:type_name -> runv.v1.RuncUnixIO
+	49, // 15: runv.v1.RuncIO.null:type_name -> runv.v1.RuncNullIO
+	55, // 16: runv.v1.RuncRestoreRequest.options:type_name -> runv.v1.RuncRestoreOptions
+	54, // 17: runv.v1.RuncRestoreOptions.checkpoint_options:type_name -> runv.v1.RuncCheckpointOptions
+	67, // 18: runv.v1.RuncEventsRequest.duration:type_name -> google.protobuf.Duration
+	33, // 19: runv.v1.RuncEvent.stats:type_name -> runv.v1.RuncStats
+	60, // 20: runv.v1.RuncUpdateRequest.resources:type_name -> runv.v1.RuncLinuxResources
+	63, // 21: runv.v1.RuncTopResponse.results:type_name -> runv.v1.RuncTopResults
+	64, // 22: runv.v1.RuncTopResults.processes:type_name -> runv.v1.RuncTopProcesses
+	8,  // 23: runv.v1.RuncService.Ping:input_type -> runv.v1.PingRequest
+	15, // 24: runv.v1.RuncService.Create:input_type -> runv.v1.RuncCreateRequest
+	18, // 25: runv.v1.RuncService.Start:input_type -> runv.v1.RuncStartRequest
+	20, // 26: runv.v1.RuncService.Exec:input_type -> runv.v1.RuncExecRequest
+	26, // 27: runv.v1.RuncService.Delete:input_type -> runv.v1.RuncDeleteRequest
+	29, // 28: runv.v1.RuncService.Kill:input_type -> runv.v1.RuncKillRequest
+	35, // 29: runv.v1.RuncService.Pause:input_type -> runv.v1.RuncPauseRequest
+	37, // 30: runv.v1.RuncService.Resume:input_type -> runv.v1.RuncResumeRequest
+	39, // 31: runv.v1.RuncService.Ps:input_type -> runv.v1.RuncPsRequest
+	44, // 32: runv.v1.RuncService.Checkpoint:input_type -> runv.v1.RuncCheckpointRequest
+	52, // 33: runv.v1.RuncService.Restore:input_type -> runv.v1.RuncRestoreRequest
+	58, // 34: runv.v1.RuncService.Update:input_type -> runv.v1.RuncUpdateRequest
+	2,  // 35: runv.v1.RuncService.NewTempConsoleSocket:input_type -> runv.v1.RuncNewTempConsoleSocketRequest
+	0,  // 36: runv.v1.RuncService.ReadPidFile:input_type -> runv.v1.RuncReadPidFileRequest
+	13, // 37: runv.v1.RuncExtrasService.State:input_type -> runv.v1.RuncStateRequest
+	24, // 38: runv.v1.RuncExtrasService.Run:input_type -> runv.v1.RuncRunRequest
+	32, // 39: runv.v1.RuncExtrasService.Stats:input_type -> runv.v1.RuncStatsRequest
+	56, // 40: runv.v1.RuncExtrasService.Events:input_type -> runv.v1.RuncEventsRequest
+	10, // 41: runv.v1.RuncExtrasService.List:input_type -> runv.v1.RuncListRequest
+	41, // 42: runv.v1.RuncExtrasService.Version:input_type -> runv.v1.RuncVersionRequest
+	61, // 43: runv.v1.RuncExtrasService.Top:input_type -> runv.v1.RuncTopRequest
+	9,  // 44: runv.v1.RuncService.Ping:output_type -> runv.v1.PingResponse
+	17, // 45: runv.v1.RuncService.Create:output_type -> runv.v1.RuncCreateResponse
+	19, // 46: runv.v1.RuncService.Start:output_type -> runv.v1.RuncStartResponse
+	23, // 47: runv.v1.RuncService.Exec:output_type -> runv.v1.RuncExecResponse
+	28, // 48: runv.v1.RuncService.Delete:output_type -> runv.v1.RuncDeleteResponse
+	31, // 49: runv.v1.RuncService.Kill:output_type -> runv.v1.RuncKillResponse
+	36, // 50: runv.v1.RuncService.Pause:output_type -> runv.v1.RuncPauseResponse
+	38, // 51: runv.v1.RuncService.Resume:output_type -> runv.v1.RuncResumeResponse
+	40, // 52: runv.v1.RuncService.Ps:output_type -> runv.v1.RuncPsResponse
+	51, // 53: runv.v1.RuncService.Checkpoint:output_type -> runv.v1.RuncCheckpointResponse
+	53, // 54: runv.v1.RuncService.Restore:output_type -> runv.v1.RuncRestoreResponse
+	59, // 55: runv.v1.RuncService.Update:output_type -> runv.v1.RuncUpdateResponse
+	3,  // 56: runv.v1.RuncService.NewTempConsoleSocket:output_type -> runv.v1.RuncNewTempConsoleSocketResponse
+	1,  // 57: runv.v1.RuncService.ReadPidFile:output_type -> runv.v1.RuncReadPidFileResponse
+	14, // 58: runv.v1.RuncExtrasService.State:output_type -> runv.v1.RuncStateResponse
+	25, // 59: runv.v1.RuncExtrasService.Run:output_type -> runv.v1.RuncRunResponse
+	34, // 60: runv.v1.RuncExtrasService.Stats:output_type -> runv.v1.RuncStatsResponse
+	57, // 61: runv.v1.RuncExtrasService.Events:output_type -> runv.v1.RuncEvent
+	12, // 62: runv.v1.RuncExtrasService.List:output_type -> runv.v1.RuncListResponse
+	42, // 63: runv.v1.RuncExtrasService.Version:output_type -> runv.v1.RuncVersionResponse
+	62, // 64: runv.v1.RuncExtrasService.Top:output_type -> runv.v1.RuncTopResponse
 	44, // [44:65] is the sub-list for method output_type
 	23, // [23:44] is the sub-list for method input_type
 	23, // [23:23] is the sub-list for extension type_name
@@ -5362,7 +5497,7 @@ func file_v1_runc_proto_init() {
 	if File_v1_runc_proto != nil {
 		return
 	}
-	file_v1_runc_proto_msgTypes[48].OneofWrappers = []any{
+	file_v1_runc_proto_msgTypes[50].OneofWrappers = []any{
 		(*runcIO_Vsock)(nil),
 		(*runcIO_Unix)(nil),
 		(*runcIO_Null)(nil),
@@ -5373,7 +5508,7 @@ func file_v1_runc_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_runc_proto_rawDesc), len(file_v1_runc_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   65,
+			NumMessages:   67,
 			NumExtensions: 0,
 			NumServices:   2,
 		},

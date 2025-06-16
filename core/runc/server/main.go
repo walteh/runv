@@ -7,9 +7,20 @@ import (
 	"syscall"
 
 	"github.com/walteh/runv/core/runc/runtime"
+	"github.com/walteh/runv/core/runc/state"
 	runvv1 "github.com/walteh/runv/proto/v1"
 	"google.golang.org/grpc"
 )
+
+type Server struct {
+	runtime         runtime.Runtime
+	runtimeExtras   runtime.RuntimeExtras
+	socketAllocator runtime.SocketAllocator
+
+	sharedDirPathPrefix string
+
+	state *state.State
+}
 
 // RunServer starts a gRPC server with the RuncService
 func RunServer(listener net.Listener, config runtime.Runtime) (*grpc.Server, error) {

@@ -20,8 +20,8 @@ type TTRPCRuncServiceService interface {
 	Checkpoint(context.Context, *RuncCheckpointRequest) (*RuncCheckpointResponse, error)
 	Restore(context.Context, *RuncRestoreRequest) (*RuncRestoreResponse, error)
 	Update(context.Context, *RuncUpdateRequest) (*RuncUpdateResponse, error)
-	LogFilePath(context.Context, *RuncLogFilePathRequest) (*RuncLogFilePathResponse, error)
 	NewTempConsoleSocket(context.Context, *RuncNewTempConsoleSocketRequest) (*RuncNewTempConsoleSocketResponse, error)
+	ReadPidFile(context.Context, *RuncReadPidFileRequest) (*RuncReadPidFileResponse, error)
 }
 
 func RegisterTTRPCRuncServiceService(srv *ttrpc.Server, svc TTRPCRuncServiceService) {
@@ -111,19 +111,19 @@ func RegisterTTRPCRuncServiceService(srv *ttrpc.Server, svc TTRPCRuncServiceServ
 				}
 				return svc.Update(ctx, &req)
 			},
-			"LogFilePath": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
-				var req RuncLogFilePathRequest
-				if err := unmarshal(&req); err != nil {
-					return nil, err
-				}
-				return svc.LogFilePath(ctx, &req)
-			},
 			"NewTempConsoleSocket": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
 				var req RuncNewTempConsoleSocketRequest
 				if err := unmarshal(&req); err != nil {
 					return nil, err
 				}
 				return svc.NewTempConsoleSocket(ctx, &req)
+			},
+			"ReadPidFile": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+				var req RuncReadPidFileRequest
+				if err := unmarshal(&req); err != nil {
+					return nil, err
+				}
+				return svc.ReadPidFile(ctx, &req)
 			},
 		},
 	})
@@ -235,17 +235,17 @@ func (c *ttrpcruncserviceClient) Update(ctx context.Context, req *RuncUpdateRequ
 	return &resp, nil
 }
 
-func (c *ttrpcruncserviceClient) LogFilePath(ctx context.Context, req *RuncLogFilePathRequest) (*RuncLogFilePathResponse, error) {
-	var resp RuncLogFilePathResponse
-	if err := c.client.Call(ctx, "runv.v1.RuncService", "LogFilePath", req, &resp); err != nil {
+func (c *ttrpcruncserviceClient) NewTempConsoleSocket(ctx context.Context, req *RuncNewTempConsoleSocketRequest) (*RuncNewTempConsoleSocketResponse, error) {
+	var resp RuncNewTempConsoleSocketResponse
+	if err := c.client.Call(ctx, "runv.v1.RuncService", "NewTempConsoleSocket", req, &resp); err != nil {
 		return nil, err
 	}
 	return &resp, nil
 }
 
-func (c *ttrpcruncserviceClient) NewTempConsoleSocket(ctx context.Context, req *RuncNewTempConsoleSocketRequest) (*RuncNewTempConsoleSocketResponse, error) {
-	var resp RuncNewTempConsoleSocketResponse
-	if err := c.client.Call(ctx, "runv.v1.RuncService", "NewTempConsoleSocket", req, &resp); err != nil {
+func (c *ttrpcruncserviceClient) ReadPidFile(ctx context.Context, req *RuncReadPidFileRequest) (*RuncReadPidFileResponse, error) {
+	var resp RuncReadPidFileResponse
+	if err := c.client.Call(ctx, "runv.v1.RuncService", "ReadPidFile", req, &resp); err != nil {
 		return nil, err
 	}
 	return &resp, nil
