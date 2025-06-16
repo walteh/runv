@@ -96,13 +96,13 @@ func New(id string, runtime runtime.Runtime, stdio stdio.Stdio) *Init {
 func (p *Init) Create(ctx context.Context, r *CreateConfig) error {
 	var (
 		err     error
-		socket  runtime.Socket
+		socket  runtime.ConsoleSocket
 		pio     *processIO
 		pidFile = newPidFile(p.Bundle, p.runtime)
 	)
 
 	if r.Terminal {
-		if socket, err = p.runtime.NewTempConsoleSocket(); err != nil {
+		if socket, err = p.runtime.NewTempConsoleSocket(ctx); err != nil {
 			return fmt.Errorf("failed to create OCI runtime console socket: %w", err)
 		}
 		defer socket.Close()

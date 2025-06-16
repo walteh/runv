@@ -27,6 +27,7 @@ require (
 	github.com/moby/sys/userns v0.1.0
 	github.com/muesli/termenv v0.16.0
 	github.com/opencontainers/runtime-spec v1.2.1
+	github.com/rs/xid v1.6.0
 	github.com/samber/slog-multi v1.4.0
 	github.com/stretchr/testify v1.10.0
 	github.com/veqryn/slog-context v0.8.0

@@ -13,14 +13,6 @@ service RuncService {
 	rpc Ping(PingRequest) returns (PingResponse) {}
 
 
-	// List returns all containers created inside the provided runc root directory
-	rpc List(RuncListRequest) returns (RuncListResponse) {}
-
-
-	// State returns the state for the container provided by id
-	rpc State(RuncStateRequest) returns (RuncStateResponse) {}
-
-
 	// Create creates a new container
 	rpc Create(RuncCreateRequest) returns (RuncCreateResponse) {}
 
@@ -33,20 +25,12 @@ service RuncService {
 	rpc Exec(RuncExecRequest) returns (RuncExecResponse) {}
 
 
-	// Run runs the create, start, delete lifecycle of the container
-	rpc Run(RuncRunRequest) returns (RuncRunResponse) {}
-
-
 	// Delete deletes the container
 	rpc Delete(RuncDeleteRequest) returns (RuncDeleteResponse) {}
 
 
 	// Kill sends the specified signal to the container
 	rpc Kill(RuncKillRequest) returns (RuncKillResponse) {}
-
-
-	// Stats return the stats for a container like cpu, memory, and io
-	rpc Stats(RuncStatsRequest) returns (RuncStatsResponse) {}
 
 
 	// Pause the container with the provided id
@@ -61,20 +45,12 @@ service RuncService {
 	rpc Ps(RuncPsRequest) returns (RuncPsResponse) {}
 
 
-	// Version returns the runc and runtime-spec versions
-	rpc Version(RuncVersionRequest) returns (RuncVersionResponse) {}
-
-
 	// Checkpoint checkpoints the container
 	rpc Checkpoint(RuncCheckpointRequest) returns (RuncCheckpointResponse) {}
 
 
 	// Restore restores the container from a checkpoint
 	rpc Restore(RuncRestoreRequest) returns (RuncRestoreResponse) {}
-
-
-	// Events returns the events for the container
-	rpc Events(RuncEventsRequest) returns (stream RuncEvent) {}
 
 
 	// Update updates the container resources
@@ -84,12 +60,36 @@ service RuncService {
 	rpc LogFilePath(RuncLogFilePathRequest) returns (RuncLogFilePathResponse) {}
 
 
-	rpc CloseIO(RuncCloseIORequest) returns (RuncCloseIOResponse) {}
+	rpc NewTempConsoleSocket(RuncNewTempConsoleSocketRequest) returns (RuncNewTempConsoleSocketResponse) {}
+}
+
+service RuncExtrasService {
+	rpc State(RuncStateRequest) returns (RuncStateResponse) {}
 
 
-	// Top lists all the processes inside the container returning the full ps data
+	rpc Run(RuncRunRequest) returns (RuncRunResponse) {}
+
+
+	rpc Stats(RuncStatsRequest) returns (RuncStatsResponse) {}
+
+
+	rpc Events(RuncEventsRequest) returns (stream RuncEvent) {}
+
+
+	rpc List(RuncListRequest) returns (RuncListResponse) {}
+
+
+	rpc Version(RuncVersionRequest) returns (RuncVersionResponse) {}
+
 
 	rpc Top(RuncTopRequest) returns (RuncTopResponse) {}
+}
+
+message RuncNewTempConsoleSocketRequest {}
+
+message RuncNewTempConsoleSocketResponse {
+	string console_reference_id = 1;
+	string go_error             = 2;
 }
 
 message RuncCloseIORequest {
@@ -146,14 +146,14 @@ message RuncCreateRequest {
 }
 
 message RuncCreateOptions {
-	bool              detach         = 1;
-	bool              no_pivot       = 2;
-	bool              no_new_keyring = 3;
-	string            pid_file       = 4;
-	repeated string   extra_args     = 5;
-	repeated string   extra_files    = 6;
-	RuncConsoleSocket console_socket = 7;
-	RuncIO            io             = 8;
+	bool            detach               = 1;
+	bool            no_pivot             = 2;
+	bool            no_new_keyring       = 3;
+	string          pid_file             = 4;
+	repeated string extra_args           = 5;
+	repeated string extra_files          = 6;
+	string          console_reference_id = 7;
+	string          io_reference_id      = 8;
 }
 
 message RuncCreateResponse {
@@ -182,9 +182,11 @@ message RuncProcessSpec {
 }
 
 message RuncExecOptions {
-	bool            detach     = 1;
-	string          pid_file   = 2;
-	repeated string extra_args = 3;
+	bool            detach               = 1;
+	string          pid_file             = 2;
+	repeated string extra_args           = 3;
+	string          io_reference_id      = 4;
+	string          console_reference_id = 5;
 }
 
 message RuncExecResponse {
@@ -323,7 +325,7 @@ message RuncUnixIO {
 message RuncNullIO {}
 
 message RuncIO {
-	uint64 io_reference_id = 1;
+	string io_reference_id = 1;
 	oneof io {
 		RuncVsockIO vsock = 2;
 		RuncUnixIO  unix  = 3;
@@ -363,14 +365,14 @@ message RuncCheckpointOptions {
 }
 
 message RuncRestoreOptions {
-	RuncCheckpointOptions checkpoint_options = 1;
-	RuncIO                io                 = 2;
-	bool                  detach             = 3;
-	string                pid_file           = 4;
-	bool                  no_subreaper       = 5;
-	bool                  no_pivot           = 6;
-	RuncConsoleSocket     console_socket     = 7;
-	repeated string       extra_args         = 8;
+	RuncCheckpointOptions checkpoint_options   = 1;
+	string                io_reference_id      = 2;
+	bool                  detach               = 3;
+	string                pid_file             = 4;
+	bool                  no_subreaper         = 5;
+	bool                  no_pivot             = 6;
+	string                console_reference_id = 7;
+	repeated string       extra_args           = 8;
 }
 
 message RuncEventsRequest {

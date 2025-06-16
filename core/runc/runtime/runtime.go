@@ -3,6 +3,7 @@ package runtime
 import (
 	"context"
 	"io"
+	"net"
 	"os/exec"
 	"time"
 
@@ -23,13 +24,19 @@ type RuntimeCreator interface {
 	Create(ctx context.Context, opts *RuntimeOptions) Runtime
 }
 
+type SocketAllocator interface {
+	AllocateSocket(ctx context.Context) (AllocatedSocket, error)
+	BindConsoleToSocket(ctx context.Context, consoleReferenceId ConsoleSocket, socketReferenceId AllocatedSocket) error
+	BindIOToSockets(ctx context.Context, ioReferenceId IO, socketReferenceIds [3]AllocatedSocket) error
+}
+
 //go:mock
 type Runtime interface {
 	// io: yes
 	// ✅
 	NewPipeIO(ioUID, ioGID int, opts ...gorunc.IOOpt) (IO, error)
 	// io: yes
-	NewTempConsoleSocket() (Socket, error)
+	NewTempConsoleSocket(ctx context.Context) (ConsoleSocket, error)
 	// io: yes
 	// ✅
 	NewNullIO() (IO, error)
@@ -60,10 +67,36 @@ type Runtime interface {
 	ReadPidFile(path string) (int, error)
 }
 
-type Socket interface {
+type ConsoleSocket interface {
 	ReceiveMaster() (console.Console, error)
 	Path() string
 	Close() error
+}
+
+// Platform handles platform-specific behavior that may differs across
+// // platform implementations
+// type Platform interface {
+// 	CopyConsole(ctx context.Context, console Console, id, stdin, stdout, stderr string, wg *sync.WaitGroup) (Console, error)
+// 	ShutdownConsole(ctx context.Context, console Console) error
+// 	Close() error
+// }
+
+type RuntimeConsole interface {
+	console.File
+
+	// Resize resizes the console to the provided window size
+	Resize(console.WinSize) error
+	// ResizeFrom resizes the calling console to the size of the
+	// provided console
+	ResizeFrom(RuntimeConsole) error
+	// SetRaw sets the console in raw mode
+	SetRaw() error
+	// DisableEcho disables echo on the console
+	DisableEcho() error
+	// Reset restores the console to its original state
+	Reset() error
+	// Size returns the window size of the console
+	Size() (console.WinSize, error)
 }
 
 type IO interface {
@@ -98,4 +131,48 @@ type RuntimeExtras interface {
 	Version(context.Context) (gorunc.Version, error)
 
 	Top(context.Context, string, string) (*gorunc.TopResults, error)
+}
+
+type AllocatedSocketReference interface {
+	ReferableByReferenceId
+}
+
+type AllocatedSocket interface {
+	isAllocatedSocket()
+	io.Closer
+	Conn() *net.UnixConn
+}
+
+type VsockAllocatedSocket interface {
+	AllocatedSocket
+	Port() uint32
+}
+
+type UnixAllocatedSocket interface {
+	AllocatedSocket
+	Path() string
+}
+
+type ServerStateGetter interface {
+	GetOpenIO(referenceId string) (IO, bool)
+	GetOpenSocket(referenceId string) (AllocatedSocket, bool)
+	GetOpenConsole(referenceId string) (ConsoleSocket, bool)
+}
+
+type ServerStateSetter interface {
+	StoreOpenIO(referenceId string, io IO)
+	StoreOpenSocket(referenceId string, socket AllocatedSocket)
+	StoreOpenConsole(referenceId string, console ConsoleSocket)
+}
+
+type ReferableByReferenceId interface {
+	GetReferenceId() string
+}
+
+type VsockProxier interface {
+	Proxy(ctx context.Context, port uint32) (*net.UnixConn, string, error)
+}
+
+type VsockFdProxier interface {
+	ProxyFd(ctx context.Context, port uint32) (*net.Conn, uintptr, error)
 }

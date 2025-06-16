@@ -40,6 +40,7 @@ import (
 
 	containerdruntime "github.com/containerd/containerd/v2/core/runtime"
 	"github.com/containerd/containerd/v2/pkg/namespaces"
+	"github.com/containerd/containerd/v2/pkg/stdio"
 	"github.com/walteh/runv/core/runc/runtime"
 	"github.com/walteh/runv/pkg/oom"
 
@@ -48,7 +49,6 @@ import (
 	ptypes "github.com/containerd/containerd/v2/pkg/protobuf/types"
 	"github.com/containerd/containerd/v2/pkg/shim"
 	"github.com/containerd/containerd/v2/pkg/shutdown"
-	"github.com/containerd/containerd/v2/pkg/stdio"
 	"github.com/containerd/containerd/v2/pkg/sys/reaper"
 	"github.com/walteh/runv/cmd/containerd-shim-runv-v2/process"
 	"github.com/walteh/runv/cmd/containerd-shim-runv-v2/runv"

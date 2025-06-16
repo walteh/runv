@@ -1,0 +1,112 @@
+edition = "2023";
+
+package runv.v1;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/go_features.proto";
+
+option features.(pb.go).api_level = API_OPAQUE;
+option features.field_presence = IMPLICIT;  // makes everything by default required, for optional set to EXPLICIT
+
+service SocketAllocatorService {
+	rpc AllocateSockets(AllocateSocketsRequest) returns (AllocateSocketsResponse) {}
+
+
+	rpc AllocateSocket(AllocateSocketRequest) returns (AllocateSocketResponse) {}
+
+
+	// the same thing but with different name than "NewPipeIO"
+	rpc AllocateIO(AllocateIORequest) returns (AllocateIOResponse) {}
+
+
+	// the same thing but with different name than "NewTempConsoleSocket"
+	rpc AllocateConsole(AllocateConsoleRequest) returns (AllocateConsoleResponse) {}
+
+
+	rpc BindConsoleToSocket(BindConsoleToSocketRequest) returns (BindConsoleToSocketResponse) {}
+
+
+	rpc BindIOToSockets(BindIOToSocketsRequest) returns (BindIOToSocketsResponse) {}
+
+
+	rpc CloseSocket(CloseSocketRequest) returns (CloseSocketResponse) {}
+
+
+	rpc CloseSockets(CloseSocketsRequest) returns (CloseSocketsResponse) {}
+
+
+	rpc CloseIO(CloseIORequest) returns (CloseIOResponse) {}
+
+
+	rpc CloseConsole(CloseConsoleRequest) returns (CloseConsoleResponse) {}
+}
+
+message AllocateIORequest {}
+
+message AllocateIOResponse {
+	string io_reference_id = 1;
+}
+
+message AllocateConsoleRequest {}
+
+message AllocateConsoleResponse {
+	string console_reference_id = 1;
+}
+
+message CloseSocketsRequest {
+	repeated string socket_reference_ids = 1;
+}
+
+message CloseSocketsResponse {}
+
+message AllocateSocketsRequest {
+	uint32 count = 1;
+}
+
+message AllocateSocketsResponse {
+	repeated string socket_reference_ids = 1;
+}
+
+message BindIOToSocketsRequest {
+	string io_reference_id            = 1;
+	string stdin_socket_reference_id  = 2;
+	string stdout_socket_reference_id = 3;
+	string stderr_socket_reference_id = 4;
+}
+
+message BindIOToSocketsResponse {}
+
+message BindConsoleToSocketRequest {
+	string console_reference_id = 1;
+	string socket_reference_id  = 2;
+}
+
+message BindConsoleToSocketResponse {}
+
+message AllocateSocketRequest {
+	uint32 count = 1;
+}
+
+message AllocateSocketResponse {
+	string socket_reference_id = 1;
+}
+
+message CloseSocketRequest {
+	string socket_reference_id = 1;
+}
+
+message CloseSocketResponse {
+	string go_error = 1;
+}
+
+message CloseIORequest {
+	string io_reference_id = 1;
+}
+
+message CloseIOResponse {}
+
+message CloseConsoleRequest {
+	string console_reference_id = 1;
+}
+
+message CloseConsoleResponse {}

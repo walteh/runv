@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 	"time"
 
@@ -32,7 +33,7 @@ func ConvertStatsToProto(stats *gorunc.Stats) (*runvv1.RuncStats, error) {
 	return resp, nil
 }
 
-func ConvertCreateOptsFromProto(ctx context.Context, opts *runvv1.RuncCreateOptions) (*gorunc.CreateOpts, error) {
+func ConvertCreateOptsFromProto(ctx context.Context, opts *runvv1.RuncCreateOptions, state runtime.ServerStateGetter) (*gorunc.CreateOpts, error) {
 	var err error
 	files := make([]*os.File, len(opts.GetExtraFiles()))
 	for i, file := range opts.GetExtraFiles() {
@@ -42,9 +43,14 @@ func ConvertCreateOptsFromProto(ctx context.Context, opts *runvv1.RuncCreateOpti
 		}
 	}
 
-	io, err := ConvertIOIn(ctx, opts.GetIo())
-	if err != nil {
-		return nil, err
+	io, ok := state.GetOpenIO(opts.GetIoReferenceId())
+	if !ok {
+		return nil, fmt.Errorf("io not found")
+	}
+
+	cs, ok := state.GetOpenConsole(opts.GetConsoleReferenceId())
+	if !ok {
+		return nil, fmt.Errorf("console not found")
 	}
 
 	return &gorunc.CreateOpts{
@@ -52,7 +58,7 @@ func ConvertCreateOptsFromProto(ctx context.Context, opts *runvv1.RuncCreateOpti
 		IO:            io,
 		NoPivot:       opts.GetNoPivot(),
 		NoNewKeyring:  opts.GetNoNewKeyring(),
-		ConsoleSocket: NewPassThroughConsoleSocket(opts.GetConsoleSocket().GetPath()),
+		ConsoleSocket: cs,
 		Detach:        opts.GetDetach(),
 		ExtraFiles:    files,
 		Started:       make(chan int),
@@ -60,10 +66,15 @@ func ConvertCreateOptsFromProto(ctx context.Context, opts *runvv1.RuncCreateOpti
 }
 
 func ConvertCreateOptsToProto(ctx context.Context, opts *gorunc.CreateOpts) (*runvv1.RuncCreateOptions, error) {
-	var err error
-	ioz, err := ConvertIOOut(ctx, opts.IO)
-	if err != nil {
-		return nil, err
+
+	ioz, ok := opts.IO.(runtime.ReferableByReferenceId)
+	if !ok {
+		return nil, fmt.Errorf("io is not a referable by reference id")
+	}
+
+	csz, ok := opts.ConsoleSocket.(runtime.ReferableByReferenceId)
+	if !ok {
+		return nil, fmt.Errorf("console socket is not a referable by reference id")
 	}
 
 	// for now panic if we see extra files, we shouldnt see any but they are not hanlded
@@ -76,23 +87,37 @@ func ConvertCreateOptsToProto(ctx context.Context, opts *gorunc.CreateOpts) (*ru
 		files[i] = file.Name()
 	}
 
-	cs := &runvv1.RuncConsoleSocket{}
-	cs.SetPath(opts.ConsoleSocket.Path())
-
 	res := &runvv1.RuncCreateOptions{}
-	res.SetIo(ioz)
+	res.SetIoReferenceId(ioz.GetReferenceId())
 	res.SetPidFile(opts.PidFile)
 	res.SetNoPivot(opts.NoPivot)
 	res.SetNoNewKeyring(opts.NoNewKeyring)
-	res.SetConsoleSocket(cs)
+	res.SetConsoleReferenceId(csz.GetReferenceId())
 	res.SetDetach(opts.Detach)
 	res.SetExtraFiles(files)
 
 	return res, nil
 }
 
-func ConvertExecOptsFromProto(opts *runvv1.RuncExecOptions) *gorunc.ExecOpts {
-	panic(runtime.ReflectNotImplementedError())
+func ConvertExecOptsFromProto(opts *runvv1.RuncExecOptions, state runtime.ServerStateGetter) (*gorunc.ExecOpts, error) {
+	io, ok := state.GetOpenIO(opts.GetIoReferenceId())
+	if !ok {
+		return nil, fmt.Errorf("io not found")
+	}
+
+	cs, ok := state.GetOpenConsole(opts.GetConsoleReferenceId())
+	if !ok {
+		return nil, fmt.Errorf("console not found")
+	}
+
+	return &gorunc.ExecOpts{
+		PidFile:       opts.GetPidFile(),
+		IO:            io,
+		Detach:        opts.GetDetach(),
+		ConsoleSocket: cs,
+		ExtraArgs:     opts.GetExtraArgs(),
+		Started:       make(chan int),
+	}, nil
 }
 
 func ConvertExecOptsToProto(opts *gorunc.ExecOpts) *runvv1.RuncExecOptions {

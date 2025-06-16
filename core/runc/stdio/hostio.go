@@ -1,4 +1,4 @@
-package runtime
+package stdio
 
 import (
 	"context"
@@ -14,13 +14,15 @@ import (
 	"github.com/mdlayher/vsock"
 )
 
-var clientVsockCounter atomic.Uint64
-var clientUnixCounter atomic.Uint64
+var hostVsockCounter atomic.Uint64
+var hostUnixCounter atomic.Uint64
 
 func init() {
-	clientVsockCounter.Store(3000)
-	clientUnixCounter.Store(0)
+	hostVsockCounter.Store(3000)
+	hostUnixCounter.Store(0)
 }
+
+var _ gorunc.IO = (*HostVsockProxyIo)(nil)
 
 type HostVsockProxyIo struct {
 	StdinPort  uint64
@@ -47,15 +49,15 @@ func NewHostVsockProxyIo(ctx context.Context, opts ...gorunc.IOOpt) (*HostVsockP
 		opt(optd)
 	}
 	if optd.OpenStdin {
-		p.StdinPort = clientVsockCounter.Add(1)
+		p.StdinPort = hostVsockCounter.Add(1)
 		p.stdinReader, p.stdinWriter = io.Pipe()
 	}
 	if optd.OpenStdout {
-		p.StdoutPort = clientVsockCounter.Add(1)
+		p.StdoutPort = hostVsockCounter.Add(1)
 		p.stdoutReader, p.stdoutWriter = io.Pipe()
 	}
 	if optd.OpenStderr {
-		p.StderrPort = clientVsockCounter.Add(1)
+		p.StderrPort = hostVsockCounter.Add(1)
 		p.stderrReader, p.stderrWriter = io.Pipe()
 	}
 
@@ -83,10 +85,23 @@ func NewHostVsockProxyIo(ctx context.Context, opts ...gorunc.IOOpt) (*HostVsockP
 	return p, nil
 }
 
+func safeBatchClose(closers ...io.Closer) {
+	for _, closer := range closers {
+		if closer != nil {
+			go closer.Close()
+		}
+	}
+}
+
 func (p *HostVsockProxyIo) Close() error {
-	go p.stdinWriter.Close()
-	go p.stdoutReader.Close()
-	go p.stderrReader.Close()
+	safeBatchClose(
+		p.stdinWriter,
+		p.stdoutReader,
+		p.stderrReader,
+		p.StdinConn,
+		p.StdoutConn,
+		p.StderrConn,
+	)
 	return nil
 }
 
@@ -104,6 +119,8 @@ func (p *HostVsockProxyIo) Stderr() io.ReadCloser {
 
 func (p *HostVsockProxyIo) Set(stdio *exec.Cmd) {
 }
+
+var _ gorunc.IO = (*HostUnixProxyIo)(nil)
 
 type HostUnixProxyIo struct {
 	StdinPath  string
@@ -133,15 +150,15 @@ func NewHostUnixProxyIo(ctx context.Context, opts ...gorunc.IOOpt) (*HostUnixPro
 	tempDir := os.TempDir()
 
 	if optd.OpenStdin {
-		p.StdinPath = filepath.Join(tempDir, fmt.Sprintf("runv-stdin-%d.sock", clientUnixCounter.Add(1)))
+		p.StdinPath = filepath.Join(tempDir, fmt.Sprintf("runv-stdin-%d.sock", hostUnixCounter.Add(1)))
 		p.stdinReader, p.stdinWriter = io.Pipe()
 	}
 	if optd.OpenStdout {
-		p.StdoutPath = filepath.Join(tempDir, fmt.Sprintf("runv-stdout-%d.sock", clientUnixCounter.Add(1)))
+		p.StdoutPath = filepath.Join(tempDir, fmt.Sprintf("runv-stdout-%d.sock", hostUnixCounter.Add(1)))
 		p.stdoutReader, p.stdoutWriter = io.Pipe()
 	}
 	if optd.OpenStderr {
-		p.StderrPath = filepath.Join(tempDir, fmt.Sprintf("runv-stderr-%d.sock", clientUnixCounter.Add(1)))
+		p.StderrPath = filepath.Join(tempDir, fmt.Sprintf("runv-stderr-%d.sock", hostUnixCounter.Add(1)))
 		p.stderrReader, p.stderrWriter = io.Pipe()
 	}
 
@@ -163,15 +180,14 @@ func NewHostUnixProxyIo(ctx context.Context, opts ...gorunc.IOOpt) (*HostUnixPro
 }
 
 func (p *HostUnixProxyIo) Close() error {
-	if p.stdinWriter != nil {
-		go p.stdinWriter.Close()
-	}
-	if p.stdoutReader != nil {
-		go p.stdoutReader.Close()
-	}
-	if p.stderrReader != nil {
-		go p.stderrReader.Close()
-	}
+	safeBatchClose(
+		p.stdinWriter,
+		p.stdoutReader,
+		p.stderrReader,
+		p.StdinConn,
+		p.StdoutConn,
+		p.StderrConn,
+	)
 
 	// Clean up socket files
 	if p.StdinPath != "" {
@@ -203,7 +219,7 @@ func (p *HostUnixProxyIo) Set(stdio *exec.Cmd) {
 }
 
 type HostNullIo struct {
-	IO
+	gorunc.IO
 }
 
 func NewHostNullIo() (*HostNullIo, error) {

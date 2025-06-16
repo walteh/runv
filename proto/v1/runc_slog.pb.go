@@ -9,6 +9,24 @@ import (
 	slog "log/slog"
 )
 
+func (x *RuncNewTempConsoleSocketRequest) LogValue() slog.Value {
+	if x == nil {
+		return slog.AnyValue(nil)
+	}
+	attrs := make([]slog.Attr, 0, 0)
+	return slog.GroupValue(attrs...)
+}
+
+func (x *RuncNewTempConsoleSocketResponse) LogValue() slog.Value {
+	if x == nil {
+		return slog.AnyValue(nil)
+	}
+	attrs := make([]slog.Attr, 0, 2)
+	attrs = append(attrs, slog.String("console_reference_id", x.GetConsoleReferenceId()))
+	attrs = append(attrs, slog.String("go_error", x.GetGoError()))
+	return slog.GroupValue(attrs...)
+}
+
 func (x *RuncCloseIORequest) LogValue() slog.Value {
 	if x == nil {
 		return slog.AnyValue(nil)
@@ -174,20 +192,8 @@ func (x *RuncCreateOptions) LogValue() slog.Value {
 		}
 		attrs = append(attrs, slog.Any("extra_files", attrs5))
 	}
-	if x.GetConsoleSocket() != nil {
-		if v, ok := interface{}(x.GetConsoleSocket()).(slog.LogValuer); ok {
-			attrs = append(attrs, slog.Attr{Key: "console_socket", Value: v.LogValue()})
-		} else {
-			attrs = append(attrs, slog.Any("console_socket", x.GetConsoleSocket()))
-		}
-	}
-	if x.GetIo() != nil {
-		if v, ok := interface{}(x.GetIo()).(slog.LogValuer); ok {
-			attrs = append(attrs, slog.Attr{Key: "io", Value: v.LogValue()})
-		} else {
-			attrs = append(attrs, slog.Any("io", x.GetIo()))
-		}
-	}
+	attrs = append(attrs, slog.String("console_reference_id", x.GetConsoleReferenceId()))
+	attrs = append(attrs, slog.String("io_reference_id", x.GetIoReferenceId()))
 	return slog.GroupValue(attrs...)
 }
 
@@ -254,7 +260,7 @@ func (x *RuncExecOptions) LogValue() slog.Value {
 	if x == nil {
 		return slog.AnyValue(nil)
 	}
-	attrs := make([]slog.Attr, 0, 3)
+	attrs := make([]slog.Attr, 0, 5)
 	attrs = append(attrs, slog.Bool("detach", x.GetDetach()))
 	attrs = append(attrs, slog.String("pid_file", x.GetPidFile()))
 	if len(x.GetExtraArgs()) != 0 {
@@ -264,6 +270,8 @@ func (x *RuncExecOptions) LogValue() slog.Value {
 		}
 		attrs = append(attrs, slog.Any("extra_args", attrs2))
 	}
+	attrs = append(attrs, slog.String("io_reference_id", x.GetIoReferenceId()))
+	attrs = append(attrs, slog.String("console_reference_id", x.GetConsoleReferenceId()))
 	return slog.GroupValue(attrs...)
 }
 
@@ -612,7 +620,7 @@ func (x *RuncIO) LogValue() slog.Value {
 		return slog.AnyValue(nil)
 	}
 	attrs := make([]slog.Attr, 0, 4)
-	attrs = append(attrs, slog.Uint64("io_reference_id", x.GetIoReferenceId()))
+	attrs = append(attrs, slog.String("io_reference_id", x.GetIoReferenceId()))
 	// Handle oneof field: Io
 	switch x.WhichIo() {
 	case RuncIO_Vsock_case:
@@ -718,24 +726,12 @@ func (x *RuncRestoreOptions) LogValue() slog.Value {
 			attrs = append(attrs, slog.Any("checkpoint_options", x.GetCheckpointOptions()))
 		}
 	}
-	if x.GetIo() != nil {
-		if v, ok := interface{}(x.GetIo()).(slog.LogValuer); ok {
-			attrs = append(attrs, slog.Attr{Key: "io", Value: v.LogValue()})
-		} else {
-			attrs = append(attrs, slog.Any("io", x.GetIo()))
-		}
-	}
+	attrs = append(attrs, slog.String("io_reference_id", x.GetIoReferenceId()))
 	attrs = append(attrs, slog.Bool("detach", x.GetDetach()))
 	attrs = append(attrs, slog.String("pid_file", x.GetPidFile()))
 	attrs = append(attrs, slog.Bool("no_subreaper", x.GetNoSubreaper()))
 	attrs = append(attrs, slog.Bool("no_pivot", x.GetNoPivot()))
-	if x.GetConsoleSocket() != nil {
-		if v, ok := interface{}(x.GetConsoleSocket()).(slog.LogValuer); ok {
-			attrs = append(attrs, slog.Attr{Key: "console_socket", Value: v.LogValue()})
-		} else {
-			attrs = append(attrs, slog.Any("console_socket", x.GetConsoleSocket()))
-		}
-	}
+	attrs = append(attrs, slog.String("console_reference_id", x.GetConsoleReferenceId()))
 	if len(x.GetExtraArgs()) != 0 {
 		attrs7 := make([]slog.Attr, 0, len(x.GetExtraArgs()))
 		for i, v := range x.GetExtraArgs() {

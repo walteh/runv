@@ -47,7 +47,7 @@ var _ runtime.Runtime = &MockRuntime{}
 //			NewPipeIOFunc: func(ioUID int, ioGID int, opts ...runc.IOOpt) (runtime.IO, error) {
 //				panic("mock out the NewPipeIO method")
 //			},
-//			NewTempConsoleSocketFunc: func() (runtime.Socket, error) {
+//			NewTempConsoleSocketFunc: func(ctx context.Context) (runtime.ConsoleSocket, error) {
 //				panic("mock out the NewTempConsoleSocket method")
 //			},
 //			PauseFunc: func(ctx context.Context, id string) error {
@@ -103,7 +103,7 @@ type MockRuntime struct {
 	NewPipeIOFunc func(ioUID int, ioGID int, opts ...runc.IOOpt) (runtime.IO, error)
 
 	// NewTempConsoleSocketFunc mocks the NewTempConsoleSocket method.
-	NewTempConsoleSocketFunc func() (runtime.Socket, error)
+	NewTempConsoleSocketFunc func(ctx context.Context) (runtime.ConsoleSocket, error)
 
 	// PauseFunc mocks the Pause method.
 	PauseFunc func(ctx context.Context, id string) error
@@ -198,6 +198,8 @@ type MockRuntime struct {
 		}
 		// NewTempConsoleSocket holds details about calls to the NewTempConsoleSocket method.
 		NewTempConsoleSocket []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
 		}
 		// Pause holds details about calls to the Pause method.
 		Pause []struct {
@@ -582,16 +584,19 @@ func (mock *MockRuntime) NewPipeIOCalls() []struct {
 }
 
 // NewTempConsoleSocket calls NewTempConsoleSocketFunc.
-func (mock *MockRuntime) NewTempConsoleSocket() (runtime.Socket, error) {
+func (mock *MockRuntime) NewTempConsoleSocket(ctx context.Context) (runtime.ConsoleSocket, error) {
 	if mock.NewTempConsoleSocketFunc == nil {
 		panic("MockRuntime.NewTempConsoleSocketFunc: method is nil but Runtime.NewTempConsoleSocket was just called")
 	}
 	callInfo := struct {
-	}{}
+		Ctx context.Context
+	}{
+		Ctx: ctx,
+	}
 	mock.lockNewTempConsoleSocket.Lock()
 	mock.calls.NewTempConsoleSocket = append(mock.calls.NewTempConsoleSocket, callInfo)
 	mock.lockNewTempConsoleSocket.Unlock()
-	return mock.NewTempConsoleSocketFunc()
+	return mock.NewTempConsoleSocketFunc(ctx)
 }
 
 // NewTempConsoleSocketCalls gets all the calls that were made to NewTempConsoleSocket.
@@ -599,8 +604,10 @@ func (mock *MockRuntime) NewTempConsoleSocket() (runtime.Socket, error) {
 //
 //	len(mockedRuntime.NewTempConsoleSocketCalls())
 func (mock *MockRuntime) NewTempConsoleSocketCalls() []struct {
+	Ctx context.Context
 } {
 	var calls []struct {
+		Ctx context.Context
 	}
 	mock.lockNewTempConsoleSocket.RLock()
 	calls = mock.calls.NewTempConsoleSocket

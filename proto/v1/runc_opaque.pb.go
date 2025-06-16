@@ -7,6 +7,34 @@ import (
 	protovalidate "buf.build/go/protovalidate"
 )
 
+// NewRuncNewTempConsoleSocketRequest creates a new RuncNewTempConsoleSocketRequest using the builder
+func NewRuncNewTempConsoleSocketRequest(b *RuncNewTempConsoleSocketRequest_builder) *RuncNewTempConsoleSocketRequest {
+	return b.Build()
+}
+
+// NewRuncNewTempConsoleSocketRequestE creates a new RuncNewTempConsoleSocketRequest using the builder with validation
+func NewRuncNewTempConsoleSocketRequestE(b *RuncNewTempConsoleSocketRequest_builder) (*RuncNewTempConsoleSocketRequest, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// NewRuncNewTempConsoleSocketResponse creates a new RuncNewTempConsoleSocketResponse using the builder
+func NewRuncNewTempConsoleSocketResponse(b *RuncNewTempConsoleSocketResponse_builder) *RuncNewTempConsoleSocketResponse {
+	return b.Build()
+}
+
+// NewRuncNewTempConsoleSocketResponseE creates a new RuncNewTempConsoleSocketResponse using the builder with validation
+func NewRuncNewTempConsoleSocketResponseE(b *RuncNewTempConsoleSocketResponse_builder) (*RuncNewTempConsoleSocketResponse, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // NewRuncCloseIORequest creates a new RuncCloseIORequest using the builder
 func NewRuncCloseIORequest(b *RuncCloseIORequest_builder) *RuncCloseIORequest {
 	return b.Build()

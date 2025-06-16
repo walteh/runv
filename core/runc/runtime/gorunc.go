@@ -25,7 +25,7 @@ func (r *GoRuncRuntime) LogFilePath() string {
 	return r.Runc.Log
 }
 
-func (r *GoRuncRuntime) NewTempConsoleSocket() (Socket, error) {
+func (r *GoRuncRuntime) NewTempConsoleSocket(ctx context.Context) (ConsoleSocket, error) {
 	return gorunc.NewTempConsoleSocket()
 }
 

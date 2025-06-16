@@ -9,39 +9,19 @@ import (
 
 type TTRPCRuncServiceService interface {
 	Ping(context.Context, *PingRequest) (*PingResponse, error)
-	List(context.Context, *RuncListRequest) (*RuncListResponse, error)
-	State(context.Context, *RuncStateRequest) (*RuncStateResponse, error)
 	Create(context.Context, *RuncCreateRequest) (*RuncCreateResponse, error)
 	Start(context.Context, *RuncStartRequest) (*RuncStartResponse, error)
 	Exec(context.Context, *RuncExecRequest) (*RuncExecResponse, error)
-	Run(context.Context, *RuncRunRequest) (*RuncRunResponse, error)
 	Delete(context.Context, *RuncDeleteRequest) (*RuncDeleteResponse, error)
 	Kill(context.Context, *RuncKillRequest) (*RuncKillResponse, error)
-	Stats(context.Context, *RuncStatsRequest) (*RuncStatsResponse, error)
 	Pause(context.Context, *RuncPauseRequest) (*RuncPauseResponse, error)
 	Resume(context.Context, *RuncResumeRequest) (*RuncResumeResponse, error)
 	Ps(context.Context, *RuncPsRequest) (*RuncPsResponse, error)
-	Version(context.Context, *RuncVersionRequest) (*RuncVersionResponse, error)
 	Checkpoint(context.Context, *RuncCheckpointRequest) (*RuncCheckpointResponse, error)
 	Restore(context.Context, *RuncRestoreRequest) (*RuncRestoreResponse, error)
-	Events(context.Context, *RuncEventsRequest, TTRPCRuncService_EventsServer) error
 	Update(context.Context, *RuncUpdateRequest) (*RuncUpdateResponse, error)
 	LogFilePath(context.Context, *RuncLogFilePathRequest) (*RuncLogFilePathResponse, error)
-	CloseIO(context.Context, *RuncCloseIORequest) (*RuncCloseIOResponse, error)
-	Top(context.Context, *RuncTopRequest) (*RuncTopResponse, error)
-}
-
-type TTRPCRuncService_EventsServer interface {
-	Send(*RuncEvent) error
-	ttrpc.StreamServer
-}
-
-type ttrpcruncserviceEventsServer struct {
-	ttrpc.StreamServer
-}
-
-func (x *ttrpcruncserviceEventsServer) Send(m *RuncEvent) error {
-	return x.StreamServer.SendMsg(m)
+	NewTempConsoleSocket(context.Context, *RuncNewTempConsoleSocketRequest) (*RuncNewTempConsoleSocketResponse, error)
 }
 
 func RegisterTTRPCRuncServiceService(srv *ttrpc.Server, svc TTRPCRuncServiceService) {
@@ -53,20 +33,6 @@ func RegisterTTRPCRuncServiceService(srv *ttrpc.Server, svc TTRPCRuncServiceServ
 					return nil, err
 				}
 				return svc.Ping(ctx, &req)
-			},
-			"List": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
-				var req RuncListRequest
-				if err := unmarshal(&req); err != nil {
-					return nil, err
-				}
-				return svc.List(ctx, &req)
-			},
-			"State": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
-				var req RuncStateRequest
-				if err := unmarshal(&req); err != nil {
-					return nil, err
-				}
-				return svc.State(ctx, &req)
 			},
 			"Create": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
 				var req RuncCreateRequest
@@ -89,13 +55,6 @@ func RegisterTTRPCRuncServiceService(srv *ttrpc.Server, svc TTRPCRuncServiceServ
 				}
 				return svc.Exec(ctx, &req)
 			},
-			"Run": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
-				var req RuncRunRequest
-				if err := unmarshal(&req); err != nil {
-					return nil, err
-				}
-				return svc.Run(ctx, &req)
-			},
 			"Delete": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
 				var req RuncDeleteRequest
 				if err := unmarshal(&req); err != nil {
@@ -109,13 +68,6 @@ func RegisterTTRPCRuncServiceService(srv *ttrpc.Server, svc TTRPCRuncServiceServ
 					return nil, err
 				}
 				return svc.Kill(ctx, &req)
-			},
-			"Stats": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
-				var req RuncStatsRequest
-				if err := unmarshal(&req); err != nil {
-					return nil, err
-				}
-				return svc.Stats(ctx, &req)
 			},
 			"Pause": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
 				var req RuncPauseRequest
@@ -137,13 +89,6 @@ func RegisterTTRPCRuncServiceService(srv *ttrpc.Server, svc TTRPCRuncServiceServ
 					return nil, err
 				}
 				return svc.Ps(ctx, &req)
-			},
-			"Version": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
-				var req RuncVersionRequest
-				if err := unmarshal(&req); err != nil {
-					return nil, err
-				}
-				return svc.Version(ctx, &req)
 			},
 			"Checkpoint": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
 				var req RuncCheckpointRequest
@@ -173,66 +118,22 @@ func RegisterTTRPCRuncServiceService(srv *ttrpc.Server, svc TTRPCRuncServiceServ
 				}
 				return svc.LogFilePath(ctx, &req)
 			},
-			"CloseIO": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
-				var req RuncCloseIORequest
+			"NewTempConsoleSocket": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+				var req RuncNewTempConsoleSocketRequest
 				if err := unmarshal(&req); err != nil {
 					return nil, err
 				}
-				return svc.CloseIO(ctx, &req)
-			},
-			"Top": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
-				var req RuncTopRequest
-				if err := unmarshal(&req); err != nil {
-					return nil, err
-				}
-				return svc.Top(ctx, &req)
-			},
-		},
-		Streams: map[string]ttrpc.Stream{
-			"Events": {
-				Handler: func(ctx context.Context, stream ttrpc.StreamServer) (interface{}, error) {
-					m := new(RuncEventsRequest)
-					if err := stream.RecvMsg(m); err != nil {
-						return nil, err
-					}
-					return nil, svc.Events(ctx, m, &ttrpcruncserviceEventsServer{stream})
-				},
-				StreamingClient: false,
-				StreamingServer: true,
+				return svc.NewTempConsoleSocket(ctx, &req)
 			},
 		},
 	})
-}
-
-type TTRPCRuncServiceClient interface {
-	Ping(context.Context, *PingRequest) (*PingResponse, error)
-	List(context.Context, *RuncListRequest) (*RuncListResponse, error)
-	State(context.Context, *RuncStateRequest) (*RuncStateResponse, error)
-	Create(context.Context, *RuncCreateRequest) (*RuncCreateResponse, error)
-	Start(context.Context, *RuncStartRequest) (*RuncStartResponse, error)
-	Exec(context.Context, *RuncExecRequest) (*RuncExecResponse, error)
-	Run(context.Context, *RuncRunRequest) (*RuncRunResponse, error)
-	Delete(context.Context, *RuncDeleteRequest) (*RuncDeleteResponse, error)
-	Kill(context.Context, *RuncKillRequest) (*RuncKillResponse, error)
-	Stats(context.Context, *RuncStatsRequest) (*RuncStatsResponse, error)
-	Pause(context.Context, *RuncPauseRequest) (*RuncPauseResponse, error)
-	Resume(context.Context, *RuncResumeRequest) (*RuncResumeResponse, error)
-	Ps(context.Context, *RuncPsRequest) (*RuncPsResponse, error)
-	Version(context.Context, *RuncVersionRequest) (*RuncVersionResponse, error)
-	Checkpoint(context.Context, *RuncCheckpointRequest) (*RuncCheckpointResponse, error)
-	Restore(context.Context, *RuncRestoreRequest) (*RuncRestoreResponse, error)
-	Events(context.Context, *RuncEventsRequest) (TTRPCRuncService_EventsClient, error)
-	Update(context.Context, *RuncUpdateRequest) (*RuncUpdateResponse, error)
-	LogFilePath(context.Context, *RuncLogFilePathRequest) (*RuncLogFilePathResponse, error)
-	CloseIO(context.Context, *RuncCloseIORequest) (*RuncCloseIOResponse, error)
-	Top(context.Context, *RuncTopRequest) (*RuncTopResponse, error)
 }
 
 type ttrpcruncserviceClient struct {
 	client *ttrpc.Client
 }
 
-func NewTTRPCRuncServiceClient(client *ttrpc.Client) TTRPCRuncServiceClient {
+func NewTTRPCRuncServiceClient(client *ttrpc.Client) TTRPCRuncServiceService {
 	return &ttrpcruncserviceClient{
 		client: client,
 	}
@@ -241,22 +142,6 @@ func NewTTRPCRuncServiceClient(client *ttrpc.Client) TTRPCRuncServiceClient {
 func (c *ttrpcruncserviceClient) Ping(ctx context.Context, req *PingRequest) (*PingResponse, error) {
 	var resp PingResponse
 	if err := c.client.Call(ctx, "runv.v1.RuncService", "Ping", req, &resp); err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-func (c *ttrpcruncserviceClient) List(ctx context.Context, req *RuncListRequest) (*RuncListResponse, error) {
-	var resp RuncListResponse
-	if err := c.client.Call(ctx, "runv.v1.RuncService", "List", req, &resp); err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-func (c *ttrpcruncserviceClient) State(ctx context.Context, req *RuncStateRequest) (*RuncStateResponse, error) {
-	var resp RuncStateResponse
-	if err := c.client.Call(ctx, "runv.v1.RuncService", "State", req, &resp); err != nil {
 		return nil, err
 	}
 	return &resp, nil
@@ -286,14 +171,6 @@ func (c *ttrpcruncserviceClient) Exec(ctx context.Context, req *RuncExecRequest)
 	return &resp, nil
 }
 
-func (c *ttrpcruncserviceClient) Run(ctx context.Context, req *RuncRunRequest) (*RuncRunResponse, error) {
-	var resp RuncRunResponse
-	if err := c.client.Call(ctx, "runv.v1.RuncService", "Run", req, &resp); err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
 func (c *ttrpcruncserviceClient) Delete(ctx context.Context, req *RuncDeleteRequest) (*RuncDeleteResponse, error) {
 	var resp RuncDeleteResponse
 	if err := c.client.Call(ctx, "runv.v1.RuncService", "Delete", req, &resp); err != nil {
@@ -305,14 +182,6 @@ func (c *ttrpcruncserviceClient) Delete(ctx context.Context, req *RuncDeleteRequ
 func (c *ttrpcruncserviceClient) Kill(ctx context.Context, req *RuncKillRequest) (*RuncKillResponse, error) {
 	var resp RuncKillResponse
 	if err := c.client.Call(ctx, "runv.v1.RuncService", "Kill", req, &resp); err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-func (c *ttrpcruncserviceClient) Stats(ctx context.Context, req *RuncStatsRequest) (*RuncStatsResponse, error) {
-	var resp RuncStatsResponse
-	if err := c.client.Call(ctx, "runv.v1.RuncService", "Stats", req, &resp); err != nil {
 		return nil, err
 	}
 	return &resp, nil
@@ -342,14 +211,6 @@ func (c *ttrpcruncserviceClient) Ps(ctx context.Context, req *RuncPsRequest) (*R
 	return &resp, nil
 }
 
-func (c *ttrpcruncserviceClient) Version(ctx context.Context, req *RuncVersionRequest) (*RuncVersionResponse, error) {
-	var resp RuncVersionResponse
-	if err := c.client.Call(ctx, "runv.v1.RuncService", "Version", req, &resp); err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
 func (c *ttrpcruncserviceClient) Checkpoint(ctx context.Context, req *RuncCheckpointRequest) (*RuncCheckpointResponse, error) {
 	var resp RuncCheckpointResponse
 	if err := c.client.Call(ctx, "runv.v1.RuncService", "Checkpoint", req, &resp); err != nil {
@@ -364,35 +225,6 @@ func (c *ttrpcruncserviceClient) Restore(ctx context.Context, req *RuncRestoreRe
 		return nil, err
 	}
 	return &resp, nil
-}
-
-func (c *ttrpcruncserviceClient) Events(ctx context.Context, req *RuncEventsRequest) (TTRPCRuncService_EventsClient, error) {
-	stream, err := c.client.NewStream(ctx, &ttrpc.StreamDesc{
-		StreamingClient: false,
-		StreamingServer: true,
-	}, "runv.v1.RuncService", "Events", req)
-	if err != nil {
-		return nil, err
-	}
-	x := &ttrpcruncserviceEventsClient{stream}
-	return x, nil
-}
-
-type TTRPCRuncService_EventsClient interface {
-	Recv() (*RuncEvent, error)
-	ttrpc.ClientStream
-}
-
-type ttrpcruncserviceEventsClient struct {
-	ttrpc.ClientStream
-}
-
-func (x *ttrpcruncserviceEventsClient) Recv() (*RuncEvent, error) {
-	m := new(RuncEvent)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
 }
 
 func (c *ttrpcruncserviceClient) Update(ctx context.Context, req *RuncUpdateRequest) (*RuncUpdateResponse, error) {
@@ -411,17 +243,191 @@ func (c *ttrpcruncserviceClient) LogFilePath(ctx context.Context, req *RuncLogFi
 	return &resp, nil
 }
 
-func (c *ttrpcruncserviceClient) CloseIO(ctx context.Context, req *RuncCloseIORequest) (*RuncCloseIOResponse, error) {
-	var resp RuncCloseIOResponse
-	if err := c.client.Call(ctx, "runv.v1.RuncService", "CloseIO", req, &resp); err != nil {
+func (c *ttrpcruncserviceClient) NewTempConsoleSocket(ctx context.Context, req *RuncNewTempConsoleSocketRequest) (*RuncNewTempConsoleSocketResponse, error) {
+	var resp RuncNewTempConsoleSocketResponse
+	if err := c.client.Call(ctx, "runv.v1.RuncService", "NewTempConsoleSocket", req, &resp); err != nil {
 		return nil, err
 	}
 	return &resp, nil
 }
 
-func (c *ttrpcruncserviceClient) Top(ctx context.Context, req *RuncTopRequest) (*RuncTopResponse, error) {
+type TTRPCRuncExtrasServiceService interface {
+	State(context.Context, *RuncStateRequest) (*RuncStateResponse, error)
+	Run(context.Context, *RuncRunRequest) (*RuncRunResponse, error)
+	Stats(context.Context, *RuncStatsRequest) (*RuncStatsResponse, error)
+	Events(context.Context, *RuncEventsRequest, TTRPCRuncExtrasService_EventsServer) error
+	List(context.Context, *RuncListRequest) (*RuncListResponse, error)
+	Version(context.Context, *RuncVersionRequest) (*RuncVersionResponse, error)
+	Top(context.Context, *RuncTopRequest) (*RuncTopResponse, error)
+}
+
+type TTRPCRuncExtrasService_EventsServer interface {
+	Send(*RuncEvent) error
+	ttrpc.StreamServer
+}
+
+type ttrpcruncextrasserviceEventsServer struct {
+	ttrpc.StreamServer
+}
+
+func (x *ttrpcruncextrasserviceEventsServer) Send(m *RuncEvent) error {
+	return x.StreamServer.SendMsg(m)
+}
+
+func RegisterTTRPCRuncExtrasServiceService(srv *ttrpc.Server, svc TTRPCRuncExtrasServiceService) {
+	srv.RegisterService("runv.v1.RuncExtrasService", &ttrpc.ServiceDesc{
+		Methods: map[string]ttrpc.Method{
+			"State": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+				var req RuncStateRequest
+				if err := unmarshal(&req); err != nil {
+					return nil, err
+				}
+				return svc.State(ctx, &req)
+			},
+			"Run": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+				var req RuncRunRequest
+				if err := unmarshal(&req); err != nil {
+					return nil, err
+				}
+				return svc.Run(ctx, &req)
+			},
+			"Stats": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+				var req RuncStatsRequest
+				if err := unmarshal(&req); err != nil {
+					return nil, err
+				}
+				return svc.Stats(ctx, &req)
+			},
+			"List": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+				var req RuncListRequest
+				if err := unmarshal(&req); err != nil {
+					return nil, err
+				}
+				return svc.List(ctx, &req)
+			},
+			"Version": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+				var req RuncVersionRequest
+				if err := unmarshal(&req); err != nil {
+					return nil, err
+				}
+				return svc.Version(ctx, &req)
+			},
+			"Top": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+				var req RuncTopRequest
+				if err := unmarshal(&req); err != nil {
+					return nil, err
+				}
+				return svc.Top(ctx, &req)
+			},
+		},
+		Streams: map[string]ttrpc.Stream{
+			"Events": {
+				Handler: func(ctx context.Context, stream ttrpc.StreamServer) (interface{}, error) {
+					m := new(RuncEventsRequest)
+					if err := stream.RecvMsg(m); err != nil {
+						return nil, err
+					}
+					return nil, svc.Events(ctx, m, &ttrpcruncextrasserviceEventsServer{stream})
+				},
+				StreamingClient: false,
+				StreamingServer: true,
+			},
+		},
+	})
+}
+
+type TTRPCRuncExtrasServiceClient interface {
+	State(context.Context, *RuncStateRequest) (*RuncStateResponse, error)
+	Run(context.Context, *RuncRunRequest) (*RuncRunResponse, error)
+	Stats(context.Context, *RuncStatsRequest) (*RuncStatsResponse, error)
+	Events(context.Context, *RuncEventsRequest) (TTRPCRuncExtrasService_EventsClient, error)
+	List(context.Context, *RuncListRequest) (*RuncListResponse, error)
+	Version(context.Context, *RuncVersionRequest) (*RuncVersionResponse, error)
+	Top(context.Context, *RuncTopRequest) (*RuncTopResponse, error)
+}
+
+type ttrpcruncextrasserviceClient struct {
+	client *ttrpc.Client
+}
+
+func NewTTRPCRuncExtrasServiceClient(client *ttrpc.Client) TTRPCRuncExtrasServiceClient {
+	return &ttrpcruncextrasserviceClient{
+		client: client,
+	}
+}
+
+func (c *ttrpcruncextrasserviceClient) State(ctx context.Context, req *RuncStateRequest) (*RuncStateResponse, error) {
+	var resp RuncStateResponse
+	if err := c.client.Call(ctx, "runv.v1.RuncExtrasService", "State", req, &resp); err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (c *ttrpcruncextrasserviceClient) Run(ctx context.Context, req *RuncRunRequest) (*RuncRunResponse, error) {
+	var resp RuncRunResponse
+	if err := c.client.Call(ctx, "runv.v1.RuncExtrasService", "Run", req, &resp); err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (c *ttrpcruncextrasserviceClient) Stats(ctx context.Context, req *RuncStatsRequest) (*RuncStatsResponse, error) {
+	var resp RuncStatsResponse
+	if err := c.client.Call(ctx, "runv.v1.RuncExtrasService", "Stats", req, &resp); err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (c *ttrpcruncextrasserviceClient) Events(ctx context.Context, req *RuncEventsRequest) (TTRPCRuncExtrasService_EventsClient, error) {
+	stream, err := c.client.NewStream(ctx, &ttrpc.StreamDesc{
+		StreamingClient: false,
+		StreamingServer: true,
+	}, "runv.v1.RuncExtrasService", "Events", req)
+	if err != nil {
+		return nil, err
+	}
+	x := &ttrpcruncextrasserviceEventsClient{stream}
+	return x, nil
+}
+
+type TTRPCRuncExtrasService_EventsClient interface {
+	Recv() (*RuncEvent, error)
+	ttrpc.ClientStream
+}
+
+type ttrpcruncextrasserviceEventsClient struct {
+	ttrpc.ClientStream
+}
+
+func (x *ttrpcruncextrasserviceEventsClient) Recv() (*RuncEvent, error) {
+	m := new(RuncEvent)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *ttrpcruncextrasserviceClient) List(ctx context.Context, req *RuncListRequest) (*RuncListResponse, error) {
+	var resp RuncListResponse
+	if err := c.client.Call(ctx, "runv.v1.RuncExtrasService", "List", req, &resp); err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (c *ttrpcruncextrasserviceClient) Version(ctx context.Context, req *RuncVersionRequest) (*RuncVersionResponse, error) {
+	var resp RuncVersionResponse
+	if err := c.client.Call(ctx, "runv.v1.RuncExtrasService", "Version", req, &resp); err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (c *ttrpcruncextrasserviceClient) Top(ctx context.Context, req *RuncTopRequest) (*RuncTopResponse, error) {
 	var resp RuncTopResponse
-	if err := c.client.Call(ctx, "runv.v1.RuncService", "Top", req, &resp); err != nil {
+	if err := c.client.Call(ctx, "runv.v1.RuncExtrasService", "Top", req, &resp); err != nil {
 		return nil, err
 	}
 	return &resp, nil

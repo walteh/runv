@@ -180,12 +180,12 @@ func (e *execProcess) start(ctx context.Context) (err error) {
 	defer e.pid.Unlock()
 
 	var (
-		socket  runtime.Socket
+		socket  runtime.ConsoleSocket
 		pio     *processIO
 		pidFile = newExecPidFile(e.path, e.id, e.parent.runtime)
 	)
 	if e.stdio.Terminal {
-		if socket, err = e.parent.runtime.NewTempConsoleSocket(); err != nil {
+		if socket, err = e.parent.runtime.NewTempConsoleSocket(ctx); err != nil {
 			return fmt.Errorf("failed to create runc console socket: %w", err)
 		}
 		defer socket.Close()
