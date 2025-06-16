@@ -39,6 +39,10 @@ func NewUnixSocketReferenceId(path string) string {
 	return fmt.Sprintf("socket:unix:%s", path)
 }
 
+func NewVsockSocketReferenceId(port uint32) string {
+	return fmt.Sprintf("socket:vsock:%d", port)
+}
+
 func NewConsoleReferenceId() string {
 	return fmt.Sprintf("console:%d", consoleReferenceCounter.Add(1))
 }

@@ -3,7 +3,9 @@ package grpcruntime
 import (
 	"context"
 	"errors"
+	"fmt"
 	"path/filepath"
+	"time"
 
 	gorunc "github.com/containerd/go-runc"
 	"github.com/opencontainers/runtime-spec/specs-go"
@@ -35,23 +37,52 @@ func (c *GRPCClientRuntime) NewTempConsoleSocket(ctx context.Context) (runtime.C
 		return nil, errors.New(cons.GetGoError())
 	}
 
-	sock, err := c.socketAllocator.AllocateSocket(ctx, &runvv1.AllocateSocketRequest{})
+	sock, err := c.socketAllocator.AllocateSocketStream(ctx, &runvv1.AllocateSocketStreamRequest{})
 	if err != nil {
 		return nil, err
+	}
+
+	refId, err := sock.Recv()
+	if err != nil {
+		return nil, err
+	}
+
+	hsock, err := runtime.NewHostAllocatedSocketFromId(ctx, refId.GetSocketReferenceId(), c.vsockProxier)
+	if err != nil {
+		return nil, err
+	}
+
+	ready := make(chan error)
+	go func() {
+		if err := hsock.Ready(); err != nil {
+			ready <- err
+			return
+		}
+		if err := sock.CloseSend(); err != nil {
+			ready <- err
+			return
+		}
+		ready <- nil
+	}()
+
+	select {
+	case <-sock.Context().Done():
+		return nil, fmt.Errorf("context done before socket was ready: %w", sock.Context().Err())
+	case <-time.After(10 * time.Second):
+		return nil, fmt.Errorf("timeout waiting for socket to be ready")
+	case err := <-ready:
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	req := &runvv1.BindConsoleToSocketRequest{}
 	req.SetConsoleReferenceId(cons.GetConsoleReferenceId())
-	req.SetSocketReferenceId(sock.GetSocketReferenceId())
+	req.SetSocketReferenceId(refId.GetSocketReferenceId())
 
 	// bind the two together
 
 	_, err = c.socketAllocator.BindConsoleToSocket(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-
-	hsock, err := runtime.NewHostAllocatedSocketFromId(ctx, sock.GetSocketReferenceId(), c.vsockProxier)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +93,7 @@ func (c *GRPCClientRuntime) NewTempConsoleSocket(ctx context.Context) (runtime.C
 	}
 
 	c.state.StoreOpenConsole(cons.GetConsoleReferenceId(), consock)
-	c.state.StoreOpenSocket(sock.GetSocketReferenceId(), hsock)
+	c.state.StoreOpenSocket(refId.GetSocketReferenceId(), hsock)
 
 	// socket is allocated, we just have an id
 	// so now we need to creater a new socket

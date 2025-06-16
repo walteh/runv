@@ -3,12 +3,42 @@ package server
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/walteh/runv/core/runc/runtime"
 	runvv1 "github.com/walteh/runv/proto/v1"
 )
 
 var _ runvv1.SocketAllocatorServiceServer = (*Server)(nil)
+
+func (s *Server) AllocateSocketStream(req *runvv1.AllocateSocketStreamRequest, stream runvv1.SocketAllocatorService_AllocateSocketStreamServer) error {
+	as, err := s.socketAllocator.AllocateSocket(stream.Context())
+	if err != nil {
+		return err
+	}
+
+	referenceId := runtime.NewSocketReferenceId(as)
+
+	res := &runvv1.AllocateSocketStreamResponse{}
+	res.SetSocketReferenceId(referenceId)
+	if err := stream.Send(res); err != nil {
+		return err
+	}
+
+	ready := make(chan error)
+	go func() {
+		ready <- as.Ready()
+	}()
+
+	select {
+	case <-stream.Context().Done():
+		return fmt.Errorf("context done before socket was ready: %w", stream.Context().Err())
+	case <-time.After(10 * time.Second):
+		return fmt.Errorf("timeout waiting for socket to be ready")
+	case err := <-ready:
+		return err
+	}
+}
 
 func (s *Server) AllocateConsole(ctx context.Context, req *runvv1.AllocateConsoleRequest) (*runvv1.AllocateConsoleResponse, error) {
 	referenceId := runtime.NewConsoleReferenceId()
@@ -95,7 +125,7 @@ func (s *Server) BindConsoleToSocket(ctx context.Context, req *runvv1.BindConsol
 		return nil, fmt.Errorf("socket not found")
 	}
 
-	err := s.socketAllocator.BindConsoleToSocket(ctx, cs, as)
+	err := runtime.BindConsoleToSocket(ctx, cs, as)
 	if err != nil {
 		return nil, err
 	}
@@ -134,7 +164,7 @@ func (s *Server) BindIOToSockets(ctx context.Context, req *runvv1.BindIOToSocket
 		iosocks[2] = sock
 	}
 
-	err := s.socketAllocator.BindIOToSockets(ctx, io, iosocks)
+	err := runtime.BindIOToSockets(ctx, io, iosocks[0], iosocks[1], iosocks[2])
 	if err != nil {
 		return nil, err
 	}

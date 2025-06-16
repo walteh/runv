@@ -9,6 +9,23 @@ import (
 	slog "log/slog"
 )
 
+func (x *AllocateSocketStreamRequest) LogValue() slog.Value {
+	if x == nil {
+		return slog.AnyValue(nil)
+	}
+	attrs := make([]slog.Attr, 0, 0)
+	return slog.GroupValue(attrs...)
+}
+
+func (x *AllocateSocketStreamResponse) LogValue() slog.Value {
+	if x == nil {
+		return slog.AnyValue(nil)
+	}
+	attrs := make([]slog.Attr, 0, 1)
+	attrs = append(attrs, slog.String("socket_reference_id", x.GetSocketReferenceId()))
+	return slog.GroupValue(attrs...)
+}
+
 func (x *AllocateIORequest) LogValue() slog.Value {
 	if x == nil {
 		return slog.AnyValue(nil)

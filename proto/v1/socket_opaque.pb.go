@@ -7,6 +7,34 @@ import (
 	protovalidate "buf.build/go/protovalidate"
 )
 
+// NewAllocateSocketStreamRequest creates a new AllocateSocketStreamRequest using the builder
+func NewAllocateSocketStreamRequest(b *AllocateSocketStreamRequest_builder) *AllocateSocketStreamRequest {
+	return b.Build()
+}
+
+// NewAllocateSocketStreamRequestE creates a new AllocateSocketStreamRequest using the builder with validation
+func NewAllocateSocketStreamRequestE(b *AllocateSocketStreamRequest_builder) (*AllocateSocketStreamRequest, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// NewAllocateSocketStreamResponse creates a new AllocateSocketStreamResponse using the builder
+func NewAllocateSocketStreamResponse(b *AllocateSocketStreamResponse_builder) *AllocateSocketStreamResponse {
+	return b.Build()
+}
+
+// NewAllocateSocketStreamResponseE creates a new AllocateSocketStreamResponse using the builder with validation
+func NewAllocateSocketStreamResponseE(b *AllocateSocketStreamResponse_builder) (*AllocateSocketStreamResponse, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // NewAllocateIORequest creates a new AllocateIORequest using the builder
 func NewAllocateIORequest(b *AllocateIORequest_builder) *AllocateIORequest {
 	return b.Build()

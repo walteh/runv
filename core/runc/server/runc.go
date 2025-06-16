@@ -6,7 +6,6 @@ import (
 
 	"github.com/walteh/runv/core/runc/conversion"
 	"github.com/walteh/runv/core/runc/runtime"
-	"github.com/walteh/runv/core/runc/state"
 	runvv1 "github.com/walteh/runv/proto/v1"
 )
 
@@ -41,15 +40,6 @@ func (s *Server) ReadPidFile(ctx context.Context, req *runvv1.RuncReadPidFileReq
 	}
 	resp.SetPid(int32(pid))
 	return resp, nil
-}
-
-func NewServer(r runtime.Runtime, runtimeExtras runtime.RuntimeExtras) *Server {
-	srv := &Server{
-		runtime:       r,
-		runtimeExtras: runtimeExtras,
-		state:         state.NewState(),
-	}
-	return srv
 }
 
 // Create implements the RuncServiceServer Create method.

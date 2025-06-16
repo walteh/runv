@@ -29,10 +29,12 @@ const (
 	PluginName = "runc"
 )
 
-func NewRuntimePluginSet(impl runtime.Runtime) plugin.PluginSet {
+func NewRuntimePluginSet(impl runtime.Runtime, runtimeExtras runtime.RuntimeExtras, socketAllocator runtime.SocketAllocator) plugin.PluginSet {
 	return plugin.PluginSet{
 		PluginName: &RuntimePlugin{
-			Impl: impl,
+			GuestRuntime:         impl,
+			GuestRuntimeExtras:   runtimeExtras,
+			GuestSocketAllocator: socketAllocator,
 		},
 	}
 }
@@ -46,7 +48,9 @@ type RuntimePlugin struct {
 
 	// Concrete implementation, written in Go. This is only used for plugins
 	// that are written in Go.
-	Impl runtime.Runtime
+	GuestRuntime         runtime.Runtime
+	GuestRuntimeExtras   runtime.RuntimeExtras
+	GuestSocketAllocator runtime.SocketAllocator
 }
 
 // GRPCPlugin must still implement the Plugin interface
@@ -59,7 +63,7 @@ func (p *RuntimePlugin) Server(broker *plugin.MuxBroker) (interface{}, error) {
 }
 
 func (p *RuntimePlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
-	runcServer := server.NewServer(p.Impl, nil)
+	runcServer := server.NewServer(p.GuestRuntime, p.GuestRuntimeExtras, p.GuestSocketAllocator)
 	runvv1.RegisterRuncServiceServer(s, runcServer)
 	return nil
 }

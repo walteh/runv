@@ -9,7 +9,7 @@ import (
 
 type TTRPCSocketAllocatorServiceService interface {
 	AllocateSockets(context.Context, *AllocateSocketsRequest) (*AllocateSocketsResponse, error)
-	AllocateSocket(context.Context, *AllocateSocketRequest) (*AllocateSocketResponse, error)
+	AllocateSocketStream(context.Context, *AllocateSocketStreamRequest, TTRPCSocketAllocatorService_AllocateSocketStreamServer) error
 	AllocateIO(context.Context, *AllocateIORequest) (*AllocateIOResponse, error)
 	AllocateConsole(context.Context, *AllocateConsoleRequest) (*AllocateConsoleResponse, error)
 	BindConsoleToSocket(context.Context, *BindConsoleToSocketRequest) (*BindConsoleToSocketResponse, error)
@@ -18,6 +18,19 @@ type TTRPCSocketAllocatorServiceService interface {
 	CloseSockets(context.Context, *CloseSocketsRequest) (*CloseSocketsResponse, error)
 	CloseIO(context.Context, *CloseIORequest) (*CloseIOResponse, error)
 	CloseConsole(context.Context, *CloseConsoleRequest) (*CloseConsoleResponse, error)
+}
+
+type TTRPCSocketAllocatorService_AllocateSocketStreamServer interface {
+	Send(*AllocateSocketStreamResponse) error
+	ttrpc.StreamServer
+}
+
+type ttrpcsocketallocatorserviceAllocateSocketStreamServer struct {
+	ttrpc.StreamServer
+}
+
+func (x *ttrpcsocketallocatorserviceAllocateSocketStreamServer) Send(m *AllocateSocketStreamResponse) error {
+	return x.StreamServer.SendMsg(m)
 }
 
 func RegisterTTRPCSocketAllocatorServiceService(srv *ttrpc.Server, svc TTRPCSocketAllocatorServiceService) {
@@ -29,13 +42,6 @@ func RegisterTTRPCSocketAllocatorServiceService(srv *ttrpc.Server, svc TTRPCSock
 					return nil, err
 				}
 				return svc.AllocateSockets(ctx, &req)
-			},
-			"AllocateSocket": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
-				var req AllocateSocketRequest
-				if err := unmarshal(&req); err != nil {
-					return nil, err
-				}
-				return svc.AllocateSocket(ctx, &req)
 			},
 			"AllocateIO": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
 				var req AllocateIORequest
@@ -94,14 +100,40 @@ func RegisterTTRPCSocketAllocatorServiceService(srv *ttrpc.Server, svc TTRPCSock
 				return svc.CloseConsole(ctx, &req)
 			},
 		},
+		Streams: map[string]ttrpc.Stream{
+			"AllocateSocketStream": {
+				Handler: func(ctx context.Context, stream ttrpc.StreamServer) (interface{}, error) {
+					m := new(AllocateSocketStreamRequest)
+					if err := stream.RecvMsg(m); err != nil {
+						return nil, err
+					}
+					return nil, svc.AllocateSocketStream(ctx, m, &ttrpcsocketallocatorserviceAllocateSocketStreamServer{stream})
+				},
+				StreamingClient: false,
+				StreamingServer: true,
+			},
+		},
 	})
+}
+
+type TTRPCSocketAllocatorServiceClient interface {
+	AllocateSockets(context.Context, *AllocateSocketsRequest) (*AllocateSocketsResponse, error)
+	AllocateSocketStream(context.Context, *AllocateSocketStreamRequest) (TTRPCSocketAllocatorService_AllocateSocketStreamClient, error)
+	AllocateIO(context.Context, *AllocateIORequest) (*AllocateIOResponse, error)
+	AllocateConsole(context.Context, *AllocateConsoleRequest) (*AllocateConsoleResponse, error)
+	BindConsoleToSocket(context.Context, *BindConsoleToSocketRequest) (*BindConsoleToSocketResponse, error)
+	BindIOToSockets(context.Context, *BindIOToSocketsRequest) (*BindIOToSocketsResponse, error)
+	CloseSocket(context.Context, *CloseSocketRequest) (*CloseSocketResponse, error)
+	CloseSockets(context.Context, *CloseSocketsRequest) (*CloseSocketsResponse, error)
+	CloseIO(context.Context, *CloseIORequest) (*CloseIOResponse, error)
+	CloseConsole(context.Context, *CloseConsoleRequest) (*CloseConsoleResponse, error)
 }
 
 type ttrpcsocketallocatorserviceClient struct {
 	client *ttrpc.Client
 }
 
-func NewTTRPCSocketAllocatorServiceClient(client *ttrpc.Client) TTRPCSocketAllocatorServiceService {
+func NewTTRPCSocketAllocatorServiceClient(client *ttrpc.Client) TTRPCSocketAllocatorServiceClient {
 	return &ttrpcsocketallocatorserviceClient{
 		client: client,
 	}
@@ -115,12 +147,33 @@ func (c *ttrpcsocketallocatorserviceClient) AllocateSockets(ctx context.Context,
 	return &resp, nil
 }
 
-func (c *ttrpcsocketallocatorserviceClient) AllocateSocket(ctx context.Context, req *AllocateSocketRequest) (*AllocateSocketResponse, error) {
-	var resp AllocateSocketResponse
-	if err := c.client.Call(ctx, "runv.v1.SocketAllocatorService", "AllocateSocket", req, &resp); err != nil {
+func (c *ttrpcsocketallocatorserviceClient) AllocateSocketStream(ctx context.Context, req *AllocateSocketStreamRequest) (TTRPCSocketAllocatorService_AllocateSocketStreamClient, error) {
+	stream, err := c.client.NewStream(ctx, &ttrpc.StreamDesc{
+		StreamingClient: false,
+		StreamingServer: true,
+	}, "runv.v1.SocketAllocatorService", "AllocateSocketStream", req)
+	if err != nil {
 		return nil, err
 	}
-	return &resp, nil
+	x := &ttrpcsocketallocatorserviceAllocateSocketStreamClient{stream}
+	return x, nil
+}
+
+type TTRPCSocketAllocatorService_AllocateSocketStreamClient interface {
+	Recv() (*AllocateSocketStreamResponse, error)
+	ttrpc.ClientStream
+}
+
+type ttrpcsocketallocatorserviceAllocateSocketStreamClient struct {
+	ttrpc.ClientStream
+}
+
+func (x *ttrpcsocketallocatorserviceAllocateSocketStreamClient) Recv() (*AllocateSocketStreamResponse, error) {
+	m := new(AllocateSocketStreamResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 func (c *ttrpcsocketallocatorserviceClient) AllocateIO(ctx context.Context, req *AllocateIORequest) (*AllocateIOResponse, error) {

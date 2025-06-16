@@ -28,8 +28,8 @@ var _ runvv1.SocketAllocatorServiceClient = &MockSocketAllocatorServiceClient{}
 //			AllocateIOFunc: func(ctx context.Context, in *runvv1.AllocateIORequest, opts ...grpc.CallOption) (*runvv1.AllocateIOResponse, error) {
 //				panic("mock out the AllocateIO method")
 //			},
-//			AllocateSocketFunc: func(ctx context.Context, in *runvv1.AllocateSocketRequest, opts ...grpc.CallOption) (*runvv1.AllocateSocketResponse, error) {
-//				panic("mock out the AllocateSocket method")
+//			AllocateSocketStreamFunc: func(ctx context.Context, in *runvv1.AllocateSocketStreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[runvv1.AllocateSocketStreamResponse], error) {
+//				panic("mock out the AllocateSocketStream method")
 //			},
 //			AllocateSocketsFunc: func(ctx context.Context, in *runvv1.AllocateSocketsRequest, opts ...grpc.CallOption) (*runvv1.AllocateSocketsResponse, error) {
 //				panic("mock out the AllocateSockets method")
@@ -65,8 +65,8 @@ type MockSocketAllocatorServiceClient struct {
 	// AllocateIOFunc mocks the AllocateIO method.
 	AllocateIOFunc func(ctx context.Context, in *runvv1.AllocateIORequest, opts ...grpc.CallOption) (*runvv1.AllocateIOResponse, error)
 
-	// AllocateSocketFunc mocks the AllocateSocket method.
-	AllocateSocketFunc func(ctx context.Context, in *runvv1.AllocateSocketRequest, opts ...grpc.CallOption) (*runvv1.AllocateSocketResponse, error)
+	// AllocateSocketStreamFunc mocks the AllocateSocketStream method.
+	AllocateSocketStreamFunc func(ctx context.Context, in *runvv1.AllocateSocketStreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[runvv1.AllocateSocketStreamResponse], error)
 
 	// AllocateSocketsFunc mocks the AllocateSockets method.
 	AllocateSocketsFunc func(ctx context.Context, in *runvv1.AllocateSocketsRequest, opts ...grpc.CallOption) (*runvv1.AllocateSocketsResponse, error)
@@ -109,12 +109,12 @@ type MockSocketAllocatorServiceClient struct {
 			// Opts is the opts argument value.
 			Opts []grpc.CallOption
 		}
-		// AllocateSocket holds details about calls to the AllocateSocket method.
-		AllocateSocket []struct {
+		// AllocateSocketStream holds details about calls to the AllocateSocketStream method.
+		AllocateSocketStream []struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
 			// In is the in argument value.
-			In *runvv1.AllocateSocketRequest
+			In *runvv1.AllocateSocketStreamRequest
 			// Opts is the opts argument value.
 			Opts []grpc.CallOption
 		}
@@ -182,16 +182,16 @@ type MockSocketAllocatorServiceClient struct {
 			Opts []grpc.CallOption
 		}
 	}
-	lockAllocateConsole     sync.RWMutex
-	lockAllocateIO          sync.RWMutex
-	lockAllocateSocket      sync.RWMutex
-	lockAllocateSockets     sync.RWMutex
-	lockBindConsoleToSocket sync.RWMutex
-	lockBindIOToSockets     sync.RWMutex
-	lockCloseConsole        sync.RWMutex
-	lockCloseIO             sync.RWMutex
-	lockCloseSocket         sync.RWMutex
-	lockCloseSockets        sync.RWMutex
+	lockAllocateConsole      sync.RWMutex
+	lockAllocateIO           sync.RWMutex
+	lockAllocateSocketStream sync.RWMutex
+	lockAllocateSockets      sync.RWMutex
+	lockBindConsoleToSocket  sync.RWMutex
+	lockBindIOToSockets      sync.RWMutex
+	lockCloseConsole         sync.RWMutex
+	lockCloseIO              sync.RWMutex
+	lockCloseSocket          sync.RWMutex
+	lockCloseSockets         sync.RWMutex
 }
 
 // AllocateConsole calls AllocateConsoleFunc.
@@ -274,43 +274,43 @@ func (mock *MockSocketAllocatorServiceClient) AllocateIOCalls() []struct {
 	return calls
 }
 
-// AllocateSocket calls AllocateSocketFunc.
-func (mock *MockSocketAllocatorServiceClient) AllocateSocket(ctx context.Context, in *runvv1.AllocateSocketRequest, opts ...grpc.CallOption) (*runvv1.AllocateSocketResponse, error) {
-	if mock.AllocateSocketFunc == nil {
-		panic("MockSocketAllocatorServiceClient.AllocateSocketFunc: method is nil but SocketAllocatorServiceClient.AllocateSocket was just called")
+// AllocateSocketStream calls AllocateSocketStreamFunc.
+func (mock *MockSocketAllocatorServiceClient) AllocateSocketStream(ctx context.Context, in *runvv1.AllocateSocketStreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[runvv1.AllocateSocketStreamResponse], error) {
+	if mock.AllocateSocketStreamFunc == nil {
+		panic("MockSocketAllocatorServiceClient.AllocateSocketStreamFunc: method is nil but SocketAllocatorServiceClient.AllocateSocketStream was just called")
 	}
 	callInfo := struct {
 		Ctx  context.Context
-		In   *runvv1.AllocateSocketRequest
+		In   *runvv1.AllocateSocketStreamRequest
 		Opts []grpc.CallOption
 	}{
 		Ctx:  ctx,
 		In:   in,
 		Opts: opts,
 	}
-	mock.lockAllocateSocket.Lock()
-	mock.calls.AllocateSocket = append(mock.calls.AllocateSocket, callInfo)
-	mock.lockAllocateSocket.Unlock()
-	return mock.AllocateSocketFunc(ctx, in, opts...)
+	mock.lockAllocateSocketStream.Lock()
+	mock.calls.AllocateSocketStream = append(mock.calls.AllocateSocketStream, callInfo)
+	mock.lockAllocateSocketStream.Unlock()
+	return mock.AllocateSocketStreamFunc(ctx, in, opts...)
 }
 
-// AllocateSocketCalls gets all the calls that were made to AllocateSocket.
+// AllocateSocketStreamCalls gets all the calls that were made to AllocateSocketStream.
 // Check the length with:
 //
-//	len(mockedSocketAllocatorServiceClient.AllocateSocketCalls())
-func (mock *MockSocketAllocatorServiceClient) AllocateSocketCalls() []struct {
+//	len(mockedSocketAllocatorServiceClient.AllocateSocketStreamCalls())
+func (mock *MockSocketAllocatorServiceClient) AllocateSocketStreamCalls() []struct {
 	Ctx  context.Context
-	In   *runvv1.AllocateSocketRequest
+	In   *runvv1.AllocateSocketStreamRequest
 	Opts []grpc.CallOption
 } {
 	var calls []struct {
 		Ctx  context.Context
-		In   *runvv1.AllocateSocketRequest
+		In   *runvv1.AllocateSocketStreamRequest
 		Opts []grpc.CallOption
 	}
-	mock.lockAllocateSocket.RLock()
-	calls = mock.calls.AllocateSocket
-	mock.lockAllocateSocket.RUnlock()
+	mock.lockAllocateSocketStream.RLock()
+	calls = mock.calls.AllocateSocketStream
+	mock.lockAllocateSocketStream.RUnlock()
 	return calls
 }
 

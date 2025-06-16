@@ -29,10 +29,9 @@ type RuntimeCreator interface {
 	Create(ctx context.Context, opts *RuntimeOptions) Runtime
 }
 
+//go:mock
 type SocketAllocator interface {
 	AllocateSocket(ctx context.Context) (AllocatedSocket, error)
-	BindConsoleToSocket(ctx context.Context, consoleReferenceId ConsoleSocket, socketReferenceId AllocatedSocket) error
-	BindIOToSockets(ctx context.Context, ioReferenceId IO, socketReferenceIds [3]AllocatedSocket) error
 }
 
 //go:mock
@@ -116,6 +115,8 @@ type IO interface {
 // RuncLibrary defines an interface for interacting with runc containers.
 // This interface mirrors the functionality provided by the go-runc package
 // to allow for easy mocking and testing.
+//
+//go:mock
 type RuntimeExtras interface {
 	// State returns the state of the container for the given id.
 	State(context.Context, string) (*gorunc.Container, error)
@@ -145,7 +146,8 @@ type AllocatedSocketReference interface {
 type AllocatedSocket interface {
 	isAllocatedSocket()
 	io.Closer
-	Conn() *net.UnixConn
+	Conn() FileConn
+	Ready() error
 }
 
 type VsockAllocatedSocket interface {

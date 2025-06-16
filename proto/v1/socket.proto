@@ -12,7 +12,9 @@ service SocketAllocatorService {
 	rpc AllocateSockets(AllocateSocketsRequest) returns (AllocateSocketsResponse) {}
 
 
-	rpc AllocateSocket(AllocateSocketRequest) returns (AllocateSocketResponse) {}
+	// rpc AllocateSocket(AllocateSocketRequest) returns (AllocateSocketResponse) {}
+
+	rpc AllocateSocketStream(AllocateSocketStreamRequest) returns (stream AllocateSocketStreamResponse) {}
 
 
 	// the same thing but with different name than "NewPipeIO"
@@ -39,6 +41,12 @@ service SocketAllocatorService {
 
 
 	rpc CloseConsole(CloseConsoleRequest) returns (CloseConsoleResponse) {}
+}
+
+message AllocateSocketStreamRequest {}
+
+message AllocateSocketStreamResponse {
+	string socket_reference_id = 1;
 }
 
 message AllocateIORequest {

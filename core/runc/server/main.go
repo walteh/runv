@@ -1,14 +1,12 @@
 package server
 
 import (
-	"net"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"github.com/walteh/runv/core/runc/runtime"
 	"github.com/walteh/runv/core/runc/state"
-	runvv1 "github.com/walteh/runv/proto/v1"
 	"google.golang.org/grpc"
 )
 
@@ -17,30 +15,34 @@ type Server struct {
 	runtimeExtras   runtime.RuntimeExtras
 	socketAllocator runtime.SocketAllocator
 
-	sharedDirPathPrefix string
-
 	state *state.State
 }
 
-// RunServer starts a gRPC server with the RuncService
-func RunServer(listener net.Listener, config runtime.Runtime) (*grpc.Server, error) {
-
-	// Create gRPC server
-	s := grpc.NewServer()
-
-	srv := NewServer(config, nil)
-
-	runvv1.RegisterRuncServiceServer(s, srv)
-
-	// Start server in a goroutine
-	go func() {
-		if err := s.Serve(listener); err != nil {
-			// Log error but don't crash - let the caller handle this
-		}
-	}()
-
-	return s, nil
+func NewServer(r runtime.Runtime, runtimeExtras runtime.RuntimeExtras, socketAllocator runtime.SocketAllocator) *Server {
+	return &Server{
+		runtime:         r,
+		runtimeExtras:   runtimeExtras,
+		socketAllocator: socketAllocator,
+		state:           state.NewState(),
+	}
 }
+
+// 	// Create gRPC server
+// 	s := grpc.NewServer()
+
+// 	srv := NewServer(config, nil)
+
+// 	runvv1.RegisterRuncServiceServer(s, srv)
+
+// 	// Start server in a goroutine
+// 	go func() {
+// 		if err := s.Serve(listener); err != nil {
+// 			// Log error but don't crash - let the caller handle this
+// 		}
+// 	}()
+
+// 	return s, nil
+// }
 
 // SetupSignalHandler sets up a signal handler for graceful shutdown
 func SetupSignalHandler(srv *grpc.Server) chan struct{} {

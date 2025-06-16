@@ -19,16 +19,16 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	SocketAllocatorService_AllocateSockets_FullMethodName     = "/runv.v1.SocketAllocatorService/AllocateSockets"
-	SocketAllocatorService_AllocateSocket_FullMethodName      = "/runv.v1.SocketAllocatorService/AllocateSocket"
-	SocketAllocatorService_AllocateIO_FullMethodName          = "/runv.v1.SocketAllocatorService/AllocateIO"
-	SocketAllocatorService_AllocateConsole_FullMethodName     = "/runv.v1.SocketAllocatorService/AllocateConsole"
-	SocketAllocatorService_BindConsoleToSocket_FullMethodName = "/runv.v1.SocketAllocatorService/BindConsoleToSocket"
-	SocketAllocatorService_BindIOToSockets_FullMethodName     = "/runv.v1.SocketAllocatorService/BindIOToSockets"
-	SocketAllocatorService_CloseSocket_FullMethodName         = "/runv.v1.SocketAllocatorService/CloseSocket"
-	SocketAllocatorService_CloseSockets_FullMethodName        = "/runv.v1.SocketAllocatorService/CloseSockets"
-	SocketAllocatorService_CloseIO_FullMethodName             = "/runv.v1.SocketAllocatorService/CloseIO"
-	SocketAllocatorService_CloseConsole_FullMethodName        = "/runv.v1.SocketAllocatorService/CloseConsole"
+	SocketAllocatorService_AllocateSockets_FullMethodName      = "/runv.v1.SocketAllocatorService/AllocateSockets"
+	SocketAllocatorService_AllocateSocketStream_FullMethodName = "/runv.v1.SocketAllocatorService/AllocateSocketStream"
+	SocketAllocatorService_AllocateIO_FullMethodName           = "/runv.v1.SocketAllocatorService/AllocateIO"
+	SocketAllocatorService_AllocateConsole_FullMethodName      = "/runv.v1.SocketAllocatorService/AllocateConsole"
+	SocketAllocatorService_BindConsoleToSocket_FullMethodName  = "/runv.v1.SocketAllocatorService/BindConsoleToSocket"
+	SocketAllocatorService_BindIOToSockets_FullMethodName      = "/runv.v1.SocketAllocatorService/BindIOToSockets"
+	SocketAllocatorService_CloseSocket_FullMethodName          = "/runv.v1.SocketAllocatorService/CloseSocket"
+	SocketAllocatorService_CloseSockets_FullMethodName         = "/runv.v1.SocketAllocatorService/CloseSockets"
+	SocketAllocatorService_CloseIO_FullMethodName              = "/runv.v1.SocketAllocatorService/CloseIO"
+	SocketAllocatorService_CloseConsole_FullMethodName         = "/runv.v1.SocketAllocatorService/CloseConsole"
 )
 
 // SocketAllocatorServiceClient is the client API for SocketAllocatorService service.
@@ -36,7 +36,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SocketAllocatorServiceClient interface {
 	AllocateSockets(ctx context.Context, in *AllocateSocketsRequest, opts ...grpc.CallOption) (*AllocateSocketsResponse, error)
-	AllocateSocket(ctx context.Context, in *AllocateSocketRequest, opts ...grpc.CallOption) (*AllocateSocketResponse, error)
+	AllocateSocketStream(ctx context.Context, in *AllocateSocketStreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[AllocateSocketStreamResponse], error)
 	// the same thing but with different name than "NewPipeIO"
 	AllocateIO(ctx context.Context, in *AllocateIORequest, opts ...grpc.CallOption) (*AllocateIOResponse, error)
 	// the same thing but with different name than "NewTempConsoleSocket"
@@ -67,15 +67,24 @@ func (c *socketAllocatorServiceClient) AllocateSockets(ctx context.Context, in *
 	return out, nil
 }
 
-func (c *socketAllocatorServiceClient) AllocateSocket(ctx context.Context, in *AllocateSocketRequest, opts ...grpc.CallOption) (*AllocateSocketResponse, error) {
+func (c *socketAllocatorServiceClient) AllocateSocketStream(ctx context.Context, in *AllocateSocketStreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[AllocateSocketStreamResponse], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AllocateSocketResponse)
-	err := c.cc.Invoke(ctx, SocketAllocatorService_AllocateSocket_FullMethodName, in, out, cOpts...)
+	stream, err := c.cc.NewStream(ctx, &SocketAllocatorService_ServiceDesc.Streams[0], SocketAllocatorService_AllocateSocketStream_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &grpc.GenericClientStream[AllocateSocketStreamRequest, AllocateSocketStreamResponse]{ClientStream: stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
 }
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type SocketAllocatorService_AllocateSocketStreamClient = grpc.ServerStreamingClient[AllocateSocketStreamResponse]
 
 func (c *socketAllocatorServiceClient) AllocateIO(ctx context.Context, in *AllocateIORequest, opts ...grpc.CallOption) (*AllocateIOResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
@@ -162,7 +171,7 @@ func (c *socketAllocatorServiceClient) CloseConsole(ctx context.Context, in *Clo
 // for forward compatibility.
 type SocketAllocatorServiceServer interface {
 	AllocateSockets(context.Context, *AllocateSocketsRequest) (*AllocateSocketsResponse, error)
-	AllocateSocket(context.Context, *AllocateSocketRequest) (*AllocateSocketResponse, error)
+	AllocateSocketStream(*AllocateSocketStreamRequest, grpc.ServerStreamingServer[AllocateSocketStreamResponse]) error
 	// the same thing but with different name than "NewPipeIO"
 	AllocateIO(context.Context, *AllocateIORequest) (*AllocateIOResponse, error)
 	// the same thing but with different name than "NewTempConsoleSocket"
@@ -185,8 +194,8 @@ type UnimplementedSocketAllocatorServiceServer struct{}
 func (UnimplementedSocketAllocatorServiceServer) AllocateSockets(context.Context, *AllocateSocketsRequest) (*AllocateSocketsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AllocateSockets not implemented")
 }
-func (UnimplementedSocketAllocatorServiceServer) AllocateSocket(context.Context, *AllocateSocketRequest) (*AllocateSocketResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AllocateSocket not implemented")
+func (UnimplementedSocketAllocatorServiceServer) AllocateSocketStream(*AllocateSocketStreamRequest, grpc.ServerStreamingServer[AllocateSocketStreamResponse]) error {
+	return status.Errorf(codes.Unimplemented, "method AllocateSocketStream not implemented")
 }
 func (UnimplementedSocketAllocatorServiceServer) AllocateIO(context.Context, *AllocateIORequest) (*AllocateIOResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AllocateIO not implemented")
@@ -250,23 +259,16 @@ func _SocketAllocatorService_AllocateSockets_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SocketAllocatorService_AllocateSocket_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AllocateSocketRequest)
-	if err := dec(in); err != nil {
-		return nil, err
+func _SocketAllocatorService_AllocateSocketStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(AllocateSocketStreamRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
 	}
-	if interceptor == nil {
-		return srv.(SocketAllocatorServiceServer).AllocateSocket(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: SocketAllocatorService_AllocateSocket_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SocketAllocatorServiceServer).AllocateSocket(ctx, req.(*AllocateSocketRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+	return srv.(SocketAllocatorServiceServer).AllocateSocketStream(m, &grpc.GenericServerStream[AllocateSocketStreamRequest, AllocateSocketStreamResponse]{ServerStream: stream})
 }
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type SocketAllocatorService_AllocateSocketStreamServer = grpc.ServerStreamingServer[AllocateSocketStreamResponse]
 
 func _SocketAllocatorService_AllocateIO_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AllocateIORequest)
@@ -424,10 +426,6 @@ var SocketAllocatorService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SocketAllocatorService_AllocateSockets_Handler,
 		},
 		{
-			MethodName: "AllocateSocket",
-			Handler:    _SocketAllocatorService_AllocateSocket_Handler,
-		},
-		{
 			MethodName: "AllocateIO",
 			Handler:    _SocketAllocatorService_AllocateIO_Handler,
 		},
@@ -460,6 +458,12 @@ var SocketAllocatorService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SocketAllocatorService_CloseConsole_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "AllocateSocketStream",
+			Handler:       _SocketAllocatorService_AllocateSocketStream_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "v1/socket.proto",
 }

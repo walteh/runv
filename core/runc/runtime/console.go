@@ -41,7 +41,7 @@ func (h *HostConsoleSocket) ReceiveMaster() (console.Console, error) {
 }
 
 func NewHostUnixConsoleSocket(ctx context.Context, socket UnixAllocatedSocket) (*HostConsoleSocket, error) {
-	return &HostConsoleSocket{socket: socket, path: socket.Path(), conn: socket.Conn()}, nil
+	return &HostConsoleSocket{socket: socket, path: socket.Path(), conn: socket.Conn().(*net.UnixConn)}, nil
 }
 
 func NewHostVsockFdConsoleSocket(ctx context.Context, socket VsockAllocatedSocket, proxier VsockProxier) (*HostConsoleSocket, error) {

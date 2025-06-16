@@ -15,6 +15,8 @@ import (
 	"github.com/walteh/runv/core/runc/runtime/plug"
 	"github.com/walteh/runv/pkg/logging"
 
+	gorunc "github.com/containerd/go-runc"
+
 	runtimemock "github.com/walteh/runv/gen/mocks/core/runc/runtime"
 )
 
@@ -24,6 +26,18 @@ var mockRuntime = &runtimemock.MockRuntime{
 	},
 	SharedDirFunc: func() string {
 		return "/runv/shared"
+	},
+}
+
+var mockSocketAllocator = &runtimemock.MockSocketAllocator{
+	AllocateSocketFunc: func(ctx context.Context) (runtime.AllocatedSocket, error) {
+		return nil, nil
+	},
+}
+
+var mockRuntimeExtras = &runtimemock.MockRuntimeExtras{
+	RunFunc: func(context1 context.Context, s string, s1 string, createOpts *gorunc.CreateOpts) (int, error) {
+		return 1234, nil
 	},
 }
 
@@ -41,7 +55,7 @@ func server(ctx context.Context, logPath string) error {
 	plugin.Serve(&plugin.ServeConfig{
 		HandshakeConfig: plug.Handshake,
 		Logger:          hclog.Default(),
-		Plugins:         plug.NewRuntimePluginSet(mockRuntime),
+		Plugins:         plug.NewRuntimePluginSet(mockRuntime, mockRuntimeExtras, mockSocketAllocator),
 		// A non-nil value here enables gRPC serving for this plugin...
 		GRPCServer: plugin.DefaultGRPCServer,
 	})

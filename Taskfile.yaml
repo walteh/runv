@@ -104,7 +104,7 @@ tasks:
                         d=$(dirname "$f"); d=${d#./}
                         raw=$(awk "/\/\/go:mock/{getline; if(\$1==\"type\") print \$2}" "$f")
                         name=${raw%%\[*}
-                        echo "$d $f $name"' || true
+                        for i in $name; do echo "$d $f $i"; done' || true
             MOCKERY_SOURCE_FILES:
                 sh: |-
                     grep -rl "//go:mock" --include="*.go" . || true
