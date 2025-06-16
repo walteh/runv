@@ -655,11 +655,19 @@ func (x *RuncUnixIO) LogValue() slog.Value {
 	return slog.GroupValue(attrs...)
 }
 
+func (x *RuncNullIO) LogValue() slog.Value {
+	if x == nil {
+		return slog.AnyValue(nil)
+	}
+	attrs := make([]slog.Attr, 0, 0)
+	return slog.GroupValue(attrs...)
+}
+
 func (x *RuncIO) LogValue() slog.Value {
 	if x == nil {
 		return slog.AnyValue(nil)
 	}
-	attrs := make([]slog.Attr, 0, 3)
+	attrs := make([]slog.Attr, 0, 4)
 	attrs = append(attrs, slog.Uint64("io_reference_id", x.GetIoReferenceId()))
 	// Handle oneof field: Io
 	switch x.WhichIo() {
@@ -674,6 +682,12 @@ func (x *RuncIO) LogValue() slog.Value {
 			attrs = append(attrs, slog.Attr{Key: "unix", Value: msgValue.LogValue()})
 		} else {
 			attrs = append(attrs, slog.Any("unix", x.GetUnix()))
+		}
+	case RuncIO_Null_case:
+		if msgValue, ok := interface{}(x.GetNull()).(slog.LogValuer); ok {
+			attrs = append(attrs, slog.Attr{Key: "null", Value: msgValue.LogValue()})
+		} else {
+			attrs = append(attrs, slog.Any("null", x.GetNull()))
 		}
 	}
 	return slog.GroupValue(attrs...)

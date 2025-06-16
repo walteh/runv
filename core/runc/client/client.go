@@ -52,12 +52,12 @@ func (c *Client) Update(ctx context.Context, id string, resources *specs.LinuxRe
 
 // NewNullIO implements runtime.Runtime.
 func (c *Client) NewNullIO() (runtime.IO, error) {
-	panic("unimplemented")
+	return runtime.NewHostNullIo()
 }
 
 // NewPipeIO implements runtime.Runtime.
 func (c *Client) NewPipeIO(ioUID, ioGID int, opts ...gorunc.IOOpt) (runtime.IO, error) {
-	panic("unimplemented")
+	return runtime.NewHostVsockProxyIo(context.Background(), opts...)
 }
 
 // NewRuncClient creates a new client for the runc service.

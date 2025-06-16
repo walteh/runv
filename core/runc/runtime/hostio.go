@@ -1,0 +1,217 @@
+package runtime
+
+import (
+	"context"
+	"fmt"
+	"io"
+	"net"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"sync/atomic"
+
+	gorunc "github.com/containerd/go-runc"
+	"github.com/mdlayher/vsock"
+)
+
+var clientVsockCounter atomic.Uint64
+var clientUnixCounter atomic.Uint64
+
+func init() {
+	clientVsockCounter.Store(3000)
+	clientUnixCounter.Store(0)
+}
+
+type HostVsockProxyIo struct {
+	StdinPort  uint64
+	StdoutPort uint64
+	StderrPort uint64
+
+	StdinConn  net.Conn
+	StdoutConn net.Conn
+	StderrConn net.Conn
+
+	stdinReader  io.ReadCloser
+	stdinWriter  io.WriteCloser
+	stdoutReader io.ReadCloser
+	stdoutWriter io.WriteCloser
+	stderrReader io.ReadCloser
+	stderrWriter io.WriteCloser
+}
+
+func NewHostVsockProxyIo(ctx context.Context, opts ...gorunc.IOOpt) (*HostVsockProxyIo, error) {
+	p := &HostVsockProxyIo{}
+
+	optd := &gorunc.IOOption{}
+	for _, opt := range opts {
+		opt(optd)
+	}
+	if optd.OpenStdin {
+		p.StdinPort = clientVsockCounter.Add(1)
+		p.stdinReader, p.stdinWriter = io.Pipe()
+	}
+	if optd.OpenStdout {
+		p.StdoutPort = clientVsockCounter.Add(1)
+		p.stdoutReader, p.stdoutWriter = io.Pipe()
+	}
+	if optd.OpenStderr {
+		p.StderrPort = clientVsockCounter.Add(1)
+		p.stderrReader, p.stderrWriter = io.Pipe()
+	}
+
+	dialFunc := func(ctx context.Context, ctxId uint32, port uint64) (net.Conn, error) {
+		return vsock.Dial(ctxId, uint32(port), nil)
+	}
+	listenFunc := func(ctx context.Context, ctxId uint32, port uint64) (net.Listener, error) {
+		return vsock.ListenContextID(ctxId, uint32(port), nil)
+	}
+
+	vsockForwarder, err := NewVsockForwarder(ctx, 0, p.StdinPort, p.StdoutPort, p.StderrPort, dialFunc, listenFunc)
+	if err != nil {
+		return nil, err
+	}
+
+	stdinConn, stdoutConn, stderrConn, err := ForwardDialers(ctx, vsockForwarder, p.stdinReader, p.stdoutWriter, p.stderrWriter)
+	if err != nil {
+		return nil, err
+	}
+
+	p.StdinConn = stdinConn
+	p.StdoutConn = stdoutConn
+	p.StderrConn = stderrConn
+
+	return p, nil
+}
+
+func (p *HostVsockProxyIo) Close() error {
+	go p.stdinWriter.Close()
+	go p.stdoutReader.Close()
+	go p.stderrReader.Close()
+	return nil
+}
+
+func (p *HostVsockProxyIo) Stdin() io.WriteCloser {
+	return p.stdinWriter
+}
+
+func (p *HostVsockProxyIo) Stdout() io.ReadCloser {
+	return p.stdoutReader
+}
+
+func (p *HostVsockProxyIo) Stderr() io.ReadCloser {
+	return p.stderrReader
+}
+
+func (p *HostVsockProxyIo) Set(stdio *exec.Cmd) {
+}
+
+type HostUnixProxyIo struct {
+	StdinPath  string
+	StdoutPath string
+	StderrPath string
+
+	StdinConn  net.Conn
+	StdoutConn net.Conn
+	StderrConn net.Conn
+
+	stdinReader  io.ReadCloser
+	stdinWriter  io.WriteCloser
+	stdoutReader io.ReadCloser
+	stdoutWriter io.WriteCloser
+	stderrReader io.ReadCloser
+	stderrWriter io.WriteCloser
+}
+
+func NewHostUnixProxyIo(ctx context.Context, opts ...gorunc.IOOpt) (*HostUnixProxyIo, error) {
+	p := &HostUnixProxyIo{}
+
+	optd := &gorunc.IOOption{}
+	for _, opt := range opts {
+		opt(optd)
+	}
+
+	tempDir := os.TempDir()
+
+	if optd.OpenStdin {
+		p.StdinPath = filepath.Join(tempDir, fmt.Sprintf("runv-stdin-%d.sock", clientUnixCounter.Add(1)))
+		p.stdinReader, p.stdinWriter = io.Pipe()
+	}
+	if optd.OpenStdout {
+		p.StdoutPath = filepath.Join(tempDir, fmt.Sprintf("runv-stdout-%d.sock", clientUnixCounter.Add(1)))
+		p.stdoutReader, p.stdoutWriter = io.Pipe()
+	}
+	if optd.OpenStderr {
+		p.StderrPath = filepath.Join(tempDir, fmt.Sprintf("runv-stderr-%d.sock", clientUnixCounter.Add(1)))
+		p.stderrReader, p.stderrWriter = io.Pipe()
+	}
+
+	unixForwarder, err := NewUnixForwarder(ctx, p.StdinPath, p.StdoutPath, p.StderrPath)
+	if err != nil {
+		return nil, err
+	}
+
+	stdinConn, stdoutConn, stderrConn, err := ForwardDialers(ctx, unixForwarder, p.stdinReader, p.stdoutWriter, p.stderrWriter)
+	if err != nil {
+		return nil, err
+	}
+
+	p.StdinConn = stdinConn
+	p.StdoutConn = stdoutConn
+	p.StderrConn = stderrConn
+
+	return p, nil
+}
+
+func (p *HostUnixProxyIo) Close() error {
+	if p.stdinWriter != nil {
+		go p.stdinWriter.Close()
+	}
+	if p.stdoutReader != nil {
+		go p.stdoutReader.Close()
+	}
+	if p.stderrReader != nil {
+		go p.stderrReader.Close()
+	}
+
+	// Clean up socket files
+	if p.StdinPath != "" {
+		os.Remove(p.StdinPath)
+	}
+	if p.StdoutPath != "" {
+		os.Remove(p.StdoutPath)
+	}
+	if p.StderrPath != "" {
+		os.Remove(p.StderrPath)
+	}
+
+	return nil
+}
+
+func (p *HostUnixProxyIo) Stdin() io.WriteCloser {
+	return p.stdinWriter
+}
+
+func (p *HostUnixProxyIo) Stdout() io.ReadCloser {
+	return p.stdoutReader
+}
+
+func (p *HostUnixProxyIo) Stderr() io.ReadCloser {
+	return p.stderrReader
+}
+
+func (p *HostUnixProxyIo) Set(stdio *exec.Cmd) {
+}
+
+type HostNullIo struct {
+	IO
+}
+
+func NewHostNullIo() (*HostNullIo, error) {
+	io, err := gorunc.NewNullIO()
+	if err != nil {
+		return nil, err
+	}
+	return &HostNullIo{
+		IO: io,
+	}, nil
+}

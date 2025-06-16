@@ -339,11 +339,14 @@ message RuncUnixIO {
 	string stderr_path = 3;
 }
 
+message RuncNullIO {}
+
 message RuncIO {
 	uint64 io_reference_id = 1;
 	oneof io {
 		RuncVsockIO vsock = 2;
 		RuncUnixIO  unix  = 3;
+		RuncNullIO  null  = 4;
 	}
 }
 

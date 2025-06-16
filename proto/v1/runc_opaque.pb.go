@@ -679,6 +679,20 @@ func NewRuncUnixIOE(b *RuncUnixIO_builder) (*RuncUnixIO, error) {
 	return m, nil
 }
 
+// NewRuncNullIO creates a new RuncNullIO using the builder
+func NewRuncNullIO(b *RuncNullIO_builder) *RuncNullIO {
+	return b.Build()
+}
+
+// NewRuncNullIOE creates a new RuncNullIO using the builder with validation
+func NewRuncNullIOE(b *RuncNullIO_builder) (*RuncNullIO, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // NewRuncIO creates a new RuncIO using the builder
 func NewRuncIO(b *RuncIO_builder) *RuncIO {
 	return b.Build()
@@ -732,6 +746,29 @@ func NewRuncIO_WithUnixE(innerBuilder *RuncUnixIO_builder) (*RuncIO, error) {
 	}
 	m := NewRuncIO(&RuncIO_builder{
 		Unix: inner,
+	})
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// NewRuncIO_WithNull creates a new RuncIO with the Null field set using the builder
+func NewRuncIO_WithNull(innerBuilder *RuncNullIO_builder) *RuncIO {
+	inner := NewRuncNullIO(innerBuilder)
+	return NewRuncIO(&RuncIO_builder{
+		Null: inner,
+	})
+}
+
+// NewRuncIO_WithNullE creates a new RuncIO with the Null field set using the builder with validation
+func NewRuncIO_WithNullE(innerBuilder *RuncNullIO_builder) (*RuncIO, error) {
+	inner, err := NewRuncNullIOE(innerBuilder)
+	if err != nil {
+		return nil, err
+	}
+	m := NewRuncIO(&RuncIO_builder{
+		Null: inner,
 	})
 	if err := protovalidate.Validate(m); err != nil {
 		return nil, err
