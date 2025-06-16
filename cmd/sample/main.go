@@ -31,7 +31,10 @@ func server(ctx context.Context, logPath string) error {
 		return err
 	}
 
-	logging.NewDefaultDevLogger("server", proxySock)
+	logging.NewDefaultDevLogger("server", proxySock,
+		logging.WithValue(slog.Int("pid", os.Getpid())),
+		logging.WithValue(slog.Int("ppid", os.Getppid())),
+	)
 
 	plugin.Serve(&plugin.ServeConfig{
 		HandshakeConfig: plug.Handshake,
@@ -45,7 +48,12 @@ func server(ctx context.Context, logPath string) error {
 }
 
 func client(ctx context.Context, command string) error {
-	logging.NewDefaultDevLogger("client", os.Stdout)
+	logging.NewDefaultDevLogger(
+		"client",
+		os.Stdout,
+		logging.WithValue(slog.Int("pid", os.Getpid())),
+		logging.WithValue(slog.Int("ppid", os.Getppid())),
+	)
 
 	proxySock, err := setupClientLogProxy(ctx, os.Stdout)
 	if err != nil {

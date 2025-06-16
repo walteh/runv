@@ -32,7 +32,6 @@ const (
 	RuncService_Pause_FullMethodName       = "/runv.v1.RuncService/Pause"
 	RuncService_Resume_FullMethodName      = "/runv.v1.RuncService/Resume"
 	RuncService_Ps_FullMethodName          = "/runv.v1.RuncService/Ps"
-	RuncService_Top_FullMethodName         = "/runv.v1.RuncService/Top"
 	RuncService_Version_FullMethodName     = "/runv.v1.RuncService/Version"
 	RuncService_Checkpoint_FullMethodName  = "/runv.v1.RuncService/Checkpoint"
 	RuncService_Restore_FullMethodName     = "/runv.v1.RuncService/Restore"
@@ -40,6 +39,7 @@ const (
 	RuncService_Update_FullMethodName      = "/runv.v1.RuncService/Update"
 	RuncService_LogFilePath_FullMethodName = "/runv.v1.RuncService/LogFilePath"
 	RuncService_CloseIO_FullMethodName     = "/runv.v1.RuncService/CloseIO"
+	RuncService_Top_FullMethodName         = "/runv.v1.RuncService/Top"
 )
 
 // RuncServiceClient is the client API for RuncService service.
@@ -72,8 +72,6 @@ type RuncServiceClient interface {
 	Resume(ctx context.Context, in *RuncResumeRequest, opts ...grpc.CallOption) (*RuncResumeResponse, error)
 	// Ps lists all the processes inside the container returning their pids
 	Ps(ctx context.Context, in *RuncPsRequest, opts ...grpc.CallOption) (*RuncPsResponse, error)
-	// Top lists all the processes inside the container returning the full ps data
-	Top(ctx context.Context, in *RuncTopRequest, opts ...grpc.CallOption) (*RuncTopResponse, error)
 	// Version returns the runc and runtime-spec versions
 	Version(ctx context.Context, in *RuncVersionRequest, opts ...grpc.CallOption) (*RuncVersionResponse, error)
 	// Checkpoint checkpoints the container
@@ -86,6 +84,7 @@ type RuncServiceClient interface {
 	Update(ctx context.Context, in *RuncUpdateRequest, opts ...grpc.CallOption) (*RuncUpdateResponse, error)
 	LogFilePath(ctx context.Context, in *RuncLogFilePathRequest, opts ...grpc.CallOption) (*RuncLogFilePathResponse, error)
 	CloseIO(ctx context.Context, in *RuncCloseIORequest, opts ...grpc.CallOption) (*RuncCloseIOResponse, error)
+	Top(ctx context.Context, in *RuncTopRequest, opts ...grpc.CallOption) (*RuncTopResponse, error)
 }
 
 type runcServiceClient struct {
@@ -226,16 +225,6 @@ func (c *runcServiceClient) Ps(ctx context.Context, in *RuncPsRequest, opts ...g
 	return out, nil
 }
 
-func (c *runcServiceClient) Top(ctx context.Context, in *RuncTopRequest, opts ...grpc.CallOption) (*RuncTopResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RuncTopResponse)
-	err := c.cc.Invoke(ctx, RuncService_Top_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *runcServiceClient) Version(ctx context.Context, in *RuncVersionRequest, opts ...grpc.CallOption) (*RuncVersionResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RuncVersionResponse)
@@ -315,6 +304,16 @@ func (c *runcServiceClient) CloseIO(ctx context.Context, in *RuncCloseIORequest,
 	return out, nil
 }
 
+func (c *runcServiceClient) Top(ctx context.Context, in *RuncTopRequest, opts ...grpc.CallOption) (*RuncTopResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RuncTopResponse)
+	err := c.cc.Invoke(ctx, RuncService_Top_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RuncServiceServer is the server API for RuncService service.
 // All implementations should embed UnimplementedRuncServiceServer
 // for forward compatibility.
@@ -345,8 +344,6 @@ type RuncServiceServer interface {
 	Resume(context.Context, *RuncResumeRequest) (*RuncResumeResponse, error)
 	// Ps lists all the processes inside the container returning their pids
 	Ps(context.Context, *RuncPsRequest) (*RuncPsResponse, error)
-	// Top lists all the processes inside the container returning the full ps data
-	Top(context.Context, *RuncTopRequest) (*RuncTopResponse, error)
 	// Version returns the runc and runtime-spec versions
 	Version(context.Context, *RuncVersionRequest) (*RuncVersionResponse, error)
 	// Checkpoint checkpoints the container
@@ -359,6 +356,7 @@ type RuncServiceServer interface {
 	Update(context.Context, *RuncUpdateRequest) (*RuncUpdateResponse, error)
 	LogFilePath(context.Context, *RuncLogFilePathRequest) (*RuncLogFilePathResponse, error)
 	CloseIO(context.Context, *RuncCloseIORequest) (*RuncCloseIOResponse, error)
+	Top(context.Context, *RuncTopRequest) (*RuncTopResponse, error)
 }
 
 // UnimplementedRuncServiceServer should be embedded to have
@@ -407,9 +405,6 @@ func (UnimplementedRuncServiceServer) Resume(context.Context, *RuncResumeRequest
 func (UnimplementedRuncServiceServer) Ps(context.Context, *RuncPsRequest) (*RuncPsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Ps not implemented")
 }
-func (UnimplementedRuncServiceServer) Top(context.Context, *RuncTopRequest) (*RuncTopResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Top not implemented")
-}
 func (UnimplementedRuncServiceServer) Version(context.Context, *RuncVersionRequest) (*RuncVersionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Version not implemented")
 }
@@ -430,6 +425,9 @@ func (UnimplementedRuncServiceServer) LogFilePath(context.Context, *RuncLogFileP
 }
 func (UnimplementedRuncServiceServer) CloseIO(context.Context, *RuncCloseIORequest) (*RuncCloseIOResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CloseIO not implemented")
+}
+func (UnimplementedRuncServiceServer) Top(context.Context, *RuncTopRequest) (*RuncTopResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Top not implemented")
 }
 func (UnimplementedRuncServiceServer) testEmbeddedByValue() {}
 
@@ -685,24 +683,6 @@ func _RuncService_Ps_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuncService_Top_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RuncTopRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RuncServiceServer).Top(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: RuncService_Top_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RuncServiceServer).Top(ctx, req.(*RuncTopRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _RuncService_Version_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RuncVersionRequest)
 	if err := dec(in); err != nil {
@@ -822,6 +802,24 @@ func _RuncService_CloseIO_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RuncService_Top_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RuncTopRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RuncServiceServer).Top(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RuncService_Top_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RuncServiceServer).Top(ctx, req.(*RuncTopRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RuncService_ServiceDesc is the grpc.ServiceDesc for RuncService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -882,10 +880,6 @@ var RuncService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _RuncService_Ps_Handler,
 		},
 		{
-			MethodName: "Top",
-			Handler:    _RuncService_Top_Handler,
-		},
-		{
 			MethodName: "Version",
 			Handler:    _RuncService_Version_Handler,
 		},
@@ -908,6 +902,10 @@ var RuncService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CloseIO",
 			Handler:    _RuncService_CloseIO_Handler,
+		},
+		{
+			MethodName: "Top",
+			Handler:    _RuncService_Top_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

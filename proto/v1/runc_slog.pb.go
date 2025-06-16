@@ -280,19 +280,15 @@ func (x *RuncRunRequest) LogValue() slog.Value {
 	if x == nil {
 		return slog.AnyValue(nil)
 	}
-	attrs := make([]slog.Attr, 0, 7)
+	attrs := make([]slog.Attr, 0, 3)
 	attrs = append(attrs, slog.String("id", x.GetId()))
 	attrs = append(attrs, slog.String("bundle", x.GetBundle()))
-	attrs = append(attrs, slog.Bool("detach", x.GetDetach()))
-	attrs = append(attrs, slog.Bool("no_pivot", x.GetNoPivot()))
-	attrs = append(attrs, slog.Bool("no_new_keyring", x.GetNoNewKeyring()))
-	attrs = append(attrs, slog.String("pid_file", x.GetPidFile()))
-	if len(x.GetExtraArgs()) != 0 {
-		attrs6 := make([]slog.Attr, 0, len(x.GetExtraArgs()))
-		for i, v := range x.GetExtraArgs() {
-			attrs6 = append(attrs6, slog.String(fmt.Sprintf("%d", i), v))
+	if x.GetOptions() != nil {
+		if v, ok := interface{}(x.GetOptions()).(slog.LogValuer); ok {
+			attrs = append(attrs, slog.Attr{Key: "options", Value: v.LogValue()})
+		} else {
+			attrs = append(attrs, slog.Any("options", x.GetOptions()))
 		}
-		attrs = append(attrs, slog.Any("extra_args", attrs6))
 	}
 	return slog.GroupValue(attrs...)
 }
@@ -482,58 +478,6 @@ func (x *RuncPsResponse) LogValue() slog.Value {
 		attrs = append(attrs, slog.Any("pids", attrs0))
 	}
 	attrs = append(attrs, slog.String("go_error", x.GetGoError()))
-	return slog.GroupValue(attrs...)
-}
-
-func (x *RuncTopRequest) LogValue() slog.Value {
-	if x == nil {
-		return slog.AnyValue(nil)
-	}
-	attrs := make([]slog.Attr, 0, 2)
-	attrs = append(attrs, slog.String("id", x.GetId()))
-	attrs = append(attrs, slog.String("ps_options", x.GetPsOptions()))
-	return slog.GroupValue(attrs...)
-}
-
-func (x *RuncTopResponse) LogValue() slog.Value {
-	if x == nil {
-		return slog.AnyValue(nil)
-	}
-	attrs := make([]slog.Attr, 0, 3)
-	if len(x.GetHeaders()) != 0 {
-		attrs0 := make([]slog.Attr, 0, len(x.GetHeaders()))
-		for i, v := range x.GetHeaders() {
-			attrs0 = append(attrs0, slog.String(fmt.Sprintf("%d", i), v))
-		}
-		attrs = append(attrs, slog.Any("headers", attrs0))
-	}
-	if len(x.GetProcesses()) != 0 {
-		attrs1 := make([]slog.Attr, 0, len(x.GetProcesses()))
-		for i, v := range x.GetProcesses() {
-			if v, ok := interface{}(v).(slog.LogValuer); ok {
-				attrs1 = append(attrs1, slog.Attr{Key: fmt.Sprintf("%d", i), Value: v.LogValue()})
-			} else {
-				attrs1 = append(attrs1, slog.Any(fmt.Sprintf("%d", i), v))
-			}
-		}
-		attrs = append(attrs, slog.Any("processes", attrs1))
-	}
-	attrs = append(attrs, slog.String("go_error", x.GetGoError()))
-	return slog.GroupValue(attrs...)
-}
-
-func (x *RuncProcessData) LogValue() slog.Value {
-	if x == nil {
-		return slog.AnyValue(nil)
-	}
-	attrs := make([]slog.Attr, 0, 1)
-	if len(x.GetData()) != 0 {
-		attrs0 := make([]slog.Attr, 0, len(x.GetData()))
-		for i, v := range x.GetData() {
-			attrs0 = append(attrs0, slog.String(fmt.Sprintf("%d", i), v))
-		}
-		attrs = append(attrs, slog.Any("data", attrs0))
-	}
 	return slog.GroupValue(attrs...)
 }
 
@@ -867,5 +811,72 @@ func (x *RuncLinuxResources) LogValue() slog.Value {
 	}
 	attrs := make([]slog.Attr, 0, 1)
 	attrs = append(attrs, slog.Any("raw_json", x.GetRawJson()))
+	return slog.GroupValue(attrs...)
+}
+
+func (x *RuncTopRequest) LogValue() slog.Value {
+	if x == nil {
+		return slog.AnyValue(nil)
+	}
+	attrs := make([]slog.Attr, 0, 2)
+	attrs = append(attrs, slog.String("id", x.GetId()))
+	attrs = append(attrs, slog.String("ps_options", x.GetPsOptions()))
+	return slog.GroupValue(attrs...)
+}
+
+func (x *RuncTopResponse) LogValue() slog.Value {
+	if x == nil {
+		return slog.AnyValue(nil)
+	}
+	attrs := make([]slog.Attr, 0, 2)
+	if x.GetResults() != nil {
+		if v, ok := interface{}(x.GetResults()).(slog.LogValuer); ok {
+			attrs = append(attrs, slog.Attr{Key: "results", Value: v.LogValue()})
+		} else {
+			attrs = append(attrs, slog.Any("results", x.GetResults()))
+		}
+	}
+	attrs = append(attrs, slog.String("go_error", x.GetGoError()))
+	return slog.GroupValue(attrs...)
+}
+
+func (x *RuncTopResults) LogValue() slog.Value {
+	if x == nil {
+		return slog.AnyValue(nil)
+	}
+	attrs := make([]slog.Attr, 0, 2)
+	if len(x.GetHeaders()) != 0 {
+		attrs0 := make([]slog.Attr, 0, len(x.GetHeaders()))
+		for i, v := range x.GetHeaders() {
+			attrs0 = append(attrs0, slog.String(fmt.Sprintf("%d", i), v))
+		}
+		attrs = append(attrs, slog.Any("headers", attrs0))
+	}
+	if len(x.GetProcesses()) != 0 {
+		attrs1 := make([]slog.Attr, 0, len(x.GetProcesses()))
+		for i, v := range x.GetProcesses() {
+			if v, ok := interface{}(v).(slog.LogValuer); ok {
+				attrs1 = append(attrs1, slog.Attr{Key: fmt.Sprintf("%d", i), Value: v.LogValue()})
+			} else {
+				attrs1 = append(attrs1, slog.Any(fmt.Sprintf("%d", i), v))
+			}
+		}
+		attrs = append(attrs, slog.Any("processes", attrs1))
+	}
+	return slog.GroupValue(attrs...)
+}
+
+func (x *RuncTopProcesses) LogValue() slog.Value {
+	if x == nil {
+		return slog.AnyValue(nil)
+	}
+	attrs := make([]slog.Attr, 0, 1)
+	if len(x.GetProcess()) != 0 {
+		attrs0 := make([]slog.Attr, 0, len(x.GetProcess()))
+		for i, v := range x.GetProcess() {
+			attrs0 = append(attrs0, slog.String(fmt.Sprintf("%d", i), v))
+		}
+		attrs = append(attrs, slog.Any("process", attrs0))
+	}
 	return slog.GroupValue(attrs...)
 }

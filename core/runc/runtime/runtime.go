@@ -26,10 +26,12 @@ type RuntimeCreator interface {
 //go:mock
 type Runtime interface {
 	// io: yes
+	// ✅
 	NewPipeIO(ioUID, ioGID int, opts ...gorunc.IOOpt) (IO, error)
 	// io: yes
 	NewTempConsoleSocket() (Socket, error)
 	// io: yes
+	// ✅
 	NewNullIO() (IO, error)
 	// io: yes
 	// console: yes
@@ -44,9 +46,12 @@ type Runtime interface {
 	Checkpoint(ctx context.Context, id string, opts *gorunc.CheckpointOpts, actions ...gorunc.CheckpointAction) error
 	// io: yes
 	Restore(ctx context.Context, id, bundle string, opts *gorunc.RestoreOpts) (int, error)
+	// ✅
 	Kill(ctx context.Context, id string, signal int, opts *gorunc.KillOpts) error
 	Start(ctx context.Context, id string) error
+	// ✅
 	Delete(ctx context.Context, id string, opts *gorunc.DeleteOpts) error
+	// ✅
 	Update(ctx context.Context, id string, resources *specs.LinuxResources) error
 	LogFilePath() string
 	Pause(ctx context.Context, id string) error

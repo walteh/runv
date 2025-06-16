@@ -54,6 +54,10 @@ func WithInterceptHclog(opt bool) OptLoggerOptsSetter {
 	return func(o *LoggerOpts) { o.interceptHclog = opt }
 }
 
+func WithValues(opt []slog.Attr) OptLoggerOptsSetter {
+	return func(o *LoggerOpts) { o.values = opt }
+}
+
 func WithDelayedHandlerCreatorOpts(opt []OptLoggerOptsSetter) OptLoggerOptsSetter {
 	return func(o *LoggerOpts) { o.delayedHandlerCreatorOpts = opt }
 }

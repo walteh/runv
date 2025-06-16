@@ -61,10 +61,6 @@ service RuncService {
 	rpc Ps(RuncPsRequest) returns (RuncPsResponse) {}
 
 
-	// Top lists all the processes inside the container returning the full ps data
-	rpc Top(RuncTopRequest) returns (RuncTopResponse) {}
-
-
 	// Version returns the runc and runtime-spec versions
 	rpc Version(RuncVersionRequest) returns (RuncVersionResponse) {}
 
@@ -89,6 +85,11 @@ service RuncService {
 
 
 	rpc CloseIO(RuncCloseIORequest) returns (RuncCloseIOResponse) {}
+
+
+	// Top lists all the processes inside the container returning the full ps data
+
+	rpc Top(RuncTopRequest) returns (RuncTopResponse) {}
 }
 
 message RuncCloseIORequest {
@@ -192,13 +193,9 @@ message RuncExecResponse {
 
 // Run related messages
 message RuncRunRequest {
-	string          id             = 1;
-	string          bundle         = 2;
-	bool            detach         = 3;
-	bool            no_pivot       = 4;
-	bool            no_new_keyring = 5;
-	string          pid_file       = 6;
-	repeated string extra_args     = 7;
+	string            id      = 1;
+	string            bundle  = 2;
+	RuncCreateOptions options = 3;
 }
 
 message RuncRunResponse {
@@ -277,22 +274,6 @@ message RuncPsRequest {
 message RuncPsResponse {
 	repeated int32 pids     = 1;
 	string         go_error = 2;
-}
-
-// Top related messages
-message RuncTopRequest {
-	string id         = 1;
-	string ps_options = 2;
-}
-
-message RuncTopResponse {
-	repeated string          headers   = 1;
-	repeated RuncProcessData processes = 2;
-	string                   go_error  = 3;
-}
-
-message RuncProcessData {
-	repeated string data = 1;
 }
 
 // Version related messages
@@ -415,4 +396,23 @@ message RuncUpdateResponse {
 
 message RuncLinuxResources {
 	bytes raw_json = 1;
+}
+
+message RuncTopRequest {
+	string id         = 1;
+	string ps_options = 2;
+}
+
+message RuncTopResponse {
+	RuncTopResults results  = 1;
+	string         go_error = 2;
+}
+
+message RuncTopResults {
+	repeated string           headers   = 1;
+	repeated RuncTopProcesses processes = 2;
+}
+
+message RuncTopProcesses {
+	repeated string process = 1;
 }

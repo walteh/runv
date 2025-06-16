@@ -14,6 +14,21 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
+//go:opts
+type LoggerOpts struct {
+	handlerOptions    *slog.HandlerOptions
+	fallbackWriter    io.Writer
+	processName       string
+	replacers         []SlogReplacer
+	handlers          []slog.Handler
+	makeDefaultLogger bool
+	interceptLogrus   bool
+	interceptHclog    bool
+	values            []slog.Attr
+
+	delayedHandlerCreatorOpts []OptLoggerOptsSetter `opts:"-"`
+}
+
 func NewDefaultDevLogger(name string, writer io.Writer, opts ...OptLoggerOptsSetter) *slog.Logger {
 	opts = append(opts,
 		WithDevTermHanlder(writer),
@@ -83,6 +98,10 @@ func NewLogger(opts ...OptLoggerOptsSetter) *slog.Logger {
 
 	l := slog.New(ctxHandler)
 
+	for _, v := range copts.values {
+		l = l.With(v)
+	}
+
 	if copts.makeDefaultLogger {
 		slog.SetDefault(l)
 	}
@@ -98,17 +117,10 @@ func NewLogger(opts ...OptLoggerOptsSetter) *slog.Logger {
 	return l
 }
 
-//go:opts
-type LoggerOpts struct {
-	handlerOptions            *slog.HandlerOptions
-	fallbackWriter            io.Writer
-	processName               string
-	replacers                 []SlogReplacer
-	handlers                  []slog.Handler
-	makeDefaultLogger         bool
-	interceptLogrus           bool
-	interceptHclog            bool
-	delayedHandlerCreatorOpts []OptLoggerOptsSetter `opts:"-"`
+func WithValue(v slog.Attr) OptLoggerOptsSetter {
+	return func(o *LoggerOpts) {
+		o.values = append(o.values, v)
+	}
 }
 
 func WithDevTermHanlder(writer io.Writer) OptLoggerOptsSetter {

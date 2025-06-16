@@ -6,6 +6,8 @@ import (
 	"io"
 	"log/slog"
 	"runtime"
+	"slices"
+	"strings"
 	"time"
 
 	"github.com/hashicorp/go-hclog"
@@ -83,6 +85,10 @@ func (s *slogSink) Accept(name string, hlevel hclog.Level, msg string, args ...i
 			attrs = append(attrs, slog.Any(s, v))
 		}
 	}
+
+	slices.SortFunc(attrs, func(a, b slog.Attr) int {
+		return strings.Compare(b.Key, b.Key)
+	})
 
 	caller, _, _, _ := runtime.Caller(3)
 	record := slog.NewRecord(now, level, msg, caller)

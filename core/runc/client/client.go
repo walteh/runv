@@ -99,19 +99,9 @@ func (c *Client) Ping(ctx context.Context) error {
 	return err
 }
 
-// List returns all containers created inside the provided runc root directory.
-func (c *Client) List(ctx context.Context) ([]*gorunc.Container, error) {
-	panic("unimplemented")
-}
-
-// State returns the state for the container provided by id.
-func (c *Client) State(ctx context.Context, id string) (*gorunc.Container, error) {
-	panic("unimplemented")
-}
-
 // Create creates a new container.
 func (c *Client) Create(ctx context.Context, id, bundle string, options *gorunc.CreateOpts) error {
-	conv, err := conversion.ConvertCreateOptsOut(ctx, options)
+	conv, err := conversion.ConvertCreateOptsToProto(ctx, options)
 	if err != nil {
 		return err
 	}
@@ -146,16 +136,11 @@ func (c *Client) Start(ctx context.Context, id string) error {
 	return nil
 }
 
-// Run runs the create, start, delete lifecycle of the container.
-func (c *Client) Run(ctx context.Context, id, bundle string, options *gorunc.CreateOpts) (int, error) {
-	panic("unimplemented")
-}
-
 // Delete deletes a container.
 func (c *Client) Delete(ctx context.Context, id string, opts *gorunc.DeleteOpts) error {
 	req := &runvv1.RuncDeleteRequest{}
 	req.SetId(id)
-	req.SetOptions(conversion.ConvertDeleteOptsOut(opts))
+	req.SetOptions(conversion.ConvertDeleteOptsToProto(opts))
 
 	resp, err := c.rpc.Delete(ctx, req)
 	if err != nil {
@@ -172,7 +157,7 @@ func (c *Client) Kill(ctx context.Context, id string, signal int, opts *gorunc.K
 	req := &runvv1.RuncKillRequest{}
 	req.SetId(id)
 	req.SetSignal(int32(signal))
-	req.SetOptions(conversion.ConvertKillOptsOut(opts))
+	req.SetOptions(conversion.ConvertKillOptsToProto(opts))
 
 	resp, err := c.rpc.Kill(ctx, req)
 	if err != nil {
@@ -182,21 +167,6 @@ func (c *Client) Kill(ctx context.Context, id string, signal int, opts *gorunc.K
 		return errors.New(resp.GetGoError())
 	}
 	return nil
-}
-
-// Stats returns the stats for a container like cpu, memory, and io.
-func (c *Client) Stats(ctx context.Context, id string) (*gorunc.Stats, error) {
-	req := &runvv1.RuncStatsRequest{}
-	req.SetId(id)
-
-	resp, err := c.rpc.Stats(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-	if resp.GetGoError() != "" {
-		return nil, errors.New(resp.GetGoError())
-	}
-	return convertStats(resp.GetStats()), nil
 }
 
 // Pause pauses the container with the provided id.
@@ -248,55 +218,18 @@ func (c *Client) Ps(ctx context.Context, id string) ([]int, error) {
 	return pids, nil
 }
 
-// Top lists all the processes inside the container returning the full ps data.
-func (c *Client) Top(ctx context.Context, id string, psOptions string) ([]string, [][]string, error) {
-	req := &runvv1.RuncTopRequest{}
-	req.SetId(id)
-	req.SetPsOptions(psOptions)
-
-	resp, err := c.rpc.Top(ctx, req)
-	if err != nil {
-		return nil, nil, err
-	}
-	if resp.GetGoError() != "" {
-		return nil, nil, errors.New(resp.GetGoError())
-	}
-
-	processes := make([][]string, len(resp.GetProcesses()))
-	for i, process := range resp.GetProcesses() {
-		processes[i] = process.GetData()
-	}
-
-	return resp.GetHeaders(), processes, nil
-}
-
-// Version returns the runc and runtime-spec versions.
-func (c *Client) Version(ctx context.Context) (gorunc.Version, error) {
-	resp, err := c.rpc.Version(ctx, &runvv1.RuncVersionRequest{})
-	if err != nil {
-		return gorunc.Version{}, err
-	}
-	if resp.GetGoError() != "" {
-		return gorunc.Version{}, errors.New(resp.GetGoError())
-	}
-	return gorunc.Version{
-		Runc:   resp.GetRunc(),
-		Spec:   resp.GetSpec(),
-		Commit: resp.GetCommit(),
-	}, nil
-}
-
 // Exec executes an additional process inside the container.
 func (c *Client) Exec(ctx context.Context, id string, spec specs.Process, options *gorunc.ExecOpts) error {
 	req := &runvv1.RuncExecRequest{}
 	req.SetId(id)
-	req.SetOptions(conversion.ConvertExecOptsOut(options))
 
-	specOut, err := conversion.ConvertProcessSpecOut(&spec)
+	specOut, err := conversion.ConvertProcessSpecToProto(&spec)
 	if err != nil {
 		return err
 	}
 	req.SetSpec(specOut)
+
+	req.SetOptions(conversion.ConvertExecOptsToProto(options))
 
 	resp, err := c.rpc.Exec(ctx, req)
 	if err != nil {
@@ -311,8 +244,8 @@ func (c *Client) Exec(ctx context.Context, id string, spec specs.Process, option
 func (c *Client) Checkpoint(ctx context.Context, id string, options *gorunc.CheckpointOpts, actions ...gorunc.CheckpointAction) error {
 	req := &runvv1.RuncCheckpointRequest{}
 	req.SetId(id)
-	req.SetOptions(convertCheckpointOpts(options))
-	req.SetActions(convertCheckpointActions(actions...))
+	req.SetOptions(conversion.ConvertCheckpointOptsToProto(options))
+	req.SetActions(conversion.ConvertCheckpointActionsToProto(actions...))
 
 	resp, err := c.rpc.Checkpoint(ctx, req)
 	if err != nil {
@@ -322,6 +255,62 @@ func (c *Client) Checkpoint(ctx context.Context, id string, options *gorunc.Chec
 		return errors.New(resp.GetGoError())
 	}
 	return nil
+}
+
+func (c *Client) Restore(ctx context.Context, id, bundle string, options *gorunc.RestoreOpts) (int, error) {
+	req := &runvv1.RuncRestoreRequest{}
+	req.SetId(id)
+	req.SetBundle(bundle)
+	req.SetOptions(conversion.ConvertRestoreOptsToProto(options))
+
+	resp, err := c.rpc.Restore(ctx, req)
+	if err != nil {
+		return -1, err
+	}
+	if resp.GetGoError() != "" {
+		return -1, errors.New(resp.GetGoError())
+	}
+	return int(resp.GetStatus()), nil
+}
+
+////////////////////////////////////////////////////////////
+// RuntimeExtras
+////////////////////////////////////////////////////////////
+
+var _ runtime.RuntimeExtras = (*Client)(nil)
+
+// Stats returns the stats for a container like cpu, memory, and io.
+func (c *Client) Stats(ctx context.Context, id string) (*gorunc.Stats, error) {
+	req := &runvv1.RuncStatsRequest{}
+	req.SetId(id)
+
+	resp, err := c.rpc.Stats(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	if resp.GetGoError() != "" {
+		return nil, errors.New(resp.GetGoError())
+	}
+	stats, err := conversion.ConvertStatsFromProto(resp.GetStats())
+	if err != nil {
+		return nil, err
+	}
+	return stats, nil
+}
+
+// List returns all containers created inside the provided runc root directory.
+func (c *Client) List(ctx context.Context) ([]*gorunc.Container, error) {
+	panic("unimplemented")
+}
+
+// State returns the state for the container provided by id.
+func (c *Client) State(ctx context.Context, id string) (*gorunc.Container, error) {
+	panic("unimplemented")
+}
+
+// Run runs the create, start, delete lifecycle of the container.
+func (c *Client) Run(ctx context.Context, id, bundle string, options *gorunc.CreateOpts) (int, error) {
+	panic("unimplemented")
 }
 
 func (c *Client) Events(ctx context.Context, id string, duration time.Duration) (chan *gorunc.Event, error) {
@@ -347,77 +336,50 @@ func (c *Client) Events(ctx context.Context, id string, duration time.Duration) 
 				return
 			}
 
-			events <- convertEvent(event)
+			eventz, err := conversion.ConvertEventFromProto(event)
+			if err != nil {
+				slog.Error("failed to convert event", "error", err)
+				return
+			}
+
+			events <- eventz
 		}
 	}()
 
 	return events, nil
 }
 
-func (c *Client) Restore(ctx context.Context, id, bundle string, options *gorunc.RestoreOpts) (int, error) {
-	req := &runvv1.RuncRestoreRequest{}
+// Top lists all the processes inside the container returning the full ps data.
+func (c *Client) Top(ctx context.Context, id string, psOptions string) (*gorunc.TopResults, error) {
+	req := &runvv1.RuncTopRequest{}
 	req.SetId(id)
-	req.SetBundle(bundle)
-	req.SetOptions(conversion.ConvertRestoreOptsOut(options))
+	req.SetPsOptions(psOptions)
 
-	resp, err := c.rpc.Restore(ctx, req)
+	resp, err := c.rpc.Top(ctx, req)
 	if err != nil {
-		return -1, err
+		return nil, err
 	}
 	if resp.GetGoError() != "" {
-		return -1, errors.New(resp.GetGoError())
+		return nil, errors.New(resp.GetGoError())
 	}
-	return int(resp.GetStatus()), nil
+
+	results := conversion.ConvertTopResultsFromProto(resp.GetResults())
+
+	return results, nil
 }
 
-func convertCheckpointOpts(opts *gorunc.CheckpointOpts) *runvv1.RuncCheckpointOptions {
-	output := &runvv1.RuncCheckpointOptions{}
-
-	output.SetImagePath(opts.ImagePath)
-	output.SetWorkDir(opts.WorkDir)
-	output.SetParentPath(opts.ParentPath)
-	output.SetAllowOpenTcp(opts.AllowOpenTCP)
-	output.SetAllowExternalUnixSockets(opts.AllowExternalUnixSockets)
-	output.SetAllowTerminal(opts.AllowTerminal)
-	output.SetCriuPageServer(opts.CriuPageServer)
-	output.SetFileLocks(opts.FileLocks)
-	output.SetCgroups(string(opts.Cgroups))
-	output.SetEmptyNamespaces(opts.EmptyNamespaces)
-	output.SetLazyPages(opts.LazyPages)
-	output.SetStatusFile(opts.StatusFile.Name())
-	output.SetExtraArgs(opts.ExtraArgs)
-
-	return output
-}
-
-func convertCheckpointActions(actions ...gorunc.CheckpointAction) []*runvv1.RuncCheckpointAction {
-	output := make([]*runvv1.RuncCheckpointAction, len(actions))
-	for i, action := range actions {
-		tmp := &runvv1.RuncCheckpointAction{}
-		tmp.SetAction(action([]string{}))
-		output[i] = tmp
+// Version returns the runc and runtime-spec versions.
+func (c *Client) Version(ctx context.Context) (gorunc.Version, error) {
+	resp, err := c.rpc.Version(ctx, &runvv1.RuncVersionRequest{})
+	if err != nil {
+		return gorunc.Version{}, err
 	}
-	return output
-}
-
-func convertStats(stats *runvv1.RuncStats) *gorunc.Stats {
-	if stats == nil {
-		return nil
+	if resp.GetGoError() != "" {
+		return gorunc.Version{}, errors.New(resp.GetGoError())
 	}
-
-	return &gorunc.Stats{}
-}
-
-func convertEvent(event *runvv1.RuncEvent) *gorunc.Event {
-	var errz error
-	if event.GetErr() != "" {
-		errz = errors.New(event.GetErr())
-	}
-
-	return &gorunc.Event{
-		Type:  event.GetType(),
-		ID:    event.GetId(),
-		Stats: convertStats(event.GetStats()),
-		Err:   errz,
-	}
+	return gorunc.Version{
+		Runc:   resp.GetRunc(),
+		Spec:   resp.GetSpec(),
+		Commit: resp.GetCommit(),
+	}, nil
 }

@@ -525,48 +525,6 @@ func NewRuncPsResponseE(b *RuncPsResponse_builder) (*RuncPsResponse, error) {
 	return m, nil
 }
 
-// NewRuncTopRequest creates a new RuncTopRequest using the builder
-func NewRuncTopRequest(b *RuncTopRequest_builder) *RuncTopRequest {
-	return b.Build()
-}
-
-// NewRuncTopRequestE creates a new RuncTopRequest using the builder with validation
-func NewRuncTopRequestE(b *RuncTopRequest_builder) (*RuncTopRequest, error) {
-	m := b.Build()
-	if err := protovalidate.Validate(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-// NewRuncTopResponse creates a new RuncTopResponse using the builder
-func NewRuncTopResponse(b *RuncTopResponse_builder) *RuncTopResponse {
-	return b.Build()
-}
-
-// NewRuncTopResponseE creates a new RuncTopResponse using the builder with validation
-func NewRuncTopResponseE(b *RuncTopResponse_builder) (*RuncTopResponse, error) {
-	m := b.Build()
-	if err := protovalidate.Validate(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-// NewRuncProcessData creates a new RuncProcessData using the builder
-func NewRuncProcessData(b *RuncProcessData_builder) *RuncProcessData {
-	return b.Build()
-}
-
-// NewRuncProcessDataE creates a new RuncProcessData using the builder with validation
-func NewRuncProcessDataE(b *RuncProcessData_builder) (*RuncProcessData, error) {
-	m := b.Build()
-	if err := protovalidate.Validate(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
 // NewRuncVersionRequest creates a new RuncVersionRequest using the builder
 func NewRuncVersionRequest(b *RuncVersionRequest_builder) *RuncVersionRequest {
 	return b.Build()
@@ -909,6 +867,62 @@ func NewRuncLinuxResources(b *RuncLinuxResources_builder) *RuncLinuxResources {
 
 // NewRuncLinuxResourcesE creates a new RuncLinuxResources using the builder with validation
 func NewRuncLinuxResourcesE(b *RuncLinuxResources_builder) (*RuncLinuxResources, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// NewRuncTopRequest creates a new RuncTopRequest using the builder
+func NewRuncTopRequest(b *RuncTopRequest_builder) *RuncTopRequest {
+	return b.Build()
+}
+
+// NewRuncTopRequestE creates a new RuncTopRequest using the builder with validation
+func NewRuncTopRequestE(b *RuncTopRequest_builder) (*RuncTopRequest, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// NewRuncTopResponse creates a new RuncTopResponse using the builder
+func NewRuncTopResponse(b *RuncTopResponse_builder) *RuncTopResponse {
+	return b.Build()
+}
+
+// NewRuncTopResponseE creates a new RuncTopResponse using the builder with validation
+func NewRuncTopResponseE(b *RuncTopResponse_builder) (*RuncTopResponse, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// NewRuncTopResults creates a new RuncTopResults using the builder
+func NewRuncTopResults(b *RuncTopResults_builder) *RuncTopResults {
+	return b.Build()
+}
+
+// NewRuncTopResultsE creates a new RuncTopResults using the builder with validation
+func NewRuncTopResultsE(b *RuncTopResults_builder) (*RuncTopResults, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// NewRuncTopProcesses creates a new RuncTopProcesses using the builder
+func NewRuncTopProcesses(b *RuncTopProcesses_builder) *RuncTopProcesses {
+	return b.Build()
+}
+
+// NewRuncTopProcessesE creates a new RuncTopProcesses using the builder with validation
+func NewRuncTopProcessesE(b *RuncTopProcesses_builder) (*RuncTopProcesses, error) {
 	m := b.Build()
 	if err := protovalidate.Validate(m); err != nil {
 		return nil, err
