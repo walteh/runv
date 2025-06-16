@@ -11,8 +11,8 @@ import (
 
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
-	"github.com/walteh/runv/core/runc/plug"
 	"github.com/walteh/runv/core/runc/runtime"
+	"github.com/walteh/runv/core/runc/runtime/plug"
 	"github.com/walteh/runv/pkg/logging"
 
 	runtimemock "github.com/walteh/runv/gen/mocks/core/runc/runtime"
