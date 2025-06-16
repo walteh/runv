@@ -8,40 +8,72 @@ import (
 	"net"
 	"os"
 	"os/exec"
+	"path/filepath"
 
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"github.com/walteh/runv/core/runc/runtime"
+	goruncruntime "github.com/walteh/runv/core/runc/runtime/gorunc"
 	"github.com/walteh/runv/core/runc/runtime/plug"
 	"github.com/walteh/runv/pkg/logging"
+
+	server "github.com/walteh/runv/core/runc/server"
 
 	gorunc "github.com/containerd/go-runc"
 
 	runtimemock "github.com/walteh/runv/gen/mocks/core/runc/runtime"
 )
 
-var mockRuntime = &runtimemock.MockRuntime{
-	ReadPidFileFunc: func(ctx context.Context, path string) (int, error) {
-		return 1234, nil
-	},
-	SharedDirFunc: func() string {
-		return "/runv/shared"
-	},
+func newMockServer() *server.Server {
+	var mockRuntime = &runtimemock.MockRuntime{
+		ReadPidFileFunc: func(ctx context.Context, path string) (int, error) {
+			return 1234, nil
+		},
+		SharedDirFunc: func() string {
+			return "/runv/shared"
+		},
+	}
+
+	var mockSocketAllocator = &runtimemock.MockSocketAllocator{
+		AllocateSocketFunc: func(ctx context.Context) (runtime.AllocatedSocket, error) {
+			return nil, nil
+		},
+	}
+
+	var mockRuntimeExtras = &runtimemock.MockRuntimeExtras{
+		RunFunc: func(context1 context.Context, s string, s1 string, createOpts *gorunc.CreateOpts) (int, error) {
+			return 1234, nil
+		},
+	}
+	return server.NewServer(mockRuntime, mockRuntimeExtras, mockSocketAllocator)
 }
 
-var mockSocketAllocator = &runtimemock.MockSocketAllocator{
-	AllocateSocketFunc: func(ctx context.Context) (runtime.AllocatedSocket, error) {
-		return nil, nil
-	},
+func newRealServer(ctx context.Context) *server.Server {
+	wrkDir := "/tmp/runv-sample"
+
+	os.RemoveAll(wrkDir)
+
+	os.MkdirAll(filepath.Join(wrkDir, "root"), 0755)
+	os.MkdirAll(filepath.Join(wrkDir, "path"), 0755)
+
+	realRuntimeCreator := goruncruntime.GoRuncRuntimeCreator{}
+
+	realRuntime := realRuntimeCreator.Create(ctx, wrkDir, &runtime.RuntimeOptions{
+		Root:          filepath.Join(wrkDir, "root"),
+		Path:          filepath.Join(wrkDir, "path"),
+		Namespace:     "runv",
+		Runtime:       "runc",
+		SystemdCgroup: true,
+	})
+
+	realSocketAllocator := runtime.NewGuestUnixSocketAllocator(wrkDir)
+
+	var mockRuntimeExtras = &runtimemock.MockRuntimeExtras{}
+
+	return server.NewServer(realRuntime, mockRuntimeExtras, realSocketAllocator)
 }
 
-var mockRuntimeExtras = &runtimemock.MockRuntimeExtras{
-	RunFunc: func(context1 context.Context, s string, s1 string, createOpts *gorunc.CreateOpts) (int, error) {
-		return 1234, nil
-	},
-}
-
-func server(ctx context.Context, logPath string) error {
+func serverz(ctx context.Context, logPath string) error {
 	proxySock, err := setupServerLogProxy(ctx, logPath)
 	if err != nil {
 		return err
@@ -52,10 +84,12 @@ func server(ctx context.Context, logPath string) error {
 		logging.WithValue(slog.Int("ppid", os.Getppid())),
 	)
 
+	srv := newRealServer(ctx)
+
 	plugin.Serve(&plugin.ServeConfig{
 		HandshakeConfig: plug.Handshake,
 		Logger:          hclog.Default(),
-		Plugins:         plug.NewRuntimePluginSet(mockRuntime, mockRuntimeExtras, mockSocketAllocator),
+		Plugins:         plug.NewRuntimePluginSet(srv),
 		// A non-nil value here enables gRPC serving for this plugin...
 		GRPCServer: plugin.DefaultGRPCServer,
 	})
@@ -114,6 +148,13 @@ func client(ctx context.Context, command string) error {
 			return err
 		}
 		fmt.Println("pid: ", pid)
+	case "pong":
+		zd, err := kv.NewTempConsoleSocket(ctx)
+		if err != nil {
+			return err
+		}
+		zd.ReceiveMaster()
+		fmt.Println("pong")
 	default:
 		return fmt.Errorf("please only use 'ping', given: %q", os.Args[0])
 	}
@@ -132,7 +173,7 @@ func main() {
 			fmt.Printf("usage: %s server <log-path>\n", os.Args[0])
 			os.Exit(1)
 		}
-		if err := server(ctx, os.Args[2]); err != nil {
+		if err := serverz(ctx, os.Args[2]); err != nil {
 			fmt.Printf("error: %+v\n", err)
 			os.Exit(1)
 		}

@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
 	"syscall"
 
 	"github.com/mdlayher/vsock"
+	"go.uber.org/atomic"
 )
 
 type FileConn interface {
@@ -238,4 +240,28 @@ func NewGuestAllocatedVsockSocket(ctx context.Context, cid uint32, port uint32) 
 	}()
 
 	return guestConn, nil
+}
+
+var _ SocketAllocator = (*GuestUnixSocketAllocator)(nil)
+
+type GuestUnixSocketAllocator struct {
+	socketDir string
+}
+
+func NewGuestUnixSocketAllocator(socketDir string) *GuestUnixSocketAllocator {
+	return &GuestUnixSocketAllocator{socketDir: socketDir}
+}
+
+var guestUnixSocketCounter = atomic.NewInt64(0)
+
+// AllocateSocket implements SocketAllocator.
+func (g *GuestUnixSocketAllocator) AllocateSocket(ctx context.Context) (AllocatedSocket, error) {
+
+	unixSockPath := filepath.Join(g.socketDir, fmt.Sprintf("runv-%02d.sock", guestUnixSocketCounter.Add(1)))
+	rid := NewUnixSocketReferenceId(unixSockPath)
+	unixSock, err := NewHostAllocatedUnixSocket(ctx, unixSockPath, rid)
+	if err != nil {
+		return nil, err
+	}
+	return unixSock, nil
 }
