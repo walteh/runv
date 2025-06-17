@@ -6,14 +6,14 @@ import (
 
 	"gitlab.com/tozd/go/errors"
 
-	"github.com/walteh/runv/core/runc/runtime"
+	"github.com/walteh/runm/core/runc/runtime"
 
-	runvv1 "github.com/walteh/runv/proto/v1"
+	runmv1 "github.com/walteh/runm/proto/v1"
 )
 
-var _ runvv1.SocketAllocatorServiceServer = (*Server)(nil)
+var _ runmv1.SocketAllocatorServiceServer = (*Server)(nil)
 
-func (s *Server) AllocateSocketStream(req *runvv1.AllocateSocketStreamRequest, stream runvv1.SocketAllocatorService_AllocateSocketStreamServer) error {
+func (s *Server) AllocateSocketStream(req *runmv1.AllocateSocketStreamRequest, stream runmv1.SocketAllocatorService_AllocateSocketStreamServer) error {
 	as, err := s.socketAllocator.AllocateSocket(stream.Context())
 	if err != nil {
 		return err
@@ -21,7 +21,7 @@ func (s *Server) AllocateSocketStream(req *runvv1.AllocateSocketStreamRequest, s
 
 	referenceId := runtime.NewSocketReferenceId(as)
 
-	res := &runvv1.AllocateSocketStreamResponse{}
+	res := &runmv1.AllocateSocketStreamResponse{}
 	res.SetSocketReferenceId(referenceId)
 	if err := stream.Send(res); err != nil {
 		return err
@@ -46,32 +46,32 @@ func (s *Server) AllocateSocketStream(req *runvv1.AllocateSocketStreamRequest, s
 	}
 }
 
-func (s *Server) AllocateConsole(ctx context.Context, req *runvv1.AllocateConsoleRequest) (*runvv1.AllocateConsoleResponse, error) {
+func (s *Server) AllocateConsole(ctx context.Context, req *runmv1.AllocateConsoleRequest) (*runmv1.AllocateConsoleResponse, error) {
 	referenceId := runtime.NewConsoleReferenceId()
 	cs, err := s.runtime.NewTempConsoleSocket(ctx)
 	if err != nil {
 		return nil, errors.Errorf("failed to allocate console: %w", err)
 	}
 	s.state.StoreOpenConsole(referenceId, cs)
-	res := &runvv1.AllocateConsoleResponse{}
+	res := &runmv1.AllocateConsoleResponse{}
 	res.SetConsoleReferenceId(referenceId)
 	return res, nil
 }
 
-func (s *Server) AllocateIO(ctx context.Context, req *runvv1.AllocateIORequest) (*runvv1.AllocateIOResponse, error) {
+func (s *Server) AllocateIO(ctx context.Context, req *runmv1.AllocateIORequest) (*runmv1.AllocateIOResponse, error) {
 	ioref := runtime.NewIoReferenceId()
 	pio, err := s.runtime.NewPipeIO(ctx, 0, 0)
 	if err != nil {
 		return nil, errors.Errorf("failed to allocate io: %w", err)
 	}
 	s.state.StoreOpenIO(ioref, pio)
-	res := &runvv1.AllocateIOResponse{}
+	res := &runmv1.AllocateIOResponse{}
 	res.SetIoReferenceId(ioref)
 	return res, nil
 }
 
-// AllocateSocket implements runvv1.SocketAllocatorServiceServer.
-func (s *Server) AllocateSocket(ctx context.Context, req *runvv1.AllocateSocketRequest) (*runvv1.AllocateSocketResponse, error) {
+// AllocateSocket implements runmv1.SocketAllocatorServiceServer.
+func (s *Server) AllocateSocket(ctx context.Context, req *runmv1.AllocateSocketRequest) (*runmv1.AllocateSocketResponse, error) {
 	as, err := s.socketAllocator.AllocateSocket(ctx)
 	if err != nil {
 		return nil, errors.Errorf("failed to allocate socket: %w", err)
@@ -80,13 +80,13 @@ func (s *Server) AllocateSocket(ctx context.Context, req *runvv1.AllocateSocketR
 	referenceId := runtime.NewSocketReferenceId(as)
 	s.state.StoreOpenSocket(referenceId, as)
 
-	res := &runvv1.AllocateSocketResponse{}
+	res := &runmv1.AllocateSocketResponse{}
 	res.SetSocketReferenceId(referenceId)
 	return res, nil
 }
 
-// AllocateSockets implements runvv1.SocketAllocatorServiceServer.
-func (s *Server) AllocateSockets(ctx context.Context, req *runvv1.AllocateSocketsRequest) (*runvv1.AllocateSocketsResponse, error) {
+// AllocateSockets implements runmv1.SocketAllocatorServiceServer.
+func (s *Server) AllocateSockets(ctx context.Context, req *runmv1.AllocateSocketsRequest) (*runmv1.AllocateSocketsResponse, error) {
 	socksToClean := make([]runtime.AllocatedSocket, 0, req.GetCount())
 	defer func() {
 		if len(socksToClean) == 0 {
@@ -106,7 +106,7 @@ func (s *Server) AllocateSockets(ctx context.Context, req *runvv1.AllocateSocket
 		socksToClean = append(socksToClean, as)
 	}
 
-	res := &runvv1.AllocateSocketsResponse{}
+	res := &runmv1.AllocateSocketsResponse{}
 	refs := make([]string, 0, req.GetCount())
 	for _, sock := range socksToClean {
 		referenceId := runtime.NewSocketReferenceId(sock)
@@ -120,8 +120,8 @@ func (s *Server) AllocateSockets(ctx context.Context, req *runvv1.AllocateSocket
 	return res, nil
 }
 
-// BindConsoleToSocket implements runvv1.SocketAllocatorServiceServer.
-func (s *Server) BindConsoleToSocket(ctx context.Context, req *runvv1.BindConsoleToSocketRequest) (*runvv1.BindConsoleToSocketResponse, error) {
+// BindConsoleToSocket implements runmv1.SocketAllocatorServiceServer.
+func (s *Server) BindConsoleToSocket(ctx context.Context, req *runmv1.BindConsoleToSocketRequest) (*runmv1.BindConsoleToSocketResponse, error) {
 	cs, ok := s.state.GetOpenConsole(req.GetConsoleReferenceId())
 	if !ok {
 		return nil, errors.Errorf("cannot bind console to socket: console not found")
@@ -137,11 +137,11 @@ func (s *Server) BindConsoleToSocket(ctx context.Context, req *runvv1.BindConsol
 		return nil, err
 	}
 
-	return &runvv1.BindConsoleToSocketResponse{}, nil
+	return &runmv1.BindConsoleToSocketResponse{}, nil
 }
 
-// BindIOToSockets implements runvv1.SocketAllocatorServiceServer.
-func (s *Server) BindIOToSockets(ctx context.Context, req *runvv1.BindIOToSocketsRequest) (*runvv1.BindIOToSocketsResponse, error) {
+// BindIOToSockets implements runmv1.SocketAllocatorServiceServer.
+func (s *Server) BindIOToSockets(ctx context.Context, req *runmv1.BindIOToSocketsRequest) (*runmv1.BindIOToSocketsResponse, error) {
 	io, ok := s.state.GetOpenIO(req.GetIoReferenceId())
 	if !ok {
 		return nil, errors.Errorf("io not found")
@@ -176,44 +176,44 @@ func (s *Server) BindIOToSockets(ctx context.Context, req *runvv1.BindIOToSocket
 		return nil, err
 	}
 
-	return &runvv1.BindIOToSocketsResponse{}, nil
+	return &runmv1.BindIOToSocketsResponse{}, nil
 }
 
-// CloseConsole implements runvv1.SocketAllocatorServiceServer.
-func (s *Server) CloseConsole(ctx context.Context, req *runvv1.CloseConsoleRequest) (*runvv1.CloseConsoleResponse, error) {
+// CloseConsole implements runmv1.SocketAllocatorServiceServer.
+func (s *Server) CloseConsole(ctx context.Context, req *runmv1.CloseConsoleRequest) (*runmv1.CloseConsoleResponse, error) {
 	val, ok := s.state.GetOpenConsole(req.GetConsoleReferenceId())
 	if !ok {
 		return nil, errors.Errorf("console not found")
 	}
 	val.Close()
 	s.state.DeleteOpenConsole(req.GetConsoleReferenceId())
-	return &runvv1.CloseConsoleResponse{}, nil
+	return &runmv1.CloseConsoleResponse{}, nil
 }
 
-// CloseIO implements runvv1.SocketAllocatorServiceServer.
-func (s *Server) CloseIO(ctx context.Context, req *runvv1.CloseIORequest) (*runvv1.CloseIOResponse, error) {
+// CloseIO implements runmv1.SocketAllocatorServiceServer.
+func (s *Server) CloseIO(ctx context.Context, req *runmv1.CloseIORequest) (*runmv1.CloseIOResponse, error) {
 	val, ok := s.state.GetOpenIO(req.GetIoReferenceId())
 	if !ok {
 		return nil, errors.Errorf("io not found")
 	}
 	val.Close()
 	s.state.DeleteOpenIO(req.GetIoReferenceId())
-	return &runvv1.CloseIOResponse{}, nil
+	return &runmv1.CloseIOResponse{}, nil
 }
 
-// CloseSocket implements runvv1.SocketAllocatorServiceServer.
-func (s *Server) CloseSocket(ctx context.Context, req *runvv1.CloseSocketRequest) (*runvv1.CloseSocketResponse, error) {
+// CloseSocket implements runmv1.SocketAllocatorServiceServer.
+func (s *Server) CloseSocket(ctx context.Context, req *runmv1.CloseSocketRequest) (*runmv1.CloseSocketResponse, error) {
 	val, ok := s.state.GetOpenSocket(req.GetSocketReferenceId())
 	if !ok {
 		return nil, errors.Errorf("socket not found")
 	}
 	val.Close()
 	s.state.DeleteOpenSocket(req.GetSocketReferenceId())
-	return &runvv1.CloseSocketResponse{}, nil
+	return &runmv1.CloseSocketResponse{}, nil
 }
 
-// CloseSockets implements runvv1.SocketAllocatorServiceServer.
-func (s *Server) CloseSockets(ctx context.Context, req *runvv1.CloseSocketsRequest) (*runvv1.CloseSocketsResponse, error) {
+// CloseSockets implements runmv1.SocketAllocatorServiceServer.
+func (s *Server) CloseSockets(ctx context.Context, req *runmv1.CloseSocketsRequest) (*runmv1.CloseSocketsResponse, error) {
 	for _, ref := range req.GetSocketReferenceIds() {
 		val, ok := s.state.GetOpenSocket(ref)
 		if !ok {
@@ -225,5 +225,5 @@ func (s *Server) CloseSockets(ctx context.Context, req *runvv1.CloseSocketsReque
 	for _, ref := range req.GetSocketReferenceIds() {
 		s.state.DeleteOpenSocket(ref)
 	}
-	return &runvv1.CloseSocketsResponse{}, nil
+	return &runmv1.CloseSocketsResponse{}, nil
 }

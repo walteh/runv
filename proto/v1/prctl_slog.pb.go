@@ -2,7 +2,7 @@
 //
 // source: v1/prctl.proto
 
-package runvv1
+package runmv1
 
 import (
 	slog "log/slog"

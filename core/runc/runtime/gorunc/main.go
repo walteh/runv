@@ -8,7 +8,7 @@ import (
 
 	gorunc "github.com/containerd/go-runc"
 
-	"github.com/walteh/runv/core/runc/runtime"
+	"github.com/walteh/runm/core/runc/runtime"
 )
 
 var _ runtime.Runtime = (*GoRuncRuntime)(nil)

@@ -46,12 +46,12 @@ import (
 	ptypes "github.com/containerd/containerd/v2/pkg/protobuf/types"
 	gorunc "github.com/containerd/go-runc"
 
-	"github.com/walteh/runv/cmd/containerd-shim-runv-v2/process"
-	"github.com/walteh/runv/cmd/containerd-shim-runv-v2/runv"
-	"github.com/walteh/runv/core/runc/runtime"
-	"github.com/walteh/runv/pkg/oom"
+	"github.com/walteh/runm/cmd/containerd-shim-runm-v2/process"
+	"github.com/walteh/runm/cmd/containerd-shim-runm-v2/runm"
+	"github.com/walteh/runm/core/runc/runtime"
+	"github.com/walteh/runm/pkg/oom"
 
-	oomv2 "github.com/walteh/runv/pkg/oom/v2"
+	oomv2 "github.com/walteh/runm/pkg/oom/v2"
 )
 
 var (
@@ -81,11 +81,11 @@ func NewTaskService(ctx context.Context, publisher shim.Publisher, sd shutdown.S
 		ec:                   reaper.Default.Subscribe(),
 		ep:                   ep,
 		shutdown:             sd,
-		containers:           make(map[string]*runv.Container),
+		containers:           make(map[string]*runm.Container),
 		running:              make(map[int][]containerProcess),
-		runningExecs:         make(map[*runv.Container]int),
-		execCountSubscribers: make(map[*runv.Container]chan<- int),
-		containerInitExit:    make(map[*runv.Container]gorunc.Exit),
+		runningExecs:         make(map[*runm.Container]int),
+		execCountSubscribers: make(map[*runm.Container]chan<- int),
+		containerInitExit:    make(map[*runm.Container]gorunc.Exit),
 		exitSubscribers:      make(map[*map[int][]gorunc.Exit]struct{}),
 	}
 	go s.processExits()
@@ -117,14 +117,14 @@ type service struct {
 	ec       chan gorunc.Exit
 	ep       oom.Watcher
 
-	containers map[string]*runv.Container
+	containers map[string]*runm.Container
 
 	lifecycleMu  sync.Mutex
 	running      map[int][]containerProcess // pid -> running process, guarded by lifecycleMu
-	runningExecs map[*runv.Container]int    // container -> num running execs, guarded by lifecycleMu
+	runningExecs map[*runm.Container]int    // container -> num running execs, guarded by lifecycleMu
 	// container -> subscription to exec exits/changes to s.runningExecs[container],
 	// guarded by lifecycleMu
-	execCountSubscribers map[*runv.Container]chan<- int
+	execCountSubscribers map[*runm.Container]chan<- int
 	// container -> init exits, guarded by lifecycleMu
 	// Used to stash container init process exits, so that we can hold them
 	// until after we've made sure to publish all the container's exec exits.
@@ -133,7 +133,7 @@ type service struct {
 	// reaped by the shim.
 	// Note that this flag gets updated before the container's [process.Init.Status]
 	// is transitioned to "stopped".
-	containerInitExit map[*runv.Container]gorunc.Exit
+	containerInitExit map[*runm.Container]gorunc.Exit
 	// Subscriptions to exits for PIDs. Adding/deleting subscriptions and
 	// dereferencing the subscription pointers must only be done while holding
 	// lifecycleMu.
@@ -145,7 +145,7 @@ type service struct {
 }
 
 type containerProcess struct {
-	Container *runv.Container
+	Container *runm.Container
 	Process   process.Process
 }
 
@@ -164,7 +164,7 @@ type containerProcess struct {
 // The returned cleanup closure releases resources used to handle early exits.
 // It must be called before the caller of preStart returns, otherwise severe
 // memory leaks will occur.
-func (s *service) preStart(c *runv.Container) (handleStarted func(*runv.Container, process.Process), cleanup func()) {
+func (s *service) preStart(c *runm.Container) (handleStarted func(*runm.Container, process.Process), cleanup func()) {
 	exits := make(map[int][]gorunc.Exit)
 	s.exitSubscribers[&exits] = struct{}{}
 
@@ -185,7 +185,7 @@ func (s *service) preStart(c *runv.Container) (handleStarted func(*runv.Containe
 		}
 	}
 
-	handleStarted = func(c *runv.Container, p process.Process) {
+	handleStarted = func(c *runm.Container, p process.Process) {
 		var pid int
 		if p != nil {
 			pid = p.Pid()
@@ -232,7 +232,7 @@ func (s *service) Create(ctx context.Context, r *taskAPI.CreateTaskRequest) (_ *
 	s.lifecycleMu.Unlock()
 	defer cleanup()
 
-	container, err := runv.NewContainer(ctx, s.platform, r, s.creator)
+	container, err := runm.NewContainer(ctx, s.platform, r, s.creator)
 	if err != nil {
 		return nil, err
 	}
@@ -276,7 +276,7 @@ func (s *service) Start(ctx context.Context, r *taskAPI.StartRequest) (*taskAPI.
 		return nil, err
 	}
 
-	var cinit *runv.Container
+	var cinit *runm.Container
 	s.lifecycleMu.Lock()
 	if r.ExecID == "" {
 		cinit = container
@@ -705,9 +705,9 @@ func (s *service) send(evt interface{}) {
 // namespace, otherwise all other processes have been reaped already).
 // - waiting for the container's running exec counter to reach 0.
 // - finally, publishing the init exit.
-func (s *service) handleInitExit(e gorunc.Exit, c *runv.Container, p *process.Init) {
+func (s *service) handleInitExit(e gorunc.Exit, c *runm.Container, p *process.Init) {
 	// kill all running container processes
-	if runv.ShouldKillAllOnExit(s.context, c.Bundle) {
+	if runm.ShouldKillAllOnExit(s.context, c.Bundle) {
 		if err := p.KillAll(s.context); err != nil {
 			log.G(s.context).WithError(err).WithField("id", p.ID()).
 				Error("failed to kill init's children")
@@ -749,7 +749,7 @@ func (s *service) handleInitExit(e gorunc.Exit, c *runv.Container, p *process.In
 	}()
 }
 
-func (s *service) handleProcessExit(e gorunc.Exit, c *runv.Container, p process.Process) {
+func (s *service) handleProcessExit(e gorunc.Exit, c *runm.Container, p process.Process) {
 	p.SetExited(e.Status)
 	s.send(&eventstypes.TaskExit{
 		ContainerID: c.ID,
@@ -768,7 +768,7 @@ func (s *service) handleProcessExit(e gorunc.Exit, c *runv.Container, p process.
 	}
 }
 
-func (s *service) getContainerPids(ctx context.Context, container *runv.Container) ([]uint32, error) {
+func (s *service) getContainerPids(ctx context.Context, container *runm.Container) ([]uint32, error) {
 	p, err := container.Process("")
 	if err != nil {
 		return nil, errgrpc.ToGRPC(err)
@@ -796,7 +796,7 @@ func (s *service) forward(ctx context.Context, publisher shim.Publisher) {
 	publisher.Close()
 }
 
-func (s *service) getContainer(id string) (*runv.Container, error) {
+func (s *service) getContainer(id string) (*runm.Container, error) {
 	s.mu.Lock()
 	container := s.containers[id]
 	s.mu.Unlock()
@@ -812,7 +812,7 @@ func (s *service) initPlatform() error {
 	if s.platform != nil {
 		return nil
 	}
-	p, err := runv.NewPlatform()
+	p, err := runm.NewPlatform()
 	if err != nil {
 		return err
 	}

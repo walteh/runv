@@ -11,12 +11,11 @@ import (
 
 	gorunc "github.com/containerd/go-runc"
 
-	"github.com/walteh/runv/core/runc/runtime"
-
-	runvv1 "github.com/walteh/runv/proto/v1"
+	"github.com/walteh/runm/core/runc/runtime"
+	runmv1 "github.com/walteh/runm/proto/v1"
 )
 
-func ConvertStatsFromProto(stats *runvv1.RuncStats) (*gorunc.Stats, error) {
+func ConvertStatsFromProto(stats *runmv1.RuncStats) (*gorunc.Stats, error) {
 	var runcStats gorunc.Stats
 	if err := json.Unmarshal(stats.GetRawJson(), &runcStats); err != nil {
 		return nil, err
@@ -24,18 +23,18 @@ func ConvertStatsFromProto(stats *runvv1.RuncStats) (*gorunc.Stats, error) {
 	return &runcStats, nil
 }
 
-// convertStats converts runc.Stats to runvv1.RuncStats
-func ConvertStatsToProto(stats *gorunc.Stats) (*runvv1.RuncStats, error) {
+// convertStats converts runc.Stats to runmv1.RuncStats
+func ConvertStatsToProto(stats *gorunc.Stats) (*runmv1.RuncStats, error) {
 	rawJson, err := json.Marshal(stats)
 	if err != nil {
 		return nil, err
 	}
-	resp := &runvv1.RuncStats{}
+	resp := &runmv1.RuncStats{}
 	resp.SetRawJson(rawJson)
 	return resp, nil
 }
 
-func ConvertCreateOptsFromProto(ctx context.Context, opts *runvv1.RuncCreateOptions, state runtime.ServerStateGetter) (*gorunc.CreateOpts, error) {
+func ConvertCreateOptsFromProto(ctx context.Context, opts *runmv1.RuncCreateOptions, state runtime.ServerStateGetter) (*gorunc.CreateOpts, error) {
 	var err error
 	files := make([]*os.File, len(opts.GetExtraFiles()))
 	for i, file := range opts.GetExtraFiles() {
@@ -67,7 +66,7 @@ func ConvertCreateOptsFromProto(ctx context.Context, opts *runvv1.RuncCreateOpti
 	}, nil
 }
 
-func ConvertCreateOptsToProto(ctx context.Context, opts *gorunc.CreateOpts) (*runvv1.RuncCreateOptions, error) {
+func ConvertCreateOptsToProto(ctx context.Context, opts *gorunc.CreateOpts) (*runmv1.RuncCreateOptions, error) {
 
 	ioz, ok := opts.IO.(runtime.ReferableByReferenceId)
 	if !ok {
@@ -89,7 +88,7 @@ func ConvertCreateOptsToProto(ctx context.Context, opts *gorunc.CreateOpts) (*ru
 		files[i] = file.Name()
 	}
 
-	res := &runvv1.RuncCreateOptions{}
+	res := &runmv1.RuncCreateOptions{}
 	res.SetIoReferenceId(ioz.GetReferenceId())
 	res.SetPidFile(opts.PidFile)
 	res.SetNoPivot(opts.NoPivot)
@@ -101,7 +100,7 @@ func ConvertCreateOptsToProto(ctx context.Context, opts *gorunc.CreateOpts) (*ru
 	return res, nil
 }
 
-func ConvertExecOptsFromProto(opts *runvv1.RuncExecOptions, state runtime.ServerStateGetter) (*gorunc.ExecOpts, error) {
+func ConvertExecOptsFromProto(opts *runmv1.RuncExecOptions, state runtime.ServerStateGetter) (*gorunc.ExecOpts, error) {
 	io, ok := state.GetOpenIO(opts.GetIoReferenceId())
 	if !ok {
 		return nil, errors.Errorf("io not found")
@@ -122,11 +121,11 @@ func ConvertExecOptsFromProto(opts *runvv1.RuncExecOptions, state runtime.Server
 	}, nil
 }
 
-func ConvertExecOptsToProto(opts *gorunc.ExecOpts) *runvv1.RuncExecOptions {
+func ConvertExecOptsToProto(opts *gorunc.ExecOpts) *runmv1.RuncExecOptions {
 	panic(runtime.ReflectNotImplementedError())
 }
 
-func ConvertKillOptsFromProto(opts *runvv1.RuncKillOptions) *gorunc.KillOpts {
+func ConvertKillOptsFromProto(opts *runmv1.RuncKillOptions) *gorunc.KillOpts {
 	out := &gorunc.KillOpts{
 		All:       opts.GetAll(),
 		ExtraArgs: opts.GetExtraArgs(),
@@ -134,8 +133,8 @@ func ConvertKillOptsFromProto(opts *runvv1.RuncKillOptions) *gorunc.KillOpts {
 	return out
 }
 
-func ConvertKillOptsToProto(opts *gorunc.KillOpts) *runvv1.RuncKillOptions {
-	out := &runvv1.RuncKillOptions{}
+func ConvertKillOptsToProto(opts *gorunc.KillOpts) *runmv1.RuncKillOptions {
+	out := &runmv1.RuncKillOptions{}
 	out.SetAll(opts.All)
 	out.SetExtraArgs(opts.ExtraArgs)
 	return out
@@ -144,16 +143,16 @@ func ConvertKillOptsToProto(opts *gorunc.KillOpts) *runvv1.RuncKillOptions {
 // checkpoint in out
 
 // restore in out
-func ConvertRestoreOptsFromProto(opts *runvv1.RuncRestoreOptions) *gorunc.RestoreOpts {
+func ConvertRestoreOptsFromProto(opts *runmv1.RuncRestoreOptions) *gorunc.RestoreOpts {
 	panic(runtime.ReflectNotImplementedError())
 }
 
-func ConvertRestoreOptsToProto(opts *gorunc.RestoreOpts) *runvv1.RuncRestoreOptions {
+func ConvertRestoreOptsToProto(opts *gorunc.RestoreOpts) *runmv1.RuncRestoreOptions {
 	panic(runtime.ReflectNotImplementedError())
 }
 
-func ConvertContainerToProto(container *gorunc.Container) (*runvv1.RuncContainer, error) {
-	output := &runvv1.RuncContainer{}
+func ConvertContainerToProto(container *gorunc.Container) (*runmv1.RuncContainer, error) {
+	output := &runmv1.RuncContainer{}
 	output.SetId(container.ID)
 	output.SetPid(int32(container.Pid))
 	output.SetStatus(container.Status)
@@ -164,7 +163,7 @@ func ConvertContainerToProto(container *gorunc.Container) (*runvv1.RuncContainer
 	return output, nil
 }
 
-func ConvertContainerFromProto(container *runvv1.RuncContainer) (*gorunc.Container, error) {
+func ConvertContainerFromProto(container *runmv1.RuncContainer) (*gorunc.Container, error) {
 	return &gorunc.Container{
 		ID:          container.GetId(),
 		Pid:         int(container.GetPid()),
@@ -179,7 +178,7 @@ func ConvertContainerFromProto(container *runvv1.RuncContainer) (*gorunc.Contain
 // checkpoint actions in out
 
 // delete in out
-func ConvertDeleteOptsFromProto(opts *runvv1.RuncDeleteOptions) *gorunc.DeleteOpts {
+func ConvertDeleteOptsFromProto(opts *runmv1.RuncDeleteOptions) *gorunc.DeleteOpts {
 	out := &gorunc.DeleteOpts{
 		Force:     opts.GetForce(),
 		ExtraArgs: opts.GetExtraArgs(),
@@ -187,8 +186,8 @@ func ConvertDeleteOptsFromProto(opts *runvv1.RuncDeleteOptions) *gorunc.DeleteOp
 	return out
 }
 
-func ConvertDeleteOptsToProto(opts *gorunc.DeleteOpts) *runvv1.RuncDeleteOptions {
-	out := &runvv1.RuncDeleteOptions{}
+func ConvertDeleteOptsToProto(opts *gorunc.DeleteOpts) *runmv1.RuncDeleteOptions {
+	out := &runmv1.RuncDeleteOptions{}
 	out.SetForce(opts.Force)
 	out.SetExtraArgs(opts.ExtraArgs)
 	return out
@@ -196,7 +195,7 @@ func ConvertDeleteOptsToProto(opts *gorunc.DeleteOpts) *runvv1.RuncDeleteOptions
 
 // linux resources in out
 
-func ConvertLinuxResourcesFromProto(resources *runvv1.RuncLinuxResources) (*specs.LinuxResources, error) {
+func ConvertLinuxResourcesFromProto(resources *runmv1.RuncLinuxResources) (*specs.LinuxResources, error) {
 	var linuxResources specs.LinuxResources
 	if err := json.Unmarshal(resources.GetRawJson(), &linuxResources); err != nil {
 		return nil, err
@@ -204,17 +203,17 @@ func ConvertLinuxResourcesFromProto(resources *runvv1.RuncLinuxResources) (*spec
 	return &linuxResources, nil
 }
 
-func ConvertLinuxResourcesToProto(resources *specs.LinuxResources) (*runvv1.RuncLinuxResources, error) {
+func ConvertLinuxResourcesToProto(resources *specs.LinuxResources) (*runmv1.RuncLinuxResources, error) {
 	rawJson, err := json.Marshal(resources)
 	if err != nil {
 		return nil, err
 	}
-	resp := &runvv1.RuncLinuxResources{}
+	resp := &runmv1.RuncLinuxResources{}
 	resp.SetRawJson(rawJson)
 	return resp, nil
 }
 
-func ConvertProcessSpecFromProto(resources *runvv1.RuncProcessSpec) (*specs.Process, error) {
+func ConvertProcessSpecFromProto(resources *runmv1.RuncProcessSpec) (*specs.Process, error) {
 	var ProcessSpec specs.Process
 	if err := json.Unmarshal(resources.GetRawJson(), &ProcessSpec); err != nil {
 		return nil, err
@@ -222,18 +221,18 @@ func ConvertProcessSpecFromProto(resources *runvv1.RuncProcessSpec) (*specs.Proc
 	return &ProcessSpec, nil
 }
 
-func ConvertProcessSpecToProto(resources *specs.Process) (*runvv1.RuncProcessSpec, error) {
+func ConvertProcessSpecToProto(resources *specs.Process) (*runmv1.RuncProcessSpec, error) {
 	rawJson, err := json.Marshal(resources)
 	if err != nil {
 		return nil, err
 	}
-	resp := &runvv1.RuncProcessSpec{}
+	resp := &runmv1.RuncProcessSpec{}
 	resp.SetRawJson(rawJson)
 	return resp, nil
 }
 
-func ConvertCheckpointOptsToProto(opts *gorunc.CheckpointOpts) *runvv1.RuncCheckpointOptions {
-	output := &runvv1.RuncCheckpointOptions{}
+func ConvertCheckpointOptsToProto(opts *gorunc.CheckpointOpts) *runmv1.RuncCheckpointOptions {
+	output := &runmv1.RuncCheckpointOptions{}
 
 	if opts.StatusFile != nil {
 		panic("status file not handled e2e")
@@ -258,7 +257,7 @@ func ConvertCheckpointOptsToProto(opts *gorunc.CheckpointOpts) *runvv1.RuncCheck
 	return output
 }
 
-func ConvertCheckpointOptsFromProto(opts *runvv1.RuncCheckpointOptions) (*gorunc.CheckpointOpts, error) {
+func ConvertCheckpointOptsFromProto(opts *runmv1.RuncCheckpointOptions) (*gorunc.CheckpointOpts, error) {
 	var err error
 
 	var sfile *os.File
@@ -291,21 +290,21 @@ func ConvertCheckpointOptsFromProto(opts *runvv1.RuncCheckpointOptions) (*gorunc
 	return out, nil
 }
 
-func ConvertCheckpointActionsFromProto(actions []runvv1.RuncCheckpointAction) []gorunc.CheckpointAction {
+func ConvertCheckpointActionsFromProto(actions []runmv1.RuncCheckpointAction) []gorunc.CheckpointAction {
 	panic(runtime.ReflectNotImplementedError())
 }
 
-func ConvertCheckpointActionsToProto(actions ...gorunc.CheckpointAction) []*runvv1.RuncCheckpointAction {
-	output := make([]*runvv1.RuncCheckpointAction, len(actions))
+func ConvertCheckpointActionsToProto(actions ...gorunc.CheckpointAction) []*runmv1.RuncCheckpointAction {
+	output := make([]*runmv1.RuncCheckpointAction, len(actions))
 	for i, action := range actions {
-		tmp := &runvv1.RuncCheckpointAction{}
+		tmp := &runmv1.RuncCheckpointAction{}
 		tmp.SetAction(action([]string{}))
 		output[i] = tmp
 	}
 	return output
 }
 
-func ConvertEventFromProto(event *runvv1.RuncEvent) (*gorunc.Event, error) {
+func ConvertEventFromProto(event *runmv1.RuncEvent) (*gorunc.Event, error) {
 	var errz error
 	if event.GetErr() != "" {
 		errz = errors.New(event.GetErr())
@@ -324,7 +323,7 @@ func ConvertEventFromProto(event *runvv1.RuncEvent) (*gorunc.Event, error) {
 	}, nil
 }
 
-func ConvertTopResultsFromProto(results *runvv1.RuncTopResults) *gorunc.TopResults {
+func ConvertTopResultsFromProto(results *runmv1.RuncTopResults) *gorunc.TopResults {
 	output := &gorunc.TopResults{}
 	headers := results.GetHeaders()
 	processes := results.GetProcesses()
@@ -340,17 +339,17 @@ func ConvertTopResultsFromProto(results *runvv1.RuncTopResults) *gorunc.TopResul
 	return output
 }
 
-func ConvertTopResultsToProto(results *gorunc.TopResults) *runvv1.RuncTopResults {
+func ConvertTopResultsToProto(results *gorunc.TopResults) *runmv1.RuncTopResults {
 	headers := results.Headers
 	processes := results.Processes
 
-	processesz := make([]*runvv1.RuncTopProcesses, len(processes))
+	processesz := make([]*runmv1.RuncTopProcesses, len(processes))
 	for i, process := range processes {
-		processesz[i] = &runvv1.RuncTopProcesses{}
+		processesz[i] = &runmv1.RuncTopProcesses{}
 		processesz[i].SetProcess(process)
 	}
 
-	output := &runvv1.RuncTopResults{}
+	output := &runmv1.RuncTopResults{}
 	output.SetHeaders(headers)
 	output.SetProcesses(processesz)
 

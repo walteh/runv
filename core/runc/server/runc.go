@@ -11,17 +11,17 @@ import (
 	"github.com/kr/pty"
 	"gitlab.com/tozd/go/errors"
 
-	"github.com/walteh/runv/core/runc/conversion"
-	"github.com/walteh/runv/core/runc/runtime"
+	"github.com/walteh/runm/core/runc/conversion"
+	"github.com/walteh/runm/core/runc/runtime"
 
-	runvv1 "github.com/walteh/runv/proto/v1"
+	runmv1 "github.com/walteh/runm/proto/v1"
 )
 
-var _ runvv1.RuncServiceServer = (*Server)(nil)
+var _ runmv1.RuncServiceServer = (*Server)(nil)
 
 // Ping implements the RuncServiceServer Ping method.
-func (s *Server) Ping(ctx context.Context, req *runvv1.PingRequest) (*runvv1.PingResponse, error) {
-	return &runvv1.PingResponse{}, nil
+func (s *Server) Ping(ctx context.Context, req *runmv1.PingRequest) (*runmv1.PingResponse, error) {
+	return &runmv1.PingResponse{}, nil
 }
 
 func simulatePty(ctx context.Context, sock string) error {
@@ -51,7 +51,7 @@ func simulatePty(ctx context.Context, sock string) error {
 	return nil
 }
 
-func (s *Server) NewTempConsoleSocket(ctx context.Context, req *runvv1.RuncNewTempConsoleSocketRequest) (*runvv1.RuncNewTempConsoleSocketResponse, error) {
+func (s *Server) NewTempConsoleSocket(ctx context.Context, req *runmv1.RuncNewTempConsoleSocketRequest) (*runmv1.RuncNewTempConsoleSocketResponse, error) {
 
 	slog.InfoContext(ctx, "new temp console socket - A")
 
@@ -65,13 +65,13 @@ func (s *Server) NewTempConsoleSocket(ctx context.Context, req *runvv1.RuncNewTe
 
 	go simulatePty(ctx, socket.Path())
 
-	resp := &runvv1.RuncNewTempConsoleSocketResponse{}
+	resp := &runmv1.RuncNewTempConsoleSocketResponse{}
 	resp.SetConsoleReferenceId(referenceId)
 	return resp, nil
 }
 
-func (s *Server) ReadPidFile(ctx context.Context, req *runvv1.RuncReadPidFileRequest) (*runvv1.RuncReadPidFileResponse, error) {
-	resp := &runvv1.RuncReadPidFileResponse{}
+func (s *Server) ReadPidFile(ctx context.Context, req *runmv1.RuncReadPidFileRequest) (*runmv1.RuncReadPidFileResponse, error) {
+	resp := &runmv1.RuncReadPidFileResponse{}
 
 	pid, err := s.runtime.ReadPidFile(ctx, req.GetPath())
 	if err != nil {
@@ -82,8 +82,8 @@ func (s *Server) ReadPidFile(ctx context.Context, req *runvv1.RuncReadPidFileReq
 }
 
 // Create implements the RuncServiceServer Create method.
-func (s *Server) Create(ctx context.Context, req *runvv1.RuncCreateRequest) (*runvv1.RuncCreateResponse, error) {
-	resp := &runvv1.RuncCreateResponse{}
+func (s *Server) Create(ctx context.Context, req *runmv1.RuncCreateRequest) (*runmv1.RuncCreateResponse, error) {
+	resp := &runmv1.RuncCreateResponse{}
 
 	opts, err := conversion.ConvertCreateOptsFromProto(ctx, req.GetOptions(), s.state)
 	if err != nil {
@@ -98,8 +98,8 @@ func (s *Server) Create(ctx context.Context, req *runvv1.RuncCreateRequest) (*ru
 }
 
 // Start implements the RuncServiceServer Start method.
-func (s *Server) Start(ctx context.Context, req *runvv1.RuncStartRequest) (*runvv1.RuncStartResponse, error) {
-	resp := &runvv1.RuncStartResponse{}
+func (s *Server) Start(ctx context.Context, req *runmv1.RuncStartRequest) (*runmv1.RuncStartResponse, error) {
+	resp := &runmv1.RuncStartResponse{}
 
 	err := s.runtime.Start(ctx, req.GetId())
 	if err != nil {
@@ -111,8 +111,8 @@ func (s *Server) Start(ctx context.Context, req *runvv1.RuncStartRequest) (*runv
 // Run implements the RuncServiceServer Run method.
 
 // Delete implements the RuncServiceServer Delete method.
-func (s *Server) Delete(ctx context.Context, req *runvv1.RuncDeleteRequest) (*runvv1.RuncDeleteResponse, error) {
-	resp := &runvv1.RuncDeleteResponse{}
+func (s *Server) Delete(ctx context.Context, req *runmv1.RuncDeleteRequest) (*runmv1.RuncDeleteResponse, error) {
+	resp := &runmv1.RuncDeleteResponse{}
 
 	opts := conversion.ConvertDeleteOptsFromProto(req.GetOptions())
 
@@ -124,8 +124,8 @@ func (s *Server) Delete(ctx context.Context, req *runvv1.RuncDeleteRequest) (*ru
 }
 
 // Kill implements the RuncServiceServer Kill method.
-func (s *Server) Kill(ctx context.Context, req *runvv1.RuncKillRequest) (*runvv1.RuncKillResponse, error) {
-	resp := &runvv1.RuncKillResponse{}
+func (s *Server) Kill(ctx context.Context, req *runmv1.RuncKillRequest) (*runmv1.RuncKillResponse, error) {
+	resp := &runmv1.RuncKillResponse{}
 
 	opts := conversion.ConvertKillOptsFromProto(req.GetOptions())
 
@@ -137,8 +137,8 @@ func (s *Server) Kill(ctx context.Context, req *runvv1.RuncKillRequest) (*runvv1
 }
 
 // Pause implements the RuncServiceServer Pause method.
-func (s *Server) Pause(ctx context.Context, req *runvv1.RuncPauseRequest) (*runvv1.RuncPauseResponse, error) {
-	resp := &runvv1.RuncPauseResponse{}
+func (s *Server) Pause(ctx context.Context, req *runmv1.RuncPauseRequest) (*runmv1.RuncPauseResponse, error) {
+	resp := &runmv1.RuncPauseResponse{}
 
 	err := s.runtime.Pause(ctx, req.GetId())
 	if err != nil {
@@ -148,8 +148,8 @@ func (s *Server) Pause(ctx context.Context, req *runvv1.RuncPauseRequest) (*runv
 }
 
 // Resume implements the RuncServiceServer Resume method.
-func (s *Server) Resume(ctx context.Context, req *runvv1.RuncResumeRequest) (*runvv1.RuncResumeResponse, error) {
-	resp := &runvv1.RuncResumeResponse{}
+func (s *Server) Resume(ctx context.Context, req *runmv1.RuncResumeRequest) (*runmv1.RuncResumeResponse, error) {
+	resp := &runmv1.RuncResumeResponse{}
 
 	err := s.runtime.Resume(ctx, req.GetId())
 	if err != nil {
@@ -159,8 +159,8 @@ func (s *Server) Resume(ctx context.Context, req *runvv1.RuncResumeRequest) (*ru
 }
 
 // Ps implements the RuncServiceServer Ps method.
-func (s *Server) Ps(ctx context.Context, req *runvv1.RuncPsRequest) (*runvv1.RuncPsResponse, error) {
-	resp := &runvv1.RuncPsResponse{}
+func (s *Server) Ps(ctx context.Context, req *runmv1.RuncPsRequest) (*runmv1.RuncPsResponse, error) {
+	resp := &runmv1.RuncPsResponse{}
 
 	pids, err := s.runtime.Ps(ctx, req.GetId())
 	if err != nil {
@@ -178,8 +178,8 @@ func (s *Server) Ps(ctx context.Context, req *runvv1.RuncPsRequest) (*runvv1.Run
 }
 
 // Exec implements the RuncServiceServer Exec method.
-func (s *Server) Exec(ctx context.Context, req *runvv1.RuncExecRequest) (*runvv1.RuncExecResponse, error) {
-	resp := &runvv1.RuncExecResponse{}
+func (s *Server) Exec(ctx context.Context, req *runmv1.RuncExecRequest) (*runmv1.RuncExecResponse, error) {
+	resp := &runmv1.RuncExecResponse{}
 
 	if req.GetSpec() == nil {
 		return nil, errors.Errorf("spec is required")
@@ -203,17 +203,17 @@ func (s *Server) Exec(ctx context.Context, req *runvv1.RuncExecRequest) (*runvv1
 	return resp, nil
 }
 
-// Checkpoint implements runvv1.RuncServiceServer.
-func (s *Server) Checkpoint(context.Context, *runvv1.RuncCheckpointRequest) (*runvv1.RuncCheckpointResponse, error) {
+// Checkpoint implements runmv1.RuncServiceServer.
+func (s *Server) Checkpoint(context.Context, *runmv1.RuncCheckpointRequest) (*runmv1.RuncCheckpointResponse, error) {
 	return nil, runtime.ReflectNotImplementedError()
 }
 
-// Restore implements runvv1.RuncServiceServer.
-func (s *Server) Restore(context.Context, *runvv1.RuncRestoreRequest) (*runvv1.RuncRestoreResponse, error) {
+// Restore implements runmv1.RuncServiceServer.
+func (s *Server) Restore(context.Context, *runmv1.RuncRestoreRequest) (*runmv1.RuncRestoreResponse, error) {
 	return nil, runtime.ReflectNotImplementedError()
 }
 
-// Update implements runvv1.RuncServiceServer.
-func (s *Server) Update(context.Context, *runvv1.RuncUpdateRequest) (*runvv1.RuncUpdateResponse, error) {
+// Update implements runmv1.RuncServiceServer.
+func (s *Server) Update(context.Context, *runmv1.RuncUpdateRequest) (*runmv1.RuncUpdateResponse, error) {
 	return nil, runtime.ReflectNotImplementedError()
 }

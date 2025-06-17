@@ -33,7 +33,7 @@ import (
 
 	"github.com/containerd/errdefs"
 
-	"github.com/walteh/runv/core/runc/runtime"
+	"github.com/walteh/runm/core/runc/runtime"
 )
 
 const (

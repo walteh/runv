@@ -7,8 +7,8 @@ import (
 
 	"google.golang.org/grpc"
 
-	"github.com/walteh/runv/core/runc/runtime"
-	"github.com/walteh/runv/core/runc/state"
+	"github.com/walteh/runm/core/runc/runtime"
+	"github.com/walteh/runm/core/runc/state"
 )
 
 type Server struct {
@@ -33,7 +33,7 @@ func NewServer(r runtime.Runtime, runtimeExtras runtime.RuntimeExtras, socketAll
 
 // 	srv := NewServer(config, nil)
 
-// 	runvv1.RegisterRuncServiceServer(s, srv)
+// 	runmv1.RegisterRuncServiceServer(s, srv)
 
 // 	// Start server in a goroutine
 // 	go func() {

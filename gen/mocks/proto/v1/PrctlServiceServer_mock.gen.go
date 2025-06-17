@@ -2,43 +2,43 @@
 // github.com/vektra/mockery
 // template: matryer
 
-package mockrunvv1
+package mockrunmv1
 
 import (
 	"context"
 	"sync"
 
-	"github.com/walteh/runv/proto/v1"
+	"github.com/walteh/runm/proto/v1"
 )
 
-// Ensure that MockPrctlServiceServer does implement runvv1.PrctlServiceServer.
+// Ensure that MockPrctlServiceServer does implement runmv1.PrctlServiceServer.
 // If this is not the case, regenerate this file with mockery.
-var _ runvv1.PrctlServiceServer = &MockPrctlServiceServer{}
+var _ runmv1.PrctlServiceServer = &MockPrctlServiceServer{}
 
-// MockPrctlServiceServer is a mock implementation of runvv1.PrctlServiceServer.
+// MockPrctlServiceServer is a mock implementation of runmv1.PrctlServiceServer.
 //
 //	func TestSomethingThatUsesPrctlServiceServer(t *testing.T) {
 //
-//		// make and configure a mocked runvv1.PrctlServiceServer
+//		// make and configure a mocked runmv1.PrctlServiceServer
 //		mockedPrctlServiceServer := &MockPrctlServiceServer{
-//			CreateFunc: func(context1 context.Context, createRequest *runvv1.CreateRequest) (*runvv1.CreateResponse, error) {
+//			CreateFunc: func(context1 context.Context, createRequest *runmv1.CreateRequest) (*runmv1.CreateResponse, error) {
 //				panic("mock out the Create method")
 //			},
-//			ShareFromFunc: func(context1 context.Context, shareFromRequest *runvv1.ShareFromRequest) (*runvv1.ShareFromResponse, error) {
+//			ShareFromFunc: func(context1 context.Context, shareFromRequest *runmv1.ShareFromRequest) (*runmv1.ShareFromResponse, error) {
 //				panic("mock out the ShareFrom method")
 //			},
 //		}
 //
-//		// use mockedPrctlServiceServer in code that requires runvv1.PrctlServiceServer
+//		// use mockedPrctlServiceServer in code that requires runmv1.PrctlServiceServer
 //		// and then make assertions.
 //
 //	}
 type MockPrctlServiceServer struct {
 	// CreateFunc mocks the Create method.
-	CreateFunc func(context1 context.Context, createRequest *runvv1.CreateRequest) (*runvv1.CreateResponse, error)
+	CreateFunc func(context1 context.Context, createRequest *runmv1.CreateRequest) (*runmv1.CreateResponse, error)
 
 	// ShareFromFunc mocks the ShareFrom method.
-	ShareFromFunc func(context1 context.Context, shareFromRequest *runvv1.ShareFromRequest) (*runvv1.ShareFromResponse, error)
+	ShareFromFunc func(context1 context.Context, shareFromRequest *runmv1.ShareFromRequest) (*runmv1.ShareFromResponse, error)
 
 	// calls tracks calls to the methods.
 	calls struct {
@@ -47,14 +47,14 @@ type MockPrctlServiceServer struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// CreateRequest is the createRequest argument value.
-			CreateRequest *runvv1.CreateRequest
+			CreateRequest *runmv1.CreateRequest
 		}
 		// ShareFrom holds details about calls to the ShareFrom method.
 		ShareFrom []struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// ShareFromRequest is the shareFromRequest argument value.
-			ShareFromRequest *runvv1.ShareFromRequest
+			ShareFromRequest *runmv1.ShareFromRequest
 		}
 	}
 	lockCreate    sync.RWMutex
@@ -62,13 +62,13 @@ type MockPrctlServiceServer struct {
 }
 
 // Create calls CreateFunc.
-func (mock *MockPrctlServiceServer) Create(context1 context.Context, createRequest *runvv1.CreateRequest) (*runvv1.CreateResponse, error) {
+func (mock *MockPrctlServiceServer) Create(context1 context.Context, createRequest *runmv1.CreateRequest) (*runmv1.CreateResponse, error) {
 	if mock.CreateFunc == nil {
 		panic("MockPrctlServiceServer.CreateFunc: method is nil but PrctlServiceServer.Create was just called")
 	}
 	callInfo := struct {
 		Context1      context.Context
-		CreateRequest *runvv1.CreateRequest
+		CreateRequest *runmv1.CreateRequest
 	}{
 		Context1:      context1,
 		CreateRequest: createRequest,
@@ -85,11 +85,11 @@ func (mock *MockPrctlServiceServer) Create(context1 context.Context, createReque
 //	len(mockedPrctlServiceServer.CreateCalls())
 func (mock *MockPrctlServiceServer) CreateCalls() []struct {
 	Context1      context.Context
-	CreateRequest *runvv1.CreateRequest
+	CreateRequest *runmv1.CreateRequest
 } {
 	var calls []struct {
 		Context1      context.Context
-		CreateRequest *runvv1.CreateRequest
+		CreateRequest *runmv1.CreateRequest
 	}
 	mock.lockCreate.RLock()
 	calls = mock.calls.Create
@@ -98,13 +98,13 @@ func (mock *MockPrctlServiceServer) CreateCalls() []struct {
 }
 
 // ShareFrom calls ShareFromFunc.
-func (mock *MockPrctlServiceServer) ShareFrom(context1 context.Context, shareFromRequest *runvv1.ShareFromRequest) (*runvv1.ShareFromResponse, error) {
+func (mock *MockPrctlServiceServer) ShareFrom(context1 context.Context, shareFromRequest *runmv1.ShareFromRequest) (*runmv1.ShareFromResponse, error) {
 	if mock.ShareFromFunc == nil {
 		panic("MockPrctlServiceServer.ShareFromFunc: method is nil but PrctlServiceServer.ShareFrom was just called")
 	}
 	callInfo := struct {
 		Context1         context.Context
-		ShareFromRequest *runvv1.ShareFromRequest
+		ShareFromRequest *runmv1.ShareFromRequest
 	}{
 		Context1:         context1,
 		ShareFromRequest: shareFromRequest,
@@ -121,11 +121,11 @@ func (mock *MockPrctlServiceServer) ShareFrom(context1 context.Context, shareFro
 //	len(mockedPrctlServiceServer.ShareFromCalls())
 func (mock *MockPrctlServiceServer) ShareFromCalls() []struct {
 	Context1         context.Context
-	ShareFromRequest *runvv1.ShareFromRequest
+	ShareFromRequest *runmv1.ShareFromRequest
 } {
 	var calls []struct {
 		Context1         context.Context
-		ShareFromRequest *runvv1.ShareFromRequest
+		ShareFromRequest *runmv1.ShareFromRequest
 	}
 	mock.lockShareFrom.RLock()
 	calls = mock.calls.ShareFrom

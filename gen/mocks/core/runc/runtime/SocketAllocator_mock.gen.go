@@ -8,7 +8,7 @@ import (
 	"context"
 	"sync"
 
-	"github.com/walteh/runv/core/runc/runtime"
+	"github.com/walteh/runm/core/runc/runtime"
 )
 
 // Ensure that MockSocketAllocator does implement runtime.SocketAllocator.

@@ -42,7 +42,7 @@ import (
 	gorunc "github.com/containerd/go-runc"
 	specs "github.com/opencontainers/runtime-spec/specs-go"
 
-	"github.com/walteh/runv/core/runc/runtime"
+	"github.com/walteh/runm/core/runc/runtime"
 )
 
 // Init represents an initial process for a container

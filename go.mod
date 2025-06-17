@@ -1,4 +1,4 @@
-module github.com/walteh/runv
+module github.com/walteh/runm
 
 go 1.24.4
 

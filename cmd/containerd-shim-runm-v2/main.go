@@ -17,13 +17,13 @@
 package main
 
 import (
-	_ "github.com/walteh/runv/cmd/containerd-shim-runv-v2/task/plugin"
+	_ "github.com/walteh/runm/cmd/containerd-shim-runm-v2/task/plugin"
 
 	"context"
 
 	"github.com/containerd/containerd/v2/pkg/shim"
 
-	"github.com/walteh/runv/cmd/containerd-shim-runv-v2/manager"
+	"github.com/walteh/runm/cmd/containerd-shim-runm-v2/manager"
 )
 
 func main() {

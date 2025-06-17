@@ -2,7 +2,7 @@
 //
 // source: v1/runc.proto
 
-package runvv1
+package runmv1
 
 import (
 	fmt "fmt"

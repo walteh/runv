@@ -16,14 +16,14 @@
    limitations under the License.
 */
 
-package runv
+package runm
 
 import (
 	"fmt"
 
 	"github.com/containerd/containerd/v2/pkg/stdio"
 
-	"github.com/walteh/runv/pkg/kqueue"
+	"github.com/walteh/runm/pkg/kqueue"
 )
 
 // NewPlatform returns a linux platform for use with I/O operations

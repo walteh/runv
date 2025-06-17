@@ -4,7 +4,7 @@
 // - protoc             (unknown)
 // source: v1/runc.proto
 
-package runvv1
+package runmv1
 
 import (
 	context "context"
@@ -19,20 +19,20 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	RuncService_Ping_FullMethodName                 = "/runv.v1.RuncService/Ping"
-	RuncService_Create_FullMethodName               = "/runv.v1.RuncService/Create"
-	RuncService_Start_FullMethodName                = "/runv.v1.RuncService/Start"
-	RuncService_Exec_FullMethodName                 = "/runv.v1.RuncService/Exec"
-	RuncService_Delete_FullMethodName               = "/runv.v1.RuncService/Delete"
-	RuncService_Kill_FullMethodName                 = "/runv.v1.RuncService/Kill"
-	RuncService_Pause_FullMethodName                = "/runv.v1.RuncService/Pause"
-	RuncService_Resume_FullMethodName               = "/runv.v1.RuncService/Resume"
-	RuncService_Ps_FullMethodName                   = "/runv.v1.RuncService/Ps"
-	RuncService_Checkpoint_FullMethodName           = "/runv.v1.RuncService/Checkpoint"
-	RuncService_Restore_FullMethodName              = "/runv.v1.RuncService/Restore"
-	RuncService_Update_FullMethodName               = "/runv.v1.RuncService/Update"
-	RuncService_NewTempConsoleSocket_FullMethodName = "/runv.v1.RuncService/NewTempConsoleSocket"
-	RuncService_ReadPidFile_FullMethodName          = "/runv.v1.RuncService/ReadPidFile"
+	RuncService_Ping_FullMethodName                 = "/runm.v1.RuncService/Ping"
+	RuncService_Create_FullMethodName               = "/runm.v1.RuncService/Create"
+	RuncService_Start_FullMethodName                = "/runm.v1.RuncService/Start"
+	RuncService_Exec_FullMethodName                 = "/runm.v1.RuncService/Exec"
+	RuncService_Delete_FullMethodName               = "/runm.v1.RuncService/Delete"
+	RuncService_Kill_FullMethodName                 = "/runm.v1.RuncService/Kill"
+	RuncService_Pause_FullMethodName                = "/runm.v1.RuncService/Pause"
+	RuncService_Resume_FullMethodName               = "/runm.v1.RuncService/Resume"
+	RuncService_Ps_FullMethodName                   = "/runm.v1.RuncService/Ps"
+	RuncService_Checkpoint_FullMethodName           = "/runm.v1.RuncService/Checkpoint"
+	RuncService_Restore_FullMethodName              = "/runm.v1.RuncService/Restore"
+	RuncService_Update_FullMethodName               = "/runm.v1.RuncService/Update"
+	RuncService_NewTempConsoleSocket_FullMethodName = "/runm.v1.RuncService/NewTempConsoleSocket"
+	RuncService_ReadPidFile_FullMethodName          = "/runm.v1.RuncService/ReadPidFile"
 )
 
 // RuncServiceClient is the client API for RuncService service.
@@ -572,7 +572,7 @@ func _RuncService_ReadPidFile_Handler(srv interface{}, ctx context.Context, dec 
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var RuncService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "runv.v1.RuncService",
+	ServiceName: "runm.v1.RuncService",
 	HandlerType: (*RuncServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -637,13 +637,13 @@ var RuncService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	RuncExtrasService_State_FullMethodName   = "/runv.v1.RuncExtrasService/State"
-	RuncExtrasService_Run_FullMethodName     = "/runv.v1.RuncExtrasService/Run"
-	RuncExtrasService_Stats_FullMethodName   = "/runv.v1.RuncExtrasService/Stats"
-	RuncExtrasService_Events_FullMethodName  = "/runv.v1.RuncExtrasService/Events"
-	RuncExtrasService_List_FullMethodName    = "/runv.v1.RuncExtrasService/List"
-	RuncExtrasService_Version_FullMethodName = "/runv.v1.RuncExtrasService/Version"
-	RuncExtrasService_Top_FullMethodName     = "/runv.v1.RuncExtrasService/Top"
+	RuncExtrasService_State_FullMethodName   = "/runm.v1.RuncExtrasService/State"
+	RuncExtrasService_Run_FullMethodName     = "/runm.v1.RuncExtrasService/Run"
+	RuncExtrasService_Stats_FullMethodName   = "/runm.v1.RuncExtrasService/Stats"
+	RuncExtrasService_Events_FullMethodName  = "/runm.v1.RuncExtrasService/Events"
+	RuncExtrasService_List_FullMethodName    = "/runm.v1.RuncExtrasService/List"
+	RuncExtrasService_Version_FullMethodName = "/runm.v1.RuncExtrasService/Version"
+	RuncExtrasService_Top_FullMethodName     = "/runm.v1.RuncExtrasService/Top"
 )
 
 // RuncExtrasServiceClient is the client API for RuncExtrasService service.
@@ -930,7 +930,7 @@ func _RuncExtrasService_Top_Handler(srv interface{}, ctx context.Context, dec fu
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var RuncExtrasService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "runv.v1.RuncExtrasService",
+	ServiceName: "runm.v1.RuncExtrasService",
 	HandlerType: (*RuncExtrasServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

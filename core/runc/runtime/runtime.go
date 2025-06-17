@@ -14,8 +14,8 @@ import (
 )
 
 const (
-	GuestSharedDir = "/runv/shared"
-	LogFileBase    = "runv.log"
+	GuestSharedDir = "/runm/shared"
+	LogFileBase    = "runm.log"
 )
 
 type RuntimeOptions struct {

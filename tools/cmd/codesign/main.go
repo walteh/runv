@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/walteh/runv/tools/pkg/codesign"
+	"github.com/walteh/runm/tools/pkg/codesign"
 )
 
 func main() {

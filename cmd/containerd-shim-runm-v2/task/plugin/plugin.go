@@ -23,7 +23,7 @@ import (
 	"github.com/containerd/plugin"
 	"github.com/containerd/plugin/registry"
 
-	"github.com/walteh/runv/cmd/containerd-shim-runv-v2/task"
+	"github.com/walteh/runm/cmd/containerd-shim-runm-v2/task"
 )
 
 func init() {

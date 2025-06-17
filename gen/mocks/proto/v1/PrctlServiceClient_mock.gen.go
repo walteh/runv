@@ -2,44 +2,44 @@
 // github.com/vektra/mockery
 // template: matryer
 
-package mockrunvv1
+package mockrunmv1
 
 import (
 	"context"
 	"sync"
 
-	"github.com/walteh/runv/proto/v1"
+	"github.com/walteh/runm/proto/v1"
 	"google.golang.org/grpc"
 )
 
-// Ensure that MockPrctlServiceClient does implement runvv1.PrctlServiceClient.
+// Ensure that MockPrctlServiceClient does implement runmv1.PrctlServiceClient.
 // If this is not the case, regenerate this file with mockery.
-var _ runvv1.PrctlServiceClient = &MockPrctlServiceClient{}
+var _ runmv1.PrctlServiceClient = &MockPrctlServiceClient{}
 
-// MockPrctlServiceClient is a mock implementation of runvv1.PrctlServiceClient.
+// MockPrctlServiceClient is a mock implementation of runmv1.PrctlServiceClient.
 //
 //	func TestSomethingThatUsesPrctlServiceClient(t *testing.T) {
 //
-//		// make and configure a mocked runvv1.PrctlServiceClient
+//		// make and configure a mocked runmv1.PrctlServiceClient
 //		mockedPrctlServiceClient := &MockPrctlServiceClient{
-//			CreateFunc: func(ctx context.Context, in *runvv1.CreateRequest, opts ...grpc.CallOption) (*runvv1.CreateResponse, error) {
+//			CreateFunc: func(ctx context.Context, in *runmv1.CreateRequest, opts ...grpc.CallOption) (*runmv1.CreateResponse, error) {
 //				panic("mock out the Create method")
 //			},
-//			ShareFromFunc: func(ctx context.Context, in *runvv1.ShareFromRequest, opts ...grpc.CallOption) (*runvv1.ShareFromResponse, error) {
+//			ShareFromFunc: func(ctx context.Context, in *runmv1.ShareFromRequest, opts ...grpc.CallOption) (*runmv1.ShareFromResponse, error) {
 //				panic("mock out the ShareFrom method")
 //			},
 //		}
 //
-//		// use mockedPrctlServiceClient in code that requires runvv1.PrctlServiceClient
+//		// use mockedPrctlServiceClient in code that requires runmv1.PrctlServiceClient
 //		// and then make assertions.
 //
 //	}
 type MockPrctlServiceClient struct {
 	// CreateFunc mocks the Create method.
-	CreateFunc func(ctx context.Context, in *runvv1.CreateRequest, opts ...grpc.CallOption) (*runvv1.CreateResponse, error)
+	CreateFunc func(ctx context.Context, in *runmv1.CreateRequest, opts ...grpc.CallOption) (*runmv1.CreateResponse, error)
 
 	// ShareFromFunc mocks the ShareFrom method.
-	ShareFromFunc func(ctx context.Context, in *runvv1.ShareFromRequest, opts ...grpc.CallOption) (*runvv1.ShareFromResponse, error)
+	ShareFromFunc func(ctx context.Context, in *runmv1.ShareFromRequest, opts ...grpc.CallOption) (*runmv1.ShareFromResponse, error)
 
 	// calls tracks calls to the methods.
 	calls struct {
@@ -48,7 +48,7 @@ type MockPrctlServiceClient struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
 			// In is the in argument value.
-			In *runvv1.CreateRequest
+			In *runmv1.CreateRequest
 			// Opts is the opts argument value.
 			Opts []grpc.CallOption
 		}
@@ -57,7 +57,7 @@ type MockPrctlServiceClient struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
 			// In is the in argument value.
-			In *runvv1.ShareFromRequest
+			In *runmv1.ShareFromRequest
 			// Opts is the opts argument value.
 			Opts []grpc.CallOption
 		}
@@ -67,13 +67,13 @@ type MockPrctlServiceClient struct {
 }
 
 // Create calls CreateFunc.
-func (mock *MockPrctlServiceClient) Create(ctx context.Context, in *runvv1.CreateRequest, opts ...grpc.CallOption) (*runvv1.CreateResponse, error) {
+func (mock *MockPrctlServiceClient) Create(ctx context.Context, in *runmv1.CreateRequest, opts ...grpc.CallOption) (*runmv1.CreateResponse, error) {
 	if mock.CreateFunc == nil {
 		panic("MockPrctlServiceClient.CreateFunc: method is nil but PrctlServiceClient.Create was just called")
 	}
 	callInfo := struct {
 		Ctx  context.Context
-		In   *runvv1.CreateRequest
+		In   *runmv1.CreateRequest
 		Opts []grpc.CallOption
 	}{
 		Ctx:  ctx,
@@ -92,12 +92,12 @@ func (mock *MockPrctlServiceClient) Create(ctx context.Context, in *runvv1.Creat
 //	len(mockedPrctlServiceClient.CreateCalls())
 func (mock *MockPrctlServiceClient) CreateCalls() []struct {
 	Ctx  context.Context
-	In   *runvv1.CreateRequest
+	In   *runmv1.CreateRequest
 	Opts []grpc.CallOption
 } {
 	var calls []struct {
 		Ctx  context.Context
-		In   *runvv1.CreateRequest
+		In   *runmv1.CreateRequest
 		Opts []grpc.CallOption
 	}
 	mock.lockCreate.RLock()
@@ -107,13 +107,13 @@ func (mock *MockPrctlServiceClient) CreateCalls() []struct {
 }
 
 // ShareFrom calls ShareFromFunc.
-func (mock *MockPrctlServiceClient) ShareFrom(ctx context.Context, in *runvv1.ShareFromRequest, opts ...grpc.CallOption) (*runvv1.ShareFromResponse, error) {
+func (mock *MockPrctlServiceClient) ShareFrom(ctx context.Context, in *runmv1.ShareFromRequest, opts ...grpc.CallOption) (*runmv1.ShareFromResponse, error) {
 	if mock.ShareFromFunc == nil {
 		panic("MockPrctlServiceClient.ShareFromFunc: method is nil but PrctlServiceClient.ShareFrom was just called")
 	}
 	callInfo := struct {
 		Ctx  context.Context
-		In   *runvv1.ShareFromRequest
+		In   *runmv1.ShareFromRequest
 		Opts []grpc.CallOption
 	}{
 		Ctx:  ctx,
@@ -132,12 +132,12 @@ func (mock *MockPrctlServiceClient) ShareFrom(ctx context.Context, in *runvv1.Sh
 //	len(mockedPrctlServiceClient.ShareFromCalls())
 func (mock *MockPrctlServiceClient) ShareFromCalls() []struct {
 	Ctx  context.Context
-	In   *runvv1.ShareFromRequest
+	In   *runmv1.ShareFromRequest
 	Opts []grpc.CallOption
 } {
 	var calls []struct {
 		Ctx  context.Context
-		In   *runvv1.ShareFromRequest
+		In   *runmv1.ShareFromRequest
 		Opts []grpc.CallOption
 	}
 	mock.lockShareFrom.RLock()

@@ -15,13 +15,13 @@ import (
 
 	gorunc "github.com/containerd/go-runc"
 
-	"github.com/walteh/runv/core/runc/runtime"
-	"github.com/walteh/runv/core/runc/runtime/plug"
-	"github.com/walteh/runv/pkg/logging"
+	"github.com/walteh/runm/core/runc/runtime"
+	"github.com/walteh/runm/core/runc/runtime/plug"
+	"github.com/walteh/runm/pkg/logging"
 
-	goruncruntime "github.com/walteh/runv/core/runc/runtime/gorunc"
-	server "github.com/walteh/runv/core/runc/server"
-	runtimemock "github.com/walteh/runv/gen/mocks/core/runc/runtime"
+	goruncruntime "github.com/walteh/runm/core/runc/runtime/gorunc"
+	server "github.com/walteh/runm/core/runc/server"
+	runtimemock "github.com/walteh/runm/gen/mocks/core/runc/runtime"
 )
 
 func newMockServer() *server.Server {
@@ -30,7 +30,7 @@ func newMockServer() *server.Server {
 			return 1234, nil
 		},
 		SharedDirFunc: func() string {
-			return "/runv/shared"
+			return "/runm/shared"
 		},
 	}
 
@@ -49,7 +49,7 @@ func newMockServer() *server.Server {
 }
 
 func newRealServer(ctx context.Context) *server.Server {
-	wrkDir := "/tmp/runv-sample"
+	wrkDir := "/tmp/runm-sample"
 
 	os.RemoveAll(wrkDir)
 
@@ -61,7 +61,7 @@ func newRealServer(ctx context.Context) *server.Server {
 	realRuntime := realRuntimeCreator.Create(ctx, wrkDir, &runtime.RuntimeOptions{
 		Root:          filepath.Join(wrkDir, "root"),
 		Path:          filepath.Join(wrkDir, "path"),
-		Namespace:     "runv",
+		Namespace:     "runm",
 		Runtime:       "runc",
 		SystemdCgroup: true,
 	})

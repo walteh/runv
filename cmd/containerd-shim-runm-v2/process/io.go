@@ -37,7 +37,7 @@ import (
 	"github.com/containerd/fifo"
 	"github.com/containerd/log"
 
-	"github.com/walteh/runv/core/runc/runtime"
+	"github.com/walteh/runm/core/runc/runtime"
 )
 
 const binaryIOProcTermTimeout = 12 * time.Second // Give logger process solid 10 seconds for cleanup

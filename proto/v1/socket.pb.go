@@ -4,7 +4,7 @@
 // 	protoc        (unknown)
 // source: v1/socket.proto
 
-package runvv1
+package runmv1
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -1266,7 +1266,7 @@ var File_v1_socket_proto protoreflect.FileDescriptor
 
 const file_v1_socket_proto_rawDesc = "" +
 	"\n" +
-	"\x0fv1/socket.proto\x12\arunv.v1\x1a\x1egoogle/protobuf/duration.proto\x1a!google/protobuf/go_features.proto\"\x1d\n" +
+	"\x0fv1/socket.proto\x12\arunm.v1\x1a\x1egoogle/protobuf/duration.proto\x1a!google/protobuf/go_features.proto\"\x1d\n" +
 	"\x1bAllocateSocketStreamRequest\"N\n" +
 	"\x1cAllocateSocketStreamResponse\x12.\n" +
 	"\x13socket_reference_id\x18\x01 \x01(\tR\x11socketReferenceId\"t\n" +
@@ -1314,65 +1314,65 @@ const file_v1_socket_proto_rawDesc = "" +
 	"\x14console_reference_id\x18\x01 \x01(\tR\x12consoleReferenceId\"\x16\n" +
 	"\x14CloseConsoleResponse2\xe0\x06\n" +
 	"\x16SocketAllocatorService\x12V\n" +
-	"\x0fAllocateSockets\x12\x1f.runv.v1.AllocateSocketsRequest\x1a .runv.v1.AllocateSocketsResponse\"\x00\x12g\n" +
-	"\x14AllocateSocketStream\x12$.runv.v1.AllocateSocketStreamRequest\x1a%.runv.v1.AllocateSocketStreamResponse\"\x000\x01\x12G\n" +
+	"\x0fAllocateSockets\x12\x1f.runm.v1.AllocateSocketsRequest\x1a .runm.v1.AllocateSocketsResponse\"\x00\x12g\n" +
+	"\x14AllocateSocketStream\x12$.runm.v1.AllocateSocketStreamRequest\x1a%.runm.v1.AllocateSocketStreamResponse\"\x000\x01\x12G\n" +
 	"\n" +
-	"AllocateIO\x12\x1a.runv.v1.AllocateIORequest\x1a\x1b.runv.v1.AllocateIOResponse\"\x00\x12V\n" +
-	"\x0fAllocateConsole\x12\x1f.runv.v1.AllocateConsoleRequest\x1a .runv.v1.AllocateConsoleResponse\"\x00\x12b\n" +
-	"\x13BindConsoleToSocket\x12#.runv.v1.BindConsoleToSocketRequest\x1a$.runv.v1.BindConsoleToSocketResponse\"\x00\x12V\n" +
-	"\x0fBindIOToSockets\x12\x1f.runv.v1.BindIOToSocketsRequest\x1a .runv.v1.BindIOToSocketsResponse\"\x00\x12J\n" +
-	"\vCloseSocket\x12\x1b.runv.v1.CloseSocketRequest\x1a\x1c.runv.v1.CloseSocketResponse\"\x00\x12M\n" +
-	"\fCloseSockets\x12\x1c.runv.v1.CloseSocketsRequest\x1a\x1d.runv.v1.CloseSocketsResponse\"\x00\x12>\n" +
-	"\aCloseIO\x12\x17.runv.v1.CloseIORequest\x1a\x18.runv.v1.CloseIOResponse\"\x00\x12M\n" +
-	"\fCloseConsole\x12\x1c.runv.v1.CloseConsoleRequest\x1a\x1d.runv.v1.CloseConsoleResponse\"\x00B\x89\x01\n" +
-	"\vcom.runv.v1B\vSocketProtoP\x01Z&github.com/walteh/runv/proto/v1;runvv1\xa2\x02\x03RXX\xaa\x02\aRunv.V1\xca\x02\aRunv\\V1\xe2\x02\x13Runv\\V1\\GPBMetadata\xea\x02\bRunv::V1\x92\x03\a\xd2>\x02\x10\x03\b\x02b\beditionsp\xe8\a"
+	"AllocateIO\x12\x1a.runm.v1.AllocateIORequest\x1a\x1b.runm.v1.AllocateIOResponse\"\x00\x12V\n" +
+	"\x0fAllocateConsole\x12\x1f.runm.v1.AllocateConsoleRequest\x1a .runm.v1.AllocateConsoleResponse\"\x00\x12b\n" +
+	"\x13BindConsoleToSocket\x12#.runm.v1.BindConsoleToSocketRequest\x1a$.runm.v1.BindConsoleToSocketResponse\"\x00\x12V\n" +
+	"\x0fBindIOToSockets\x12\x1f.runm.v1.BindIOToSocketsRequest\x1a .runm.v1.BindIOToSocketsResponse\"\x00\x12J\n" +
+	"\vCloseSocket\x12\x1b.runm.v1.CloseSocketRequest\x1a\x1c.runm.v1.CloseSocketResponse\"\x00\x12M\n" +
+	"\fCloseSockets\x12\x1c.runm.v1.CloseSocketsRequest\x1a\x1d.runm.v1.CloseSocketsResponse\"\x00\x12>\n" +
+	"\aCloseIO\x12\x17.runm.v1.CloseIORequest\x1a\x18.runm.v1.CloseIOResponse\"\x00\x12M\n" +
+	"\fCloseConsole\x12\x1c.runm.v1.CloseConsoleRequest\x1a\x1d.runm.v1.CloseConsoleResponse\"\x00B\x89\x01\n" +
+	"\vcom.runm.v1B\vSocketProtoP\x01Z&github.com/walteh/runm/proto/v1;runmv1\xa2\x02\x03RXX\xaa\x02\aRunm.V1\xca\x02\aRunm\\V1\xe2\x02\x13Runm\\V1\\GPBMetadata\xea\x02\bRunm::V1\x92\x03\a\xd2>\x02\x10\x03\b\x02b\beditionsp\xe8\a"
 
 var file_v1_socket_proto_msgTypes = make([]protoimpl.MessageInfo, 22)
 var file_v1_socket_proto_goTypes = []any{
-	(*AllocateSocketStreamRequest)(nil),  // 0: runv.v1.AllocateSocketStreamRequest
-	(*AllocateSocketStreamResponse)(nil), // 1: runv.v1.AllocateSocketStreamResponse
-	(*AllocateIORequest)(nil),            // 2: runv.v1.AllocateIORequest
-	(*AllocateIOResponse)(nil),           // 3: runv.v1.AllocateIOResponse
-	(*AllocateConsoleRequest)(nil),       // 4: runv.v1.AllocateConsoleRequest
-	(*AllocateConsoleResponse)(nil),      // 5: runv.v1.AllocateConsoleResponse
-	(*CloseSocketsRequest)(nil),          // 6: runv.v1.CloseSocketsRequest
-	(*CloseSocketsResponse)(nil),         // 7: runv.v1.CloseSocketsResponse
-	(*AllocateSocketsRequest)(nil),       // 8: runv.v1.AllocateSocketsRequest
-	(*AllocateSocketsResponse)(nil),      // 9: runv.v1.AllocateSocketsResponse
-	(*BindIOToSocketsRequest)(nil),       // 10: runv.v1.BindIOToSocketsRequest
-	(*BindIOToSocketsResponse)(nil),      // 11: runv.v1.BindIOToSocketsResponse
-	(*BindConsoleToSocketRequest)(nil),   // 12: runv.v1.BindConsoleToSocketRequest
-	(*BindConsoleToSocketResponse)(nil),  // 13: runv.v1.BindConsoleToSocketResponse
-	(*AllocateSocketRequest)(nil),        // 14: runv.v1.AllocateSocketRequest
-	(*AllocateSocketResponse)(nil),       // 15: runv.v1.AllocateSocketResponse
-	(*CloseSocketRequest)(nil),           // 16: runv.v1.CloseSocketRequest
-	(*CloseSocketResponse)(nil),          // 17: runv.v1.CloseSocketResponse
-	(*CloseIORequest)(nil),               // 18: runv.v1.CloseIORequest
-	(*CloseIOResponse)(nil),              // 19: runv.v1.CloseIOResponse
-	(*CloseConsoleRequest)(nil),          // 20: runv.v1.CloseConsoleRequest
-	(*CloseConsoleResponse)(nil),         // 21: runv.v1.CloseConsoleResponse
+	(*AllocateSocketStreamRequest)(nil),  // 0: runm.v1.AllocateSocketStreamRequest
+	(*AllocateSocketStreamResponse)(nil), // 1: runm.v1.AllocateSocketStreamResponse
+	(*AllocateIORequest)(nil),            // 2: runm.v1.AllocateIORequest
+	(*AllocateIOResponse)(nil),           // 3: runm.v1.AllocateIOResponse
+	(*AllocateConsoleRequest)(nil),       // 4: runm.v1.AllocateConsoleRequest
+	(*AllocateConsoleResponse)(nil),      // 5: runm.v1.AllocateConsoleResponse
+	(*CloseSocketsRequest)(nil),          // 6: runm.v1.CloseSocketsRequest
+	(*CloseSocketsResponse)(nil),         // 7: runm.v1.CloseSocketsResponse
+	(*AllocateSocketsRequest)(nil),       // 8: runm.v1.AllocateSocketsRequest
+	(*AllocateSocketsResponse)(nil),      // 9: runm.v1.AllocateSocketsResponse
+	(*BindIOToSocketsRequest)(nil),       // 10: runm.v1.BindIOToSocketsRequest
+	(*BindIOToSocketsResponse)(nil),      // 11: runm.v1.BindIOToSocketsResponse
+	(*BindConsoleToSocketRequest)(nil),   // 12: runm.v1.BindConsoleToSocketRequest
+	(*BindConsoleToSocketResponse)(nil),  // 13: runm.v1.BindConsoleToSocketResponse
+	(*AllocateSocketRequest)(nil),        // 14: runm.v1.AllocateSocketRequest
+	(*AllocateSocketResponse)(nil),       // 15: runm.v1.AllocateSocketResponse
+	(*CloseSocketRequest)(nil),           // 16: runm.v1.CloseSocketRequest
+	(*CloseSocketResponse)(nil),          // 17: runm.v1.CloseSocketResponse
+	(*CloseIORequest)(nil),               // 18: runm.v1.CloseIORequest
+	(*CloseIOResponse)(nil),              // 19: runm.v1.CloseIOResponse
+	(*CloseConsoleRequest)(nil),          // 20: runm.v1.CloseConsoleRequest
+	(*CloseConsoleResponse)(nil),         // 21: runm.v1.CloseConsoleResponse
 }
 var file_v1_socket_proto_depIdxs = []int32{
-	8,  // 0: runv.v1.SocketAllocatorService.AllocateSockets:input_type -> runv.v1.AllocateSocketsRequest
-	0,  // 1: runv.v1.SocketAllocatorService.AllocateSocketStream:input_type -> runv.v1.AllocateSocketStreamRequest
-	2,  // 2: runv.v1.SocketAllocatorService.AllocateIO:input_type -> runv.v1.AllocateIORequest
-	4,  // 3: runv.v1.SocketAllocatorService.AllocateConsole:input_type -> runv.v1.AllocateConsoleRequest
-	12, // 4: runv.v1.SocketAllocatorService.BindConsoleToSocket:input_type -> runv.v1.BindConsoleToSocketRequest
-	10, // 5: runv.v1.SocketAllocatorService.BindIOToSockets:input_type -> runv.v1.BindIOToSocketsRequest
-	16, // 6: runv.v1.SocketAllocatorService.CloseSocket:input_type -> runv.v1.CloseSocketRequest
-	6,  // 7: runv.v1.SocketAllocatorService.CloseSockets:input_type -> runv.v1.CloseSocketsRequest
-	18, // 8: runv.v1.SocketAllocatorService.CloseIO:input_type -> runv.v1.CloseIORequest
-	20, // 9: runv.v1.SocketAllocatorService.CloseConsole:input_type -> runv.v1.CloseConsoleRequest
-	9,  // 10: runv.v1.SocketAllocatorService.AllocateSockets:output_type -> runv.v1.AllocateSocketsResponse
-	1,  // 11: runv.v1.SocketAllocatorService.AllocateSocketStream:output_type -> runv.v1.AllocateSocketStreamResponse
-	3,  // 12: runv.v1.SocketAllocatorService.AllocateIO:output_type -> runv.v1.AllocateIOResponse
-	5,  // 13: runv.v1.SocketAllocatorService.AllocateConsole:output_type -> runv.v1.AllocateConsoleResponse
-	13, // 14: runv.v1.SocketAllocatorService.BindConsoleToSocket:output_type -> runv.v1.BindConsoleToSocketResponse
-	11, // 15: runv.v1.SocketAllocatorService.BindIOToSockets:output_type -> runv.v1.BindIOToSocketsResponse
-	17, // 16: runv.v1.SocketAllocatorService.CloseSocket:output_type -> runv.v1.CloseSocketResponse
-	7,  // 17: runv.v1.SocketAllocatorService.CloseSockets:output_type -> runv.v1.CloseSocketsResponse
-	19, // 18: runv.v1.SocketAllocatorService.CloseIO:output_type -> runv.v1.CloseIOResponse
-	21, // 19: runv.v1.SocketAllocatorService.CloseConsole:output_type -> runv.v1.CloseConsoleResponse
+	8,  // 0: runm.v1.SocketAllocatorService.AllocateSockets:input_type -> runm.v1.AllocateSocketsRequest
+	0,  // 1: runm.v1.SocketAllocatorService.AllocateSocketStream:input_type -> runm.v1.AllocateSocketStreamRequest
+	2,  // 2: runm.v1.SocketAllocatorService.AllocateIO:input_type -> runm.v1.AllocateIORequest
+	4,  // 3: runm.v1.SocketAllocatorService.AllocateConsole:input_type -> runm.v1.AllocateConsoleRequest
+	12, // 4: runm.v1.SocketAllocatorService.BindConsoleToSocket:input_type -> runm.v1.BindConsoleToSocketRequest
+	10, // 5: runm.v1.SocketAllocatorService.BindIOToSockets:input_type -> runm.v1.BindIOToSocketsRequest
+	16, // 6: runm.v1.SocketAllocatorService.CloseSocket:input_type -> runm.v1.CloseSocketRequest
+	6,  // 7: runm.v1.SocketAllocatorService.CloseSockets:input_type -> runm.v1.CloseSocketsRequest
+	18, // 8: runm.v1.SocketAllocatorService.CloseIO:input_type -> runm.v1.CloseIORequest
+	20, // 9: runm.v1.SocketAllocatorService.CloseConsole:input_type -> runm.v1.CloseConsoleRequest
+	9,  // 10: runm.v1.SocketAllocatorService.AllocateSockets:output_type -> runm.v1.AllocateSocketsResponse
+	1,  // 11: runm.v1.SocketAllocatorService.AllocateSocketStream:output_type -> runm.v1.AllocateSocketStreamResponse
+	3,  // 12: runm.v1.SocketAllocatorService.AllocateIO:output_type -> runm.v1.AllocateIOResponse
+	5,  // 13: runm.v1.SocketAllocatorService.AllocateConsole:output_type -> runm.v1.AllocateConsoleResponse
+	13, // 14: runm.v1.SocketAllocatorService.BindConsoleToSocket:output_type -> runm.v1.BindConsoleToSocketResponse
+	11, // 15: runm.v1.SocketAllocatorService.BindIOToSockets:output_type -> runm.v1.BindIOToSocketsResponse
+	17, // 16: runm.v1.SocketAllocatorService.CloseSocket:output_type -> runm.v1.CloseSocketResponse
+	7,  // 17: runm.v1.SocketAllocatorService.CloseSockets:output_type -> runm.v1.CloseSocketsResponse
+	19, // 18: runm.v1.SocketAllocatorService.CloseIO:output_type -> runm.v1.CloseIOResponse
+	21, // 19: runm.v1.SocketAllocatorService.CloseConsole:output_type -> runm.v1.CloseConsoleResponse
 	10, // [10:20] is the sub-list for method output_type
 	0,  // [0:10] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name

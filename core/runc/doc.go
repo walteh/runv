@@ -16,8 +16,8 @@ package runc
 // the runc flow where everything is on the host looks like this:
 // host: containerd -> runc-shim -> go-runc -> runc binary
 //
-// in comparison, the runv flow enabled by this package looks like this:
-// host: containerd -> runv-shim -> [runc grpc client] ~~~(vsock)~~~>
+// in comparison, the runm flow enabled by this package looks like this:
+// host: containerd -> runm-shim -> [runc grpc client] ~~~(vsock)~~~>
 // guest: 	~~>	[runc grpc server] -> go-runc -> runc binary
 //
 // testing notes:

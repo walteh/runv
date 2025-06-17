@@ -2,125 +2,125 @@
 // github.com/vektra/mockery
 // template: matryer
 
-package mockrunvv1
+package mockrunmv1
 
 import (
 	"context"
 	"sync"
 
-	"github.com/walteh/runv/proto/v1"
+	"github.com/walteh/runm/proto/v1"
 	"google.golang.org/grpc"
 )
 
-// Ensure that MockRuncExtrasServiceServer does implement runvv1.RuncExtrasServiceServer.
+// Ensure that MockRuncExtrasServiceServer does implement runmv1.RuncExtrasServiceServer.
 // If this is not the case, regenerate this file with mockery.
-var _ runvv1.RuncExtrasServiceServer = &MockRuncExtrasServiceServer{}
+var _ runmv1.RuncExtrasServiceServer = &MockRuncExtrasServiceServer{}
 
-// MockRuncExtrasServiceServer is a mock implementation of runvv1.RuncExtrasServiceServer.
+// MockRuncExtrasServiceServer is a mock implementation of runmv1.RuncExtrasServiceServer.
 //
 //	func TestSomethingThatUsesRuncExtrasServiceServer(t *testing.T) {
 //
-//		// make and configure a mocked runvv1.RuncExtrasServiceServer
+//		// make and configure a mocked runmv1.RuncExtrasServiceServer
 //		mockedRuncExtrasServiceServer := &MockRuncExtrasServiceServer{
-//			EventsFunc: func(runcEventsRequest *runvv1.RuncEventsRequest, serverStreamingServer grpc.ServerStreamingServer[runvv1.RuncEvent]) error {
+//			EventsFunc: func(runcEventsRequest *runmv1.RuncEventsRequest, serverStreamingServer grpc.ServerStreamingServer[runmv1.RuncEvent]) error {
 //				panic("mock out the Events method")
 //			},
-//			ListFunc: func(context1 context.Context, runcListRequest *runvv1.RuncListRequest) (*runvv1.RuncListResponse, error) {
+//			ListFunc: func(context1 context.Context, runcListRequest *runmv1.RuncListRequest) (*runmv1.RuncListResponse, error) {
 //				panic("mock out the List method")
 //			},
-//			RunFunc: func(context1 context.Context, runcRunRequest *runvv1.RuncRunRequest) (*runvv1.RuncRunResponse, error) {
+//			RunFunc: func(context1 context.Context, runcRunRequest *runmv1.RuncRunRequest) (*runmv1.RuncRunResponse, error) {
 //				panic("mock out the Run method")
 //			},
-//			StateFunc: func(context1 context.Context, runcStateRequest *runvv1.RuncStateRequest) (*runvv1.RuncStateResponse, error) {
+//			StateFunc: func(context1 context.Context, runcStateRequest *runmv1.RuncStateRequest) (*runmv1.RuncStateResponse, error) {
 //				panic("mock out the State method")
 //			},
-//			StatsFunc: func(context1 context.Context, runcStatsRequest *runvv1.RuncStatsRequest) (*runvv1.RuncStatsResponse, error) {
+//			StatsFunc: func(context1 context.Context, runcStatsRequest *runmv1.RuncStatsRequest) (*runmv1.RuncStatsResponse, error) {
 //				panic("mock out the Stats method")
 //			},
-//			TopFunc: func(context1 context.Context, runcTopRequest *runvv1.RuncTopRequest) (*runvv1.RuncTopResponse, error) {
+//			TopFunc: func(context1 context.Context, runcTopRequest *runmv1.RuncTopRequest) (*runmv1.RuncTopResponse, error) {
 //				panic("mock out the Top method")
 //			},
-//			VersionFunc: func(context1 context.Context, runcVersionRequest *runvv1.RuncVersionRequest) (*runvv1.RuncVersionResponse, error) {
+//			VersionFunc: func(context1 context.Context, runcVersionRequest *runmv1.RuncVersionRequest) (*runmv1.RuncVersionResponse, error) {
 //				panic("mock out the Version method")
 //			},
 //		}
 //
-//		// use mockedRuncExtrasServiceServer in code that requires runvv1.RuncExtrasServiceServer
+//		// use mockedRuncExtrasServiceServer in code that requires runmv1.RuncExtrasServiceServer
 //		// and then make assertions.
 //
 //	}
 type MockRuncExtrasServiceServer struct {
 	// EventsFunc mocks the Events method.
-	EventsFunc func(runcEventsRequest *runvv1.RuncEventsRequest, serverStreamingServer grpc.ServerStreamingServer[runvv1.RuncEvent]) error
+	EventsFunc func(runcEventsRequest *runmv1.RuncEventsRequest, serverStreamingServer grpc.ServerStreamingServer[runmv1.RuncEvent]) error
 
 	// ListFunc mocks the List method.
-	ListFunc func(context1 context.Context, runcListRequest *runvv1.RuncListRequest) (*runvv1.RuncListResponse, error)
+	ListFunc func(context1 context.Context, runcListRequest *runmv1.RuncListRequest) (*runmv1.RuncListResponse, error)
 
 	// RunFunc mocks the Run method.
-	RunFunc func(context1 context.Context, runcRunRequest *runvv1.RuncRunRequest) (*runvv1.RuncRunResponse, error)
+	RunFunc func(context1 context.Context, runcRunRequest *runmv1.RuncRunRequest) (*runmv1.RuncRunResponse, error)
 
 	// StateFunc mocks the State method.
-	StateFunc func(context1 context.Context, runcStateRequest *runvv1.RuncStateRequest) (*runvv1.RuncStateResponse, error)
+	StateFunc func(context1 context.Context, runcStateRequest *runmv1.RuncStateRequest) (*runmv1.RuncStateResponse, error)
 
 	// StatsFunc mocks the Stats method.
-	StatsFunc func(context1 context.Context, runcStatsRequest *runvv1.RuncStatsRequest) (*runvv1.RuncStatsResponse, error)
+	StatsFunc func(context1 context.Context, runcStatsRequest *runmv1.RuncStatsRequest) (*runmv1.RuncStatsResponse, error)
 
 	// TopFunc mocks the Top method.
-	TopFunc func(context1 context.Context, runcTopRequest *runvv1.RuncTopRequest) (*runvv1.RuncTopResponse, error)
+	TopFunc func(context1 context.Context, runcTopRequest *runmv1.RuncTopRequest) (*runmv1.RuncTopResponse, error)
 
 	// VersionFunc mocks the Version method.
-	VersionFunc func(context1 context.Context, runcVersionRequest *runvv1.RuncVersionRequest) (*runvv1.RuncVersionResponse, error)
+	VersionFunc func(context1 context.Context, runcVersionRequest *runmv1.RuncVersionRequest) (*runmv1.RuncVersionResponse, error)
 
 	// calls tracks calls to the methods.
 	calls struct {
 		// Events holds details about calls to the Events method.
 		Events []struct {
 			// RuncEventsRequest is the runcEventsRequest argument value.
-			RuncEventsRequest *runvv1.RuncEventsRequest
+			RuncEventsRequest *runmv1.RuncEventsRequest
 			// ServerStreamingServer is the serverStreamingServer argument value.
-			ServerStreamingServer grpc.ServerStreamingServer[runvv1.RuncEvent]
+			ServerStreamingServer grpc.ServerStreamingServer[runmv1.RuncEvent]
 		}
 		// List holds details about calls to the List method.
 		List []struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// RuncListRequest is the runcListRequest argument value.
-			RuncListRequest *runvv1.RuncListRequest
+			RuncListRequest *runmv1.RuncListRequest
 		}
 		// Run holds details about calls to the Run method.
 		Run []struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// RuncRunRequest is the runcRunRequest argument value.
-			RuncRunRequest *runvv1.RuncRunRequest
+			RuncRunRequest *runmv1.RuncRunRequest
 		}
 		// State holds details about calls to the State method.
 		State []struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// RuncStateRequest is the runcStateRequest argument value.
-			RuncStateRequest *runvv1.RuncStateRequest
+			RuncStateRequest *runmv1.RuncStateRequest
 		}
 		// Stats holds details about calls to the Stats method.
 		Stats []struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// RuncStatsRequest is the runcStatsRequest argument value.
-			RuncStatsRequest *runvv1.RuncStatsRequest
+			RuncStatsRequest *runmv1.RuncStatsRequest
 		}
 		// Top holds details about calls to the Top method.
 		Top []struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// RuncTopRequest is the runcTopRequest argument value.
-			RuncTopRequest *runvv1.RuncTopRequest
+			RuncTopRequest *runmv1.RuncTopRequest
 		}
 		// Version holds details about calls to the Version method.
 		Version []struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// RuncVersionRequest is the runcVersionRequest argument value.
-			RuncVersionRequest *runvv1.RuncVersionRequest
+			RuncVersionRequest *runmv1.RuncVersionRequest
 		}
 	}
 	lockEvents  sync.RWMutex
@@ -133,13 +133,13 @@ type MockRuncExtrasServiceServer struct {
 }
 
 // Events calls EventsFunc.
-func (mock *MockRuncExtrasServiceServer) Events(runcEventsRequest *runvv1.RuncEventsRequest, serverStreamingServer grpc.ServerStreamingServer[runvv1.RuncEvent]) error {
+func (mock *MockRuncExtrasServiceServer) Events(runcEventsRequest *runmv1.RuncEventsRequest, serverStreamingServer grpc.ServerStreamingServer[runmv1.RuncEvent]) error {
 	if mock.EventsFunc == nil {
 		panic("MockRuncExtrasServiceServer.EventsFunc: method is nil but RuncExtrasServiceServer.Events was just called")
 	}
 	callInfo := struct {
-		RuncEventsRequest     *runvv1.RuncEventsRequest
-		ServerStreamingServer grpc.ServerStreamingServer[runvv1.RuncEvent]
+		RuncEventsRequest     *runmv1.RuncEventsRequest
+		ServerStreamingServer grpc.ServerStreamingServer[runmv1.RuncEvent]
 	}{
 		RuncEventsRequest:     runcEventsRequest,
 		ServerStreamingServer: serverStreamingServer,
@@ -155,12 +155,12 @@ func (mock *MockRuncExtrasServiceServer) Events(runcEventsRequest *runvv1.RuncEv
 //
 //	len(mockedRuncExtrasServiceServer.EventsCalls())
 func (mock *MockRuncExtrasServiceServer) EventsCalls() []struct {
-	RuncEventsRequest     *runvv1.RuncEventsRequest
-	ServerStreamingServer grpc.ServerStreamingServer[runvv1.RuncEvent]
+	RuncEventsRequest     *runmv1.RuncEventsRequest
+	ServerStreamingServer grpc.ServerStreamingServer[runmv1.RuncEvent]
 } {
 	var calls []struct {
-		RuncEventsRequest     *runvv1.RuncEventsRequest
-		ServerStreamingServer grpc.ServerStreamingServer[runvv1.RuncEvent]
+		RuncEventsRequest     *runmv1.RuncEventsRequest
+		ServerStreamingServer grpc.ServerStreamingServer[runmv1.RuncEvent]
 	}
 	mock.lockEvents.RLock()
 	calls = mock.calls.Events
@@ -169,13 +169,13 @@ func (mock *MockRuncExtrasServiceServer) EventsCalls() []struct {
 }
 
 // List calls ListFunc.
-func (mock *MockRuncExtrasServiceServer) List(context1 context.Context, runcListRequest *runvv1.RuncListRequest) (*runvv1.RuncListResponse, error) {
+func (mock *MockRuncExtrasServiceServer) List(context1 context.Context, runcListRequest *runmv1.RuncListRequest) (*runmv1.RuncListResponse, error) {
 	if mock.ListFunc == nil {
 		panic("MockRuncExtrasServiceServer.ListFunc: method is nil but RuncExtrasServiceServer.List was just called")
 	}
 	callInfo := struct {
 		Context1        context.Context
-		RuncListRequest *runvv1.RuncListRequest
+		RuncListRequest *runmv1.RuncListRequest
 	}{
 		Context1:        context1,
 		RuncListRequest: runcListRequest,
@@ -192,11 +192,11 @@ func (mock *MockRuncExtrasServiceServer) List(context1 context.Context, runcList
 //	len(mockedRuncExtrasServiceServer.ListCalls())
 func (mock *MockRuncExtrasServiceServer) ListCalls() []struct {
 	Context1        context.Context
-	RuncListRequest *runvv1.RuncListRequest
+	RuncListRequest *runmv1.RuncListRequest
 } {
 	var calls []struct {
 		Context1        context.Context
-		RuncListRequest *runvv1.RuncListRequest
+		RuncListRequest *runmv1.RuncListRequest
 	}
 	mock.lockList.RLock()
 	calls = mock.calls.List
@@ -205,13 +205,13 @@ func (mock *MockRuncExtrasServiceServer) ListCalls() []struct {
 }
 
 // Run calls RunFunc.
-func (mock *MockRuncExtrasServiceServer) Run(context1 context.Context, runcRunRequest *runvv1.RuncRunRequest) (*runvv1.RuncRunResponse, error) {
+func (mock *MockRuncExtrasServiceServer) Run(context1 context.Context, runcRunRequest *runmv1.RuncRunRequest) (*runmv1.RuncRunResponse, error) {
 	if mock.RunFunc == nil {
 		panic("MockRuncExtrasServiceServer.RunFunc: method is nil but RuncExtrasServiceServer.Run was just called")
 	}
 	callInfo := struct {
 		Context1       context.Context
-		RuncRunRequest *runvv1.RuncRunRequest
+		RuncRunRequest *runmv1.RuncRunRequest
 	}{
 		Context1:       context1,
 		RuncRunRequest: runcRunRequest,
@@ -228,11 +228,11 @@ func (mock *MockRuncExtrasServiceServer) Run(context1 context.Context, runcRunRe
 //	len(mockedRuncExtrasServiceServer.RunCalls())
 func (mock *MockRuncExtrasServiceServer) RunCalls() []struct {
 	Context1       context.Context
-	RuncRunRequest *runvv1.RuncRunRequest
+	RuncRunRequest *runmv1.RuncRunRequest
 } {
 	var calls []struct {
 		Context1       context.Context
-		RuncRunRequest *runvv1.RuncRunRequest
+		RuncRunRequest *runmv1.RuncRunRequest
 	}
 	mock.lockRun.RLock()
 	calls = mock.calls.Run
@@ -241,13 +241,13 @@ func (mock *MockRuncExtrasServiceServer) RunCalls() []struct {
 }
 
 // State calls StateFunc.
-func (mock *MockRuncExtrasServiceServer) State(context1 context.Context, runcStateRequest *runvv1.RuncStateRequest) (*runvv1.RuncStateResponse, error) {
+func (mock *MockRuncExtrasServiceServer) State(context1 context.Context, runcStateRequest *runmv1.RuncStateRequest) (*runmv1.RuncStateResponse, error) {
 	if mock.StateFunc == nil {
 		panic("MockRuncExtrasServiceServer.StateFunc: method is nil but RuncExtrasServiceServer.State was just called")
 	}
 	callInfo := struct {
 		Context1         context.Context
-		RuncStateRequest *runvv1.RuncStateRequest
+		RuncStateRequest *runmv1.RuncStateRequest
 	}{
 		Context1:         context1,
 		RuncStateRequest: runcStateRequest,
@@ -264,11 +264,11 @@ func (mock *MockRuncExtrasServiceServer) State(context1 context.Context, runcSta
 //	len(mockedRuncExtrasServiceServer.StateCalls())
 func (mock *MockRuncExtrasServiceServer) StateCalls() []struct {
 	Context1         context.Context
-	RuncStateRequest *runvv1.RuncStateRequest
+	RuncStateRequest *runmv1.RuncStateRequest
 } {
 	var calls []struct {
 		Context1         context.Context
-		RuncStateRequest *runvv1.RuncStateRequest
+		RuncStateRequest *runmv1.RuncStateRequest
 	}
 	mock.lockState.RLock()
 	calls = mock.calls.State
@@ -277,13 +277,13 @@ func (mock *MockRuncExtrasServiceServer) StateCalls() []struct {
 }
 
 // Stats calls StatsFunc.
-func (mock *MockRuncExtrasServiceServer) Stats(context1 context.Context, runcStatsRequest *runvv1.RuncStatsRequest) (*runvv1.RuncStatsResponse, error) {
+func (mock *MockRuncExtrasServiceServer) Stats(context1 context.Context, runcStatsRequest *runmv1.RuncStatsRequest) (*runmv1.RuncStatsResponse, error) {
 	if mock.StatsFunc == nil {
 		panic("MockRuncExtrasServiceServer.StatsFunc: method is nil but RuncExtrasServiceServer.Stats was just called")
 	}
 	callInfo := struct {
 		Context1         context.Context
-		RuncStatsRequest *runvv1.RuncStatsRequest
+		RuncStatsRequest *runmv1.RuncStatsRequest
 	}{
 		Context1:         context1,
 		RuncStatsRequest: runcStatsRequest,
@@ -300,11 +300,11 @@ func (mock *MockRuncExtrasServiceServer) Stats(context1 context.Context, runcSta
 //	len(mockedRuncExtrasServiceServer.StatsCalls())
 func (mock *MockRuncExtrasServiceServer) StatsCalls() []struct {
 	Context1         context.Context
-	RuncStatsRequest *runvv1.RuncStatsRequest
+	RuncStatsRequest *runmv1.RuncStatsRequest
 } {
 	var calls []struct {
 		Context1         context.Context
-		RuncStatsRequest *runvv1.RuncStatsRequest
+		RuncStatsRequest *runmv1.RuncStatsRequest
 	}
 	mock.lockStats.RLock()
 	calls = mock.calls.Stats
@@ -313,13 +313,13 @@ func (mock *MockRuncExtrasServiceServer) StatsCalls() []struct {
 }
 
 // Top calls TopFunc.
-func (mock *MockRuncExtrasServiceServer) Top(context1 context.Context, runcTopRequest *runvv1.RuncTopRequest) (*runvv1.RuncTopResponse, error) {
+func (mock *MockRuncExtrasServiceServer) Top(context1 context.Context, runcTopRequest *runmv1.RuncTopRequest) (*runmv1.RuncTopResponse, error) {
 	if mock.TopFunc == nil {
 		panic("MockRuncExtrasServiceServer.TopFunc: method is nil but RuncExtrasServiceServer.Top was just called")
 	}
 	callInfo := struct {
 		Context1       context.Context
-		RuncTopRequest *runvv1.RuncTopRequest
+		RuncTopRequest *runmv1.RuncTopRequest
 	}{
 		Context1:       context1,
 		RuncTopRequest: runcTopRequest,
@@ -336,11 +336,11 @@ func (mock *MockRuncExtrasServiceServer) Top(context1 context.Context, runcTopRe
 //	len(mockedRuncExtrasServiceServer.TopCalls())
 func (mock *MockRuncExtrasServiceServer) TopCalls() []struct {
 	Context1       context.Context
-	RuncTopRequest *runvv1.RuncTopRequest
+	RuncTopRequest *runmv1.RuncTopRequest
 } {
 	var calls []struct {
 		Context1       context.Context
-		RuncTopRequest *runvv1.RuncTopRequest
+		RuncTopRequest *runmv1.RuncTopRequest
 	}
 	mock.lockTop.RLock()
 	calls = mock.calls.Top
@@ -349,13 +349,13 @@ func (mock *MockRuncExtrasServiceServer) TopCalls() []struct {
 }
 
 // Version calls VersionFunc.
-func (mock *MockRuncExtrasServiceServer) Version(context1 context.Context, runcVersionRequest *runvv1.RuncVersionRequest) (*runvv1.RuncVersionResponse, error) {
+func (mock *MockRuncExtrasServiceServer) Version(context1 context.Context, runcVersionRequest *runmv1.RuncVersionRequest) (*runmv1.RuncVersionResponse, error) {
 	if mock.VersionFunc == nil {
 		panic("MockRuncExtrasServiceServer.VersionFunc: method is nil but RuncExtrasServiceServer.Version was just called")
 	}
 	callInfo := struct {
 		Context1           context.Context
-		RuncVersionRequest *runvv1.RuncVersionRequest
+		RuncVersionRequest *runmv1.RuncVersionRequest
 	}{
 		Context1:           context1,
 		RuncVersionRequest: runcVersionRequest,
@@ -372,11 +372,11 @@ func (mock *MockRuncExtrasServiceServer) Version(context1 context.Context, runcV
 //	len(mockedRuncExtrasServiceServer.VersionCalls())
 func (mock *MockRuncExtrasServiceServer) VersionCalls() []struct {
 	Context1           context.Context
-	RuncVersionRequest *runvv1.RuncVersionRequest
+	RuncVersionRequest *runmv1.RuncVersionRequest
 } {
 	var calls []struct {
 		Context1           context.Context
-		RuncVersionRequest *runvv1.RuncVersionRequest
+		RuncVersionRequest *runmv1.RuncVersionRequest
 	}
 	mock.lockVersion.RLock()
 	calls = mock.calls.Version

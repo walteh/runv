@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-package runv
+package runm
 
 import (
 	"context"
@@ -31,7 +31,7 @@ import (
 	"github.com/containerd/containerd/v2/pkg/stdio"
 	"github.com/containerd/fifo"
 
-	"github.com/walteh/runv/cmd/containerd-shim-runv-v2/process"
+	"github.com/walteh/runm/cmd/containerd-shim-runm-v2/process"
 )
 
 var bufPool = sync.Pool{

@@ -10,17 +10,17 @@ import (
 
 	gorunc "github.com/containerd/go-runc"
 
-	"github.com/walteh/runv/core/runc/conversion"
-	"github.com/walteh/runv/core/runc/runtime"
+	"github.com/walteh/runm/core/runc/conversion"
+	"github.com/walteh/runm/core/runc/runtime"
 
-	runvv1 "github.com/walteh/runv/proto/v1"
+	runmv1 "github.com/walteh/runm/proto/v1"
 )
 
 var _ runtime.RuntimeExtras = (*GRPCClientRuntime)(nil)
 
 // Stats returns the stats for a container like cpu, memory, and io.
 func (c *GRPCClientRuntime) Stats(ctx context.Context, id string) (*gorunc.Stats, error) {
-	req := &runvv1.RuncStatsRequest{}
+	req := &runmv1.RuncStatsRequest{}
 	req.SetId(id)
 
 	resp, err := c.runtimeExtras.Stats(ctx, req)
@@ -53,7 +53,7 @@ func (c *GRPCClientRuntime) Run(ctx context.Context, id, bundle string, options 
 }
 
 func (c *GRPCClientRuntime) Events(ctx context.Context, id string, duration time.Duration) (chan *gorunc.Event, error) {
-	req := &runvv1.RuncEventsRequest{}
+	req := &runmv1.RuncEventsRequest{}
 	req.SetId(id)
 	req.SetDuration(durationpb.New(duration))
 
@@ -90,7 +90,7 @@ func (c *GRPCClientRuntime) Events(ctx context.Context, id string, duration time
 
 // Top lists all the processes inside the container returning the full ps data.
 func (c *GRPCClientRuntime) Top(ctx context.Context, id string, psOptions string) (*gorunc.TopResults, error) {
-	req := &runvv1.RuncTopRequest{}
+	req := &runmv1.RuncTopRequest{}
 	req.SetId(id)
 	req.SetPsOptions(psOptions)
 
@@ -109,7 +109,7 @@ func (c *GRPCClientRuntime) Top(ctx context.Context, id string, psOptions string
 
 // Version returns the runc and runtime-spec versions.
 func (c *GRPCClientRuntime) Version(ctx context.Context) (gorunc.Version, error) {
-	resp, err := c.runtimeExtras.Version(ctx, &runvv1.RuncVersionRequest{})
+	resp, err := c.runtimeExtras.Version(ctx, &runmv1.RuncVersionRequest{})
 	if err != nil {
 		return gorunc.Version{}, err
 	}

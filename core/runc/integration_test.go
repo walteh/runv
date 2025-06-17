@@ -14,11 +14,12 @@ import (
 
 	gorunc "github.com/containerd/go-runc"
 
-	"github.com/walteh/runv/core/runc/server"
+	"github.com/walteh/runm/core/runc/server"
 
-	grpcruntime "github.com/walteh/runv/core/runc/runtime/grpc"
-	runtimemock "github.com/walteh/runv/gen/mocks/core/runc/runtime"
-	runvv1 "github.com/walteh/runv/proto/v1"
+	grpcruntime "github.com/walteh/runm/core/runc/runtime/grpc"
+	runtimemock "github.com/walteh/runm/gen/mocks/core/runc/runtime"
+
+	runmv1 "github.com/walteh/runm/proto/v1"
 )
 
 func TestBasicClientServer(t *testing.T) {
@@ -40,7 +41,7 @@ func TestBasicClientServer(t *testing.T) {
 
 	// Create and register our RuncServer service
 	runcServer := server.NewServer(mockRuntime, nil, nil) // Using default runc configuration
-	runvv1.RegisterRuncServiceServer(s, runcServer)
+	runmv1.RegisterRuncServiceServer(s, runcServer)
 
 	// Start the server
 	go func() {
