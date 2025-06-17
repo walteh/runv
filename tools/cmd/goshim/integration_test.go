@@ -277,6 +277,6 @@ func hasFlag(args []string, flag string) bool {
 
 // Helper function to check if codesign tool is available
 func isCodesignToolAvailable() bool {
-	cmd := exec.Command("go", "tool", "github.com/walteh/ec1/tools/cmd/codesign", "--help")
+	cmd := exec.Command("go", "tool", "codesign", "--help")
 	return cmd.Run() == nil
 }

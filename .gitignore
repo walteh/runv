@@ -75,3 +75,7 @@ build
 __debug*
 
 .cursor/
+
+gen/build
+
+.task/checksum/linux-*

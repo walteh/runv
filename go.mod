@@ -11,7 +11,6 @@ require (
 	github.com/charmbracelet/lipgloss v1.1.0
 	github.com/containerd/cgroups/v3 v3.0.5
 	github.com/containerd/console v1.0.5
-	github.com/containerd/containerd v1.7.23
 	github.com/containerd/containerd/api v1.9.0
 	github.com/containerd/containerd/v2 v2.1.2
 	github.com/containerd/errdefs v1.0.0
@@ -26,13 +25,13 @@ require (
 	github.com/hashicorp/go-hclog v0.14.1
 	github.com/hashicorp/go-plugin v1.6.3
 	github.com/kr/pty v1.1.8
+	github.com/mholt/archives v0.1.2
 	github.com/moby/sys/userns v0.1.0
 	github.com/muesli/termenv v0.16.0
 	github.com/opencontainers/runtime-spec v1.2.1
 	github.com/samber/slog-multi v1.4.0
 	github.com/stretchr/testify v1.10.0
 	github.com/veqryn/slog-context v0.8.0
-	github.com/walteh/ec1 v0.0.0-20250613112923-0e64a26166de
 	gitlab.com/tozd/go/errors v0.10.0
 	go.uber.org/atomic v1.11.0
 	google.golang.org/protobuf v1.36.6
@@ -41,39 +40,46 @@ require (
 
 require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.6-20250613105001-9f2d3c737feb.1 // indirect
+	github.com/STARRY-S/zip v0.2.1 // indirect
+	github.com/andybalholm/brotli v1.1.2-0.20250424173009-453214e765f3 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
+	github.com/bodgit/plumbing v1.3.0 // indirect
+	github.com/bodgit/sevenzip v1.6.0 // indirect
+	github.com/bodgit/windows v1.0.1 // indirect
 	github.com/charmbracelet/colorprofile v0.2.3-0.20250311203215-f60798e515dc // indirect
 	github.com/charmbracelet/x/ansi v0.8.0 // indirect
 	github.com/charmbracelet/x/cellbuf v0.0.13-0.20250311204145-2c3ea96c31dd // indirect
 	github.com/charmbracelet/x/term v0.2.1 // indirect
 	github.com/containerd/platforms v1.0.0-rc.1 // indirect
-	github.com/creack/goselect v0.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
+	github.com/dsnet/compress v0.0.2-0.20230904184137-39efe44ab707 // indirect
 	github.com/fatih/color v1.18.0 // indirect
-	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
+	github.com/hashicorp/errwrap v1.1.0 // indirect
+	github.com/hashicorp/go-multierror v1.1.1 // indirect
+	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/hashicorp/yamux v0.1.1 // indirect
-	github.com/k0kubun/pp/v3 v3.4.1 // indirect
 	github.com/klauspost/compress v1.18.1-0.20250502091416-dee68d8e897e // indirect
+	github.com/klauspost/pgzip v1.2.6 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
-	github.com/lufia/plan9stats v0.0.0-20240909124753-873cd0166683 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect
+	github.com/minio/minlz v1.0.0 // indirect
 	github.com/moby/sys/user v0.4.0 // indirect
+	github.com/nwaples/rardecode/v2 v2.1.0 // indirect
 	github.com/oklog/run v1.0.0 // indirect
+	github.com/pierrec/lz4/v4 v4.1.21 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
-	github.com/power-devops/perfstat v0.0.0-20240221224432-82ca36839d55 // indirect
+	github.com/prometheus/procfs v0.16.1 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
+	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	github.com/samber/lo v1.49.1 // indirect
-	github.com/shirou/gopsutil/v3 v3.24.5 // indirect
-	github.com/shoenig/go-m1cpu v0.1.6 // indirect
-	github.com/tklauser/go-sysconf v0.3.14 // indirect
-	github.com/tklauser/numcpus v0.9.0 // indirect
-	github.com/walteh/run v0.0.0-20250510150917-6f8074766f03 // indirect
+	github.com/sorairolake/lzip-go v0.3.5 // indirect
+	github.com/therootcompany/xz v1.0.1 // indirect
+	github.com/ulikunitz/xz v0.5.12 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
-	github.com/yusufpapurcu/wmi v1.2.4 // indirect
-	go.bug.st/serial v1.6.4 // indirect
+	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
@@ -119,7 +125,7 @@ require (
 	go.opentelemetry.io/proto/otlp v1.5.0 // indirect
 	golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6 // indirect
 	golang.org/x/net v0.41.0 // indirect
-	golang.org/x/sync v0.15.0 // indirect
+	golang.org/x/sync v0.15.0
 	golang.org/x/sys v0.33.0
 	golang.org/x/text v0.26.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250505200425-f936aa4a68b2 // indirect

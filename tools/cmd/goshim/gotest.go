@@ -180,7 +180,7 @@ func (cfg *GoShimConfig) handleTest(args []string) error {
 					}
 
 					// Use codesign signing for debug binary
-					signArgs := []string{"tool", "github.com/walteh/ec1/tools/cmd/codesign", "-mode=sign", "-target=" + outputFile}
+					signArgs := []string{"tool", "codesign", "-mode=sign", "-target=" + outputFile}
 
 					// Add entitlements if specified, otherwise use default
 					if len(codesignEntitlements) > 0 {

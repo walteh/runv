@@ -638,7 +638,7 @@ func TestGoShimConfig_buildCodesignExecArgs(t *testing.T) {
 			entitlements: nil,
 			identity:     "",
 			force:        false,
-			expectedArgs: []string{"tool", "github.com/walteh/ec1/tools/cmd/codesign", "-mode=test", "-entitlement=virtualization", "-quiet", "--"},
+			expectedArgs: []string{"tool", "codesign", "-mode=test", "-entitlement=virtualization", "-quiet", "--"},
 		},
 		{
 			name:         "run mode with custom entitlement",
@@ -646,7 +646,7 @@ func TestGoShimConfig_buildCodesignExecArgs(t *testing.T) {
 			entitlements: []string{"hypervisor"},
 			identity:     "",
 			force:        false,
-			expectedArgs: []string{"tool", "github.com/walteh/ec1/tools/cmd/codesign", "-mode=run", "-entitlement=hypervisor", "-quiet", "--"},
+			expectedArgs: []string{"tool", "codesign", "-mode=run", "-entitlement=hypervisor", "-quiet", "--"},
 		},
 		{
 			name:         "test mode with identity and force",
@@ -654,7 +654,7 @@ func TestGoShimConfig_buildCodesignExecArgs(t *testing.T) {
 			entitlements: nil,
 			identity:     "Developer ID",
 			force:        true,
-			expectedArgs: []string{"tool", "github.com/walteh/ec1/tools/cmd/codesign", "-mode=test", "-entitlement=virtualization", "-identity=Developer ID", "-force", "-quiet", "--"},
+			expectedArgs: []string{"tool", "codesign", "-mode=test", "-entitlement=virtualization", "-identity=Developer ID", "-force", "-quiet", "--"},
 		},
 		{
 			name:           "run mode with multiple entitlements and additional args",
@@ -663,7 +663,7 @@ func TestGoShimConfig_buildCodesignExecArgs(t *testing.T) {
 			identity:       "",
 			force:          false,
 			additionalArgs: []string{"-custom-flag", "value"},
-			expectedArgs:   []string{"tool", "github.com/walteh/ec1/tools/cmd/codesign", "-mode=run", "-entitlement=virtualization", "-entitlement=hypervisor", "-quiet", "-custom-flag", "value", "--"},
+			expectedArgs:   []string{"tool", "codesign", "-mode=run", "-entitlement=virtualization", "-entitlement=hypervisor", "-quiet", "-custom-flag", "value", "--"},
 		},
 	}
 

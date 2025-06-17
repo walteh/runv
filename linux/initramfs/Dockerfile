@@ -2,7 +2,7 @@
 # args
 ########################################################
 
-ARG BUSYBOX_VERSION=1.36.1
+ARG BUSYBOX_VERSION=1.37.0
 ARG GO_VERSION=1.24
 ARG ALPINE_VERSION=3.22
 ARG DEBIAN_CODENAME=bookworm
@@ -40,12 +40,34 @@ RUN apt-get update \
 		wget \
 	&& rm -rf /var/lib/apt/lists/*
 
+
+########################################################
+# busybox builder2
+########################################################
+
+FROM alpine-ref AS busybox-static-builder-2
+ARG BUSYBOX_VERSION
+
+RUN apk add --no-cache "busybox-static>${BUSYBOX_VERSION}"
+
+# RUN which busybox && exit 1
+
+RUN mkdir -p /rootfs/bin /rootfs/sbin /rootfs/usr/sbin /rootfs/usr/bin /rootfs/usr/local/bin
+RUN cp $(which busybox.static) /rootfs/bin/busybox \
+	&& chroot /rootfs /bin/busybox --install -s
+
+RUN mkdir -p /rootfs/etc/network
+RUN echo -e 'auto eth0\niface eth0 inet dhcp' > /rootfs/etc/network/interfaces
+
 ########################################################
 # busybox builder
 ########################################################
 FROM alpine-ref AS busybox-static-builder
-RUN apk add --no-cache build-base wget tar linux-headers musl-dev musl-utils
+RUN apk add --no-cache build-base wget tar linux-headers musl-dev musl-utils perl
 WORKDIR /build
+
+ARG BUSYBOX_VERSION
+
 # Grab and unpack BusyBox source
 RUN wget -qO- https://busybox.net/downloads/busybox-${BUSYBOX_VERSION}.tar.bz2 \
 	| tar -xj
@@ -76,6 +98,8 @@ RUN echo -e 'auto eth0\niface eth0 inet dhcp' > /rootfs/etc/network/interfaces
 
 FROM debian-ref AS jq-static-builder
 
+ARG JQ_GIT_REF
+
 RUN git clone --depth 1 --branch ${JQ_GIT_REF} https://github.com/jqlang/jq.git /app
 ## have to skip building docs but I don't need them for my use case
 RUN cd /app \
@@ -93,6 +117,8 @@ RUN cd /app && make check || echo "check failed"
 ########################################################
 
 FROM debian-ref AS lshw-static-builder
+
+ARG LSHW_GIT_REF
 
 RUN git clone --depth 1 --branch ${LSHW_GIT_REF} https://github.com/lyonel/lshw.git /src
 WORKDIR /src
@@ -112,6 +138,9 @@ FROM alpine/socat:${SOCAT_VERSION} AS socat-static-builder
 ########################################################
 
 FROM alpine-ref AS e2fsprogs-static-builder
+
+ARG E2FSPROGS_GIT_REF
+
 RUN apk add --no-cache build-base git autoconf automake linux-headers musl-dev
 RUN git clone --depth 1 --branch ${E2FSPROGS_GIT_REF} https://git.kernel.org/pub/scm/fs/ext2/e2fsprogs.git /src
 WORKDIR /src
@@ -128,6 +157,9 @@ RUN cp misc/mke2fs /bin/
 ########################################################
 
 FROM debian-golang-ref AS runc-static-builder
+
+ARG RUNC_GIT_REF
+
 RUN apt-get update \
 	&& apt-get install -y \
 		build-essential \
@@ -147,27 +179,48 @@ RUN make static
 RUN strip runc
 RUN cp runc /bin/runc
 
+
 ########################################################
-# runm-linux-mounter builder
+# runm-linux-go-base builder
 ########################################################
 
-FROM alpine-golang-ref AS runm-linux-mounter-builder
+FROM alpine-golang-ref AS runm-linux-go-base-builder
 
+COPY --from=forks / /app/
 COPY --from=runm . /app/runm
 
 WORKDIR /app/runm
-RUN GOOS=linux GOARCH=arm64 go build -x -ldflags="-s -w -extldflags=-static" -trimpath -o /out/runm-linux-mounter ./cmd/runm-linux-mounter
+
+RUN --mount=type=cache,target=/root/.cache/go-build --mount=type=cache,target=/go/pkg/mod <<EOF
+go mod download -x
+EOF
+
+########################################################
+# runm-linux-mounter builder
+########################################################
+FROM runm-linux-go-base-builder AS runm-linux-mounter-builder
+
+WORKDIR /app/runm
+
+ARG ARCH 
+
+RUN --mount=type=cache,target=/root/.cache/go-build --mount=type=cache,target=/go/pkg/mod <<EOF
+GOOS=linux GOARCH=${ARCH} go build -x -ldflags="-s -w -extldflags=-static" -trimpath -o /out/runm-linux-mounter ./cmd/runm-linux-mounter
+EOF
 
 ########################################################
 # runm-linux-init builder
 ########################################################
 
-FROM alpine-golang-ref AS runm-linux-init-builder
-
-COPY --from=runm . /app/runm
+FROM runm-linux-go-base-builder AS runm-linux-init-builder
 
 WORKDIR /app/runm
-RUN GOOS=linux GOARCH=${ARCH} go build -x -ldflags="-s -w -extldflags=-static" -trimpath -o /out/runm-linux-init ./cmd/runm-linux-init
+
+ARG ARCH 
+
+RUN --mount=type=cache,target=/root/.cache/go-build --mount=type=cache,target=/go/pkg/mod <<EOF
+GOOS=linux GOARCH=${ARCH} go build -x -ldflags="-s -w -extldflags=-static" -trimpath -o /out/runm-linux-init ./cmd/runm-linux-init
+EOF
 
 
 ########################################################
@@ -186,7 +239,7 @@ COPY --from=runm-linux-init-builder /out/runm-linux-init /mbin/runm-linux-init
 COPY --from=runm-linux-mounter-builder /out/runm-linux-mounter /mbin/runm-linux-mounter
 
 # busybox initalized filesystem
-COPY --from=busybox-static-builder /rootfs/ /
+COPY --from=busybox-static-builder-2 /rootfs/ /
 
 # our raw files
 COPY udhcpc.default /rootfs/etc/udhcpc/default.script

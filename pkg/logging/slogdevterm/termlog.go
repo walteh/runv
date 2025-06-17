@@ -11,7 +11,6 @@ import (
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/muesli/termenv"
-	"github.com/walteh/ec1/pkg/logging/valuelog"
 )
 
 var _ slog.Handler = (*TermLogger)(nil)
@@ -149,15 +148,15 @@ func (l *TermLogger) Handle(ctx context.Context, r slog.Record) error {
 
 			var valColored string
 
-			if pv, ok := a.Value.Any().(valuelog.PrettyRawJSONValue); ok {
-				appendageBuilder.WriteString(JSONToTree(a.Key, pv.RawJSON(), l.styles, l.renderFunc))
-				appendageBuilder.WriteString("\n")
-				valColored = l.render(l.styles.ValueAppendage, "󰘦 "+a.Key)
-			} else if pv, ok := a.Value.Any().(valuelog.PrettyAnyValue); ok {
-				appendageBuilder.WriteString(StructToTreeWithTitle(pv.Any(), a.Key, l.styles, l.renderFunc))
-				appendageBuilder.WriteString("\n")
-				valColored = l.render(l.styles.ValueAppendage, "󰙅 "+a.Key)
-			} else if (a.Key == "error" || a.Key == "err" || a.Key == "error.payload") && r.Level > slog.LevelWarn {
+			// if pv, ok := a.Value.Any().(valuelog.PrettyRawJSONValue); ok {
+			// 	appendageBuilder.WriteString(JSONToTree(a.Key, pv.RawJSON(), l.styles, l.renderFunc))
+			// 	appendageBuilder.WriteString("\n")
+			// 	valColored = l.render(l.styles.ValueAppendage, "󰘦 "+a.Key)
+			// } else if pv, ok := a.Value.Any().(valuelog.PrettyAnyValue); ok {
+			// 	appendageBuilder.WriteString(StructToTreeWithTitle(pv.Any(), a.Key, l.styles, l.renderFunc))
+			// 	appendageBuilder.WriteString("\n")
+			// 	valColored = l.render(l.styles.ValueAppendage, "󰙅 "+a.Key)
+			if (a.Key == "error" || a.Key == "err" || a.Key == "error.payload") && r.Level > slog.LevelWarn {
 				// Special handling for error values - use beautiful error trace display
 				if err, ok := a.Value.Any().(error); ok {
 					appendageBuilder.WriteString(ErrorToTrace(err, r, l.styles, l.renderFunc, l.hyperlinkFunc))

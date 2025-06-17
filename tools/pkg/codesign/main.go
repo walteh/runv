@@ -287,7 +287,7 @@ func testMode(ctx context.Context, config *Config) error {
 
 func createTestExecWrapper(ctx context.Context, entitlements []string, identity string, force bool) []string {
 	// Return a command that will sign and execute the test binary
-	args := []string{"tool", "github.com/walteh/ec1/tools/cmd/codesign", "-mode=exec"}
+	args := []string{"tool", "codesign", "-mode=exec"}
 
 	if identity != "-" {
 		args = append(args, "-identity="+identity)

@@ -23,6 +23,8 @@ RUN apt-get update && apt-get install -y \
 	cpio \
 	&& rm -rf /var/lib/apt/lists/*
 
+ARG LINUX_KERNEL_VERSION
+
 ENV SRC_DIR=/usr/src \
 	DIST_DIR=/dist \
 	LINUX_DIR=/usr/src/linux \
@@ -52,11 +54,11 @@ EOF
 
 RUN <<EOF
 if [ "${TARGETARCH}" = "arm64" ]; then
-	cp arch/arm64/boot/Image /boot/vmlinux
-	cp .config /boot/config-${KERNEL_VERSION}
+	cp arch/arm64/boot/Image /boot/kernel
+	cp .config /boot/config
 else
-	cp arch/x86/boot/bzImage /boot/vmlinux
-	cp .config /boot/config-${KERNEL_VERSION}
+	cp arch/x86/boot/bzImage /boot/kernel
+	cp .config /boot/config
 fi
 EOF
 
@@ -65,4 +67,4 @@ EOF
 ########################################################
 
 FROM scratch AS export
-COPY --from=builder /boot /boot
+COPY --from=builder /boot /

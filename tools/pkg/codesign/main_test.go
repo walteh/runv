@@ -117,28 +117,28 @@ func TestCreateTestExecWrapper(t *testing.T) {
 			entitlements: []string{"virtualization"},
 			identity:     "-",
 			force:        false,
-			expectedArgs: []string{"tool", "github.com/walteh/ec1/tools/cmd/codesign", "-mode=exec", "-entitlement=virtualization", "--"},
+			expectedArgs: []string{"tool", "codesign", "-mode=exec", "-entitlement=virtualization", "--"},
 		},
 		{
 			name:         "with custom identity",
 			entitlements: []string{"virtualization"},
 			identity:     "Developer ID",
 			force:        false,
-			expectedArgs: []string{"tool", "github.com/walteh/ec1/tools/cmd/codesign", "-mode=exec", "-identity=Developer ID", "-entitlement=virtualization", "--"},
+			expectedArgs: []string{"tool", "codesign", "-mode=exec", "-identity=Developer ID", "-entitlement=virtualization", "--"},
 		},
 		{
 			name:         "with force",
 			entitlements: []string{"virtualization"},
 			identity:     "-",
 			force:        true,
-			expectedArgs: []string{"tool", "github.com/walteh/ec1/tools/cmd/codesign", "-mode=exec", "-force", "-entitlement=virtualization", "--"},
+			expectedArgs: []string{"tool", "codesign", "-mode=exec", "-force", "-entitlement=virtualization", "--"},
 		},
 		{
 			name:         "multiple entitlements",
 			entitlements: []string{"virtualization", "network-client"},
 			identity:     "-",
 			force:        false,
-			expectedArgs: []string{"tool", "github.com/walteh/ec1/tools/cmd/codesign", "-mode=exec", "-entitlement=virtualization", "-entitlement=network-client", "--"},
+			expectedArgs: []string{"tool", "codesign", "-mode=exec", "-entitlement=virtualization", "-entitlement=network-client", "--"},
 		},
 	}
 
