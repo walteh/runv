@@ -24,15 +24,16 @@ require (
 	github.com/creack/pty v1.1.24
 	github.com/hashicorp/go-hclog v0.14.1
 	github.com/hashicorp/go-plugin v1.6.3
+	github.com/kr/pty v1.1.8
 	github.com/moby/sys/userns v0.1.0
 	github.com/muesli/termenv v0.16.0
 	github.com/opencontainers/runtime-spec v1.2.1
-	github.com/rs/xid v1.6.0
 	github.com/samber/slog-multi v1.4.0
 	github.com/stretchr/testify v1.10.0
 	github.com/veqryn/slog-context v0.8.0
 	github.com/walteh/ec1 v0.0.0-20250613112923-0e64a26166de
 	gitlab.com/tozd/go/errors v0.10.0
+	go.uber.org/atomic v1.11.0
 	google.golang.org/protobuf v1.36.6
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )
@@ -67,7 +68,7 @@ require (
 	github.com/Microsoft/hcsshim v0.13.0 // indirect
 	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
-	github.com/cilium/ebpf v0.16.0 // indirect
+	github.com/cilium/ebpf v0.18.0 // indirect
 	github.com/containerd/continuity v0.4.5 // indirect
 	github.com/containerd/otelttrpc v0.1.0 // indirect
 	github.com/coreos/go-systemd/v22 v22.5.1-0.20231103132048-7d375ecc2b09 // indirect
@@ -102,10 +103,10 @@ require (
 	go.opentelemetry.io/otel/trace v1.35.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.5.0 // indirect
 	golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6 // indirect
-	golang.org/x/net v0.40.0 // indirect
-	golang.org/x/sync v0.14.0 // indirect
+	golang.org/x/net v0.41.0 // indirect
+	golang.org/x/sync v0.15.0 // indirect
 	golang.org/x/sys v0.33.0
-	golang.org/x/text v0.25.0 // indirect
+	golang.org/x/text v0.26.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250505200425-f936aa4a68b2 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250505200425-f936aa4a68b2 // indirect
 	google.golang.org/grpc v1.72.2

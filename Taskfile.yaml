@@ -171,6 +171,34 @@ tasks:
           - cd /tmp/bindfs && sudo make install
           - sudo install_name_tool -add_rpath /usr/local/lib /usr/local/bin/bindfs
 
+    harpoon:runc:*:
+        label: 'harpoon:runc:{{.ARCH}}'
+        requires: {vars: [ARCH]}
+        desc: embeds the bins
+        vars:
+            ARCH: "{{index .MATCH 0}}"
+            BIN: runc
+            PACKAGE: harpoon_runc_{{ .ARCH }}
+            OUT_DIR: ./gen/harpoon/{{.PACKAGE}}
+        generates:
+          - ./gen/harpoon/harpoon_runc_{{ .ARCH }}/**
+        sources:
+          - go.mod
+          - go.sum
+        cmds:
+          - cmd: rm -rf {{.OUT_DIR}}
+          - cmd: mkdir -p {{.OUT_DIR}}
+          - cmd: |-
+                CGO_ENABLED=1 GOOS=linux GOARCH={{.ARCH}} go build -ldflags="-s -w -extldflags=-static -linkmode external" -tags='netgo osusergo' -trimpath -o {{.OUT_DIR}}/{{.BIN}} github.com/opencontainers/runc
+                xz -k {{.OUT_DIR}}/{{.BIN}}
+                sha256sum {{.OUT_DIR}}/{{.BIN}}.xz > {{.OUT_DIR}}/{{.BIN}}.xz.sha256
+          - cmd: |-
+                echo -e "package {{.PACKAGE}}\n\nimport _ \"embed\"\nimport \"github.com/walteh/ec1/pkg/binembed\"\n" > {{.OUT_DIR}}/embed.gen.go
+                echo -e "//go:embed {{.BIN}}.xz\nvar BinaryXZ []byte\n" >> {{.OUT_DIR}}/embed.gen.go
+                echo -e "const BinaryXZChecksum = \"$(cat {{.OUT_DIR}}/{{.BIN}}.xz.sha256 | awk '{print $1}')\"\n" >> {{.OUT_DIR}}/embed.gen.go
+                echo -e "func init() {\n\tbinembed.RegisterXZ(BinaryXZChecksum, BinaryXZ)\n}\n" >> {{.OUT_DIR}}/embed.gen.go
+          - cmd: go fmt {{.OUT_DIR}}/embed.gen.go
+
     harpoon:harpoond:*:
         label: 'harpoon:harpoond:{{.ARCH}}'
         requires: {vars: [ARCH]}
