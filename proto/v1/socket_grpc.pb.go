@@ -4,7 +4,7 @@
 // - protoc             (unknown)
 // source: v1/socket.proto
 
-package runvv1
+package runmv1
 
 import (
 	context "context"
@@ -19,16 +19,16 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	SocketAllocatorService_AllocateSockets_FullMethodName      = "/runv.v1.SocketAllocatorService/AllocateSockets"
-	SocketAllocatorService_AllocateSocketStream_FullMethodName = "/runv.v1.SocketAllocatorService/AllocateSocketStream"
-	SocketAllocatorService_AllocateIO_FullMethodName           = "/runv.v1.SocketAllocatorService/AllocateIO"
-	SocketAllocatorService_AllocateConsole_FullMethodName      = "/runv.v1.SocketAllocatorService/AllocateConsole"
-	SocketAllocatorService_BindConsoleToSocket_FullMethodName  = "/runv.v1.SocketAllocatorService/BindConsoleToSocket"
-	SocketAllocatorService_BindIOToSockets_FullMethodName      = "/runv.v1.SocketAllocatorService/BindIOToSockets"
-	SocketAllocatorService_CloseSocket_FullMethodName          = "/runv.v1.SocketAllocatorService/CloseSocket"
-	SocketAllocatorService_CloseSockets_FullMethodName         = "/runv.v1.SocketAllocatorService/CloseSockets"
-	SocketAllocatorService_CloseIO_FullMethodName              = "/runv.v1.SocketAllocatorService/CloseIO"
-	SocketAllocatorService_CloseConsole_FullMethodName         = "/runv.v1.SocketAllocatorService/CloseConsole"
+	SocketAllocatorService_AllocateSockets_FullMethodName      = "/runm.v1.SocketAllocatorService/AllocateSockets"
+	SocketAllocatorService_AllocateSocketStream_FullMethodName = "/runm.v1.SocketAllocatorService/AllocateSocketStream"
+	SocketAllocatorService_AllocateIO_FullMethodName           = "/runm.v1.SocketAllocatorService/AllocateIO"
+	SocketAllocatorService_AllocateConsole_FullMethodName      = "/runm.v1.SocketAllocatorService/AllocateConsole"
+	SocketAllocatorService_BindConsoleToSocket_FullMethodName  = "/runm.v1.SocketAllocatorService/BindConsoleToSocket"
+	SocketAllocatorService_BindIOToSockets_FullMethodName      = "/runm.v1.SocketAllocatorService/BindIOToSockets"
+	SocketAllocatorService_CloseSocket_FullMethodName          = "/runm.v1.SocketAllocatorService/CloseSocket"
+	SocketAllocatorService_CloseSockets_FullMethodName         = "/runm.v1.SocketAllocatorService/CloseSockets"
+	SocketAllocatorService_CloseIO_FullMethodName              = "/runm.v1.SocketAllocatorService/CloseIO"
+	SocketAllocatorService_CloseConsole_FullMethodName         = "/runm.v1.SocketAllocatorService/CloseConsole"
 )
 
 // SocketAllocatorServiceClient is the client API for SocketAllocatorService service.
@@ -418,7 +418,7 @@ func _SocketAllocatorService_CloseConsole_Handler(srv interface{}, ctx context.C
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var SocketAllocatorService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "runv.v1.SocketAllocatorService",
+	ServiceName: "runm.v1.SocketAllocatorService",
 	HandlerType: (*SocketAllocatorServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

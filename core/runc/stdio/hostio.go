@@ -151,15 +151,15 @@ func NewHostUnixProxyIo(ctx context.Context, opts ...gorunc.IOOpt) (*HostUnixPro
 	tempDir := os.TempDir()
 
 	if optd.OpenStdin {
-		p.StdinPath = filepath.Join(tempDir, fmt.Sprintf("runv-stdin-%d.sock", hostUnixCounter.Add(1)))
+		p.StdinPath = filepath.Join(tempDir, fmt.Sprintf("runm-stdin-%d.sock", hostUnixCounter.Add(1)))
 		p.stdinReader, p.stdinWriter = io.Pipe()
 	}
 	if optd.OpenStdout {
-		p.StdoutPath = filepath.Join(tempDir, fmt.Sprintf("runv-stdout-%d.sock", hostUnixCounter.Add(1)))
+		p.StdoutPath = filepath.Join(tempDir, fmt.Sprintf("runm-stdout-%d.sock", hostUnixCounter.Add(1)))
 		p.stdoutReader, p.stdoutWriter = io.Pipe()
 	}
 	if optd.OpenStderr {
-		p.StderrPath = filepath.Join(tempDir, fmt.Sprintf("runv-stderr-%d.sock", hostUnixCounter.Add(1)))
+		p.StderrPath = filepath.Join(tempDir, fmt.Sprintf("runm-stderr-%d.sock", hostUnixCounter.Add(1)))
 		p.stderrReader, p.stderrWriter = io.Pipe()
 	}
 

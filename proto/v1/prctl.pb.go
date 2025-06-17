@@ -4,7 +4,7 @@
 // 	protoc        (unknown)
 // source: v1/prctl.proto
 
-package runvv1
+package runmv1
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -70,7 +70,7 @@ func (x PrctlPidType) Number() protoreflect.EnumNumber {
 
 type CreateRequest struct {
 	state              protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_PidType PrctlPidType           `protobuf:"varint,1,opt,name=pid_type,json=pidType,enum=runv.v1.PrctlPidType"`
+	xxx_hidden_PidType PrctlPidType           `protobuf:"varint,1,opt,name=pid_type,json=pidType,enum=runm.v1.PrctlPidType"`
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
@@ -185,7 +185,7 @@ func (b0 CreateResponse_builder) Build() *CreateResponse {
 type ShareFromRequest struct {
 	state              protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Pid     uint64                 `protobuf:"varint,1,opt,name=pid"`
-	xxx_hidden_PidType PrctlPidType           `protobuf:"varint,2,opt,name=pid_type,json=pidType,enum=runv.v1.PrctlPidType"`
+	xxx_hidden_PidType PrctlPidType           `protobuf:"varint,2,opt,name=pid_type,json=pidType,enum=runm.v1.PrctlPidType"`
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
@@ -314,14 +314,14 @@ var File_v1_prctl_proto protoreflect.FileDescriptor
 
 const file_v1_prctl_proto_rawDesc = "" +
 	"\n" +
-	"\x0ev1/prctl.proto\x12\arunv.v1\x1a!google/protobuf/go_features.proto\"A\n" +
+	"\x0ev1/prctl.proto\x12\arunm.v1\x1a!google/protobuf/go_features.proto\"A\n" +
 	"\rCreateRequest\x120\n" +
-	"\bpid_type\x18\x01 \x01(\x0e2\x15.runv.v1.PrctlPidTypeR\apidType\"+\n" +
+	"\bpid_type\x18\x01 \x01(\x0e2\x15.runm.v1.PrctlPidTypeR\apidType\"+\n" +
 	"\x0eCreateResponse\x12\x19\n" +
 	"\bgo_error\x18\x01 \x01(\tR\agoError\"V\n" +
 	"\x10ShareFromRequest\x12\x10\n" +
 	"\x03pid\x18\x01 \x01(\x04R\x03pid\x120\n" +
-	"\bpid_type\x18\x02 \x01(\x0e2\x15.runv.v1.PrctlPidTypeR\apidType\".\n" +
+	"\bpid_type\x18\x02 \x01(\x0e2\x15.runm.v1.PrctlPidTypeR\apidType\".\n" +
 	"\x11ShareFromResponse\x12\x19\n" +
 	"\bgo_error\x18\x01 \x01(\tR\agoError*x\n" +
 	"\fPrctlPidType\x12\x1e\n" +
@@ -330,27 +330,27 @@ const file_v1_prctl_proto_rawDesc = "" +
 	"\x13PRCTL_PID_TYPE_TGID\x10\x02\x12\x17\n" +
 	"\x13PRCTL_PID_TYPE_PGID\x10\x032\x91\x01\n" +
 	"\fPrctlService\x12;\n" +
-	"\x06Create\x12\x16.runv.v1.CreateRequest\x1a\x17.runv.v1.CreateResponse\"\x00\x12D\n" +
-	"\tShareFrom\x12\x19.runv.v1.ShareFromRequest\x1a\x1a.runv.v1.ShareFromResponse\"\x00B\x88\x01\n" +
-	"\vcom.runv.v1B\n" +
-	"PrctlProtoP\x01Z&github.com/walteh/runv/proto/v1;runvv1\xa2\x02\x03RXX\xaa\x02\aRunv.V1\xca\x02\aRunv\\V1\xe2\x02\x13Runv\\V1\\GPBMetadata\xea\x02\bRunv::V1\x92\x03\a\xd2>\x02\x10\x03\b\x02b\beditionsp\xe8\a"
+	"\x06Create\x12\x16.runm.v1.CreateRequest\x1a\x17.runm.v1.CreateResponse\"\x00\x12D\n" +
+	"\tShareFrom\x12\x19.runm.v1.ShareFromRequest\x1a\x1a.runm.v1.ShareFromResponse\"\x00B\x88\x01\n" +
+	"\vcom.runm.v1B\n" +
+	"PrctlProtoP\x01Z&github.com/walteh/runm/proto/v1;runmv1\xa2\x02\x03RXX\xaa\x02\aRunm.V1\xca\x02\aRunm\\V1\xe2\x02\x13Runm\\V1\\GPBMetadata\xea\x02\bRunm::V1\x92\x03\a\xd2>\x02\x10\x03\b\x02b\beditionsp\xe8\a"
 
 var file_v1_prctl_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_v1_prctl_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_v1_prctl_proto_goTypes = []any{
-	(PrctlPidType)(0),         // 0: runv.v1.PrctlPidType
-	(*CreateRequest)(nil),     // 1: runv.v1.CreateRequest
-	(*CreateResponse)(nil),    // 2: runv.v1.CreateResponse
-	(*ShareFromRequest)(nil),  // 3: runv.v1.ShareFromRequest
-	(*ShareFromResponse)(nil), // 4: runv.v1.ShareFromResponse
+	(PrctlPidType)(0),         // 0: runm.v1.PrctlPidType
+	(*CreateRequest)(nil),     // 1: runm.v1.CreateRequest
+	(*CreateResponse)(nil),    // 2: runm.v1.CreateResponse
+	(*ShareFromRequest)(nil),  // 3: runm.v1.ShareFromRequest
+	(*ShareFromResponse)(nil), // 4: runm.v1.ShareFromResponse
 }
 var file_v1_prctl_proto_depIdxs = []int32{
-	0, // 0: runv.v1.CreateRequest.pid_type:type_name -> runv.v1.PrctlPidType
-	0, // 1: runv.v1.ShareFromRequest.pid_type:type_name -> runv.v1.PrctlPidType
-	1, // 2: runv.v1.PrctlService.Create:input_type -> runv.v1.CreateRequest
-	3, // 3: runv.v1.PrctlService.ShareFrom:input_type -> runv.v1.ShareFromRequest
-	2, // 4: runv.v1.PrctlService.Create:output_type -> runv.v1.CreateResponse
-	4, // 5: runv.v1.PrctlService.ShareFrom:output_type -> runv.v1.ShareFromResponse
+	0, // 0: runm.v1.CreateRequest.pid_type:type_name -> runm.v1.PrctlPidType
+	0, // 1: runm.v1.ShareFromRequest.pid_type:type_name -> runm.v1.PrctlPidType
+	1, // 2: runm.v1.PrctlService.Create:input_type -> runm.v1.CreateRequest
+	3, // 3: runm.v1.PrctlService.ShareFrom:input_type -> runm.v1.ShareFromRequest
+	2, // 4: runm.v1.PrctlService.Create:output_type -> runm.v1.CreateResponse
+	4, // 5: runm.v1.PrctlService.ShareFrom:output_type -> runm.v1.ShareFromResponse
 	4, // [4:6] is the sub-list for method output_type
 	2, // [2:4] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name

@@ -1,6 +1,6 @@
 edition = "2023";
 
-package runv.v1;
+package runm.v1;
 
 import "google/protobuf/duration.proto";
 import "google/protobuf/go_features.proto";

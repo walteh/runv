@@ -317,7 +317,7 @@ var guestUnixSocketCounter = atomic.NewInt64(0)
 // AllocateSocket implements SocketAllocator.
 func (g *GuestUnixSocketAllocator) AllocateSocket(ctx context.Context) (AllocatedSocket, error) {
 
-	unixSockPath := filepath.Join(g.socketDir, fmt.Sprintf("runv-%02d.sock", guestUnixSocketCounter.Add(1)))
+	unixSockPath := filepath.Join(g.socketDir, fmt.Sprintf("runm-%02d.sock", guestUnixSocketCounter.Add(1)))
 
 	os.MkdirAll(filepath.Dir(unixSockPath), 0755)
 

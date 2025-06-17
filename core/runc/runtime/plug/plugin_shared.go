@@ -7,11 +7,12 @@ import (
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
 
-	"github.com/walteh/runv/core/runc/runtime"
-	"github.com/walteh/runv/core/runc/server"
+	"github.com/walteh/runm/core/runc/runtime"
+	"github.com/walteh/runm/core/runc/server"
 
-	grpcruntime "github.com/walteh/runv/core/runc/runtime/grpc"
-	runvv1 "github.com/walteh/runv/proto/v1"
+	grpcruntime "github.com/walteh/runm/core/runc/runtime/grpc"
+
+	runmv1 "github.com/walteh/runm/proto/v1"
 )
 
 // Handshake is a common handshake that is shared by plugin and host.
@@ -61,9 +62,9 @@ func (p *RuntimePlugin) Server(broker *plugin.MuxBroker) (interface{}, error) {
 }
 
 func (p *RuntimePlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
-	runvv1.RegisterRuncServiceServer(s, p.srv)
-	runvv1.RegisterRuncExtrasServiceServer(s, p.srv)
-	runvv1.RegisterSocketAllocatorServiceServer(s, p.srv)
+	runmv1.RegisterRuncServiceServer(s, p.srv)
+	runmv1.RegisterRuncExtrasServiceServer(s, p.srv)
+	runmv1.RegisterSocketAllocatorServiceServer(s, p.srv)
 	return nil
 }
 

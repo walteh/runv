@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-package runv
+package runm
 
 import (
 	"context"
@@ -39,8 +39,8 @@ import (
 
 	cgroupsv2 "github.com/containerd/cgroups/v3/cgroup2"
 
-	"github.com/walteh/runv/cmd/containerd-shim-runv-v2/process"
-	"github.com/walteh/runv/core/runc/runtime"
+	"github.com/walteh/runm/cmd/containerd-shim-runm-v2/process"
+	"github.com/walteh/runm/core/runc/runtime"
 )
 
 // NewContainer returns a new runc container

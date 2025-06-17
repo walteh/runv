@@ -13,7 +13,7 @@ import (
 
 	gorunc "github.com/containerd/go-runc"
 
-	"github.com/walteh/runv/core/runc/file"
+	"github.com/walteh/runm/core/runc/file"
 )
 
 var _ ConsoleSocket = &HostConsoleSocket{}

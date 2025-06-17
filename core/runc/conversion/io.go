@@ -9,35 +9,35 @@ import (
 
 	gorunc "github.com/containerd/go-runc"
 
-	"github.com/walteh/runv/core/runc/runtime"
-	"github.com/walteh/runv/core/runc/stdio"
+	"github.com/walteh/runm/core/runc/runtime"
+	"github.com/walteh/runm/core/runc/stdio"
 
-	runvv1 "github.com/walteh/runv/proto/v1"
+	runmv1 "github.com/walteh/runm/proto/v1"
 )
 
-func ConvertIOFromProto(ctx context.Context, req *runvv1.RuncIO) (runtime.IO, error) {
+func ConvertIOFromProto(ctx context.Context, req *runmv1.RuncIO) (runtime.IO, error) {
 	return NewServerIOFromClient(ctx, req)
 }
 
-func ConvertIOToProto(ctx context.Context, rvio runtime.IO) (*runvv1.RuncIO, error) {
-	res := &runvv1.RuncIO{}
+func ConvertIOToProto(ctx context.Context, rvio runtime.IO) (*runmv1.RuncIO, error) {
+	res := &runmv1.RuncIO{}
 
 	switch iot := rvio.(type) {
 	case *stdio.HostVsockProxyIo:
-		rviod := &runvv1.RuncVsockIO{}
+		rviod := &runmv1.RuncVsockIO{}
 		rviod.SetStdinVsockPort(iot.StdinPort)
 		rviod.SetStdoutVsockPort(iot.StdoutPort)
 		rviod.SetStderrVsockPort(iot.StderrPort)
 		rviod.SetVsockContextId(3)
 		res.SetVsock(rviod)
 	case *stdio.HostUnixProxyIo:
-		rviod := &runvv1.RuncUnixIO{}
+		rviod := &runmv1.RuncUnixIO{}
 		rviod.SetStdinPath(iot.StdinPath)
 		rviod.SetStdoutPath(iot.StdoutPath)
 		rviod.SetStderrPath(iot.StderrPath)
 		res.SetUnix(rviod)
 	case *stdio.HostNullIo:
-		res.SetNull(&runvv1.RuncNullIO{})
+		res.SetNull(&runmv1.RuncNullIO{})
 	default:
 		return nil, errors.Errorf("io is not a vsock proxy io")
 	}
@@ -45,16 +45,16 @@ func ConvertIOToProto(ctx context.Context, rvio runtime.IO) (*runvv1.RuncIO, err
 	return res, nil
 }
 
-func NewServerIOFromClient(ctx context.Context, rvio *runvv1.RuncIO) (runtime.IO, error) {
+func NewServerIOFromClient(ctx context.Context, rvio *runmv1.RuncIO) (runtime.IO, error) {
 	var err error
 	opts := []gorunc.IOOpt{
 		func(o *gorunc.IOOption) {
 			switch rvio.WhichIo() {
-			case runvv1.RuncIO_Vsock_case:
+			case runmv1.RuncIO_Vsock_case:
 				o.OpenStdin = rvio.GetVsock().GetStdinVsockPort() != 0
 				o.OpenStdout = rvio.GetVsock().GetStdoutVsockPort() != 0
 				o.OpenStderr = rvio.GetVsock().GetStderrVsockPort() != 0
-			case runvv1.RuncIO_Unix_case:
+			case runmv1.RuncIO_Unix_case:
 				o.OpenStdin = rvio.GetUnix().GetStdinPath() != ""
 				o.OpenStdout = rvio.GetUnix().GetStdoutPath() != ""
 				o.OpenStderr = rvio.GetUnix().GetStderrPath() != ""
@@ -64,7 +64,7 @@ func NewServerIOFromClient(ctx context.Context, rvio *runvv1.RuncIO) (runtime.IO
 	var forwarder stdio.ListenForwarders
 
 	switch rvio.WhichIo() {
-	case runvv1.RuncIO_Vsock_case:
+	case runmv1.RuncIO_Vsock_case:
 		ctxId := rvio.GetVsock().GetVsockContextId()
 		stdinPort := rvio.GetVsock().GetStdinVsockPort()
 		stdoutPort := rvio.GetVsock().GetStdoutVsockPort()
@@ -76,12 +76,12 @@ func NewServerIOFromClient(ctx context.Context, rvio *runvv1.RuncIO) (runtime.IO
 			return vsock.ListenContextID(ctxId, uint32(port), nil)
 		}
 		forwarder, err = stdio.NewVsockForwarder(ctx, ctxId, stdinPort, stdoutPort, stderrPort, dialFunc, listenFunc)
-	case runvv1.RuncIO_Unix_case:
+	case runmv1.RuncIO_Unix_case:
 		stdinPath := rvio.GetUnix().GetStdinPath()
 		stdoutPath := rvio.GetUnix().GetStdoutPath()
 		stderrPath := rvio.GetUnix().GetStderrPath()
 		forwarder, err = stdio.NewUnixForwarder(ctx, stdinPath, stdoutPath, stderrPath)
-	case runvv1.RuncIO_Null_case:
+	case runmv1.RuncIO_Null_case:
 		// no need to forward null io
 		return gorunc.NewNullIO()
 	default:

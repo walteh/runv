@@ -10,9 +10,9 @@ import (
 	"github.com/muesli/termenv"
 	"gopkg.in/natefinch/lumberjack.v2"
 
-	"github.com/walteh/runv/pkg/logging/slogdevterm"
-	"github.com/walteh/runv/pkg/logging/sloghclog"
-	"github.com/walteh/runv/pkg/logging/sloglogrus"
+	"github.com/walteh/runm/pkg/logging/slogdevterm"
+	"github.com/walteh/runm/pkg/logging/sloghclog"
+	"github.com/walteh/runm/pkg/logging/sloglogrus"
 )
 
 //go:opts

@@ -2,92 +2,92 @@
 // github.com/vektra/mockery
 // template: matryer
 
-package mockrunvv1
+package mockrunmv1
 
 import (
 	"context"
 	"sync"
 
-	"github.com/walteh/runv/proto/v1"
+	"github.com/walteh/runm/proto/v1"
 	"google.golang.org/grpc"
 )
 
-// Ensure that MockSocketAllocatorServiceClient does implement runvv1.SocketAllocatorServiceClient.
+// Ensure that MockSocketAllocatorServiceClient does implement runmv1.SocketAllocatorServiceClient.
 // If this is not the case, regenerate this file with mockery.
-var _ runvv1.SocketAllocatorServiceClient = &MockSocketAllocatorServiceClient{}
+var _ runmv1.SocketAllocatorServiceClient = &MockSocketAllocatorServiceClient{}
 
-// MockSocketAllocatorServiceClient is a mock implementation of runvv1.SocketAllocatorServiceClient.
+// MockSocketAllocatorServiceClient is a mock implementation of runmv1.SocketAllocatorServiceClient.
 //
 //	func TestSomethingThatUsesSocketAllocatorServiceClient(t *testing.T) {
 //
-//		// make and configure a mocked runvv1.SocketAllocatorServiceClient
+//		// make and configure a mocked runmv1.SocketAllocatorServiceClient
 //		mockedSocketAllocatorServiceClient := &MockSocketAllocatorServiceClient{
-//			AllocateConsoleFunc: func(ctx context.Context, in *runvv1.AllocateConsoleRequest, opts ...grpc.CallOption) (*runvv1.AllocateConsoleResponse, error) {
+//			AllocateConsoleFunc: func(ctx context.Context, in *runmv1.AllocateConsoleRequest, opts ...grpc.CallOption) (*runmv1.AllocateConsoleResponse, error) {
 //				panic("mock out the AllocateConsole method")
 //			},
-//			AllocateIOFunc: func(ctx context.Context, in *runvv1.AllocateIORequest, opts ...grpc.CallOption) (*runvv1.AllocateIOResponse, error) {
+//			AllocateIOFunc: func(ctx context.Context, in *runmv1.AllocateIORequest, opts ...grpc.CallOption) (*runmv1.AllocateIOResponse, error) {
 //				panic("mock out the AllocateIO method")
 //			},
-//			AllocateSocketStreamFunc: func(ctx context.Context, in *runvv1.AllocateSocketStreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[runvv1.AllocateSocketStreamResponse], error) {
+//			AllocateSocketStreamFunc: func(ctx context.Context, in *runmv1.AllocateSocketStreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[runmv1.AllocateSocketStreamResponse], error) {
 //				panic("mock out the AllocateSocketStream method")
 //			},
-//			AllocateSocketsFunc: func(ctx context.Context, in *runvv1.AllocateSocketsRequest, opts ...grpc.CallOption) (*runvv1.AllocateSocketsResponse, error) {
+//			AllocateSocketsFunc: func(ctx context.Context, in *runmv1.AllocateSocketsRequest, opts ...grpc.CallOption) (*runmv1.AllocateSocketsResponse, error) {
 //				panic("mock out the AllocateSockets method")
 //			},
-//			BindConsoleToSocketFunc: func(ctx context.Context, in *runvv1.BindConsoleToSocketRequest, opts ...grpc.CallOption) (*runvv1.BindConsoleToSocketResponse, error) {
+//			BindConsoleToSocketFunc: func(ctx context.Context, in *runmv1.BindConsoleToSocketRequest, opts ...grpc.CallOption) (*runmv1.BindConsoleToSocketResponse, error) {
 //				panic("mock out the BindConsoleToSocket method")
 //			},
-//			BindIOToSocketsFunc: func(ctx context.Context, in *runvv1.BindIOToSocketsRequest, opts ...grpc.CallOption) (*runvv1.BindIOToSocketsResponse, error) {
+//			BindIOToSocketsFunc: func(ctx context.Context, in *runmv1.BindIOToSocketsRequest, opts ...grpc.CallOption) (*runmv1.BindIOToSocketsResponse, error) {
 //				panic("mock out the BindIOToSockets method")
 //			},
-//			CloseConsoleFunc: func(ctx context.Context, in *runvv1.CloseConsoleRequest, opts ...grpc.CallOption) (*runvv1.CloseConsoleResponse, error) {
+//			CloseConsoleFunc: func(ctx context.Context, in *runmv1.CloseConsoleRequest, opts ...grpc.CallOption) (*runmv1.CloseConsoleResponse, error) {
 //				panic("mock out the CloseConsole method")
 //			},
-//			CloseIOFunc: func(ctx context.Context, in *runvv1.CloseIORequest, opts ...grpc.CallOption) (*runvv1.CloseIOResponse, error) {
+//			CloseIOFunc: func(ctx context.Context, in *runmv1.CloseIORequest, opts ...grpc.CallOption) (*runmv1.CloseIOResponse, error) {
 //				panic("mock out the CloseIO method")
 //			},
-//			CloseSocketFunc: func(ctx context.Context, in *runvv1.CloseSocketRequest, opts ...grpc.CallOption) (*runvv1.CloseSocketResponse, error) {
+//			CloseSocketFunc: func(ctx context.Context, in *runmv1.CloseSocketRequest, opts ...grpc.CallOption) (*runmv1.CloseSocketResponse, error) {
 //				panic("mock out the CloseSocket method")
 //			},
-//			CloseSocketsFunc: func(ctx context.Context, in *runvv1.CloseSocketsRequest, opts ...grpc.CallOption) (*runvv1.CloseSocketsResponse, error) {
+//			CloseSocketsFunc: func(ctx context.Context, in *runmv1.CloseSocketsRequest, opts ...grpc.CallOption) (*runmv1.CloseSocketsResponse, error) {
 //				panic("mock out the CloseSockets method")
 //			},
 //		}
 //
-//		// use mockedSocketAllocatorServiceClient in code that requires runvv1.SocketAllocatorServiceClient
+//		// use mockedSocketAllocatorServiceClient in code that requires runmv1.SocketAllocatorServiceClient
 //		// and then make assertions.
 //
 //	}
 type MockSocketAllocatorServiceClient struct {
 	// AllocateConsoleFunc mocks the AllocateConsole method.
-	AllocateConsoleFunc func(ctx context.Context, in *runvv1.AllocateConsoleRequest, opts ...grpc.CallOption) (*runvv1.AllocateConsoleResponse, error)
+	AllocateConsoleFunc func(ctx context.Context, in *runmv1.AllocateConsoleRequest, opts ...grpc.CallOption) (*runmv1.AllocateConsoleResponse, error)
 
 	// AllocateIOFunc mocks the AllocateIO method.
-	AllocateIOFunc func(ctx context.Context, in *runvv1.AllocateIORequest, opts ...grpc.CallOption) (*runvv1.AllocateIOResponse, error)
+	AllocateIOFunc func(ctx context.Context, in *runmv1.AllocateIORequest, opts ...grpc.CallOption) (*runmv1.AllocateIOResponse, error)
 
 	// AllocateSocketStreamFunc mocks the AllocateSocketStream method.
-	AllocateSocketStreamFunc func(ctx context.Context, in *runvv1.AllocateSocketStreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[runvv1.AllocateSocketStreamResponse], error)
+	AllocateSocketStreamFunc func(ctx context.Context, in *runmv1.AllocateSocketStreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[runmv1.AllocateSocketStreamResponse], error)
 
 	// AllocateSocketsFunc mocks the AllocateSockets method.
-	AllocateSocketsFunc func(ctx context.Context, in *runvv1.AllocateSocketsRequest, opts ...grpc.CallOption) (*runvv1.AllocateSocketsResponse, error)
+	AllocateSocketsFunc func(ctx context.Context, in *runmv1.AllocateSocketsRequest, opts ...grpc.CallOption) (*runmv1.AllocateSocketsResponse, error)
 
 	// BindConsoleToSocketFunc mocks the BindConsoleToSocket method.
-	BindConsoleToSocketFunc func(ctx context.Context, in *runvv1.BindConsoleToSocketRequest, opts ...grpc.CallOption) (*runvv1.BindConsoleToSocketResponse, error)
+	BindConsoleToSocketFunc func(ctx context.Context, in *runmv1.BindConsoleToSocketRequest, opts ...grpc.CallOption) (*runmv1.BindConsoleToSocketResponse, error)
 
 	// BindIOToSocketsFunc mocks the BindIOToSockets method.
-	BindIOToSocketsFunc func(ctx context.Context, in *runvv1.BindIOToSocketsRequest, opts ...grpc.CallOption) (*runvv1.BindIOToSocketsResponse, error)
+	BindIOToSocketsFunc func(ctx context.Context, in *runmv1.BindIOToSocketsRequest, opts ...grpc.CallOption) (*runmv1.BindIOToSocketsResponse, error)
 
 	// CloseConsoleFunc mocks the CloseConsole method.
-	CloseConsoleFunc func(ctx context.Context, in *runvv1.CloseConsoleRequest, opts ...grpc.CallOption) (*runvv1.CloseConsoleResponse, error)
+	CloseConsoleFunc func(ctx context.Context, in *runmv1.CloseConsoleRequest, opts ...grpc.CallOption) (*runmv1.CloseConsoleResponse, error)
 
 	// CloseIOFunc mocks the CloseIO method.
-	CloseIOFunc func(ctx context.Context, in *runvv1.CloseIORequest, opts ...grpc.CallOption) (*runvv1.CloseIOResponse, error)
+	CloseIOFunc func(ctx context.Context, in *runmv1.CloseIORequest, opts ...grpc.CallOption) (*runmv1.CloseIOResponse, error)
 
 	// CloseSocketFunc mocks the CloseSocket method.
-	CloseSocketFunc func(ctx context.Context, in *runvv1.CloseSocketRequest, opts ...grpc.CallOption) (*runvv1.CloseSocketResponse, error)
+	CloseSocketFunc func(ctx context.Context, in *runmv1.CloseSocketRequest, opts ...grpc.CallOption) (*runmv1.CloseSocketResponse, error)
 
 	// CloseSocketsFunc mocks the CloseSockets method.
-	CloseSocketsFunc func(ctx context.Context, in *runvv1.CloseSocketsRequest, opts ...grpc.CallOption) (*runvv1.CloseSocketsResponse, error)
+	CloseSocketsFunc func(ctx context.Context, in *runmv1.CloseSocketsRequest, opts ...grpc.CallOption) (*runmv1.CloseSocketsResponse, error)
 
 	// calls tracks calls to the methods.
 	calls struct {
@@ -96,7 +96,7 @@ type MockSocketAllocatorServiceClient struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
 			// In is the in argument value.
-			In *runvv1.AllocateConsoleRequest
+			In *runmv1.AllocateConsoleRequest
 			// Opts is the opts argument value.
 			Opts []grpc.CallOption
 		}
@@ -105,7 +105,7 @@ type MockSocketAllocatorServiceClient struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
 			// In is the in argument value.
-			In *runvv1.AllocateIORequest
+			In *runmv1.AllocateIORequest
 			// Opts is the opts argument value.
 			Opts []grpc.CallOption
 		}
@@ -114,7 +114,7 @@ type MockSocketAllocatorServiceClient struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
 			// In is the in argument value.
-			In *runvv1.AllocateSocketStreamRequest
+			In *runmv1.AllocateSocketStreamRequest
 			// Opts is the opts argument value.
 			Opts []grpc.CallOption
 		}
@@ -123,7 +123,7 @@ type MockSocketAllocatorServiceClient struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
 			// In is the in argument value.
-			In *runvv1.AllocateSocketsRequest
+			In *runmv1.AllocateSocketsRequest
 			// Opts is the opts argument value.
 			Opts []grpc.CallOption
 		}
@@ -132,7 +132,7 @@ type MockSocketAllocatorServiceClient struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
 			// In is the in argument value.
-			In *runvv1.BindConsoleToSocketRequest
+			In *runmv1.BindConsoleToSocketRequest
 			// Opts is the opts argument value.
 			Opts []grpc.CallOption
 		}
@@ -141,7 +141,7 @@ type MockSocketAllocatorServiceClient struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
 			// In is the in argument value.
-			In *runvv1.BindIOToSocketsRequest
+			In *runmv1.BindIOToSocketsRequest
 			// Opts is the opts argument value.
 			Opts []grpc.CallOption
 		}
@@ -150,7 +150,7 @@ type MockSocketAllocatorServiceClient struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
 			// In is the in argument value.
-			In *runvv1.CloseConsoleRequest
+			In *runmv1.CloseConsoleRequest
 			// Opts is the opts argument value.
 			Opts []grpc.CallOption
 		}
@@ -159,7 +159,7 @@ type MockSocketAllocatorServiceClient struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
 			// In is the in argument value.
-			In *runvv1.CloseIORequest
+			In *runmv1.CloseIORequest
 			// Opts is the opts argument value.
 			Opts []grpc.CallOption
 		}
@@ -168,7 +168,7 @@ type MockSocketAllocatorServiceClient struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
 			// In is the in argument value.
-			In *runvv1.CloseSocketRequest
+			In *runmv1.CloseSocketRequest
 			// Opts is the opts argument value.
 			Opts []grpc.CallOption
 		}
@@ -177,7 +177,7 @@ type MockSocketAllocatorServiceClient struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
 			// In is the in argument value.
-			In *runvv1.CloseSocketsRequest
+			In *runmv1.CloseSocketsRequest
 			// Opts is the opts argument value.
 			Opts []grpc.CallOption
 		}
@@ -195,13 +195,13 @@ type MockSocketAllocatorServiceClient struct {
 }
 
 // AllocateConsole calls AllocateConsoleFunc.
-func (mock *MockSocketAllocatorServiceClient) AllocateConsole(ctx context.Context, in *runvv1.AllocateConsoleRequest, opts ...grpc.CallOption) (*runvv1.AllocateConsoleResponse, error) {
+func (mock *MockSocketAllocatorServiceClient) AllocateConsole(ctx context.Context, in *runmv1.AllocateConsoleRequest, opts ...grpc.CallOption) (*runmv1.AllocateConsoleResponse, error) {
 	if mock.AllocateConsoleFunc == nil {
 		panic("MockSocketAllocatorServiceClient.AllocateConsoleFunc: method is nil but SocketAllocatorServiceClient.AllocateConsole was just called")
 	}
 	callInfo := struct {
 		Ctx  context.Context
-		In   *runvv1.AllocateConsoleRequest
+		In   *runmv1.AllocateConsoleRequest
 		Opts []grpc.CallOption
 	}{
 		Ctx:  ctx,
@@ -220,12 +220,12 @@ func (mock *MockSocketAllocatorServiceClient) AllocateConsole(ctx context.Contex
 //	len(mockedSocketAllocatorServiceClient.AllocateConsoleCalls())
 func (mock *MockSocketAllocatorServiceClient) AllocateConsoleCalls() []struct {
 	Ctx  context.Context
-	In   *runvv1.AllocateConsoleRequest
+	In   *runmv1.AllocateConsoleRequest
 	Opts []grpc.CallOption
 } {
 	var calls []struct {
 		Ctx  context.Context
-		In   *runvv1.AllocateConsoleRequest
+		In   *runmv1.AllocateConsoleRequest
 		Opts []grpc.CallOption
 	}
 	mock.lockAllocateConsole.RLock()
@@ -235,13 +235,13 @@ func (mock *MockSocketAllocatorServiceClient) AllocateConsoleCalls() []struct {
 }
 
 // AllocateIO calls AllocateIOFunc.
-func (mock *MockSocketAllocatorServiceClient) AllocateIO(ctx context.Context, in *runvv1.AllocateIORequest, opts ...grpc.CallOption) (*runvv1.AllocateIOResponse, error) {
+func (mock *MockSocketAllocatorServiceClient) AllocateIO(ctx context.Context, in *runmv1.AllocateIORequest, opts ...grpc.CallOption) (*runmv1.AllocateIOResponse, error) {
 	if mock.AllocateIOFunc == nil {
 		panic("MockSocketAllocatorServiceClient.AllocateIOFunc: method is nil but SocketAllocatorServiceClient.AllocateIO was just called")
 	}
 	callInfo := struct {
 		Ctx  context.Context
-		In   *runvv1.AllocateIORequest
+		In   *runmv1.AllocateIORequest
 		Opts []grpc.CallOption
 	}{
 		Ctx:  ctx,
@@ -260,12 +260,12 @@ func (mock *MockSocketAllocatorServiceClient) AllocateIO(ctx context.Context, in
 //	len(mockedSocketAllocatorServiceClient.AllocateIOCalls())
 func (mock *MockSocketAllocatorServiceClient) AllocateIOCalls() []struct {
 	Ctx  context.Context
-	In   *runvv1.AllocateIORequest
+	In   *runmv1.AllocateIORequest
 	Opts []grpc.CallOption
 } {
 	var calls []struct {
 		Ctx  context.Context
-		In   *runvv1.AllocateIORequest
+		In   *runmv1.AllocateIORequest
 		Opts []grpc.CallOption
 	}
 	mock.lockAllocateIO.RLock()
@@ -275,13 +275,13 @@ func (mock *MockSocketAllocatorServiceClient) AllocateIOCalls() []struct {
 }
 
 // AllocateSocketStream calls AllocateSocketStreamFunc.
-func (mock *MockSocketAllocatorServiceClient) AllocateSocketStream(ctx context.Context, in *runvv1.AllocateSocketStreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[runvv1.AllocateSocketStreamResponse], error) {
+func (mock *MockSocketAllocatorServiceClient) AllocateSocketStream(ctx context.Context, in *runmv1.AllocateSocketStreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[runmv1.AllocateSocketStreamResponse], error) {
 	if mock.AllocateSocketStreamFunc == nil {
 		panic("MockSocketAllocatorServiceClient.AllocateSocketStreamFunc: method is nil but SocketAllocatorServiceClient.AllocateSocketStream was just called")
 	}
 	callInfo := struct {
 		Ctx  context.Context
-		In   *runvv1.AllocateSocketStreamRequest
+		In   *runmv1.AllocateSocketStreamRequest
 		Opts []grpc.CallOption
 	}{
 		Ctx:  ctx,
@@ -300,12 +300,12 @@ func (mock *MockSocketAllocatorServiceClient) AllocateSocketStream(ctx context.C
 //	len(mockedSocketAllocatorServiceClient.AllocateSocketStreamCalls())
 func (mock *MockSocketAllocatorServiceClient) AllocateSocketStreamCalls() []struct {
 	Ctx  context.Context
-	In   *runvv1.AllocateSocketStreamRequest
+	In   *runmv1.AllocateSocketStreamRequest
 	Opts []grpc.CallOption
 } {
 	var calls []struct {
 		Ctx  context.Context
-		In   *runvv1.AllocateSocketStreamRequest
+		In   *runmv1.AllocateSocketStreamRequest
 		Opts []grpc.CallOption
 	}
 	mock.lockAllocateSocketStream.RLock()
@@ -315,13 +315,13 @@ func (mock *MockSocketAllocatorServiceClient) AllocateSocketStreamCalls() []stru
 }
 
 // AllocateSockets calls AllocateSocketsFunc.
-func (mock *MockSocketAllocatorServiceClient) AllocateSockets(ctx context.Context, in *runvv1.AllocateSocketsRequest, opts ...grpc.CallOption) (*runvv1.AllocateSocketsResponse, error) {
+func (mock *MockSocketAllocatorServiceClient) AllocateSockets(ctx context.Context, in *runmv1.AllocateSocketsRequest, opts ...grpc.CallOption) (*runmv1.AllocateSocketsResponse, error) {
 	if mock.AllocateSocketsFunc == nil {
 		panic("MockSocketAllocatorServiceClient.AllocateSocketsFunc: method is nil but SocketAllocatorServiceClient.AllocateSockets was just called")
 	}
 	callInfo := struct {
 		Ctx  context.Context
-		In   *runvv1.AllocateSocketsRequest
+		In   *runmv1.AllocateSocketsRequest
 		Opts []grpc.CallOption
 	}{
 		Ctx:  ctx,
@@ -340,12 +340,12 @@ func (mock *MockSocketAllocatorServiceClient) AllocateSockets(ctx context.Contex
 //	len(mockedSocketAllocatorServiceClient.AllocateSocketsCalls())
 func (mock *MockSocketAllocatorServiceClient) AllocateSocketsCalls() []struct {
 	Ctx  context.Context
-	In   *runvv1.AllocateSocketsRequest
+	In   *runmv1.AllocateSocketsRequest
 	Opts []grpc.CallOption
 } {
 	var calls []struct {
 		Ctx  context.Context
-		In   *runvv1.AllocateSocketsRequest
+		In   *runmv1.AllocateSocketsRequest
 		Opts []grpc.CallOption
 	}
 	mock.lockAllocateSockets.RLock()
@@ -355,13 +355,13 @@ func (mock *MockSocketAllocatorServiceClient) AllocateSocketsCalls() []struct {
 }
 
 // BindConsoleToSocket calls BindConsoleToSocketFunc.
-func (mock *MockSocketAllocatorServiceClient) BindConsoleToSocket(ctx context.Context, in *runvv1.BindConsoleToSocketRequest, opts ...grpc.CallOption) (*runvv1.BindConsoleToSocketResponse, error) {
+func (mock *MockSocketAllocatorServiceClient) BindConsoleToSocket(ctx context.Context, in *runmv1.BindConsoleToSocketRequest, opts ...grpc.CallOption) (*runmv1.BindConsoleToSocketResponse, error) {
 	if mock.BindConsoleToSocketFunc == nil {
 		panic("MockSocketAllocatorServiceClient.BindConsoleToSocketFunc: method is nil but SocketAllocatorServiceClient.BindConsoleToSocket was just called")
 	}
 	callInfo := struct {
 		Ctx  context.Context
-		In   *runvv1.BindConsoleToSocketRequest
+		In   *runmv1.BindConsoleToSocketRequest
 		Opts []grpc.CallOption
 	}{
 		Ctx:  ctx,
@@ -380,12 +380,12 @@ func (mock *MockSocketAllocatorServiceClient) BindConsoleToSocket(ctx context.Co
 //	len(mockedSocketAllocatorServiceClient.BindConsoleToSocketCalls())
 func (mock *MockSocketAllocatorServiceClient) BindConsoleToSocketCalls() []struct {
 	Ctx  context.Context
-	In   *runvv1.BindConsoleToSocketRequest
+	In   *runmv1.BindConsoleToSocketRequest
 	Opts []grpc.CallOption
 } {
 	var calls []struct {
 		Ctx  context.Context
-		In   *runvv1.BindConsoleToSocketRequest
+		In   *runmv1.BindConsoleToSocketRequest
 		Opts []grpc.CallOption
 	}
 	mock.lockBindConsoleToSocket.RLock()
@@ -395,13 +395,13 @@ func (mock *MockSocketAllocatorServiceClient) BindConsoleToSocketCalls() []struc
 }
 
 // BindIOToSockets calls BindIOToSocketsFunc.
-func (mock *MockSocketAllocatorServiceClient) BindIOToSockets(ctx context.Context, in *runvv1.BindIOToSocketsRequest, opts ...grpc.CallOption) (*runvv1.BindIOToSocketsResponse, error) {
+func (mock *MockSocketAllocatorServiceClient) BindIOToSockets(ctx context.Context, in *runmv1.BindIOToSocketsRequest, opts ...grpc.CallOption) (*runmv1.BindIOToSocketsResponse, error) {
 	if mock.BindIOToSocketsFunc == nil {
 		panic("MockSocketAllocatorServiceClient.BindIOToSocketsFunc: method is nil but SocketAllocatorServiceClient.BindIOToSockets was just called")
 	}
 	callInfo := struct {
 		Ctx  context.Context
-		In   *runvv1.BindIOToSocketsRequest
+		In   *runmv1.BindIOToSocketsRequest
 		Opts []grpc.CallOption
 	}{
 		Ctx:  ctx,
@@ -420,12 +420,12 @@ func (mock *MockSocketAllocatorServiceClient) BindIOToSockets(ctx context.Contex
 //	len(mockedSocketAllocatorServiceClient.BindIOToSocketsCalls())
 func (mock *MockSocketAllocatorServiceClient) BindIOToSocketsCalls() []struct {
 	Ctx  context.Context
-	In   *runvv1.BindIOToSocketsRequest
+	In   *runmv1.BindIOToSocketsRequest
 	Opts []grpc.CallOption
 } {
 	var calls []struct {
 		Ctx  context.Context
-		In   *runvv1.BindIOToSocketsRequest
+		In   *runmv1.BindIOToSocketsRequest
 		Opts []grpc.CallOption
 	}
 	mock.lockBindIOToSockets.RLock()
@@ -435,13 +435,13 @@ func (mock *MockSocketAllocatorServiceClient) BindIOToSocketsCalls() []struct {
 }
 
 // CloseConsole calls CloseConsoleFunc.
-func (mock *MockSocketAllocatorServiceClient) CloseConsole(ctx context.Context, in *runvv1.CloseConsoleRequest, opts ...grpc.CallOption) (*runvv1.CloseConsoleResponse, error) {
+func (mock *MockSocketAllocatorServiceClient) CloseConsole(ctx context.Context, in *runmv1.CloseConsoleRequest, opts ...grpc.CallOption) (*runmv1.CloseConsoleResponse, error) {
 	if mock.CloseConsoleFunc == nil {
 		panic("MockSocketAllocatorServiceClient.CloseConsoleFunc: method is nil but SocketAllocatorServiceClient.CloseConsole was just called")
 	}
 	callInfo := struct {
 		Ctx  context.Context
-		In   *runvv1.CloseConsoleRequest
+		In   *runmv1.CloseConsoleRequest
 		Opts []grpc.CallOption
 	}{
 		Ctx:  ctx,
@@ -460,12 +460,12 @@ func (mock *MockSocketAllocatorServiceClient) CloseConsole(ctx context.Context, 
 //	len(mockedSocketAllocatorServiceClient.CloseConsoleCalls())
 func (mock *MockSocketAllocatorServiceClient) CloseConsoleCalls() []struct {
 	Ctx  context.Context
-	In   *runvv1.CloseConsoleRequest
+	In   *runmv1.CloseConsoleRequest
 	Opts []grpc.CallOption
 } {
 	var calls []struct {
 		Ctx  context.Context
-		In   *runvv1.CloseConsoleRequest
+		In   *runmv1.CloseConsoleRequest
 		Opts []grpc.CallOption
 	}
 	mock.lockCloseConsole.RLock()
@@ -475,13 +475,13 @@ func (mock *MockSocketAllocatorServiceClient) CloseConsoleCalls() []struct {
 }
 
 // CloseIO calls CloseIOFunc.
-func (mock *MockSocketAllocatorServiceClient) CloseIO(ctx context.Context, in *runvv1.CloseIORequest, opts ...grpc.CallOption) (*runvv1.CloseIOResponse, error) {
+func (mock *MockSocketAllocatorServiceClient) CloseIO(ctx context.Context, in *runmv1.CloseIORequest, opts ...grpc.CallOption) (*runmv1.CloseIOResponse, error) {
 	if mock.CloseIOFunc == nil {
 		panic("MockSocketAllocatorServiceClient.CloseIOFunc: method is nil but SocketAllocatorServiceClient.CloseIO was just called")
 	}
 	callInfo := struct {
 		Ctx  context.Context
-		In   *runvv1.CloseIORequest
+		In   *runmv1.CloseIORequest
 		Opts []grpc.CallOption
 	}{
 		Ctx:  ctx,
@@ -500,12 +500,12 @@ func (mock *MockSocketAllocatorServiceClient) CloseIO(ctx context.Context, in *r
 //	len(mockedSocketAllocatorServiceClient.CloseIOCalls())
 func (mock *MockSocketAllocatorServiceClient) CloseIOCalls() []struct {
 	Ctx  context.Context
-	In   *runvv1.CloseIORequest
+	In   *runmv1.CloseIORequest
 	Opts []grpc.CallOption
 } {
 	var calls []struct {
 		Ctx  context.Context
-		In   *runvv1.CloseIORequest
+		In   *runmv1.CloseIORequest
 		Opts []grpc.CallOption
 	}
 	mock.lockCloseIO.RLock()
@@ -515,13 +515,13 @@ func (mock *MockSocketAllocatorServiceClient) CloseIOCalls() []struct {
 }
 
 // CloseSocket calls CloseSocketFunc.
-func (mock *MockSocketAllocatorServiceClient) CloseSocket(ctx context.Context, in *runvv1.CloseSocketRequest, opts ...grpc.CallOption) (*runvv1.CloseSocketResponse, error) {
+func (mock *MockSocketAllocatorServiceClient) CloseSocket(ctx context.Context, in *runmv1.CloseSocketRequest, opts ...grpc.CallOption) (*runmv1.CloseSocketResponse, error) {
 	if mock.CloseSocketFunc == nil {
 		panic("MockSocketAllocatorServiceClient.CloseSocketFunc: method is nil but SocketAllocatorServiceClient.CloseSocket was just called")
 	}
 	callInfo := struct {
 		Ctx  context.Context
-		In   *runvv1.CloseSocketRequest
+		In   *runmv1.CloseSocketRequest
 		Opts []grpc.CallOption
 	}{
 		Ctx:  ctx,
@@ -540,12 +540,12 @@ func (mock *MockSocketAllocatorServiceClient) CloseSocket(ctx context.Context, i
 //	len(mockedSocketAllocatorServiceClient.CloseSocketCalls())
 func (mock *MockSocketAllocatorServiceClient) CloseSocketCalls() []struct {
 	Ctx  context.Context
-	In   *runvv1.CloseSocketRequest
+	In   *runmv1.CloseSocketRequest
 	Opts []grpc.CallOption
 } {
 	var calls []struct {
 		Ctx  context.Context
-		In   *runvv1.CloseSocketRequest
+		In   *runmv1.CloseSocketRequest
 		Opts []grpc.CallOption
 	}
 	mock.lockCloseSocket.RLock()
@@ -555,13 +555,13 @@ func (mock *MockSocketAllocatorServiceClient) CloseSocketCalls() []struct {
 }
 
 // CloseSockets calls CloseSocketsFunc.
-func (mock *MockSocketAllocatorServiceClient) CloseSockets(ctx context.Context, in *runvv1.CloseSocketsRequest, opts ...grpc.CallOption) (*runvv1.CloseSocketsResponse, error) {
+func (mock *MockSocketAllocatorServiceClient) CloseSockets(ctx context.Context, in *runmv1.CloseSocketsRequest, opts ...grpc.CallOption) (*runmv1.CloseSocketsResponse, error) {
 	if mock.CloseSocketsFunc == nil {
 		panic("MockSocketAllocatorServiceClient.CloseSocketsFunc: method is nil but SocketAllocatorServiceClient.CloseSockets was just called")
 	}
 	callInfo := struct {
 		Ctx  context.Context
-		In   *runvv1.CloseSocketsRequest
+		In   *runmv1.CloseSocketsRequest
 		Opts []grpc.CallOption
 	}{
 		Ctx:  ctx,
@@ -580,12 +580,12 @@ func (mock *MockSocketAllocatorServiceClient) CloseSockets(ctx context.Context, 
 //	len(mockedSocketAllocatorServiceClient.CloseSocketsCalls())
 func (mock *MockSocketAllocatorServiceClient) CloseSocketsCalls() []struct {
 	Ctx  context.Context
-	In   *runvv1.CloseSocketsRequest
+	In   *runmv1.CloseSocketsRequest
 	Opts []grpc.CallOption
 } {
 	var calls []struct {
 		Ctx  context.Context
-		In   *runvv1.CloseSocketsRequest
+		In   *runmv1.CloseSocketsRequest
 		Opts []grpc.CallOption
 	}
 	mock.lockCloseSockets.RLock()

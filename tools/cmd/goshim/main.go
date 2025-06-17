@@ -13,7 +13,7 @@ import (
 
 	"github.com/nxadm/tail"
 
-	"github.com/walteh/runv/tools/pkg/codesign"
+	"github.com/walteh/runm/tools/pkg/codesign"
 )
 
 func init() {

@@ -4,7 +4,7 @@
 // - protoc             (unknown)
 // source: v1/prctl.proto
 
-package runvv1
+package runmv1
 
 import (
 	context "context"
@@ -19,8 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PrctlService_Create_FullMethodName    = "/runv.v1.PrctlService/Create"
-	PrctlService_ShareFrom_FullMethodName = "/runv.v1.PrctlService/ShareFrom"
+	PrctlService_Create_FullMethodName    = "/runm.v1.PrctlService/Create"
+	PrctlService_ShareFrom_FullMethodName = "/runm.v1.PrctlService/ShareFrom"
 )
 
 // PrctlServiceClient is the client API for PrctlService service.
@@ -140,7 +140,7 @@ func _PrctlService_ShareFrom_Handler(srv interface{}, ctx context.Context, dec f
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var PrctlService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "runv.v1.PrctlService",
+	ServiceName: "runm.v1.PrctlService",
 	HandlerType: (*PrctlServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

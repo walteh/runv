@@ -5,18 +5,18 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	"github.com/walteh/runv/core/runc/runtime"
-	"github.com/walteh/runv/core/runc/state"
+	"github.com/walteh/runm/core/runc/runtime"
+	"github.com/walteh/runm/core/runc/state"
 
-	runvv1 "github.com/walteh/runv/proto/v1"
+	runmv1 "github.com/walteh/runm/proto/v1"
 )
 
 // Client is a client for the runc service.
 
 type GRPCClientRuntime struct {
-	runtime         runvv1.RuncServiceClient
-	runtimeExtras   runvv1.RuncExtrasServiceClient
-	socketAllocator runvv1.SocketAllocatorServiceClient
+	runtime         runmv1.RuncServiceClient
+	runtimeExtras   runmv1.RuncExtrasServiceClient
+	socketAllocator runmv1.SocketAllocatorServiceClient
 
 	vsockProxier        runtime.VsockProxier
 	sharedDirPathPrefix string
@@ -44,9 +44,9 @@ func NewGRPCClientRuntime(target string, opts ...grpc.DialOption) (*GRPCClientRu
 func NewGRPCClientRuntimeFromConn(conn *grpc.ClientConn) (*GRPCClientRuntime, error) {
 
 	client := &GRPCClientRuntime{
-		runtime:         runvv1.NewRuncServiceClient(conn),
-		runtimeExtras:   runvv1.NewRuncExtrasServiceClient(conn),
-		socketAllocator: runvv1.NewSocketAllocatorServiceClient(conn),
+		runtime:         runmv1.NewRuncServiceClient(conn),
+		runtimeExtras:   runmv1.NewRuncExtrasServiceClient(conn),
+		socketAllocator: runmv1.NewSocketAllocatorServiceClient(conn),
 		conn:            conn,
 		state:           state.NewState(),
 	}

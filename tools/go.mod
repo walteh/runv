@@ -1,4 +1,4 @@
-module github.com/walteh/runv/tools
+module github.com/walteh/runm/tools
 
 go 1.24.3
 
@@ -11,10 +11,10 @@ exclude google.golang.org/grpc/stats/opentelemetry v0.0.0-20240907200651-3ffb98b
 replace buf.build/go/protovalidate => buf.build/go/protovalidate v0.12.1-0.20250514162658-4adc4f1c5ce2
 
 tool (
-	github.com/walteh/runv/tools/cmd/codesign
-	github.com/walteh/runv/tools/cmd/goshim
-	github.com/walteh/runv/tools/cmd/protoc-gen-go-opaque
-	github.com/walteh/runv/tools/cmd/protoc-gen-go-slog
+	github.com/walteh/runm/tools/cmd/codesign
+	github.com/walteh/runm/tools/cmd/goshim
+	github.com/walteh/runm/tools/cmd/protoc-gen-go-opaque
+	github.com/walteh/runm/tools/cmd/protoc-gen-go-slog
 )
 
 tool (

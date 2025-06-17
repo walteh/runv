@@ -2,74 +2,74 @@
 // github.com/vektra/mockery
 // template: matryer
 
-package mockrunvv1
+package mockrunmv1
 
 import (
 	"context"
 	"sync"
 
-	"github.com/walteh/runv/proto/v1"
+	"github.com/walteh/runm/proto/v1"
 	"google.golang.org/grpc"
 )
 
-// Ensure that MockRuncExtrasServiceClient does implement runvv1.RuncExtrasServiceClient.
+// Ensure that MockRuncExtrasServiceClient does implement runmv1.RuncExtrasServiceClient.
 // If this is not the case, regenerate this file with mockery.
-var _ runvv1.RuncExtrasServiceClient = &MockRuncExtrasServiceClient{}
+var _ runmv1.RuncExtrasServiceClient = &MockRuncExtrasServiceClient{}
 
-// MockRuncExtrasServiceClient is a mock implementation of runvv1.RuncExtrasServiceClient.
+// MockRuncExtrasServiceClient is a mock implementation of runmv1.RuncExtrasServiceClient.
 //
 //	func TestSomethingThatUsesRuncExtrasServiceClient(t *testing.T) {
 //
-//		// make and configure a mocked runvv1.RuncExtrasServiceClient
+//		// make and configure a mocked runmv1.RuncExtrasServiceClient
 //		mockedRuncExtrasServiceClient := &MockRuncExtrasServiceClient{
-//			EventsFunc: func(ctx context.Context, in *runvv1.RuncEventsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[runvv1.RuncEvent], error) {
+//			EventsFunc: func(ctx context.Context, in *runmv1.RuncEventsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[runmv1.RuncEvent], error) {
 //				panic("mock out the Events method")
 //			},
-//			ListFunc: func(ctx context.Context, in *runvv1.RuncListRequest, opts ...grpc.CallOption) (*runvv1.RuncListResponse, error) {
+//			ListFunc: func(ctx context.Context, in *runmv1.RuncListRequest, opts ...grpc.CallOption) (*runmv1.RuncListResponse, error) {
 //				panic("mock out the List method")
 //			},
-//			RunFunc: func(ctx context.Context, in *runvv1.RuncRunRequest, opts ...grpc.CallOption) (*runvv1.RuncRunResponse, error) {
+//			RunFunc: func(ctx context.Context, in *runmv1.RuncRunRequest, opts ...grpc.CallOption) (*runmv1.RuncRunResponse, error) {
 //				panic("mock out the Run method")
 //			},
-//			StateFunc: func(ctx context.Context, in *runvv1.RuncStateRequest, opts ...grpc.CallOption) (*runvv1.RuncStateResponse, error) {
+//			StateFunc: func(ctx context.Context, in *runmv1.RuncStateRequest, opts ...grpc.CallOption) (*runmv1.RuncStateResponse, error) {
 //				panic("mock out the State method")
 //			},
-//			StatsFunc: func(ctx context.Context, in *runvv1.RuncStatsRequest, opts ...grpc.CallOption) (*runvv1.RuncStatsResponse, error) {
+//			StatsFunc: func(ctx context.Context, in *runmv1.RuncStatsRequest, opts ...grpc.CallOption) (*runmv1.RuncStatsResponse, error) {
 //				panic("mock out the Stats method")
 //			},
-//			TopFunc: func(ctx context.Context, in *runvv1.RuncTopRequest, opts ...grpc.CallOption) (*runvv1.RuncTopResponse, error) {
+//			TopFunc: func(ctx context.Context, in *runmv1.RuncTopRequest, opts ...grpc.CallOption) (*runmv1.RuncTopResponse, error) {
 //				panic("mock out the Top method")
 //			},
-//			VersionFunc: func(ctx context.Context, in *runvv1.RuncVersionRequest, opts ...grpc.CallOption) (*runvv1.RuncVersionResponse, error) {
+//			VersionFunc: func(ctx context.Context, in *runmv1.RuncVersionRequest, opts ...grpc.CallOption) (*runmv1.RuncVersionResponse, error) {
 //				panic("mock out the Version method")
 //			},
 //		}
 //
-//		// use mockedRuncExtrasServiceClient in code that requires runvv1.RuncExtrasServiceClient
+//		// use mockedRuncExtrasServiceClient in code that requires runmv1.RuncExtrasServiceClient
 //		// and then make assertions.
 //
 //	}
 type MockRuncExtrasServiceClient struct {
 	// EventsFunc mocks the Events method.
-	EventsFunc func(ctx context.Context, in *runvv1.RuncEventsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[runvv1.RuncEvent], error)
+	EventsFunc func(ctx context.Context, in *runmv1.RuncEventsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[runmv1.RuncEvent], error)
 
 	// ListFunc mocks the List method.
-	ListFunc func(ctx context.Context, in *runvv1.RuncListRequest, opts ...grpc.CallOption) (*runvv1.RuncListResponse, error)
+	ListFunc func(ctx context.Context, in *runmv1.RuncListRequest, opts ...grpc.CallOption) (*runmv1.RuncListResponse, error)
 
 	// RunFunc mocks the Run method.
-	RunFunc func(ctx context.Context, in *runvv1.RuncRunRequest, opts ...grpc.CallOption) (*runvv1.RuncRunResponse, error)
+	RunFunc func(ctx context.Context, in *runmv1.RuncRunRequest, opts ...grpc.CallOption) (*runmv1.RuncRunResponse, error)
 
 	// StateFunc mocks the State method.
-	StateFunc func(ctx context.Context, in *runvv1.RuncStateRequest, opts ...grpc.CallOption) (*runvv1.RuncStateResponse, error)
+	StateFunc func(ctx context.Context, in *runmv1.RuncStateRequest, opts ...grpc.CallOption) (*runmv1.RuncStateResponse, error)
 
 	// StatsFunc mocks the Stats method.
-	StatsFunc func(ctx context.Context, in *runvv1.RuncStatsRequest, opts ...grpc.CallOption) (*runvv1.RuncStatsResponse, error)
+	StatsFunc func(ctx context.Context, in *runmv1.RuncStatsRequest, opts ...grpc.CallOption) (*runmv1.RuncStatsResponse, error)
 
 	// TopFunc mocks the Top method.
-	TopFunc func(ctx context.Context, in *runvv1.RuncTopRequest, opts ...grpc.CallOption) (*runvv1.RuncTopResponse, error)
+	TopFunc func(ctx context.Context, in *runmv1.RuncTopRequest, opts ...grpc.CallOption) (*runmv1.RuncTopResponse, error)
 
 	// VersionFunc mocks the Version method.
-	VersionFunc func(ctx context.Context, in *runvv1.RuncVersionRequest, opts ...grpc.CallOption) (*runvv1.RuncVersionResponse, error)
+	VersionFunc func(ctx context.Context, in *runmv1.RuncVersionRequest, opts ...grpc.CallOption) (*runmv1.RuncVersionResponse, error)
 
 	// calls tracks calls to the methods.
 	calls struct {
@@ -78,7 +78,7 @@ type MockRuncExtrasServiceClient struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
 			// In is the in argument value.
-			In *runvv1.RuncEventsRequest
+			In *runmv1.RuncEventsRequest
 			// Opts is the opts argument value.
 			Opts []grpc.CallOption
 		}
@@ -87,7 +87,7 @@ type MockRuncExtrasServiceClient struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
 			// In is the in argument value.
-			In *runvv1.RuncListRequest
+			In *runmv1.RuncListRequest
 			// Opts is the opts argument value.
 			Opts []grpc.CallOption
 		}
@@ -96,7 +96,7 @@ type MockRuncExtrasServiceClient struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
 			// In is the in argument value.
-			In *runvv1.RuncRunRequest
+			In *runmv1.RuncRunRequest
 			// Opts is the opts argument value.
 			Opts []grpc.CallOption
 		}
@@ -105,7 +105,7 @@ type MockRuncExtrasServiceClient struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
 			// In is the in argument value.
-			In *runvv1.RuncStateRequest
+			In *runmv1.RuncStateRequest
 			// Opts is the opts argument value.
 			Opts []grpc.CallOption
 		}
@@ -114,7 +114,7 @@ type MockRuncExtrasServiceClient struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
 			// In is the in argument value.
-			In *runvv1.RuncStatsRequest
+			In *runmv1.RuncStatsRequest
 			// Opts is the opts argument value.
 			Opts []grpc.CallOption
 		}
@@ -123,7 +123,7 @@ type MockRuncExtrasServiceClient struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
 			// In is the in argument value.
-			In *runvv1.RuncTopRequest
+			In *runmv1.RuncTopRequest
 			// Opts is the opts argument value.
 			Opts []grpc.CallOption
 		}
@@ -132,7 +132,7 @@ type MockRuncExtrasServiceClient struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
 			// In is the in argument value.
-			In *runvv1.RuncVersionRequest
+			In *runmv1.RuncVersionRequest
 			// Opts is the opts argument value.
 			Opts []grpc.CallOption
 		}
@@ -147,13 +147,13 @@ type MockRuncExtrasServiceClient struct {
 }
 
 // Events calls EventsFunc.
-func (mock *MockRuncExtrasServiceClient) Events(ctx context.Context, in *runvv1.RuncEventsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[runvv1.RuncEvent], error) {
+func (mock *MockRuncExtrasServiceClient) Events(ctx context.Context, in *runmv1.RuncEventsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[runmv1.RuncEvent], error) {
 	if mock.EventsFunc == nil {
 		panic("MockRuncExtrasServiceClient.EventsFunc: method is nil but RuncExtrasServiceClient.Events was just called")
 	}
 	callInfo := struct {
 		Ctx  context.Context
-		In   *runvv1.RuncEventsRequest
+		In   *runmv1.RuncEventsRequest
 		Opts []grpc.CallOption
 	}{
 		Ctx:  ctx,
@@ -172,12 +172,12 @@ func (mock *MockRuncExtrasServiceClient) Events(ctx context.Context, in *runvv1.
 //	len(mockedRuncExtrasServiceClient.EventsCalls())
 func (mock *MockRuncExtrasServiceClient) EventsCalls() []struct {
 	Ctx  context.Context
-	In   *runvv1.RuncEventsRequest
+	In   *runmv1.RuncEventsRequest
 	Opts []grpc.CallOption
 } {
 	var calls []struct {
 		Ctx  context.Context
-		In   *runvv1.RuncEventsRequest
+		In   *runmv1.RuncEventsRequest
 		Opts []grpc.CallOption
 	}
 	mock.lockEvents.RLock()
@@ -187,13 +187,13 @@ func (mock *MockRuncExtrasServiceClient) EventsCalls() []struct {
 }
 
 // List calls ListFunc.
-func (mock *MockRuncExtrasServiceClient) List(ctx context.Context, in *runvv1.RuncListRequest, opts ...grpc.CallOption) (*runvv1.RuncListResponse, error) {
+func (mock *MockRuncExtrasServiceClient) List(ctx context.Context, in *runmv1.RuncListRequest, opts ...grpc.CallOption) (*runmv1.RuncListResponse, error) {
 	if mock.ListFunc == nil {
 		panic("MockRuncExtrasServiceClient.ListFunc: method is nil but RuncExtrasServiceClient.List was just called")
 	}
 	callInfo := struct {
 		Ctx  context.Context
-		In   *runvv1.RuncListRequest
+		In   *runmv1.RuncListRequest
 		Opts []grpc.CallOption
 	}{
 		Ctx:  ctx,
@@ -212,12 +212,12 @@ func (mock *MockRuncExtrasServiceClient) List(ctx context.Context, in *runvv1.Ru
 //	len(mockedRuncExtrasServiceClient.ListCalls())
 func (mock *MockRuncExtrasServiceClient) ListCalls() []struct {
 	Ctx  context.Context
-	In   *runvv1.RuncListRequest
+	In   *runmv1.RuncListRequest
 	Opts []grpc.CallOption
 } {
 	var calls []struct {
 		Ctx  context.Context
-		In   *runvv1.RuncListRequest
+		In   *runmv1.RuncListRequest
 		Opts []grpc.CallOption
 	}
 	mock.lockList.RLock()
@@ -227,13 +227,13 @@ func (mock *MockRuncExtrasServiceClient) ListCalls() []struct {
 }
 
 // Run calls RunFunc.
-func (mock *MockRuncExtrasServiceClient) Run(ctx context.Context, in *runvv1.RuncRunRequest, opts ...grpc.CallOption) (*runvv1.RuncRunResponse, error) {
+func (mock *MockRuncExtrasServiceClient) Run(ctx context.Context, in *runmv1.RuncRunRequest, opts ...grpc.CallOption) (*runmv1.RuncRunResponse, error) {
 	if mock.RunFunc == nil {
 		panic("MockRuncExtrasServiceClient.RunFunc: method is nil but RuncExtrasServiceClient.Run was just called")
 	}
 	callInfo := struct {
 		Ctx  context.Context
-		In   *runvv1.RuncRunRequest
+		In   *runmv1.RuncRunRequest
 		Opts []grpc.CallOption
 	}{
 		Ctx:  ctx,
@@ -252,12 +252,12 @@ func (mock *MockRuncExtrasServiceClient) Run(ctx context.Context, in *runvv1.Run
 //	len(mockedRuncExtrasServiceClient.RunCalls())
 func (mock *MockRuncExtrasServiceClient) RunCalls() []struct {
 	Ctx  context.Context
-	In   *runvv1.RuncRunRequest
+	In   *runmv1.RuncRunRequest
 	Opts []grpc.CallOption
 } {
 	var calls []struct {
 		Ctx  context.Context
-		In   *runvv1.RuncRunRequest
+		In   *runmv1.RuncRunRequest
 		Opts []grpc.CallOption
 	}
 	mock.lockRun.RLock()
@@ -267,13 +267,13 @@ func (mock *MockRuncExtrasServiceClient) RunCalls() []struct {
 }
 
 // State calls StateFunc.
-func (mock *MockRuncExtrasServiceClient) State(ctx context.Context, in *runvv1.RuncStateRequest, opts ...grpc.CallOption) (*runvv1.RuncStateResponse, error) {
+func (mock *MockRuncExtrasServiceClient) State(ctx context.Context, in *runmv1.RuncStateRequest, opts ...grpc.CallOption) (*runmv1.RuncStateResponse, error) {
 	if mock.StateFunc == nil {
 		panic("MockRuncExtrasServiceClient.StateFunc: method is nil but RuncExtrasServiceClient.State was just called")
 	}
 	callInfo := struct {
 		Ctx  context.Context
-		In   *runvv1.RuncStateRequest
+		In   *runmv1.RuncStateRequest
 		Opts []grpc.CallOption
 	}{
 		Ctx:  ctx,
@@ -292,12 +292,12 @@ func (mock *MockRuncExtrasServiceClient) State(ctx context.Context, in *runvv1.R
 //	len(mockedRuncExtrasServiceClient.StateCalls())
 func (mock *MockRuncExtrasServiceClient) StateCalls() []struct {
 	Ctx  context.Context
-	In   *runvv1.RuncStateRequest
+	In   *runmv1.RuncStateRequest
 	Opts []grpc.CallOption
 } {
 	var calls []struct {
 		Ctx  context.Context
-		In   *runvv1.RuncStateRequest
+		In   *runmv1.RuncStateRequest
 		Opts []grpc.CallOption
 	}
 	mock.lockState.RLock()
@@ -307,13 +307,13 @@ func (mock *MockRuncExtrasServiceClient) StateCalls() []struct {
 }
 
 // Stats calls StatsFunc.
-func (mock *MockRuncExtrasServiceClient) Stats(ctx context.Context, in *runvv1.RuncStatsRequest, opts ...grpc.CallOption) (*runvv1.RuncStatsResponse, error) {
+func (mock *MockRuncExtrasServiceClient) Stats(ctx context.Context, in *runmv1.RuncStatsRequest, opts ...grpc.CallOption) (*runmv1.RuncStatsResponse, error) {
 	if mock.StatsFunc == nil {
 		panic("MockRuncExtrasServiceClient.StatsFunc: method is nil but RuncExtrasServiceClient.Stats was just called")
 	}
 	callInfo := struct {
 		Ctx  context.Context
-		In   *runvv1.RuncStatsRequest
+		In   *runmv1.RuncStatsRequest
 		Opts []grpc.CallOption
 	}{
 		Ctx:  ctx,
@@ -332,12 +332,12 @@ func (mock *MockRuncExtrasServiceClient) Stats(ctx context.Context, in *runvv1.R
 //	len(mockedRuncExtrasServiceClient.StatsCalls())
 func (mock *MockRuncExtrasServiceClient) StatsCalls() []struct {
 	Ctx  context.Context
-	In   *runvv1.RuncStatsRequest
+	In   *runmv1.RuncStatsRequest
 	Opts []grpc.CallOption
 } {
 	var calls []struct {
 		Ctx  context.Context
-		In   *runvv1.RuncStatsRequest
+		In   *runmv1.RuncStatsRequest
 		Opts []grpc.CallOption
 	}
 	mock.lockStats.RLock()
@@ -347,13 +347,13 @@ func (mock *MockRuncExtrasServiceClient) StatsCalls() []struct {
 }
 
 // Top calls TopFunc.
-func (mock *MockRuncExtrasServiceClient) Top(ctx context.Context, in *runvv1.RuncTopRequest, opts ...grpc.CallOption) (*runvv1.RuncTopResponse, error) {
+func (mock *MockRuncExtrasServiceClient) Top(ctx context.Context, in *runmv1.RuncTopRequest, opts ...grpc.CallOption) (*runmv1.RuncTopResponse, error) {
 	if mock.TopFunc == nil {
 		panic("MockRuncExtrasServiceClient.TopFunc: method is nil but RuncExtrasServiceClient.Top was just called")
 	}
 	callInfo := struct {
 		Ctx  context.Context
-		In   *runvv1.RuncTopRequest
+		In   *runmv1.RuncTopRequest
 		Opts []grpc.CallOption
 	}{
 		Ctx:  ctx,
@@ -372,12 +372,12 @@ func (mock *MockRuncExtrasServiceClient) Top(ctx context.Context, in *runvv1.Run
 //	len(mockedRuncExtrasServiceClient.TopCalls())
 func (mock *MockRuncExtrasServiceClient) TopCalls() []struct {
 	Ctx  context.Context
-	In   *runvv1.RuncTopRequest
+	In   *runmv1.RuncTopRequest
 	Opts []grpc.CallOption
 } {
 	var calls []struct {
 		Ctx  context.Context
-		In   *runvv1.RuncTopRequest
+		In   *runmv1.RuncTopRequest
 		Opts []grpc.CallOption
 	}
 	mock.lockTop.RLock()
@@ -387,13 +387,13 @@ func (mock *MockRuncExtrasServiceClient) TopCalls() []struct {
 }
 
 // Version calls VersionFunc.
-func (mock *MockRuncExtrasServiceClient) Version(ctx context.Context, in *runvv1.RuncVersionRequest, opts ...grpc.CallOption) (*runvv1.RuncVersionResponse, error) {
+func (mock *MockRuncExtrasServiceClient) Version(ctx context.Context, in *runmv1.RuncVersionRequest, opts ...grpc.CallOption) (*runmv1.RuncVersionResponse, error) {
 	if mock.VersionFunc == nil {
 		panic("MockRuncExtrasServiceClient.VersionFunc: method is nil but RuncExtrasServiceClient.Version was just called")
 	}
 	callInfo := struct {
 		Ctx  context.Context
-		In   *runvv1.RuncVersionRequest
+		In   *runmv1.RuncVersionRequest
 		Opts []grpc.CallOption
 	}{
 		Ctx:  ctx,
@@ -412,12 +412,12 @@ func (mock *MockRuncExtrasServiceClient) Version(ctx context.Context, in *runvv1
 //	len(mockedRuncExtrasServiceClient.VersionCalls())
 func (mock *MockRuncExtrasServiceClient) VersionCalls() []struct {
 	Ctx  context.Context
-	In   *runvv1.RuncVersionRequest
+	In   *runmv1.RuncVersionRequest
 	Opts []grpc.CallOption
 } {
 	var calls []struct {
 		Ctx  context.Context
-		In   *runvv1.RuncVersionRequest
+		In   *runmv1.RuncVersionRequest
 		Opts []grpc.CallOption
 	}
 	mock.lockVersion.RLock()

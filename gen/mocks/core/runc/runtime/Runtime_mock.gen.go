@@ -10,7 +10,7 @@ import (
 
 	"github.com/containerd/go-runc"
 	"github.com/opencontainers/runtime-spec/specs-go"
-	"github.com/walteh/runv/core/runc/runtime"
+	"github.com/walteh/runm/core/runc/runtime"
 )
 
 // Ensure that MockRuntime does implement runtime.Runtime.

@@ -50,9 +50,9 @@ import (
 	cgroupsv2 "github.com/containerd/cgroups/v3/cgroup2"
 	gorunc "github.com/containerd/go-runc"
 
-	"github.com/walteh/runv/cmd/containerd-shim-runv-v2/process"
-	"github.com/walteh/runv/cmd/containerd-shim-runv-v2/runv"
-	"github.com/walteh/runv/core/runc/runtime"
+	"github.com/walteh/runm/cmd/containerd-shim-runm-v2/process"
+	"github.com/walteh/runm/cmd/containerd-shim-runm-v2/runm"
+	"github.com/walteh/runm/core/runc/runtime"
 )
 
 // NewShimManager returns an implementation of the shim manager
@@ -299,11 +299,11 @@ func (m manager) Stop(ctx context.Context, id string) (shim.StopStatus, error) {
 	if err != nil {
 		return shim.StopStatus{}, err
 	}
-	runtimez, err := runv.ReadRuntime(path)
+	runtimez, err := runm.ReadRuntime(path)
 	if err != nil && !os.IsNotExist(err) {
 		return shim.StopStatus{}, err
 	}
-	opts, err := runv.ReadOptions(path)
+	opts, err := runm.ReadOptions(path)
 	if err != nil {
 		return shim.StopStatus{}, err
 	}

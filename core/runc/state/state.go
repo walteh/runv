@@ -1,8 +1,8 @@
 package state
 
 import (
-	"github.com/walteh/runv/core/runc/runtime"
-	"github.com/walteh/runv/pkg/syncmap"
+	"github.com/walteh/runm/core/runc/runtime"
+	"github.com/walteh/runm/pkg/syncmap"
 )
 
 type State struct {

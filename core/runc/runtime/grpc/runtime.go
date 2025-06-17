@@ -11,10 +11,10 @@ import (
 
 	gorunc "github.com/containerd/go-runc"
 
-	"github.com/walteh/runv/core/runc/conversion"
-	"github.com/walteh/runv/core/runc/runtime"
+	"github.com/walteh/runm/core/runc/conversion"
+	"github.com/walteh/runm/core/runc/runtime"
 
-	runvv1 "github.com/walteh/runv/proto/v1"
+	runmv1 "github.com/walteh/runm/proto/v1"
 )
 
 var _ runtime.Runtime = (*GRPCClientRuntime)(nil)
@@ -25,14 +25,14 @@ func (c *GRPCClientRuntime) SharedDir() string {
 
 // Ping checks if the runc service is alive.
 func (c *GRPCClientRuntime) Ping(ctx context.Context) error {
-	_, err := c.runtime.Ping(ctx, &runvv1.PingRequest{})
+	_, err := c.runtime.Ping(ctx, &runmv1.PingRequest{})
 	return err
 }
 
 // NewTempConsoleSocket implements runtime.Runtime.
 func (c *GRPCClientRuntime) NewTempConsoleSocket(ctx context.Context) (runtime.ConsoleSocket, error) {
 
-	sock, err := c.socketAllocator.AllocateSocketStream(ctx, &runvv1.AllocateSocketStreamRequest{})
+	sock, err := c.socketAllocator.AllocateSocketStream(ctx, &runmv1.AllocateSocketStreamRequest{})
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +75,7 @@ func (c *GRPCClientRuntime) NewTempConsoleSocket(ctx context.Context) (runtime.C
 	}
 	slog.InfoContext(ctx, "socket is ready - D")
 
-	cons, err := c.runtime.NewTempConsoleSocket(ctx, &runvv1.RuncNewTempConsoleSocketRequest{})
+	cons, err := c.runtime.NewTempConsoleSocket(ctx, &runmv1.RuncNewTempConsoleSocketRequest{})
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ func (c *GRPCClientRuntime) NewTempConsoleSocket(ctx context.Context) (runtime.C
 
 	slog.InfoContext(ctx, "creating console - A")
 
-	req := &runvv1.BindConsoleToSocketRequest{}
+	req := &runmv1.BindConsoleToSocketRequest{}
 	req.SetConsoleReferenceId(cons.GetConsoleReferenceId())
 	req.SetSocketReferenceId(refId.GetSocketReferenceId())
 
@@ -118,7 +118,7 @@ func (c *GRPCClientRuntime) NewTempConsoleSocket(ctx context.Context) (runtime.C
 
 // ReadPidFile implements runtime.Runtime.
 func (c *GRPCClientRuntime) ReadPidFile(ctx context.Context, path string) (int, error) {
-	req := &runvv1.RuncReadPidFileRequest{}
+	req := &runmv1.RuncReadPidFileRequest{}
 	req.SetPath(path)
 	resp, err := c.runtime.ReadPidFile(ctx, req)
 	if err != nil {
@@ -168,7 +168,7 @@ func (c *GRPCClientRuntime) NewPipeIO(ctx context.Context, ioUID, ioGID int, opt
 		return nil, errors.New("no sockets to allocate")
 	}
 
-	req := &runvv1.AllocateSocketsRequest{}
+	req := &runmv1.AllocateSocketsRequest{}
 	req.SetCount(uint32(count))
 
 	iov, err := c.socketAllocator.AllocateSockets(ctx, req)
@@ -176,7 +176,7 @@ func (c *GRPCClientRuntime) NewPipeIO(ctx context.Context, ioUID, ioGID int, opt
 		return nil, err
 	}
 
-	ioReq := &runvv1.AllocateIORequest{}
+	ioReq := &runmv1.AllocateIORequest{}
 	ioReq.SetOpenStdin(ropts.OpenStdin)
 	ioReq.SetOpenStdout(ropts.OpenStdout)
 	ioReq.SetOpenStderr(ropts.OpenStderr)
@@ -188,7 +188,7 @@ func (c *GRPCClientRuntime) NewPipeIO(ctx context.Context, ioUID, ioGID int, opt
 
 	count2 := 0
 
-	bindReq := &runvv1.BindIOToSocketsRequest{}
+	bindReq := &runmv1.BindIOToSocketsRequest{}
 	bindReq.SetIoReferenceId(sock.GetIoReferenceId())
 
 	if ropts.OpenStdin {
@@ -255,7 +255,7 @@ func (c *GRPCClientRuntime) Create(ctx context.Context, id, bundle string, optio
 		return err
 	}
 
-	req := &runvv1.RuncCreateRequest{}
+	req := &runmv1.RuncCreateRequest{}
 	req.SetId(id)
 	req.SetBundle(bundle)
 	req.SetOptions(conv)
@@ -272,7 +272,7 @@ func (c *GRPCClientRuntime) Create(ctx context.Context, id, bundle string, optio
 
 // Start starts an already created container.
 func (c *GRPCClientRuntime) Start(ctx context.Context, id string) error {
-	req := &runvv1.RuncStartRequest{}
+	req := &runmv1.RuncStartRequest{}
 	req.SetId(id)
 
 	resp, err := c.runtime.Start(ctx, req)
@@ -287,7 +287,7 @@ func (c *GRPCClientRuntime) Start(ctx context.Context, id string) error {
 
 // Delete deletes a container.
 func (c *GRPCClientRuntime) Delete(ctx context.Context, id string, opts *gorunc.DeleteOpts) error {
-	req := &runvv1.RuncDeleteRequest{}
+	req := &runmv1.RuncDeleteRequest{}
 	req.SetId(id)
 	req.SetOptions(conversion.ConvertDeleteOptsToProto(opts))
 
@@ -303,7 +303,7 @@ func (c *GRPCClientRuntime) Delete(ctx context.Context, id string, opts *gorunc.
 
 // Kill sends the specified signal to the container.
 func (c *GRPCClientRuntime) Kill(ctx context.Context, id string, signal int, opts *gorunc.KillOpts) error {
-	req := &runvv1.RuncKillRequest{}
+	req := &runmv1.RuncKillRequest{}
 	req.SetId(id)
 	req.SetSignal(int32(signal))
 	req.SetOptions(conversion.ConvertKillOptsToProto(opts))
@@ -320,7 +320,7 @@ func (c *GRPCClientRuntime) Kill(ctx context.Context, id string, signal int, opt
 
 // Pause pauses the container with the provided id.
 func (c *GRPCClientRuntime) Pause(ctx context.Context, id string) error {
-	req := &runvv1.RuncPauseRequest{}
+	req := &runmv1.RuncPauseRequest{}
 	req.SetId(id)
 
 	resp, err := c.runtime.Pause(ctx, req)
@@ -335,7 +335,7 @@ func (c *GRPCClientRuntime) Pause(ctx context.Context, id string) error {
 
 // Resume resumes the container with the provided id.
 func (c *GRPCClientRuntime) Resume(ctx context.Context, id string) error {
-	req := &runvv1.RuncResumeRequest{}
+	req := &runmv1.RuncResumeRequest{}
 	req.SetId(id)
 
 	resp, err := c.runtime.Resume(ctx, req)
@@ -350,7 +350,7 @@ func (c *GRPCClientRuntime) Resume(ctx context.Context, id string) error {
 
 // Ps lists all the processes inside the container returning their pids.
 func (c *GRPCClientRuntime) Ps(ctx context.Context, id string) ([]int, error) {
-	req := &runvv1.RuncPsRequest{}
+	req := &runmv1.RuncPsRequest{}
 	req.SetId(id)
 
 	resp, err := c.runtime.Ps(ctx, req)
@@ -369,7 +369,7 @@ func (c *GRPCClientRuntime) Ps(ctx context.Context, id string) ([]int, error) {
 
 // Exec executes an additional process inside the container.
 func (c *GRPCClientRuntime) Exec(ctx context.Context, id string, spec specs.Process, options *gorunc.ExecOpts) error {
-	req := &runvv1.RuncExecRequest{}
+	req := &runmv1.RuncExecRequest{}
 	req.SetId(id)
 
 	specOut, err := conversion.ConvertProcessSpecToProto(&spec)
@@ -391,7 +391,7 @@ func (c *GRPCClientRuntime) Exec(ctx context.Context, id string, spec specs.Proc
 }
 
 func (c *GRPCClientRuntime) Checkpoint(ctx context.Context, id string, options *gorunc.CheckpointOpts, actions ...gorunc.CheckpointAction) error {
-	req := &runvv1.RuncCheckpointRequest{}
+	req := &runmv1.RuncCheckpointRequest{}
 	req.SetId(id)
 	req.SetOptions(conversion.ConvertCheckpointOptsToProto(options))
 	req.SetActions(conversion.ConvertCheckpointActionsToProto(actions...))
@@ -407,7 +407,7 @@ func (c *GRPCClientRuntime) Checkpoint(ctx context.Context, id string, options *
 }
 
 func (c *GRPCClientRuntime) Restore(ctx context.Context, id, bundle string, options *gorunc.RestoreOpts) (int, error) {
-	req := &runvv1.RuncRestoreRequest{}
+	req := &runmv1.RuncRestoreRequest{}
 	req.SetId(id)
 	req.SetBundle(bundle)
 	req.SetOptions(conversion.ConvertRestoreOptsToProto(options))

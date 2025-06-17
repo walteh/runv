@@ -2,92 +2,92 @@
 // github.com/vektra/mockery
 // template: matryer
 
-package mockrunvv1
+package mockrunmv1
 
 import (
 	"context"
 	"sync"
 
-	"github.com/walteh/runv/proto/v1"
+	"github.com/walteh/runm/proto/v1"
 	"google.golang.org/grpc"
 )
 
-// Ensure that MockSocketAllocatorServiceServer does implement runvv1.SocketAllocatorServiceServer.
+// Ensure that MockSocketAllocatorServiceServer does implement runmv1.SocketAllocatorServiceServer.
 // If this is not the case, regenerate this file with mockery.
-var _ runvv1.SocketAllocatorServiceServer = &MockSocketAllocatorServiceServer{}
+var _ runmv1.SocketAllocatorServiceServer = &MockSocketAllocatorServiceServer{}
 
-// MockSocketAllocatorServiceServer is a mock implementation of runvv1.SocketAllocatorServiceServer.
+// MockSocketAllocatorServiceServer is a mock implementation of runmv1.SocketAllocatorServiceServer.
 //
 //	func TestSomethingThatUsesSocketAllocatorServiceServer(t *testing.T) {
 //
-//		// make and configure a mocked runvv1.SocketAllocatorServiceServer
+//		// make and configure a mocked runmv1.SocketAllocatorServiceServer
 //		mockedSocketAllocatorServiceServer := &MockSocketAllocatorServiceServer{
-//			AllocateConsoleFunc: func(context1 context.Context, allocateConsoleRequest *runvv1.AllocateConsoleRequest) (*runvv1.AllocateConsoleResponse, error) {
+//			AllocateConsoleFunc: func(context1 context.Context, allocateConsoleRequest *runmv1.AllocateConsoleRequest) (*runmv1.AllocateConsoleResponse, error) {
 //				panic("mock out the AllocateConsole method")
 //			},
-//			AllocateIOFunc: func(context1 context.Context, allocateIORequest *runvv1.AllocateIORequest) (*runvv1.AllocateIOResponse, error) {
+//			AllocateIOFunc: func(context1 context.Context, allocateIORequest *runmv1.AllocateIORequest) (*runmv1.AllocateIOResponse, error) {
 //				panic("mock out the AllocateIO method")
 //			},
-//			AllocateSocketStreamFunc: func(allocateSocketStreamRequest *runvv1.AllocateSocketStreamRequest, serverStreamingServer grpc.ServerStreamingServer[runvv1.AllocateSocketStreamResponse]) error {
+//			AllocateSocketStreamFunc: func(allocateSocketStreamRequest *runmv1.AllocateSocketStreamRequest, serverStreamingServer grpc.ServerStreamingServer[runmv1.AllocateSocketStreamResponse]) error {
 //				panic("mock out the AllocateSocketStream method")
 //			},
-//			AllocateSocketsFunc: func(context1 context.Context, allocateSocketsRequest *runvv1.AllocateSocketsRequest) (*runvv1.AllocateSocketsResponse, error) {
+//			AllocateSocketsFunc: func(context1 context.Context, allocateSocketsRequest *runmv1.AllocateSocketsRequest) (*runmv1.AllocateSocketsResponse, error) {
 //				panic("mock out the AllocateSockets method")
 //			},
-//			BindConsoleToSocketFunc: func(context1 context.Context, bindConsoleToSocketRequest *runvv1.BindConsoleToSocketRequest) (*runvv1.BindConsoleToSocketResponse, error) {
+//			BindConsoleToSocketFunc: func(context1 context.Context, bindConsoleToSocketRequest *runmv1.BindConsoleToSocketRequest) (*runmv1.BindConsoleToSocketResponse, error) {
 //				panic("mock out the BindConsoleToSocket method")
 //			},
-//			BindIOToSocketsFunc: func(context1 context.Context, bindIOToSocketsRequest *runvv1.BindIOToSocketsRequest) (*runvv1.BindIOToSocketsResponse, error) {
+//			BindIOToSocketsFunc: func(context1 context.Context, bindIOToSocketsRequest *runmv1.BindIOToSocketsRequest) (*runmv1.BindIOToSocketsResponse, error) {
 //				panic("mock out the BindIOToSockets method")
 //			},
-//			CloseConsoleFunc: func(context1 context.Context, closeConsoleRequest *runvv1.CloseConsoleRequest) (*runvv1.CloseConsoleResponse, error) {
+//			CloseConsoleFunc: func(context1 context.Context, closeConsoleRequest *runmv1.CloseConsoleRequest) (*runmv1.CloseConsoleResponse, error) {
 //				panic("mock out the CloseConsole method")
 //			},
-//			CloseIOFunc: func(context1 context.Context, closeIORequest *runvv1.CloseIORequest) (*runvv1.CloseIOResponse, error) {
+//			CloseIOFunc: func(context1 context.Context, closeIORequest *runmv1.CloseIORequest) (*runmv1.CloseIOResponse, error) {
 //				panic("mock out the CloseIO method")
 //			},
-//			CloseSocketFunc: func(context1 context.Context, closeSocketRequest *runvv1.CloseSocketRequest) (*runvv1.CloseSocketResponse, error) {
+//			CloseSocketFunc: func(context1 context.Context, closeSocketRequest *runmv1.CloseSocketRequest) (*runmv1.CloseSocketResponse, error) {
 //				panic("mock out the CloseSocket method")
 //			},
-//			CloseSocketsFunc: func(context1 context.Context, closeSocketsRequest *runvv1.CloseSocketsRequest) (*runvv1.CloseSocketsResponse, error) {
+//			CloseSocketsFunc: func(context1 context.Context, closeSocketsRequest *runmv1.CloseSocketsRequest) (*runmv1.CloseSocketsResponse, error) {
 //				panic("mock out the CloseSockets method")
 //			},
 //		}
 //
-//		// use mockedSocketAllocatorServiceServer in code that requires runvv1.SocketAllocatorServiceServer
+//		// use mockedSocketAllocatorServiceServer in code that requires runmv1.SocketAllocatorServiceServer
 //		// and then make assertions.
 //
 //	}
 type MockSocketAllocatorServiceServer struct {
 	// AllocateConsoleFunc mocks the AllocateConsole method.
-	AllocateConsoleFunc func(context1 context.Context, allocateConsoleRequest *runvv1.AllocateConsoleRequest) (*runvv1.AllocateConsoleResponse, error)
+	AllocateConsoleFunc func(context1 context.Context, allocateConsoleRequest *runmv1.AllocateConsoleRequest) (*runmv1.AllocateConsoleResponse, error)
 
 	// AllocateIOFunc mocks the AllocateIO method.
-	AllocateIOFunc func(context1 context.Context, allocateIORequest *runvv1.AllocateIORequest) (*runvv1.AllocateIOResponse, error)
+	AllocateIOFunc func(context1 context.Context, allocateIORequest *runmv1.AllocateIORequest) (*runmv1.AllocateIOResponse, error)
 
 	// AllocateSocketStreamFunc mocks the AllocateSocketStream method.
-	AllocateSocketStreamFunc func(allocateSocketStreamRequest *runvv1.AllocateSocketStreamRequest, serverStreamingServer grpc.ServerStreamingServer[runvv1.AllocateSocketStreamResponse]) error
+	AllocateSocketStreamFunc func(allocateSocketStreamRequest *runmv1.AllocateSocketStreamRequest, serverStreamingServer grpc.ServerStreamingServer[runmv1.AllocateSocketStreamResponse]) error
 
 	// AllocateSocketsFunc mocks the AllocateSockets method.
-	AllocateSocketsFunc func(context1 context.Context, allocateSocketsRequest *runvv1.AllocateSocketsRequest) (*runvv1.AllocateSocketsResponse, error)
+	AllocateSocketsFunc func(context1 context.Context, allocateSocketsRequest *runmv1.AllocateSocketsRequest) (*runmv1.AllocateSocketsResponse, error)
 
 	// BindConsoleToSocketFunc mocks the BindConsoleToSocket method.
-	BindConsoleToSocketFunc func(context1 context.Context, bindConsoleToSocketRequest *runvv1.BindConsoleToSocketRequest) (*runvv1.BindConsoleToSocketResponse, error)
+	BindConsoleToSocketFunc func(context1 context.Context, bindConsoleToSocketRequest *runmv1.BindConsoleToSocketRequest) (*runmv1.BindConsoleToSocketResponse, error)
 
 	// BindIOToSocketsFunc mocks the BindIOToSockets method.
-	BindIOToSocketsFunc func(context1 context.Context, bindIOToSocketsRequest *runvv1.BindIOToSocketsRequest) (*runvv1.BindIOToSocketsResponse, error)
+	BindIOToSocketsFunc func(context1 context.Context, bindIOToSocketsRequest *runmv1.BindIOToSocketsRequest) (*runmv1.BindIOToSocketsResponse, error)
 
 	// CloseConsoleFunc mocks the CloseConsole method.
-	CloseConsoleFunc func(context1 context.Context, closeConsoleRequest *runvv1.CloseConsoleRequest) (*runvv1.CloseConsoleResponse, error)
+	CloseConsoleFunc func(context1 context.Context, closeConsoleRequest *runmv1.CloseConsoleRequest) (*runmv1.CloseConsoleResponse, error)
 
 	// CloseIOFunc mocks the CloseIO method.
-	CloseIOFunc func(context1 context.Context, closeIORequest *runvv1.CloseIORequest) (*runvv1.CloseIOResponse, error)
+	CloseIOFunc func(context1 context.Context, closeIORequest *runmv1.CloseIORequest) (*runmv1.CloseIOResponse, error)
 
 	// CloseSocketFunc mocks the CloseSocket method.
-	CloseSocketFunc func(context1 context.Context, closeSocketRequest *runvv1.CloseSocketRequest) (*runvv1.CloseSocketResponse, error)
+	CloseSocketFunc func(context1 context.Context, closeSocketRequest *runmv1.CloseSocketRequest) (*runmv1.CloseSocketResponse, error)
 
 	// CloseSocketsFunc mocks the CloseSockets method.
-	CloseSocketsFunc func(context1 context.Context, closeSocketsRequest *runvv1.CloseSocketsRequest) (*runvv1.CloseSocketsResponse, error)
+	CloseSocketsFunc func(context1 context.Context, closeSocketsRequest *runmv1.CloseSocketsRequest) (*runmv1.CloseSocketsResponse, error)
 
 	// calls tracks calls to the methods.
 	calls struct {
@@ -96,70 +96,70 @@ type MockSocketAllocatorServiceServer struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// AllocateConsoleRequest is the allocateConsoleRequest argument value.
-			AllocateConsoleRequest *runvv1.AllocateConsoleRequest
+			AllocateConsoleRequest *runmv1.AllocateConsoleRequest
 		}
 		// AllocateIO holds details about calls to the AllocateIO method.
 		AllocateIO []struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// AllocateIORequest is the allocateIORequest argument value.
-			AllocateIORequest *runvv1.AllocateIORequest
+			AllocateIORequest *runmv1.AllocateIORequest
 		}
 		// AllocateSocketStream holds details about calls to the AllocateSocketStream method.
 		AllocateSocketStream []struct {
 			// AllocateSocketStreamRequest is the allocateSocketStreamRequest argument value.
-			AllocateSocketStreamRequest *runvv1.AllocateSocketStreamRequest
+			AllocateSocketStreamRequest *runmv1.AllocateSocketStreamRequest
 			// ServerStreamingServer is the serverStreamingServer argument value.
-			ServerStreamingServer grpc.ServerStreamingServer[runvv1.AllocateSocketStreamResponse]
+			ServerStreamingServer grpc.ServerStreamingServer[runmv1.AllocateSocketStreamResponse]
 		}
 		// AllocateSockets holds details about calls to the AllocateSockets method.
 		AllocateSockets []struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// AllocateSocketsRequest is the allocateSocketsRequest argument value.
-			AllocateSocketsRequest *runvv1.AllocateSocketsRequest
+			AllocateSocketsRequest *runmv1.AllocateSocketsRequest
 		}
 		// BindConsoleToSocket holds details about calls to the BindConsoleToSocket method.
 		BindConsoleToSocket []struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// BindConsoleToSocketRequest is the bindConsoleToSocketRequest argument value.
-			BindConsoleToSocketRequest *runvv1.BindConsoleToSocketRequest
+			BindConsoleToSocketRequest *runmv1.BindConsoleToSocketRequest
 		}
 		// BindIOToSockets holds details about calls to the BindIOToSockets method.
 		BindIOToSockets []struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// BindIOToSocketsRequest is the bindIOToSocketsRequest argument value.
-			BindIOToSocketsRequest *runvv1.BindIOToSocketsRequest
+			BindIOToSocketsRequest *runmv1.BindIOToSocketsRequest
 		}
 		// CloseConsole holds details about calls to the CloseConsole method.
 		CloseConsole []struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// CloseConsoleRequest is the closeConsoleRequest argument value.
-			CloseConsoleRequest *runvv1.CloseConsoleRequest
+			CloseConsoleRequest *runmv1.CloseConsoleRequest
 		}
 		// CloseIO holds details about calls to the CloseIO method.
 		CloseIO []struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// CloseIORequest is the closeIORequest argument value.
-			CloseIORequest *runvv1.CloseIORequest
+			CloseIORequest *runmv1.CloseIORequest
 		}
 		// CloseSocket holds details about calls to the CloseSocket method.
 		CloseSocket []struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// CloseSocketRequest is the closeSocketRequest argument value.
-			CloseSocketRequest *runvv1.CloseSocketRequest
+			CloseSocketRequest *runmv1.CloseSocketRequest
 		}
 		// CloseSockets holds details about calls to the CloseSockets method.
 		CloseSockets []struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// CloseSocketsRequest is the closeSocketsRequest argument value.
-			CloseSocketsRequest *runvv1.CloseSocketsRequest
+			CloseSocketsRequest *runmv1.CloseSocketsRequest
 		}
 	}
 	lockAllocateConsole      sync.RWMutex
@@ -175,13 +175,13 @@ type MockSocketAllocatorServiceServer struct {
 }
 
 // AllocateConsole calls AllocateConsoleFunc.
-func (mock *MockSocketAllocatorServiceServer) AllocateConsole(context1 context.Context, allocateConsoleRequest *runvv1.AllocateConsoleRequest) (*runvv1.AllocateConsoleResponse, error) {
+func (mock *MockSocketAllocatorServiceServer) AllocateConsole(context1 context.Context, allocateConsoleRequest *runmv1.AllocateConsoleRequest) (*runmv1.AllocateConsoleResponse, error) {
 	if mock.AllocateConsoleFunc == nil {
 		panic("MockSocketAllocatorServiceServer.AllocateConsoleFunc: method is nil but SocketAllocatorServiceServer.AllocateConsole was just called")
 	}
 	callInfo := struct {
 		Context1               context.Context
-		AllocateConsoleRequest *runvv1.AllocateConsoleRequest
+		AllocateConsoleRequest *runmv1.AllocateConsoleRequest
 	}{
 		Context1:               context1,
 		AllocateConsoleRequest: allocateConsoleRequest,
@@ -198,11 +198,11 @@ func (mock *MockSocketAllocatorServiceServer) AllocateConsole(context1 context.C
 //	len(mockedSocketAllocatorServiceServer.AllocateConsoleCalls())
 func (mock *MockSocketAllocatorServiceServer) AllocateConsoleCalls() []struct {
 	Context1               context.Context
-	AllocateConsoleRequest *runvv1.AllocateConsoleRequest
+	AllocateConsoleRequest *runmv1.AllocateConsoleRequest
 } {
 	var calls []struct {
 		Context1               context.Context
-		AllocateConsoleRequest *runvv1.AllocateConsoleRequest
+		AllocateConsoleRequest *runmv1.AllocateConsoleRequest
 	}
 	mock.lockAllocateConsole.RLock()
 	calls = mock.calls.AllocateConsole
@@ -211,13 +211,13 @@ func (mock *MockSocketAllocatorServiceServer) AllocateConsoleCalls() []struct {
 }
 
 // AllocateIO calls AllocateIOFunc.
-func (mock *MockSocketAllocatorServiceServer) AllocateIO(context1 context.Context, allocateIORequest *runvv1.AllocateIORequest) (*runvv1.AllocateIOResponse, error) {
+func (mock *MockSocketAllocatorServiceServer) AllocateIO(context1 context.Context, allocateIORequest *runmv1.AllocateIORequest) (*runmv1.AllocateIOResponse, error) {
 	if mock.AllocateIOFunc == nil {
 		panic("MockSocketAllocatorServiceServer.AllocateIOFunc: method is nil but SocketAllocatorServiceServer.AllocateIO was just called")
 	}
 	callInfo := struct {
 		Context1          context.Context
-		AllocateIORequest *runvv1.AllocateIORequest
+		AllocateIORequest *runmv1.AllocateIORequest
 	}{
 		Context1:          context1,
 		AllocateIORequest: allocateIORequest,
@@ -234,11 +234,11 @@ func (mock *MockSocketAllocatorServiceServer) AllocateIO(context1 context.Contex
 //	len(mockedSocketAllocatorServiceServer.AllocateIOCalls())
 func (mock *MockSocketAllocatorServiceServer) AllocateIOCalls() []struct {
 	Context1          context.Context
-	AllocateIORequest *runvv1.AllocateIORequest
+	AllocateIORequest *runmv1.AllocateIORequest
 } {
 	var calls []struct {
 		Context1          context.Context
-		AllocateIORequest *runvv1.AllocateIORequest
+		AllocateIORequest *runmv1.AllocateIORequest
 	}
 	mock.lockAllocateIO.RLock()
 	calls = mock.calls.AllocateIO
@@ -247,13 +247,13 @@ func (mock *MockSocketAllocatorServiceServer) AllocateIOCalls() []struct {
 }
 
 // AllocateSocketStream calls AllocateSocketStreamFunc.
-func (mock *MockSocketAllocatorServiceServer) AllocateSocketStream(allocateSocketStreamRequest *runvv1.AllocateSocketStreamRequest, serverStreamingServer grpc.ServerStreamingServer[runvv1.AllocateSocketStreamResponse]) error {
+func (mock *MockSocketAllocatorServiceServer) AllocateSocketStream(allocateSocketStreamRequest *runmv1.AllocateSocketStreamRequest, serverStreamingServer grpc.ServerStreamingServer[runmv1.AllocateSocketStreamResponse]) error {
 	if mock.AllocateSocketStreamFunc == nil {
 		panic("MockSocketAllocatorServiceServer.AllocateSocketStreamFunc: method is nil but SocketAllocatorServiceServer.AllocateSocketStream was just called")
 	}
 	callInfo := struct {
-		AllocateSocketStreamRequest *runvv1.AllocateSocketStreamRequest
-		ServerStreamingServer       grpc.ServerStreamingServer[runvv1.AllocateSocketStreamResponse]
+		AllocateSocketStreamRequest *runmv1.AllocateSocketStreamRequest
+		ServerStreamingServer       grpc.ServerStreamingServer[runmv1.AllocateSocketStreamResponse]
 	}{
 		AllocateSocketStreamRequest: allocateSocketStreamRequest,
 		ServerStreamingServer:       serverStreamingServer,
@@ -269,12 +269,12 @@ func (mock *MockSocketAllocatorServiceServer) AllocateSocketStream(allocateSocke
 //
 //	len(mockedSocketAllocatorServiceServer.AllocateSocketStreamCalls())
 func (mock *MockSocketAllocatorServiceServer) AllocateSocketStreamCalls() []struct {
-	AllocateSocketStreamRequest *runvv1.AllocateSocketStreamRequest
-	ServerStreamingServer       grpc.ServerStreamingServer[runvv1.AllocateSocketStreamResponse]
+	AllocateSocketStreamRequest *runmv1.AllocateSocketStreamRequest
+	ServerStreamingServer       grpc.ServerStreamingServer[runmv1.AllocateSocketStreamResponse]
 } {
 	var calls []struct {
-		AllocateSocketStreamRequest *runvv1.AllocateSocketStreamRequest
-		ServerStreamingServer       grpc.ServerStreamingServer[runvv1.AllocateSocketStreamResponse]
+		AllocateSocketStreamRequest *runmv1.AllocateSocketStreamRequest
+		ServerStreamingServer       grpc.ServerStreamingServer[runmv1.AllocateSocketStreamResponse]
 	}
 	mock.lockAllocateSocketStream.RLock()
 	calls = mock.calls.AllocateSocketStream
@@ -283,13 +283,13 @@ func (mock *MockSocketAllocatorServiceServer) AllocateSocketStreamCalls() []stru
 }
 
 // AllocateSockets calls AllocateSocketsFunc.
-func (mock *MockSocketAllocatorServiceServer) AllocateSockets(context1 context.Context, allocateSocketsRequest *runvv1.AllocateSocketsRequest) (*runvv1.AllocateSocketsResponse, error) {
+func (mock *MockSocketAllocatorServiceServer) AllocateSockets(context1 context.Context, allocateSocketsRequest *runmv1.AllocateSocketsRequest) (*runmv1.AllocateSocketsResponse, error) {
 	if mock.AllocateSocketsFunc == nil {
 		panic("MockSocketAllocatorServiceServer.AllocateSocketsFunc: method is nil but SocketAllocatorServiceServer.AllocateSockets was just called")
 	}
 	callInfo := struct {
 		Context1               context.Context
-		AllocateSocketsRequest *runvv1.AllocateSocketsRequest
+		AllocateSocketsRequest *runmv1.AllocateSocketsRequest
 	}{
 		Context1:               context1,
 		AllocateSocketsRequest: allocateSocketsRequest,
@@ -306,11 +306,11 @@ func (mock *MockSocketAllocatorServiceServer) AllocateSockets(context1 context.C
 //	len(mockedSocketAllocatorServiceServer.AllocateSocketsCalls())
 func (mock *MockSocketAllocatorServiceServer) AllocateSocketsCalls() []struct {
 	Context1               context.Context
-	AllocateSocketsRequest *runvv1.AllocateSocketsRequest
+	AllocateSocketsRequest *runmv1.AllocateSocketsRequest
 } {
 	var calls []struct {
 		Context1               context.Context
-		AllocateSocketsRequest *runvv1.AllocateSocketsRequest
+		AllocateSocketsRequest *runmv1.AllocateSocketsRequest
 	}
 	mock.lockAllocateSockets.RLock()
 	calls = mock.calls.AllocateSockets
@@ -319,13 +319,13 @@ func (mock *MockSocketAllocatorServiceServer) AllocateSocketsCalls() []struct {
 }
 
 // BindConsoleToSocket calls BindConsoleToSocketFunc.
-func (mock *MockSocketAllocatorServiceServer) BindConsoleToSocket(context1 context.Context, bindConsoleToSocketRequest *runvv1.BindConsoleToSocketRequest) (*runvv1.BindConsoleToSocketResponse, error) {
+func (mock *MockSocketAllocatorServiceServer) BindConsoleToSocket(context1 context.Context, bindConsoleToSocketRequest *runmv1.BindConsoleToSocketRequest) (*runmv1.BindConsoleToSocketResponse, error) {
 	if mock.BindConsoleToSocketFunc == nil {
 		panic("MockSocketAllocatorServiceServer.BindConsoleToSocketFunc: method is nil but SocketAllocatorServiceServer.BindConsoleToSocket was just called")
 	}
 	callInfo := struct {
 		Context1                   context.Context
-		BindConsoleToSocketRequest *runvv1.BindConsoleToSocketRequest
+		BindConsoleToSocketRequest *runmv1.BindConsoleToSocketRequest
 	}{
 		Context1:                   context1,
 		BindConsoleToSocketRequest: bindConsoleToSocketRequest,
@@ -342,11 +342,11 @@ func (mock *MockSocketAllocatorServiceServer) BindConsoleToSocket(context1 conte
 //	len(mockedSocketAllocatorServiceServer.BindConsoleToSocketCalls())
 func (mock *MockSocketAllocatorServiceServer) BindConsoleToSocketCalls() []struct {
 	Context1                   context.Context
-	BindConsoleToSocketRequest *runvv1.BindConsoleToSocketRequest
+	BindConsoleToSocketRequest *runmv1.BindConsoleToSocketRequest
 } {
 	var calls []struct {
 		Context1                   context.Context
-		BindConsoleToSocketRequest *runvv1.BindConsoleToSocketRequest
+		BindConsoleToSocketRequest *runmv1.BindConsoleToSocketRequest
 	}
 	mock.lockBindConsoleToSocket.RLock()
 	calls = mock.calls.BindConsoleToSocket
@@ -355,13 +355,13 @@ func (mock *MockSocketAllocatorServiceServer) BindConsoleToSocketCalls() []struc
 }
 
 // BindIOToSockets calls BindIOToSocketsFunc.
-func (mock *MockSocketAllocatorServiceServer) BindIOToSockets(context1 context.Context, bindIOToSocketsRequest *runvv1.BindIOToSocketsRequest) (*runvv1.BindIOToSocketsResponse, error) {
+func (mock *MockSocketAllocatorServiceServer) BindIOToSockets(context1 context.Context, bindIOToSocketsRequest *runmv1.BindIOToSocketsRequest) (*runmv1.BindIOToSocketsResponse, error) {
 	if mock.BindIOToSocketsFunc == nil {
 		panic("MockSocketAllocatorServiceServer.BindIOToSocketsFunc: method is nil but SocketAllocatorServiceServer.BindIOToSockets was just called")
 	}
 	callInfo := struct {
 		Context1               context.Context
-		BindIOToSocketsRequest *runvv1.BindIOToSocketsRequest
+		BindIOToSocketsRequest *runmv1.BindIOToSocketsRequest
 	}{
 		Context1:               context1,
 		BindIOToSocketsRequest: bindIOToSocketsRequest,
@@ -378,11 +378,11 @@ func (mock *MockSocketAllocatorServiceServer) BindIOToSockets(context1 context.C
 //	len(mockedSocketAllocatorServiceServer.BindIOToSocketsCalls())
 func (mock *MockSocketAllocatorServiceServer) BindIOToSocketsCalls() []struct {
 	Context1               context.Context
-	BindIOToSocketsRequest *runvv1.BindIOToSocketsRequest
+	BindIOToSocketsRequest *runmv1.BindIOToSocketsRequest
 } {
 	var calls []struct {
 		Context1               context.Context
-		BindIOToSocketsRequest *runvv1.BindIOToSocketsRequest
+		BindIOToSocketsRequest *runmv1.BindIOToSocketsRequest
 	}
 	mock.lockBindIOToSockets.RLock()
 	calls = mock.calls.BindIOToSockets
@@ -391,13 +391,13 @@ func (mock *MockSocketAllocatorServiceServer) BindIOToSocketsCalls() []struct {
 }
 
 // CloseConsole calls CloseConsoleFunc.
-func (mock *MockSocketAllocatorServiceServer) CloseConsole(context1 context.Context, closeConsoleRequest *runvv1.CloseConsoleRequest) (*runvv1.CloseConsoleResponse, error) {
+func (mock *MockSocketAllocatorServiceServer) CloseConsole(context1 context.Context, closeConsoleRequest *runmv1.CloseConsoleRequest) (*runmv1.CloseConsoleResponse, error) {
 	if mock.CloseConsoleFunc == nil {
 		panic("MockSocketAllocatorServiceServer.CloseConsoleFunc: method is nil but SocketAllocatorServiceServer.CloseConsole was just called")
 	}
 	callInfo := struct {
 		Context1            context.Context
-		CloseConsoleRequest *runvv1.CloseConsoleRequest
+		CloseConsoleRequest *runmv1.CloseConsoleRequest
 	}{
 		Context1:            context1,
 		CloseConsoleRequest: closeConsoleRequest,
@@ -414,11 +414,11 @@ func (mock *MockSocketAllocatorServiceServer) CloseConsole(context1 context.Cont
 //	len(mockedSocketAllocatorServiceServer.CloseConsoleCalls())
 func (mock *MockSocketAllocatorServiceServer) CloseConsoleCalls() []struct {
 	Context1            context.Context
-	CloseConsoleRequest *runvv1.CloseConsoleRequest
+	CloseConsoleRequest *runmv1.CloseConsoleRequest
 } {
 	var calls []struct {
 		Context1            context.Context
-		CloseConsoleRequest *runvv1.CloseConsoleRequest
+		CloseConsoleRequest *runmv1.CloseConsoleRequest
 	}
 	mock.lockCloseConsole.RLock()
 	calls = mock.calls.CloseConsole
@@ -427,13 +427,13 @@ func (mock *MockSocketAllocatorServiceServer) CloseConsoleCalls() []struct {
 }
 
 // CloseIO calls CloseIOFunc.
-func (mock *MockSocketAllocatorServiceServer) CloseIO(context1 context.Context, closeIORequest *runvv1.CloseIORequest) (*runvv1.CloseIOResponse, error) {
+func (mock *MockSocketAllocatorServiceServer) CloseIO(context1 context.Context, closeIORequest *runmv1.CloseIORequest) (*runmv1.CloseIOResponse, error) {
 	if mock.CloseIOFunc == nil {
 		panic("MockSocketAllocatorServiceServer.CloseIOFunc: method is nil but SocketAllocatorServiceServer.CloseIO was just called")
 	}
 	callInfo := struct {
 		Context1       context.Context
-		CloseIORequest *runvv1.CloseIORequest
+		CloseIORequest *runmv1.CloseIORequest
 	}{
 		Context1:       context1,
 		CloseIORequest: closeIORequest,
@@ -450,11 +450,11 @@ func (mock *MockSocketAllocatorServiceServer) CloseIO(context1 context.Context, 
 //	len(mockedSocketAllocatorServiceServer.CloseIOCalls())
 func (mock *MockSocketAllocatorServiceServer) CloseIOCalls() []struct {
 	Context1       context.Context
-	CloseIORequest *runvv1.CloseIORequest
+	CloseIORequest *runmv1.CloseIORequest
 } {
 	var calls []struct {
 		Context1       context.Context
-		CloseIORequest *runvv1.CloseIORequest
+		CloseIORequest *runmv1.CloseIORequest
 	}
 	mock.lockCloseIO.RLock()
 	calls = mock.calls.CloseIO
@@ -463,13 +463,13 @@ func (mock *MockSocketAllocatorServiceServer) CloseIOCalls() []struct {
 }
 
 // CloseSocket calls CloseSocketFunc.
-func (mock *MockSocketAllocatorServiceServer) CloseSocket(context1 context.Context, closeSocketRequest *runvv1.CloseSocketRequest) (*runvv1.CloseSocketResponse, error) {
+func (mock *MockSocketAllocatorServiceServer) CloseSocket(context1 context.Context, closeSocketRequest *runmv1.CloseSocketRequest) (*runmv1.CloseSocketResponse, error) {
 	if mock.CloseSocketFunc == nil {
 		panic("MockSocketAllocatorServiceServer.CloseSocketFunc: method is nil but SocketAllocatorServiceServer.CloseSocket was just called")
 	}
 	callInfo := struct {
 		Context1           context.Context
-		CloseSocketRequest *runvv1.CloseSocketRequest
+		CloseSocketRequest *runmv1.CloseSocketRequest
 	}{
 		Context1:           context1,
 		CloseSocketRequest: closeSocketRequest,
@@ -486,11 +486,11 @@ func (mock *MockSocketAllocatorServiceServer) CloseSocket(context1 context.Conte
 //	len(mockedSocketAllocatorServiceServer.CloseSocketCalls())
 func (mock *MockSocketAllocatorServiceServer) CloseSocketCalls() []struct {
 	Context1           context.Context
-	CloseSocketRequest *runvv1.CloseSocketRequest
+	CloseSocketRequest *runmv1.CloseSocketRequest
 } {
 	var calls []struct {
 		Context1           context.Context
-		CloseSocketRequest *runvv1.CloseSocketRequest
+		CloseSocketRequest *runmv1.CloseSocketRequest
 	}
 	mock.lockCloseSocket.RLock()
 	calls = mock.calls.CloseSocket
@@ -499,13 +499,13 @@ func (mock *MockSocketAllocatorServiceServer) CloseSocketCalls() []struct {
 }
 
 // CloseSockets calls CloseSocketsFunc.
-func (mock *MockSocketAllocatorServiceServer) CloseSockets(context1 context.Context, closeSocketsRequest *runvv1.CloseSocketsRequest) (*runvv1.CloseSocketsResponse, error) {
+func (mock *MockSocketAllocatorServiceServer) CloseSockets(context1 context.Context, closeSocketsRequest *runmv1.CloseSocketsRequest) (*runmv1.CloseSocketsResponse, error) {
 	if mock.CloseSocketsFunc == nil {
 		panic("MockSocketAllocatorServiceServer.CloseSocketsFunc: method is nil but SocketAllocatorServiceServer.CloseSockets was just called")
 	}
 	callInfo := struct {
 		Context1            context.Context
-		CloseSocketsRequest *runvv1.CloseSocketsRequest
+		CloseSocketsRequest *runmv1.CloseSocketsRequest
 	}{
 		Context1:            context1,
 		CloseSocketsRequest: closeSocketsRequest,
@@ -522,11 +522,11 @@ func (mock *MockSocketAllocatorServiceServer) CloseSockets(context1 context.Cont
 //	len(mockedSocketAllocatorServiceServer.CloseSocketsCalls())
 func (mock *MockSocketAllocatorServiceServer) CloseSocketsCalls() []struct {
 	Context1            context.Context
-	CloseSocketsRequest *runvv1.CloseSocketsRequest
+	CloseSocketsRequest *runmv1.CloseSocketsRequest
 } {
 	var calls []struct {
 		Context1            context.Context
-		CloseSocketsRequest *runvv1.CloseSocketsRequest
+		CloseSocketsRequest *runmv1.CloseSocketsRequest
 	}
 	mock.lockCloseSockets.RLock()
 	calls = mock.calls.CloseSockets

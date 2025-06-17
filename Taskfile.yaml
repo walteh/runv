@@ -43,7 +43,7 @@ tasks:
     go:lint:
         desc: runs the linters
         vars:
-            # GO_FILES: "./cmd/containerd-shim-runv-v2/manager/manager.go"
+            # GO_FILES: "./cmd/containerd-shim-runm-v2/manager/manager.go"
 
             # skip .gen and .pb.go files
             GO_FILES:

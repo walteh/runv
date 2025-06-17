@@ -1,5 +1,5 @@
 /*
-   Copyright The runv Authors.
+   Copyright The runm Authors.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -20,16 +20,16 @@ import (
 	"context"
 	"errors"
 
-	runvv1 "github.com/walteh/runv/proto/v1"
+	runmv1 "github.com/walteh/runm/proto/v1"
 )
 
 type PrctlClient struct {
-	service runvv1.TTRPCPrctlServiceService
+	service runmv1.TTRPCPrctlServiceService
 }
 
 // Create a new sched core domain
-func (s *PrctlClient) Create(ctx context.Context, t runvv1.PrctlPidType) error {
-	createRequest := runvv1.NewCreateRequest(&runvv1.CreateRequest_builder{
+func (s *PrctlClient) Create(ctx context.Context, t runmv1.PrctlPidType) error {
+	createRequest := runmv1.NewCreateRequest(&runmv1.CreateRequest_builder{
 		PidType: t,
 	})
 
@@ -46,8 +46,8 @@ func (s *PrctlClient) Create(ctx context.Context, t runvv1.PrctlPidType) error {
 }
 
 // ShareFrom shares the sched core domain from the provided pid
-func (s *PrctlClient) ShareFrom(ctx context.Context, pid uint64, t runvv1.PrctlPidType) error {
-	shareFromRequest := runvv1.NewShareFromRequest(&runvv1.ShareFromRequest_builder{
+func (s *PrctlClient) ShareFrom(ctx context.Context, pid uint64, t runmv1.PrctlPidType) error {
+	shareFromRequest := runmv1.NewShareFromRequest(&runmv1.ShareFromRequest_builder{
 		Pid:     pid,
 		PidType: t,
 	})

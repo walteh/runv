@@ -27,7 +27,7 @@ import (
 	cgroupsv2 "github.com/containerd/cgroups/v3/cgroup2"
 	eventstypes "github.com/containerd/containerd/api/events"
 
-	"github.com/walteh/runv/pkg/oom"
+	"github.com/walteh/runm/pkg/oom"
 )
 
 // New returns an implementation that listens to OOM events

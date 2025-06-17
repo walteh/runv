@@ -1,6 +1,6 @@
 version: v2
 modules:
-  - name: github.com/walteh/runv
+  - name: github.com/walteh/runm
     path: .
 deps:
   - "buf.build/bufbuild/protovalidate"

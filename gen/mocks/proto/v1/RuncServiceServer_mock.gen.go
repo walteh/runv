@@ -2,115 +2,115 @@
 // github.com/vektra/mockery
 // template: matryer
 
-package mockrunvv1
+package mockrunmv1
 
 import (
 	"context"
 	"sync"
 
-	"github.com/walteh/runv/proto/v1"
+	"github.com/walteh/runm/proto/v1"
 )
 
-// Ensure that MockRuncServiceServer does implement runvv1.RuncServiceServer.
+// Ensure that MockRuncServiceServer does implement runmv1.RuncServiceServer.
 // If this is not the case, regenerate this file with mockery.
-var _ runvv1.RuncServiceServer = &MockRuncServiceServer{}
+var _ runmv1.RuncServiceServer = &MockRuncServiceServer{}
 
-// MockRuncServiceServer is a mock implementation of runvv1.RuncServiceServer.
+// MockRuncServiceServer is a mock implementation of runmv1.RuncServiceServer.
 //
 //	func TestSomethingThatUsesRuncServiceServer(t *testing.T) {
 //
-//		// make and configure a mocked runvv1.RuncServiceServer
+//		// make and configure a mocked runmv1.RuncServiceServer
 //		mockedRuncServiceServer := &MockRuncServiceServer{
-//			CheckpointFunc: func(context1 context.Context, runcCheckpointRequest *runvv1.RuncCheckpointRequest) (*runvv1.RuncCheckpointResponse, error) {
+//			CheckpointFunc: func(context1 context.Context, runcCheckpointRequest *runmv1.RuncCheckpointRequest) (*runmv1.RuncCheckpointResponse, error) {
 //				panic("mock out the Checkpoint method")
 //			},
-//			CreateFunc: func(context1 context.Context, runcCreateRequest *runvv1.RuncCreateRequest) (*runvv1.RuncCreateResponse, error) {
+//			CreateFunc: func(context1 context.Context, runcCreateRequest *runmv1.RuncCreateRequest) (*runmv1.RuncCreateResponse, error) {
 //				panic("mock out the Create method")
 //			},
-//			DeleteFunc: func(context1 context.Context, runcDeleteRequest *runvv1.RuncDeleteRequest) (*runvv1.RuncDeleteResponse, error) {
+//			DeleteFunc: func(context1 context.Context, runcDeleteRequest *runmv1.RuncDeleteRequest) (*runmv1.RuncDeleteResponse, error) {
 //				panic("mock out the Delete method")
 //			},
-//			ExecFunc: func(context1 context.Context, runcExecRequest *runvv1.RuncExecRequest) (*runvv1.RuncExecResponse, error) {
+//			ExecFunc: func(context1 context.Context, runcExecRequest *runmv1.RuncExecRequest) (*runmv1.RuncExecResponse, error) {
 //				panic("mock out the Exec method")
 //			},
-//			KillFunc: func(context1 context.Context, runcKillRequest *runvv1.RuncKillRequest) (*runvv1.RuncKillResponse, error) {
+//			KillFunc: func(context1 context.Context, runcKillRequest *runmv1.RuncKillRequest) (*runmv1.RuncKillResponse, error) {
 //				panic("mock out the Kill method")
 //			},
-//			NewTempConsoleSocketFunc: func(context1 context.Context, runcNewTempConsoleSocketRequest *runvv1.RuncNewTempConsoleSocketRequest) (*runvv1.RuncNewTempConsoleSocketResponse, error) {
+//			NewTempConsoleSocketFunc: func(context1 context.Context, runcNewTempConsoleSocketRequest *runmv1.RuncNewTempConsoleSocketRequest) (*runmv1.RuncNewTempConsoleSocketResponse, error) {
 //				panic("mock out the NewTempConsoleSocket method")
 //			},
-//			PauseFunc: func(context1 context.Context, runcPauseRequest *runvv1.RuncPauseRequest) (*runvv1.RuncPauseResponse, error) {
+//			PauseFunc: func(context1 context.Context, runcPauseRequest *runmv1.RuncPauseRequest) (*runmv1.RuncPauseResponse, error) {
 //				panic("mock out the Pause method")
 //			},
-//			PingFunc: func(context1 context.Context, pingRequest *runvv1.PingRequest) (*runvv1.PingResponse, error) {
+//			PingFunc: func(context1 context.Context, pingRequest *runmv1.PingRequest) (*runmv1.PingResponse, error) {
 //				panic("mock out the Ping method")
 //			},
-//			PsFunc: func(context1 context.Context, runcPsRequest *runvv1.RuncPsRequest) (*runvv1.RuncPsResponse, error) {
+//			PsFunc: func(context1 context.Context, runcPsRequest *runmv1.RuncPsRequest) (*runmv1.RuncPsResponse, error) {
 //				panic("mock out the Ps method")
 //			},
-//			ReadPidFileFunc: func(context1 context.Context, runcReadPidFileRequest *runvv1.RuncReadPidFileRequest) (*runvv1.RuncReadPidFileResponse, error) {
+//			ReadPidFileFunc: func(context1 context.Context, runcReadPidFileRequest *runmv1.RuncReadPidFileRequest) (*runmv1.RuncReadPidFileResponse, error) {
 //				panic("mock out the ReadPidFile method")
 //			},
-//			RestoreFunc: func(context1 context.Context, runcRestoreRequest *runvv1.RuncRestoreRequest) (*runvv1.RuncRestoreResponse, error) {
+//			RestoreFunc: func(context1 context.Context, runcRestoreRequest *runmv1.RuncRestoreRequest) (*runmv1.RuncRestoreResponse, error) {
 //				panic("mock out the Restore method")
 //			},
-//			ResumeFunc: func(context1 context.Context, runcResumeRequest *runvv1.RuncResumeRequest) (*runvv1.RuncResumeResponse, error) {
+//			ResumeFunc: func(context1 context.Context, runcResumeRequest *runmv1.RuncResumeRequest) (*runmv1.RuncResumeResponse, error) {
 //				panic("mock out the Resume method")
 //			},
-//			StartFunc: func(context1 context.Context, runcStartRequest *runvv1.RuncStartRequest) (*runvv1.RuncStartResponse, error) {
+//			StartFunc: func(context1 context.Context, runcStartRequest *runmv1.RuncStartRequest) (*runmv1.RuncStartResponse, error) {
 //				panic("mock out the Start method")
 //			},
-//			UpdateFunc: func(context1 context.Context, runcUpdateRequest *runvv1.RuncUpdateRequest) (*runvv1.RuncUpdateResponse, error) {
+//			UpdateFunc: func(context1 context.Context, runcUpdateRequest *runmv1.RuncUpdateRequest) (*runmv1.RuncUpdateResponse, error) {
 //				panic("mock out the Update method")
 //			},
 //		}
 //
-//		// use mockedRuncServiceServer in code that requires runvv1.RuncServiceServer
+//		// use mockedRuncServiceServer in code that requires runmv1.RuncServiceServer
 //		// and then make assertions.
 //
 //	}
 type MockRuncServiceServer struct {
 	// CheckpointFunc mocks the Checkpoint method.
-	CheckpointFunc func(context1 context.Context, runcCheckpointRequest *runvv1.RuncCheckpointRequest) (*runvv1.RuncCheckpointResponse, error)
+	CheckpointFunc func(context1 context.Context, runcCheckpointRequest *runmv1.RuncCheckpointRequest) (*runmv1.RuncCheckpointResponse, error)
 
 	// CreateFunc mocks the Create method.
-	CreateFunc func(context1 context.Context, runcCreateRequest *runvv1.RuncCreateRequest) (*runvv1.RuncCreateResponse, error)
+	CreateFunc func(context1 context.Context, runcCreateRequest *runmv1.RuncCreateRequest) (*runmv1.RuncCreateResponse, error)
 
 	// DeleteFunc mocks the Delete method.
-	DeleteFunc func(context1 context.Context, runcDeleteRequest *runvv1.RuncDeleteRequest) (*runvv1.RuncDeleteResponse, error)
+	DeleteFunc func(context1 context.Context, runcDeleteRequest *runmv1.RuncDeleteRequest) (*runmv1.RuncDeleteResponse, error)
 
 	// ExecFunc mocks the Exec method.
-	ExecFunc func(context1 context.Context, runcExecRequest *runvv1.RuncExecRequest) (*runvv1.RuncExecResponse, error)
+	ExecFunc func(context1 context.Context, runcExecRequest *runmv1.RuncExecRequest) (*runmv1.RuncExecResponse, error)
 
 	// KillFunc mocks the Kill method.
-	KillFunc func(context1 context.Context, runcKillRequest *runvv1.RuncKillRequest) (*runvv1.RuncKillResponse, error)
+	KillFunc func(context1 context.Context, runcKillRequest *runmv1.RuncKillRequest) (*runmv1.RuncKillResponse, error)
 
 	// NewTempConsoleSocketFunc mocks the NewTempConsoleSocket method.
-	NewTempConsoleSocketFunc func(context1 context.Context, runcNewTempConsoleSocketRequest *runvv1.RuncNewTempConsoleSocketRequest) (*runvv1.RuncNewTempConsoleSocketResponse, error)
+	NewTempConsoleSocketFunc func(context1 context.Context, runcNewTempConsoleSocketRequest *runmv1.RuncNewTempConsoleSocketRequest) (*runmv1.RuncNewTempConsoleSocketResponse, error)
 
 	// PauseFunc mocks the Pause method.
-	PauseFunc func(context1 context.Context, runcPauseRequest *runvv1.RuncPauseRequest) (*runvv1.RuncPauseResponse, error)
+	PauseFunc func(context1 context.Context, runcPauseRequest *runmv1.RuncPauseRequest) (*runmv1.RuncPauseResponse, error)
 
 	// PingFunc mocks the Ping method.
-	PingFunc func(context1 context.Context, pingRequest *runvv1.PingRequest) (*runvv1.PingResponse, error)
+	PingFunc func(context1 context.Context, pingRequest *runmv1.PingRequest) (*runmv1.PingResponse, error)
 
 	// PsFunc mocks the Ps method.
-	PsFunc func(context1 context.Context, runcPsRequest *runvv1.RuncPsRequest) (*runvv1.RuncPsResponse, error)
+	PsFunc func(context1 context.Context, runcPsRequest *runmv1.RuncPsRequest) (*runmv1.RuncPsResponse, error)
 
 	// ReadPidFileFunc mocks the ReadPidFile method.
-	ReadPidFileFunc func(context1 context.Context, runcReadPidFileRequest *runvv1.RuncReadPidFileRequest) (*runvv1.RuncReadPidFileResponse, error)
+	ReadPidFileFunc func(context1 context.Context, runcReadPidFileRequest *runmv1.RuncReadPidFileRequest) (*runmv1.RuncReadPidFileResponse, error)
 
 	// RestoreFunc mocks the Restore method.
-	RestoreFunc func(context1 context.Context, runcRestoreRequest *runvv1.RuncRestoreRequest) (*runvv1.RuncRestoreResponse, error)
+	RestoreFunc func(context1 context.Context, runcRestoreRequest *runmv1.RuncRestoreRequest) (*runmv1.RuncRestoreResponse, error)
 
 	// ResumeFunc mocks the Resume method.
-	ResumeFunc func(context1 context.Context, runcResumeRequest *runvv1.RuncResumeRequest) (*runvv1.RuncResumeResponse, error)
+	ResumeFunc func(context1 context.Context, runcResumeRequest *runmv1.RuncResumeRequest) (*runmv1.RuncResumeResponse, error)
 
 	// StartFunc mocks the Start method.
-	StartFunc func(context1 context.Context, runcStartRequest *runvv1.RuncStartRequest) (*runvv1.RuncStartResponse, error)
+	StartFunc func(context1 context.Context, runcStartRequest *runmv1.RuncStartRequest) (*runmv1.RuncStartResponse, error)
 
 	// UpdateFunc mocks the Update method.
-	UpdateFunc func(context1 context.Context, runcUpdateRequest *runvv1.RuncUpdateRequest) (*runvv1.RuncUpdateResponse, error)
+	UpdateFunc func(context1 context.Context, runcUpdateRequest *runmv1.RuncUpdateRequest) (*runmv1.RuncUpdateResponse, error)
 
 	// calls tracks calls to the methods.
 	calls struct {
@@ -119,98 +119,98 @@ type MockRuncServiceServer struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// RuncCheckpointRequest is the runcCheckpointRequest argument value.
-			RuncCheckpointRequest *runvv1.RuncCheckpointRequest
+			RuncCheckpointRequest *runmv1.RuncCheckpointRequest
 		}
 		// Create holds details about calls to the Create method.
 		Create []struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// RuncCreateRequest is the runcCreateRequest argument value.
-			RuncCreateRequest *runvv1.RuncCreateRequest
+			RuncCreateRequest *runmv1.RuncCreateRequest
 		}
 		// Delete holds details about calls to the Delete method.
 		Delete []struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// RuncDeleteRequest is the runcDeleteRequest argument value.
-			RuncDeleteRequest *runvv1.RuncDeleteRequest
+			RuncDeleteRequest *runmv1.RuncDeleteRequest
 		}
 		// Exec holds details about calls to the Exec method.
 		Exec []struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// RuncExecRequest is the runcExecRequest argument value.
-			RuncExecRequest *runvv1.RuncExecRequest
+			RuncExecRequest *runmv1.RuncExecRequest
 		}
 		// Kill holds details about calls to the Kill method.
 		Kill []struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// RuncKillRequest is the runcKillRequest argument value.
-			RuncKillRequest *runvv1.RuncKillRequest
+			RuncKillRequest *runmv1.RuncKillRequest
 		}
 		// NewTempConsoleSocket holds details about calls to the NewTempConsoleSocket method.
 		NewTempConsoleSocket []struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// RuncNewTempConsoleSocketRequest is the runcNewTempConsoleSocketRequest argument value.
-			RuncNewTempConsoleSocketRequest *runvv1.RuncNewTempConsoleSocketRequest
+			RuncNewTempConsoleSocketRequest *runmv1.RuncNewTempConsoleSocketRequest
 		}
 		// Pause holds details about calls to the Pause method.
 		Pause []struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// RuncPauseRequest is the runcPauseRequest argument value.
-			RuncPauseRequest *runvv1.RuncPauseRequest
+			RuncPauseRequest *runmv1.RuncPauseRequest
 		}
 		// Ping holds details about calls to the Ping method.
 		Ping []struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// PingRequest is the pingRequest argument value.
-			PingRequest *runvv1.PingRequest
+			PingRequest *runmv1.PingRequest
 		}
 		// Ps holds details about calls to the Ps method.
 		Ps []struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// RuncPsRequest is the runcPsRequest argument value.
-			RuncPsRequest *runvv1.RuncPsRequest
+			RuncPsRequest *runmv1.RuncPsRequest
 		}
 		// ReadPidFile holds details about calls to the ReadPidFile method.
 		ReadPidFile []struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// RuncReadPidFileRequest is the runcReadPidFileRequest argument value.
-			RuncReadPidFileRequest *runvv1.RuncReadPidFileRequest
+			RuncReadPidFileRequest *runmv1.RuncReadPidFileRequest
 		}
 		// Restore holds details about calls to the Restore method.
 		Restore []struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// RuncRestoreRequest is the runcRestoreRequest argument value.
-			RuncRestoreRequest *runvv1.RuncRestoreRequest
+			RuncRestoreRequest *runmv1.RuncRestoreRequest
 		}
 		// Resume holds details about calls to the Resume method.
 		Resume []struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// RuncResumeRequest is the runcResumeRequest argument value.
-			RuncResumeRequest *runvv1.RuncResumeRequest
+			RuncResumeRequest *runmv1.RuncResumeRequest
 		}
 		// Start holds details about calls to the Start method.
 		Start []struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// RuncStartRequest is the runcStartRequest argument value.
-			RuncStartRequest *runvv1.RuncStartRequest
+			RuncStartRequest *runmv1.RuncStartRequest
 		}
 		// Update holds details about calls to the Update method.
 		Update []struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// RuncUpdateRequest is the runcUpdateRequest argument value.
-			RuncUpdateRequest *runvv1.RuncUpdateRequest
+			RuncUpdateRequest *runmv1.RuncUpdateRequest
 		}
 	}
 	lockCheckpoint           sync.RWMutex
@@ -230,13 +230,13 @@ type MockRuncServiceServer struct {
 }
 
 // Checkpoint calls CheckpointFunc.
-func (mock *MockRuncServiceServer) Checkpoint(context1 context.Context, runcCheckpointRequest *runvv1.RuncCheckpointRequest) (*runvv1.RuncCheckpointResponse, error) {
+func (mock *MockRuncServiceServer) Checkpoint(context1 context.Context, runcCheckpointRequest *runmv1.RuncCheckpointRequest) (*runmv1.RuncCheckpointResponse, error) {
 	if mock.CheckpointFunc == nil {
 		panic("MockRuncServiceServer.CheckpointFunc: method is nil but RuncServiceServer.Checkpoint was just called")
 	}
 	callInfo := struct {
 		Context1              context.Context
-		RuncCheckpointRequest *runvv1.RuncCheckpointRequest
+		RuncCheckpointRequest *runmv1.RuncCheckpointRequest
 	}{
 		Context1:              context1,
 		RuncCheckpointRequest: runcCheckpointRequest,
@@ -253,11 +253,11 @@ func (mock *MockRuncServiceServer) Checkpoint(context1 context.Context, runcChec
 //	len(mockedRuncServiceServer.CheckpointCalls())
 func (mock *MockRuncServiceServer) CheckpointCalls() []struct {
 	Context1              context.Context
-	RuncCheckpointRequest *runvv1.RuncCheckpointRequest
+	RuncCheckpointRequest *runmv1.RuncCheckpointRequest
 } {
 	var calls []struct {
 		Context1              context.Context
-		RuncCheckpointRequest *runvv1.RuncCheckpointRequest
+		RuncCheckpointRequest *runmv1.RuncCheckpointRequest
 	}
 	mock.lockCheckpoint.RLock()
 	calls = mock.calls.Checkpoint
@@ -266,13 +266,13 @@ func (mock *MockRuncServiceServer) CheckpointCalls() []struct {
 }
 
 // Create calls CreateFunc.
-func (mock *MockRuncServiceServer) Create(context1 context.Context, runcCreateRequest *runvv1.RuncCreateRequest) (*runvv1.RuncCreateResponse, error) {
+func (mock *MockRuncServiceServer) Create(context1 context.Context, runcCreateRequest *runmv1.RuncCreateRequest) (*runmv1.RuncCreateResponse, error) {
 	if mock.CreateFunc == nil {
 		panic("MockRuncServiceServer.CreateFunc: method is nil but RuncServiceServer.Create was just called")
 	}
 	callInfo := struct {
 		Context1          context.Context
-		RuncCreateRequest *runvv1.RuncCreateRequest
+		RuncCreateRequest *runmv1.RuncCreateRequest
 	}{
 		Context1:          context1,
 		RuncCreateRequest: runcCreateRequest,
@@ -289,11 +289,11 @@ func (mock *MockRuncServiceServer) Create(context1 context.Context, runcCreateRe
 //	len(mockedRuncServiceServer.CreateCalls())
 func (mock *MockRuncServiceServer) CreateCalls() []struct {
 	Context1          context.Context
-	RuncCreateRequest *runvv1.RuncCreateRequest
+	RuncCreateRequest *runmv1.RuncCreateRequest
 } {
 	var calls []struct {
 		Context1          context.Context
-		RuncCreateRequest *runvv1.RuncCreateRequest
+		RuncCreateRequest *runmv1.RuncCreateRequest
 	}
 	mock.lockCreate.RLock()
 	calls = mock.calls.Create
@@ -302,13 +302,13 @@ func (mock *MockRuncServiceServer) CreateCalls() []struct {
 }
 
 // Delete calls DeleteFunc.
-func (mock *MockRuncServiceServer) Delete(context1 context.Context, runcDeleteRequest *runvv1.RuncDeleteRequest) (*runvv1.RuncDeleteResponse, error) {
+func (mock *MockRuncServiceServer) Delete(context1 context.Context, runcDeleteRequest *runmv1.RuncDeleteRequest) (*runmv1.RuncDeleteResponse, error) {
 	if mock.DeleteFunc == nil {
 		panic("MockRuncServiceServer.DeleteFunc: method is nil but RuncServiceServer.Delete was just called")
 	}
 	callInfo := struct {
 		Context1          context.Context
-		RuncDeleteRequest *runvv1.RuncDeleteRequest
+		RuncDeleteRequest *runmv1.RuncDeleteRequest
 	}{
 		Context1:          context1,
 		RuncDeleteRequest: runcDeleteRequest,
@@ -325,11 +325,11 @@ func (mock *MockRuncServiceServer) Delete(context1 context.Context, runcDeleteRe
 //	len(mockedRuncServiceServer.DeleteCalls())
 func (mock *MockRuncServiceServer) DeleteCalls() []struct {
 	Context1          context.Context
-	RuncDeleteRequest *runvv1.RuncDeleteRequest
+	RuncDeleteRequest *runmv1.RuncDeleteRequest
 } {
 	var calls []struct {
 		Context1          context.Context
-		RuncDeleteRequest *runvv1.RuncDeleteRequest
+		RuncDeleteRequest *runmv1.RuncDeleteRequest
 	}
 	mock.lockDelete.RLock()
 	calls = mock.calls.Delete
@@ -338,13 +338,13 @@ func (mock *MockRuncServiceServer) DeleteCalls() []struct {
 }
 
 // Exec calls ExecFunc.
-func (mock *MockRuncServiceServer) Exec(context1 context.Context, runcExecRequest *runvv1.RuncExecRequest) (*runvv1.RuncExecResponse, error) {
+func (mock *MockRuncServiceServer) Exec(context1 context.Context, runcExecRequest *runmv1.RuncExecRequest) (*runmv1.RuncExecResponse, error) {
 	if mock.ExecFunc == nil {
 		panic("MockRuncServiceServer.ExecFunc: method is nil but RuncServiceServer.Exec was just called")
 	}
 	callInfo := struct {
 		Context1        context.Context
-		RuncExecRequest *runvv1.RuncExecRequest
+		RuncExecRequest *runmv1.RuncExecRequest
 	}{
 		Context1:        context1,
 		RuncExecRequest: runcExecRequest,
@@ -361,11 +361,11 @@ func (mock *MockRuncServiceServer) Exec(context1 context.Context, runcExecReques
 //	len(mockedRuncServiceServer.ExecCalls())
 func (mock *MockRuncServiceServer) ExecCalls() []struct {
 	Context1        context.Context
-	RuncExecRequest *runvv1.RuncExecRequest
+	RuncExecRequest *runmv1.RuncExecRequest
 } {
 	var calls []struct {
 		Context1        context.Context
-		RuncExecRequest *runvv1.RuncExecRequest
+		RuncExecRequest *runmv1.RuncExecRequest
 	}
 	mock.lockExec.RLock()
 	calls = mock.calls.Exec
@@ -374,13 +374,13 @@ func (mock *MockRuncServiceServer) ExecCalls() []struct {
 }
 
 // Kill calls KillFunc.
-func (mock *MockRuncServiceServer) Kill(context1 context.Context, runcKillRequest *runvv1.RuncKillRequest) (*runvv1.RuncKillResponse, error) {
+func (mock *MockRuncServiceServer) Kill(context1 context.Context, runcKillRequest *runmv1.RuncKillRequest) (*runmv1.RuncKillResponse, error) {
 	if mock.KillFunc == nil {
 		panic("MockRuncServiceServer.KillFunc: method is nil but RuncServiceServer.Kill was just called")
 	}
 	callInfo := struct {
 		Context1        context.Context
-		RuncKillRequest *runvv1.RuncKillRequest
+		RuncKillRequest *runmv1.RuncKillRequest
 	}{
 		Context1:        context1,
 		RuncKillRequest: runcKillRequest,
@@ -397,11 +397,11 @@ func (mock *MockRuncServiceServer) Kill(context1 context.Context, runcKillReques
 //	len(mockedRuncServiceServer.KillCalls())
 func (mock *MockRuncServiceServer) KillCalls() []struct {
 	Context1        context.Context
-	RuncKillRequest *runvv1.RuncKillRequest
+	RuncKillRequest *runmv1.RuncKillRequest
 } {
 	var calls []struct {
 		Context1        context.Context
-		RuncKillRequest *runvv1.RuncKillRequest
+		RuncKillRequest *runmv1.RuncKillRequest
 	}
 	mock.lockKill.RLock()
 	calls = mock.calls.Kill
@@ -410,13 +410,13 @@ func (mock *MockRuncServiceServer) KillCalls() []struct {
 }
 
 // NewTempConsoleSocket calls NewTempConsoleSocketFunc.
-func (mock *MockRuncServiceServer) NewTempConsoleSocket(context1 context.Context, runcNewTempConsoleSocketRequest *runvv1.RuncNewTempConsoleSocketRequest) (*runvv1.RuncNewTempConsoleSocketResponse, error) {
+func (mock *MockRuncServiceServer) NewTempConsoleSocket(context1 context.Context, runcNewTempConsoleSocketRequest *runmv1.RuncNewTempConsoleSocketRequest) (*runmv1.RuncNewTempConsoleSocketResponse, error) {
 	if mock.NewTempConsoleSocketFunc == nil {
 		panic("MockRuncServiceServer.NewTempConsoleSocketFunc: method is nil but RuncServiceServer.NewTempConsoleSocket was just called")
 	}
 	callInfo := struct {
 		Context1                        context.Context
-		RuncNewTempConsoleSocketRequest *runvv1.RuncNewTempConsoleSocketRequest
+		RuncNewTempConsoleSocketRequest *runmv1.RuncNewTempConsoleSocketRequest
 	}{
 		Context1:                        context1,
 		RuncNewTempConsoleSocketRequest: runcNewTempConsoleSocketRequest,
@@ -433,11 +433,11 @@ func (mock *MockRuncServiceServer) NewTempConsoleSocket(context1 context.Context
 //	len(mockedRuncServiceServer.NewTempConsoleSocketCalls())
 func (mock *MockRuncServiceServer) NewTempConsoleSocketCalls() []struct {
 	Context1                        context.Context
-	RuncNewTempConsoleSocketRequest *runvv1.RuncNewTempConsoleSocketRequest
+	RuncNewTempConsoleSocketRequest *runmv1.RuncNewTempConsoleSocketRequest
 } {
 	var calls []struct {
 		Context1                        context.Context
-		RuncNewTempConsoleSocketRequest *runvv1.RuncNewTempConsoleSocketRequest
+		RuncNewTempConsoleSocketRequest *runmv1.RuncNewTempConsoleSocketRequest
 	}
 	mock.lockNewTempConsoleSocket.RLock()
 	calls = mock.calls.NewTempConsoleSocket
@@ -446,13 +446,13 @@ func (mock *MockRuncServiceServer) NewTempConsoleSocketCalls() []struct {
 }
 
 // Pause calls PauseFunc.
-func (mock *MockRuncServiceServer) Pause(context1 context.Context, runcPauseRequest *runvv1.RuncPauseRequest) (*runvv1.RuncPauseResponse, error) {
+func (mock *MockRuncServiceServer) Pause(context1 context.Context, runcPauseRequest *runmv1.RuncPauseRequest) (*runmv1.RuncPauseResponse, error) {
 	if mock.PauseFunc == nil {
 		panic("MockRuncServiceServer.PauseFunc: method is nil but RuncServiceServer.Pause was just called")
 	}
 	callInfo := struct {
 		Context1         context.Context
-		RuncPauseRequest *runvv1.RuncPauseRequest
+		RuncPauseRequest *runmv1.RuncPauseRequest
 	}{
 		Context1:         context1,
 		RuncPauseRequest: runcPauseRequest,
@@ -469,11 +469,11 @@ func (mock *MockRuncServiceServer) Pause(context1 context.Context, runcPauseRequ
 //	len(mockedRuncServiceServer.PauseCalls())
 func (mock *MockRuncServiceServer) PauseCalls() []struct {
 	Context1         context.Context
-	RuncPauseRequest *runvv1.RuncPauseRequest
+	RuncPauseRequest *runmv1.RuncPauseRequest
 } {
 	var calls []struct {
 		Context1         context.Context
-		RuncPauseRequest *runvv1.RuncPauseRequest
+		RuncPauseRequest *runmv1.RuncPauseRequest
 	}
 	mock.lockPause.RLock()
 	calls = mock.calls.Pause
@@ -482,13 +482,13 @@ func (mock *MockRuncServiceServer) PauseCalls() []struct {
 }
 
 // Ping calls PingFunc.
-func (mock *MockRuncServiceServer) Ping(context1 context.Context, pingRequest *runvv1.PingRequest) (*runvv1.PingResponse, error) {
+func (mock *MockRuncServiceServer) Ping(context1 context.Context, pingRequest *runmv1.PingRequest) (*runmv1.PingResponse, error) {
 	if mock.PingFunc == nil {
 		panic("MockRuncServiceServer.PingFunc: method is nil but RuncServiceServer.Ping was just called")
 	}
 	callInfo := struct {
 		Context1    context.Context
-		PingRequest *runvv1.PingRequest
+		PingRequest *runmv1.PingRequest
 	}{
 		Context1:    context1,
 		PingRequest: pingRequest,
@@ -505,11 +505,11 @@ func (mock *MockRuncServiceServer) Ping(context1 context.Context, pingRequest *r
 //	len(mockedRuncServiceServer.PingCalls())
 func (mock *MockRuncServiceServer) PingCalls() []struct {
 	Context1    context.Context
-	PingRequest *runvv1.PingRequest
+	PingRequest *runmv1.PingRequest
 } {
 	var calls []struct {
 		Context1    context.Context
-		PingRequest *runvv1.PingRequest
+		PingRequest *runmv1.PingRequest
 	}
 	mock.lockPing.RLock()
 	calls = mock.calls.Ping
@@ -518,13 +518,13 @@ func (mock *MockRuncServiceServer) PingCalls() []struct {
 }
 
 // Ps calls PsFunc.
-func (mock *MockRuncServiceServer) Ps(context1 context.Context, runcPsRequest *runvv1.RuncPsRequest) (*runvv1.RuncPsResponse, error) {
+func (mock *MockRuncServiceServer) Ps(context1 context.Context, runcPsRequest *runmv1.RuncPsRequest) (*runmv1.RuncPsResponse, error) {
 	if mock.PsFunc == nil {
 		panic("MockRuncServiceServer.PsFunc: method is nil but RuncServiceServer.Ps was just called")
 	}
 	callInfo := struct {
 		Context1      context.Context
-		RuncPsRequest *runvv1.RuncPsRequest
+		RuncPsRequest *runmv1.RuncPsRequest
 	}{
 		Context1:      context1,
 		RuncPsRequest: runcPsRequest,
@@ -541,11 +541,11 @@ func (mock *MockRuncServiceServer) Ps(context1 context.Context, runcPsRequest *r
 //	len(mockedRuncServiceServer.PsCalls())
 func (mock *MockRuncServiceServer) PsCalls() []struct {
 	Context1      context.Context
-	RuncPsRequest *runvv1.RuncPsRequest
+	RuncPsRequest *runmv1.RuncPsRequest
 } {
 	var calls []struct {
 		Context1      context.Context
-		RuncPsRequest *runvv1.RuncPsRequest
+		RuncPsRequest *runmv1.RuncPsRequest
 	}
 	mock.lockPs.RLock()
 	calls = mock.calls.Ps
@@ -554,13 +554,13 @@ func (mock *MockRuncServiceServer) PsCalls() []struct {
 }
 
 // ReadPidFile calls ReadPidFileFunc.
-func (mock *MockRuncServiceServer) ReadPidFile(context1 context.Context, runcReadPidFileRequest *runvv1.RuncReadPidFileRequest) (*runvv1.RuncReadPidFileResponse, error) {
+func (mock *MockRuncServiceServer) ReadPidFile(context1 context.Context, runcReadPidFileRequest *runmv1.RuncReadPidFileRequest) (*runmv1.RuncReadPidFileResponse, error) {
 	if mock.ReadPidFileFunc == nil {
 		panic("MockRuncServiceServer.ReadPidFileFunc: method is nil but RuncServiceServer.ReadPidFile was just called")
 	}
 	callInfo := struct {
 		Context1               context.Context
-		RuncReadPidFileRequest *runvv1.RuncReadPidFileRequest
+		RuncReadPidFileRequest *runmv1.RuncReadPidFileRequest
 	}{
 		Context1:               context1,
 		RuncReadPidFileRequest: runcReadPidFileRequest,
@@ -577,11 +577,11 @@ func (mock *MockRuncServiceServer) ReadPidFile(context1 context.Context, runcRea
 //	len(mockedRuncServiceServer.ReadPidFileCalls())
 func (mock *MockRuncServiceServer) ReadPidFileCalls() []struct {
 	Context1               context.Context
-	RuncReadPidFileRequest *runvv1.RuncReadPidFileRequest
+	RuncReadPidFileRequest *runmv1.RuncReadPidFileRequest
 } {
 	var calls []struct {
 		Context1               context.Context
-		RuncReadPidFileRequest *runvv1.RuncReadPidFileRequest
+		RuncReadPidFileRequest *runmv1.RuncReadPidFileRequest
 	}
 	mock.lockReadPidFile.RLock()
 	calls = mock.calls.ReadPidFile
@@ -590,13 +590,13 @@ func (mock *MockRuncServiceServer) ReadPidFileCalls() []struct {
 }
 
 // Restore calls RestoreFunc.
-func (mock *MockRuncServiceServer) Restore(context1 context.Context, runcRestoreRequest *runvv1.RuncRestoreRequest) (*runvv1.RuncRestoreResponse, error) {
+func (mock *MockRuncServiceServer) Restore(context1 context.Context, runcRestoreRequest *runmv1.RuncRestoreRequest) (*runmv1.RuncRestoreResponse, error) {
 	if mock.RestoreFunc == nil {
 		panic("MockRuncServiceServer.RestoreFunc: method is nil but RuncServiceServer.Restore was just called")
 	}
 	callInfo := struct {
 		Context1           context.Context
-		RuncRestoreRequest *runvv1.RuncRestoreRequest
+		RuncRestoreRequest *runmv1.RuncRestoreRequest
 	}{
 		Context1:           context1,
 		RuncRestoreRequest: runcRestoreRequest,
@@ -613,11 +613,11 @@ func (mock *MockRuncServiceServer) Restore(context1 context.Context, runcRestore
 //	len(mockedRuncServiceServer.RestoreCalls())
 func (mock *MockRuncServiceServer) RestoreCalls() []struct {
 	Context1           context.Context
-	RuncRestoreRequest *runvv1.RuncRestoreRequest
+	RuncRestoreRequest *runmv1.RuncRestoreRequest
 } {
 	var calls []struct {
 		Context1           context.Context
-		RuncRestoreRequest *runvv1.RuncRestoreRequest
+		RuncRestoreRequest *runmv1.RuncRestoreRequest
 	}
 	mock.lockRestore.RLock()
 	calls = mock.calls.Restore
@@ -626,13 +626,13 @@ func (mock *MockRuncServiceServer) RestoreCalls() []struct {
 }
 
 // Resume calls ResumeFunc.
-func (mock *MockRuncServiceServer) Resume(context1 context.Context, runcResumeRequest *runvv1.RuncResumeRequest) (*runvv1.RuncResumeResponse, error) {
+func (mock *MockRuncServiceServer) Resume(context1 context.Context, runcResumeRequest *runmv1.RuncResumeRequest) (*runmv1.RuncResumeResponse, error) {
 	if mock.ResumeFunc == nil {
 		panic("MockRuncServiceServer.ResumeFunc: method is nil but RuncServiceServer.Resume was just called")
 	}
 	callInfo := struct {
 		Context1          context.Context
-		RuncResumeRequest *runvv1.RuncResumeRequest
+		RuncResumeRequest *runmv1.RuncResumeRequest
 	}{
 		Context1:          context1,
 		RuncResumeRequest: runcResumeRequest,
@@ -649,11 +649,11 @@ func (mock *MockRuncServiceServer) Resume(context1 context.Context, runcResumeRe
 //	len(mockedRuncServiceServer.ResumeCalls())
 func (mock *MockRuncServiceServer) ResumeCalls() []struct {
 	Context1          context.Context
-	RuncResumeRequest *runvv1.RuncResumeRequest
+	RuncResumeRequest *runmv1.RuncResumeRequest
 } {
 	var calls []struct {
 		Context1          context.Context
-		RuncResumeRequest *runvv1.RuncResumeRequest
+		RuncResumeRequest *runmv1.RuncResumeRequest
 	}
 	mock.lockResume.RLock()
 	calls = mock.calls.Resume
@@ -662,13 +662,13 @@ func (mock *MockRuncServiceServer) ResumeCalls() []struct {
 }
 
 // Start calls StartFunc.
-func (mock *MockRuncServiceServer) Start(context1 context.Context, runcStartRequest *runvv1.RuncStartRequest) (*runvv1.RuncStartResponse, error) {
+func (mock *MockRuncServiceServer) Start(context1 context.Context, runcStartRequest *runmv1.RuncStartRequest) (*runmv1.RuncStartResponse, error) {
 	if mock.StartFunc == nil {
 		panic("MockRuncServiceServer.StartFunc: method is nil but RuncServiceServer.Start was just called")
 	}
 	callInfo := struct {
 		Context1         context.Context
-		RuncStartRequest *runvv1.RuncStartRequest
+		RuncStartRequest *runmv1.RuncStartRequest
 	}{
 		Context1:         context1,
 		RuncStartRequest: runcStartRequest,
@@ -685,11 +685,11 @@ func (mock *MockRuncServiceServer) Start(context1 context.Context, runcStartRequ
 //	len(mockedRuncServiceServer.StartCalls())
 func (mock *MockRuncServiceServer) StartCalls() []struct {
 	Context1         context.Context
-	RuncStartRequest *runvv1.RuncStartRequest
+	RuncStartRequest *runmv1.RuncStartRequest
 } {
 	var calls []struct {
 		Context1         context.Context
-		RuncStartRequest *runvv1.RuncStartRequest
+		RuncStartRequest *runmv1.RuncStartRequest
 	}
 	mock.lockStart.RLock()
 	calls = mock.calls.Start
@@ -698,13 +698,13 @@ func (mock *MockRuncServiceServer) StartCalls() []struct {
 }
 
 // Update calls UpdateFunc.
-func (mock *MockRuncServiceServer) Update(context1 context.Context, runcUpdateRequest *runvv1.RuncUpdateRequest) (*runvv1.RuncUpdateResponse, error) {
+func (mock *MockRuncServiceServer) Update(context1 context.Context, runcUpdateRequest *runmv1.RuncUpdateRequest) (*runmv1.RuncUpdateResponse, error) {
 	if mock.UpdateFunc == nil {
 		panic("MockRuncServiceServer.UpdateFunc: method is nil but RuncServiceServer.Update was just called")
 	}
 	callInfo := struct {
 		Context1          context.Context
-		RuncUpdateRequest *runvv1.RuncUpdateRequest
+		RuncUpdateRequest *runmv1.RuncUpdateRequest
 	}{
 		Context1:          context1,
 		RuncUpdateRequest: runcUpdateRequest,
@@ -721,11 +721,11 @@ func (mock *MockRuncServiceServer) Update(context1 context.Context, runcUpdateRe
 //	len(mockedRuncServiceServer.UpdateCalls())
 func (mock *MockRuncServiceServer) UpdateCalls() []struct {
 	Context1          context.Context
-	RuncUpdateRequest *runvv1.RuncUpdateRequest
+	RuncUpdateRequest *runmv1.RuncUpdateRequest
 } {
 	var calls []struct {
 		Context1          context.Context
-		RuncUpdateRequest *runvv1.RuncUpdateRequest
+		RuncUpdateRequest *runmv1.RuncUpdateRequest
 	}
 	mock.lockUpdate.RLock()
 	calls = mock.calls.Update
