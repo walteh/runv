@@ -9,6 +9,7 @@ import (
 
 	"github.com/walteh/runm/core/runc/runtime"
 	"github.com/walteh/runm/core/runc/state"
+	runmv1 "github.com/walteh/runm/proto/v1"
 )
 
 type Server struct {
@@ -19,13 +20,32 @@ type Server struct {
 	state *state.State
 }
 
-func NewServer(r runtime.Runtime, runtimeExtras runtime.RuntimeExtras, socketAllocator runtime.SocketAllocator) *Server {
-	return &Server{
+type ServerOpt func(*ServerOpts)
+
+type ServerOpts struct {
+}
+
+func NewServer(r runtime.Runtime, runtimeExtras runtime.RuntimeExtras, socketAllocator runtime.SocketAllocator, opts ...ServerOpt) *Server {
+
+	optz := &ServerOpts{}
+	for _, opt := range opts {
+		opt(optz)
+	}
+
+	s := &Server{
 		runtime:         r,
 		runtimeExtras:   runtimeExtras,
 		socketAllocator: socketAllocator,
 		state:           state.NewState(),
 	}
+
+	return s
+}
+
+func (s *Server) RegisterGrpcServer(grpcServer *grpc.Server) {
+	runmv1.RegisterRuncServiceServer(grpcServer, s)
+	runmv1.RegisterRuncExtrasServiceServer(grpcServer, s)
+	runmv1.RegisterSocketAllocatorServiceServer(grpcServer, s)
 }
 
 // 	// Create gRPC server
