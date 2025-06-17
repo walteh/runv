@@ -13,7 +13,7 @@ import (
 	"gitlab.com/tozd/go/errors"
 	"gvisor.dev/gvisor/pkg/tcpip/stack"
 
-	"github.com/walteh/ec1/pkg/hack"
+	"github.com/walteh/runm/pkg/hack"
 )
 
 var _ run.Runnable = (*VirtualNetworkRunner)(nil)

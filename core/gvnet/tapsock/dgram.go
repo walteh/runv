@@ -14,7 +14,7 @@ import (
 
 	"gitlab.com/tozd/go/errors"
 
-	"github.com/walteh/ec1/pkg/virtio"
+	"github.com/walteh/runm/core/virt/virtio"
 )
 
 func unixFd(fd uintptr) int {

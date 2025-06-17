@@ -17,8 +17,8 @@ import (
 
 	slogctx "github.com/veqryn/slog-context"
 
-	"github.com/walteh/ec1/pkg/gvnet/tapsock"
-	"github.com/walteh/ec1/pkg/virtio"
+	"github.com/walteh/runm/core/gvnet/tapsock"
+	"github.com/walteh/runm/core/virt/virtio"
 )
 
 type GvproxyConfig struct {

@@ -1,0 +1,84 @@
+edition = "2023";
+
+package runm.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/go_features.proto";
+
+option features.(pb.go).api_level = API_OPAQUE;
+option features.field_presence = IMPLICIT;  // makes everything by default required, for optional set to EXPLICIT
+
+service GuestManagementService {
+	rpc GuestTimeSync(GuestTimeSyncRequest) returns (GuestTimeSyncResponse);
+
+
+	rpc GuestReadiness(GuestReadinessRequest) returns (GuestReadinessResponse);
+
+
+	rpc GuestRunCommand(GuestRunCommandRequest) returns (GuestRunCommandResponse);
+}
+
+message GuestTimeSyncRequest {
+	uint64 unix_time_ns = 1 [
+		(buf.validate.field).required = true
+	];
+	string timezone     = 2 [
+		(buf.validate.field).required = true
+	];
+}
+
+message GuestTimeSyncResponse {
+	uint64 previous_time_ns = 1 [
+		(buf.validate.field).required = true
+	];
+}
+
+message GuestReadinessRequest {}
+
+message GuestReadinessResponse {
+	bool ready = 1 [
+		(buf.validate.field).required = true
+	];
+}
+
+message GuestRunCommandRequest {
+	bytes stdin = 1 [
+		(buf.validate.field).required = false
+	];
+
+	// the executable to run
+	string argc = 2 [
+		(buf.validate.field).required = true
+	];
+
+	// the arguments to pass to the executable
+	repeated string argv = 3 [
+		(buf.validate.field).required = true
+	];
+
+	// the environment variables to set for the executable
+	map<string, string> env_vars = 4 [
+		(buf.validate.field).required = true
+	];
+
+	string chroot = 5 [
+		(buf.validate.field).required = false
+	];
+
+	bytes cwd = 6 [
+		(buf.validate.field).required = false
+	];
+}
+
+message GuestRunCommandResponse {
+	bytes stdout = 1 [
+		(buf.validate.field).required = false
+	];
+
+	bytes stderr    = 2 [
+		(buf.validate.field).required = false
+	];
+	int32 exit_code = 3 [
+		(buf.validate.field).required = true
+	];
+}
