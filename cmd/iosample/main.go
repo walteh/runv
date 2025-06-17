@@ -8,10 +8,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/containerd/console"
-	runc "github.com/containerd/go-runc"
-	"github.com/creack/pty"
 	"golang.org/x/sys/unix"
+
+	"github.com/containerd/console"
+	"github.com/creack/pty"
+
+	runc "github.com/containerd/go-runc"
 )
 
 func main() {

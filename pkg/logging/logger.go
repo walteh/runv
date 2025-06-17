@@ -8,10 +8,11 @@ import (
 	"path/filepath"
 
 	"github.com/muesli/termenv"
+	"gopkg.in/natefinch/lumberjack.v2"
+
 	"github.com/walteh/runv/pkg/logging/slogdevterm"
 	"github.com/walteh/runv/pkg/logging/sloghclog"
 	"github.com/walteh/runv/pkg/logging/sloglogrus"
-	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 //go:opts

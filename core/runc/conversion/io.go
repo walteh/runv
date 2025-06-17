@@ -4,11 +4,14 @@ import (
 	"context"
 	"net"
 
-	gorunc "github.com/containerd/go-runc"
 	"github.com/mdlayher/vsock"
-	"github.com/pkg/errors"
+	"gitlab.com/tozd/go/errors"
+
+	gorunc "github.com/containerd/go-runc"
+
 	"github.com/walteh/runv/core/runc/runtime"
 	"github.com/walteh/runv/core/runc/stdio"
+
 	runvv1 "github.com/walteh/runv/proto/v1"
 )
 

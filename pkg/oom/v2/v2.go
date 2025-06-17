@@ -20,11 +20,13 @@ import (
 	"context"
 	"fmt"
 
-	cgroupsv2 "github.com/containerd/cgroups/v3/cgroup2"
-	eventstypes "github.com/containerd/containerd/api/events"
 	"github.com/containerd/containerd/v2/core/events"
 	"github.com/containerd/containerd/v2/core/runtime"
 	"github.com/containerd/log"
+
+	cgroupsv2 "github.com/containerd/cgroups/v3/cgroup2"
+	eventstypes "github.com/containerd/containerd/api/events"
+
 	"github.com/walteh/runv/pkg/oom"
 )
 

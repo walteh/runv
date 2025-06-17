@@ -11,7 +11,6 @@ import (
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/muesli/termenv"
-
 	"github.com/walteh/ec1/pkg/logging/valuelog"
 )
 

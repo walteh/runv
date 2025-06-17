@@ -23,9 +23,11 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/containerd/log"
+
 	google_protobuf "github.com/containerd/containerd/v2/pkg/protobuf/types"
 	gorunc "github.com/containerd/go-runc"
-	"github.com/containerd/log"
+
 	"github.com/walteh/runv/core/runc/runtime"
 )
 

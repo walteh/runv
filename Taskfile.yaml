@@ -40,6 +40,20 @@ tasks:
             cmd: cd {{.ITEM}} && go get -u {{.CLI_ARGS}}
           - task: go:tidy
 
+    go:lint:
+        desc: runs the linters
+        vars:
+            # GO_FILES: "./cmd/containerd-shim-runv-v2/manager/manager.go"
+
+            # skip .gen and .pb.go files
+            GO_FILES:
+                sh: find . -type f -name '*.go' -not -path '*/gen/*' -not -path '*/proto/*'
+        cmds:
+          - for: {var: GO_FILES}
+            cmd: |-
+                tmp=$(mktemp); cat {{.ITEM}} | go tool goshim retab > $tmp; mv $tmp {{.ITEM}}
+          - cmd: go tool golangci-lint run --fix ./...
+
     go:test:
         desc: runs the tests
         cmds:

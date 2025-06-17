@@ -29,9 +29,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/containerd/errdefs"
-	"github.com/walteh/runv/core/runc/runtime"
 	"golang.org/x/sys/unix"
+
+	"github.com/containerd/errdefs"
+
+	"github.com/walteh/runv/core/runc/runtime"
 )
 
 const (

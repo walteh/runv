@@ -5,9 +5,10 @@ import (
 	"os/signal"
 	"syscall"
 
+	"google.golang.org/grpc"
+
 	"github.com/walteh/runv/core/runc/runtime"
 	"github.com/walteh/runv/core/runc/state"
-	"google.golang.org/grpc"
 )
 
 type Server struct {

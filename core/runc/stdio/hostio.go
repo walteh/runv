@@ -10,8 +10,9 @@ import (
 	"path/filepath"
 	"sync/atomic"
 
-	gorunc "github.com/containerd/go-runc"
 	"github.com/mdlayher/vsock"
+
+	gorunc "github.com/containerd/go-runc"
 )
 
 var hostVsockCounter atomic.Uint64

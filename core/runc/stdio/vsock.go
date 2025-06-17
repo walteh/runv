@@ -5,7 +5,7 @@ import (
 	"net"
 
 	"github.com/mdlayher/vsock"
-	"github.com/pkg/errors"
+	"gitlab.com/tozd/go/errors"
 )
 
 type vsockForwarder struct {

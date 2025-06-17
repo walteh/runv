@@ -4,9 +4,11 @@ import (
 	"context"
 	"time"
 
-	"github.com/walteh/runv/core/runc/runtime"
-	runvv1 "github.com/walteh/runv/proto/v1"
 	"gitlab.com/tozd/go/errors"
+
+	"github.com/walteh/runv/core/runc/runtime"
+
+	runvv1 "github.com/walteh/runv/proto/v1"
 )
 
 var _ runvv1.SocketAllocatorServiceServer = (*Server)(nil)

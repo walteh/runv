@@ -6,12 +6,14 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/walteh/runv/core/runc/conversion"
-	"github.com/walteh/runv/core/runc/runtime"
-	runvv1 "github.com/walteh/runv/proto/v1"
 	"google.golang.org/protobuf/types/known/durationpb"
 
 	gorunc "github.com/containerd/go-runc"
+
+	"github.com/walteh/runv/core/runc/conversion"
+	"github.com/walteh/runv/core/runc/runtime"
+
+	runvv1 "github.com/walteh/runv/proto/v1"
 )
 
 var _ runtime.RuntimeExtras = (*GRPCClientRuntime)(nil)

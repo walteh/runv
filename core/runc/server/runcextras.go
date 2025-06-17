@@ -3,10 +3,12 @@ package server
 import (
 	"context"
 
+	"google.golang.org/grpc"
+
 	"github.com/walteh/runv/core/runc/conversion"
 	"github.com/walteh/runv/core/runc/runtime"
+
 	runvv1 "github.com/walteh/runv/proto/v1"
-	"google.golang.org/grpc"
 )
 
 var _ runvv1.RuncExtrasServiceServer = (*Server)(nil)

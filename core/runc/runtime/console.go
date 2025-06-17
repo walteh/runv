@@ -6,12 +6,14 @@ import (
 	"net"
 	"os"
 
-	"github.com/containerd/console"
-	"github.com/walteh/runv/core/runc/file"
-	"gitlab.com/tozd/go/errors"
 	"golang.org/x/sys/unix"
 
+	"github.com/containerd/console"
+	"gitlab.com/tozd/go/errors"
+
 	gorunc "github.com/containerd/go-runc"
+
+	"github.com/walteh/runv/core/runc/file"
 )
 
 var _ ConsoleSocket = &HostConsoleSocket{}

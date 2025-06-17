@@ -6,16 +6,19 @@ import (
 	"net"
 	"testing"
 
-	gorunc "github.com/containerd/go-runc"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	grpcruntime "github.com/walteh/runv/core/runc/runtime/grpc"
-	"github.com/walteh/runv/core/runc/server"
-	runtimemock "github.com/walteh/runv/gen/mocks/core/runc/runtime"
-	runvv1 "github.com/walteh/runv/proto/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/test/bufconn"
+
+	gorunc "github.com/containerd/go-runc"
+
+	"github.com/walteh/runv/core/runc/server"
+
+	grpcruntime "github.com/walteh/runv/core/runc/runtime/grpc"
+	runtimemock "github.com/walteh/runv/gen/mocks/core/runc/runtime"
+	runvv1 "github.com/walteh/runv/proto/v1"
 )
 
 func TestBasicClientServer(t *testing.T) {

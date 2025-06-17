@@ -23,14 +23,16 @@ import (
 	"fmt"
 	"sync"
 
+	"golang.org/x/sys/unix"
+
 	"github.com/containerd/cgroups/v3/cgroup1"
-	eventstypes "github.com/containerd/containerd/api/events"
 	"github.com/containerd/containerd/v2/core/events"
 	"github.com/containerd/containerd/v2/core/runtime"
 	"github.com/containerd/containerd/v2/pkg/oom"
 	"github.com/containerd/containerd/v2/pkg/sys"
 	"github.com/containerd/log"
-	"golang.org/x/sys/unix"
+
+	eventstypes "github.com/containerd/containerd/api/events"
 )
 
 // New returns an epoll implementation that listens to OOM events

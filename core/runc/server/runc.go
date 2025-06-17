@@ -6,12 +6,15 @@ import (
 	"net"
 	"time"
 
+	"golang.org/x/sys/unix"
+
 	"github.com/kr/pty"
+	"gitlab.com/tozd/go/errors"
+
 	"github.com/walteh/runv/core/runc/conversion"
 	"github.com/walteh/runv/core/runc/runtime"
+
 	runvv1 "github.com/walteh/runv/proto/v1"
-	"gitlab.com/tozd/go/errors"
-	"golang.org/x/sys/unix"
 )
 
 var _ runvv1.RuncServiceServer = (*Server)(nil)

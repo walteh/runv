@@ -27,13 +27,15 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	goruntime "runtime"
 	"syscall"
 	"time"
 
+	goruntime "runtime"
+
+	"golang.org/x/sys/unix"
+
 	"github.com/containerd/cgroups/v3"
 	"github.com/containerd/cgroups/v3/cgroup1"
-	cgroupsv2 "github.com/containerd/cgroups/v3/cgroup2"
 	"github.com/containerd/containerd/api/types"
 	"github.com/containerd/containerd/api/types/runc/options"
 	"github.com/containerd/containerd/v2/core/mount"
@@ -41,14 +43,16 @@ import (
 	"github.com/containerd/containerd/v2/pkg/shim"
 	"github.com/containerd/containerd/v2/version"
 	"github.com/containerd/errdefs"
-	gorunc "github.com/containerd/go-runc"
 	"github.com/containerd/log"
 	"github.com/containerd/typeurl/v2"
 	"github.com/opencontainers/runtime-spec/specs-go/features"
+
+	cgroupsv2 "github.com/containerd/cgroups/v3/cgroup2"
+	gorunc "github.com/containerd/go-runc"
+
 	"github.com/walteh/runv/cmd/containerd-shim-runv-v2/process"
 	"github.com/walteh/runv/cmd/containerd-shim-runv-v2/runv"
 	"github.com/walteh/runv/core/runc/runtime"
-	"golang.org/x/sys/unix"
 )
 
 // NewShimManager returns an implementation of the shim manager

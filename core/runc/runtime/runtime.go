@@ -8,8 +8,9 @@ import (
 	"time"
 
 	"github.com/containerd/console"
-	gorunc "github.com/containerd/go-runc"
 	"github.com/opencontainers/runtime-spec/specs-go"
+
+	gorunc "github.com/containerd/go-runc"
 )
 
 const (

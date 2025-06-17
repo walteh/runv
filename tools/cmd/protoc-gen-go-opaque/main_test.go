@@ -42,7 +42,7 @@ func TestShouldGenerateHelpersLogic(t *testing.T) {
 					t.Log("Map entry correctly identified")
 				}
 			}
-			
+
 			if strings.HasSuffix(tt.msgName, "_") {
 				if tt.expected == false {
 					t.Log("Oneof wrapper correctly identified")
@@ -67,4 +67,4 @@ func TestPluginConfiguration(t *testing.T) {
 			t.Error("Edition 2024 constant should not be zero")
 		}
 	})
-} 
+}

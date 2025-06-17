@@ -12,17 +12,15 @@ import (
 
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
-	"github.com/kr/pty"
-	"github.com/walteh/runv/core/runc/runtime"
-	goruncruntime "github.com/walteh/runv/core/runc/runtime/gorunc"
-	"github.com/walteh/runv/core/runc/runtime/plug"
-	"github.com/walteh/runv/pkg/logging"
-	"golang.org/x/sys/unix"
-
-	server "github.com/walteh/runv/core/runc/server"
 
 	gorunc "github.com/containerd/go-runc"
 
+	"github.com/walteh/runv/core/runc/runtime"
+	"github.com/walteh/runv/core/runc/runtime/plug"
+	"github.com/walteh/runv/pkg/logging"
+
+	goruncruntime "github.com/walteh/runv/core/runc/runtime/gorunc"
+	server "github.com/walteh/runv/core/runc/server"
 	runtimemock "github.com/walteh/runv/gen/mocks/core/runc/runtime"
 )
 
@@ -101,31 +99,6 @@ func serverz(ctx context.Context, logPath string) error {
 	return nil
 }
 
-func simulatePty(ctx context.Context, sock string) error {
-	master, slave, err := pty.Open()
-	if err != nil {
-		slog.Error("open pty", "error", err)
-		return err
-	}
-	defer master.Close()
-	defer slave.Close()
-
-	conn, err := net.Dial("unix", sock)
-	if err != nil {
-		slog.Error("dial socket", "path", sock, "error", err)
-		return err
-	}
-	defer conn.Close()
-
-	// Build the control message carrying our master FD
-	rights := unix.UnixRights(int(master.Fd()))
-	n, oobn, err := conn.(*net.UnixConn).
-		WriteMsgUnix(nil, rights, nil)
-	slog.Info("sent FD", "socket", sock, "n", n, "oobn", oobn, "error", err)
-	<-ctx.Done()
-	return nil
-}
-
 func client(ctx context.Context, command string) error {
 	logging.NewDefaultDevLogger(
 		"client",
@@ -178,14 +151,16 @@ func client(ctx context.Context, command string) error {
 		}
 		fmt.Println("pid: ", pid)
 	case "pong":
-		zd, err := kv.NewTempConsoleSocket(ctx)
-		if err != nil {
-			return err
-		}
+		// zd, err := kv.NewPipeIO(ctx, 0, 0, func(i *gorunc.IOOption) {
+		// 	i.OpenStderr = true
+		// 	i.OpenStdout = true
+		// 	i.OpenStdin = true
+		// })
+		// if err != nil {
+		// 	return err
+		// }
+		// //
 
-		// go simulatePty(ctx, "/tmp/runv-sample/console.sock")
-
-		zd.ReceiveMaster()
 		fmt.Println("pong")
 	default:
 		return fmt.Errorf("please only use 'ping', given: %q", os.Args[0])
@@ -260,3 +235,28 @@ func setupClientLogProxy(ctx context.Context, w io.Writer) (string, error) {
 
 	return tmpFile.Name(), nil
 }
+
+// func simulatePty(ctx context.Context, sock string) error {
+// 	master, slave, err := pty.Open()
+// 	if err != nil {
+// 		slog.Error("open pty", "error", err)
+// 		return err
+// 	}
+// 	defer master.Close()
+// 	defer slave.Close()
+
+// 	conn, err := net.Dial("unix", sock)
+// 	if err != nil {
+// 		slog.Error("dial socket", "path", sock, "error", err)
+// 		return err
+// 	}
+// 	defer conn.Close()
+
+// 	// Build the control message carrying our master FD
+// 	rights := unix.UnixRights(int(master.Fd()))
+// 	n, oobn, err := conn.(*net.UnixConn).
+// 		WriteMsgUnix(nil, rights, nil)
+// 	slog.Info("sent FD", "socket", sock, "n", n, "oobn", oobn, "error", err)
+// 	<-ctx.Done()
+// 	return nil
+// }
