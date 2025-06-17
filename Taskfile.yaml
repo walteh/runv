@@ -12,6 +12,7 @@ vars:
       - ../console
       - ../go-runc
       - ../ttrpc
+      - ../gvisor-tap-vsock
     BUILD_OUT_DIR: gen/build
 
 env:
