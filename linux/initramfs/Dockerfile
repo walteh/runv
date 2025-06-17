@@ -224,19 +224,18 @@ EOF
 
 
 ########################################################
-# rootfs bins builder
+# initramfs builder
 ########################################################
 
-FROM scratch AS fs-builder
-
+FROM scratch AS initramfs-files
 
 # our static binaries (as needed)
 # COPY --from=socat-static-builder /usr/bin/socat /mbin/socat
 # COPY --from=e2fsprogs-static-builder /bin/mke2fs /mbin/mke2fs
 # COPY --from=lshw-static-builder /bin/lshw /mbin/lshw
-COPY --from=runc-static-builder /bin/runc /mbin/runc
-COPY --from=runm-linux-init-builder /out/runm-linux-init /mbin/runm-linux-init
-COPY --from=runm-linux-mounter-builder /out/runm-linux-mounter /mbin/runm-linux-mounter
+# COPY --from=runc-static-builder /bin/runc /mbin/runc
+# COPY --from=runm-linux-init-builder /out/runm-linux-init /mbin/runm-linux-init
+COPY --from=runm-linux-mounter-builder /out/runm-linux-mounter /runm-linux-mounter
 
 # busybox initalized filesystem
 COPY --from=busybox-static-builder-2 /rootfs/ /
@@ -246,16 +245,30 @@ COPY udhcpc.default /rootfs/etc/udhcpc/default.script
 COPY resolv.conf /rootfs/etc/resolv.conf
 
 ########################################################
-# cpio builder
+# mbin builder
 ########################################################
 
-FROM alpine-ref AS cpio-builder
+FROM scratch AS mbin-files
+
+# our static binaries (as needed)
+# COPY --from=socat-static-builder /usr/bin/socat /mbin/socat
+# COPY --from=e2fsprogs-static-builder /bin/mke2fs /mbin/mke2fs
+# COPY --from=lshw-static-builder /bin/lshw /mbin/lshw
+COPY --from=runc-static-builder /bin/runc /runc
+COPY --from=runm-linux-init-builder /out/runm-linux-init /runm-linux-init
+
+
+########################################################
+# initramfs cpio builder
+########################################################
+
+FROM alpine-ref AS initramfs-cpio-builder
 RUN apk add --no-cache cpio gzip
 WORKDIR /work
 
-COPY --from=fs-builder / /rootfs
+COPY --from=initramfs-files / /rootfs
 
-RUN chroot /rootfs ln -s mbin/runm-linux-mounter /init
+RUN chroot /rootfs ln -s /runm-linux-mounter /init
 
 RUN mkdir -p /dist \
 	&& (cd /rootfs && find . -print0 | cpio --null -ov --format=newc > /dist/initramfs.cpio) \
@@ -263,8 +276,24 @@ RUN mkdir -p /dist \
 
 
 ########################################################
+# mbin squashfs builder
+########################################################
+
+FROM alpine-ref AS mbin-squashfs-builder
+RUN apk add --no-cache squashfs-tools
+WORKDIR /work
+
+RUN mkdir -p /dist
+
+COPY --from=mbin-files / /rootfs
+
+RUN mksquashfs /rootfs /dist/mbin.squashfs
+
+
+########################################################
 # export stage
 ########################################################
 
 FROM scratch AS export
-COPY --from=cpio-builder /dist/initramfs.cpio.gz /initramfs.cpio.gz
+COPY --from=initramfs-cpio-builder /dist/initramfs.cpio.gz /initramfs.cpio.gz
+COPY --from=mbin-squashfs-builder /dist/mbin.squashfs /mbin.squashfs
