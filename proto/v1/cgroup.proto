@@ -1,0 +1,47 @@
+edition = "2023";
+
+package runm.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/go_features.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+
+option features.(pb.go).api_level = API_OPAQUE;
+option features.field_presence = IMPLICIT;  // makes everything by default required, for optional set to EXPLICIT
+
+service GuestCgroupService {
+	rpc GetCgroupStats(GetCgroupStatsRequest) returns (GetCgroupStatsResponse);
+
+
+	rpc StreamCgroupEvents(StreamCgroupEventsRequest) returns (stream StreamCgroupEventsResponse);
+
+
+	rpc ToggleAllControllers(ToggleAllControllersRequest) returns (ToggleAllControllersResponse);
+}
+
+message GetCgroupStatsRequest {}
+
+message GetCgroupStatsResponse {
+	google.protobuf.Any stats = 1;
+}
+
+message StreamCgroupEventsRequest {}
+
+message CgroupEvent {
+	uint64 low      = 1;
+	uint64 high     = 2;
+	uint64 max      = 3;
+	uint64 oom      = 4;
+	uint64 oom_kill = 5;
+}
+
+message StreamCgroupEventsResponse {
+	CgroupEvent event = 1;
+}
+
+message ToggleAllControllersRequest {}
+
+message ToggleAllControllersResponse {}

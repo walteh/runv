@@ -34,8 +34,6 @@ import (
 
 	"golang.org/x/sys/unix"
 
-	"github.com/containerd/cgroups/v3"
-	"github.com/containerd/cgroups/v3/cgroup1"
 	"github.com/containerd/containerd/api/types"
 	"github.com/containerd/containerd/api/types/runc/options"
 	"github.com/containerd/containerd/v2/core/mount"
@@ -47,7 +45,6 @@ import (
 	"github.com/containerd/typeurl/v2"
 	"github.com/opencontainers/runtime-spec/specs-go/features"
 
-	cgroupsv2 "github.com/containerd/cgroups/v3/cgroup2"
 	gorunc "github.com/containerd/go-runc"
 
 	"github.com/walteh/runm/cmd/containerd-shim-runm-v2/process"
@@ -258,27 +255,27 @@ func (manager) Start(ctx context.Context, id string, opts shim.StartOpts) (_ shi
 	// make sure to wait after start
 	go cmd.Wait()
 
-	if opts, err := shim.ReadRuntimeOptions[*options.Options](os.Stdin); err == nil {
-		if opts.ShimCgroup != "" {
-			if cgroups.Mode() == cgroups.Unified {
-				cg, err := cgroupsv2.Load(opts.ShimCgroup)
-				if err != nil {
-					return params, fmt.Errorf("failed to load cgroup %s: %w", opts.ShimCgroup, err)
-				}
-				if err := cg.AddProc(uint64(cmd.Process.Pid)); err != nil {
-					return params, fmt.Errorf("failed to join cgroup %s: %w", opts.ShimCgroup, err)
-				}
-			} else {
-				cg, err := cgroup1.Load(cgroup1.StaticPath(opts.ShimCgroup))
-				if err != nil {
-					return params, fmt.Errorf("failed to load cgroup %s: %w", opts.ShimCgroup, err)
-				}
-				if err := cg.AddProc(uint64(cmd.Process.Pid)); err != nil {
-					return params, fmt.Errorf("failed to join cgroup %s: %w", opts.ShimCgroup, err)
-				}
-			}
-		}
-	}
+	// if opts, err := shim.ReadRuntimeOptions[*options.Options](os.Stdin); err == nil {
+	// 	if opts.ShimCgroup != "" {
+	// 		if cgroups.Mode() == cgroups.Unified {
+	// 			cg, err := cgroupsv2.Load(opts.ShimCgroup)
+	// 			if err != nil {
+	// 				return params, fmt.Errorf("failed to load cgroup %s: %w", opts.ShimCgroup, err)
+	// 			}
+	// 			if err := cg.AddProc(uint64(cmd.Process.Pid)); err != nil {
+	// 				return params, fmt.Errorf("failed to join cgroup %s: %w", opts.ShimCgroup, err)
+	// 			}
+	// 		} else {
+	// 			cg, err := cgroup1.Load(cgroup1.StaticPath(opts.ShimCgroup))
+	// 			if err != nil {
+	// 				return params, fmt.Errorf("failed to load cgroup %s: %w", opts.ShimCgroup, err)
+	// 			}
+	// 			if err := cg.AddProc(uint64(cmd.Process.Pid)); err != nil {
+	// 				return params, fmt.Errorf("failed to join cgroup %s: %w", opts.ShimCgroup, err)
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 	if err := shim.AdjustOOMScore(cmd.Process.Pid); err != nil {
 		return params, fmt.Errorf("failed to adjust OOM score for shim: %w", err)

@@ -16,6 +16,9 @@ type Server struct {
 	runtime         runtime.Runtime
 	runtimeExtras   runtime.RuntimeExtras
 	socketAllocator runtime.SocketAllocator
+	eventHandler    runtime.EventHandler
+	cgroupAdapter   runtime.CgroupAdapter
+	guestManagement runtime.GuestManagement
 
 	state *state.State
 }

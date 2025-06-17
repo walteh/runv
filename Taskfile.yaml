@@ -242,7 +242,7 @@ tasks:
           - cmd: mkdir -p {{.TMP_DIR}}
           - cmd: mkdir -p {{.TMP_DIR}}/forks
           - for: {var: FORKS}
-            cmd: cp -r {{.ITEM}} {{.TMP_DIR}}/forks/
+            cmd: rsync -a --exclude='vendor/' --exclude='tmp/' --exclude='.git/' {{.ITEM}} {{.TMP_DIR}}/forks/
           - |-
             docker buildx build \
                 --platform=linux/{{.ARCH}} \
@@ -270,6 +270,28 @@ tasks:
         cmds:
           - for: {var: SUPPORTED_ARCHS}
             task: linux:initramfs:{{.ITEM}}
+
+    linux:vf:*:
+        label: 'linux:vf:{{.ARCH}}'
+        requires: {vars: [ARCH]}
+        deps:
+          - linux:kernel:{{.ARCH}}
+          - linux:initramfs:{{.ARCH}}
+        desc: builds the vf
+        vars:
+            ARCH: "{{index .MATCH 0}}"
+            KERNEL_DIR: "{{.BUILD_OUT_DIR}}/linux_kernel_{{ .ARCH }}"
+            INITRAMFS_DIR: "{{.BUILD_OUT_DIR}}/linux_initramfs_{{ .ARCH }}"
+            OUT_DIR: "{{.BUILD_OUT_DIR}}/linux_vf_{{ .ARCH }}"
+            TMP_DIR:
+                sh: mktemp -d
+        cmds:
+          - cmd: mkdir -p {{.TMP_DIR}}
+          - defer: rm -rf {{.TMP_DIR}}
+          - cmd: unxz {{.KERNEL_DIR}}/kernel.xz > {{.TMP_DIR}}/kernel
+          - cmd: unxz {{.INITRAMFS_DIR}}/initramfs.cpio.gz.xz > {{.TMP_DIR}}/initramfs.cpio.gz
+          - cmd: mv -f {{.TMP_DIR}}/kernel {{.OUT_DIR}}/kernel
+          - cmd: mv -f {{.TMP_DIR}}/initramfs.cpio.gz {{.OUT_DIR}}/initramfs.cpio.gz
 
     linux:all:
         desc: builds all linux components

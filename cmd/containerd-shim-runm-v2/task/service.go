@@ -22,7 +22,6 @@ import (
 	"os"
 	"sync"
 
-	"github.com/containerd/cgroups/v3"
 	"github.com/containerd/cgroups/v3/cgroup1"
 	"github.com/containerd/containerd/api/types/runc/options"
 	"github.com/containerd/containerd/api/types/task"
@@ -48,10 +47,10 @@ import (
 
 	"github.com/walteh/runm/cmd/containerd-shim-runm-v2/process"
 	"github.com/walteh/runm/cmd/containerd-shim-runm-v2/runm"
+	"github.com/walteh/runm/core/runc/oom"
 	"github.com/walteh/runm/core/runc/runtime"
-	"github.com/walteh/runm/pkg/oom"
-
-	oomv2 "github.com/walteh/runm/pkg/oom/v2"
+	"github.com/walteh/runm/core/virt/vf"
+	"github.com/walteh/runm/core/virt/vmm"
 )
 
 var (
@@ -61,19 +60,20 @@ var (
 
 // NewTaskService creates a new instance of a task service
 func NewTaskService(ctx context.Context, publisher shim.Publisher, sd shutdown.Service) (taskAPI.TTRPCTaskService, error) {
-	var (
-		ep  oom.Watcher
-		err error
-	)
-	if cgroups.Mode() == cgroups.Unified {
-		ep, err = oomv2.New(publisher)
-	} else {
-		// ep, err = oomv1.New(publisher)
-		return nil, fmt.Errorf("unsupported cgroup mode: %d", cgroups.Mode())
-	}
+
+	hpv := vf.NewHypervisor()
+	vm, err := vmm.NewContainerizedVirtualMachineFromRootfs(ctx, hpv, vmm.ContainerizedVMConfig{}, nil, nil)
 	if err != nil {
 		return nil, err
 	}
+
+	srv, err := vm.GuestService(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	ep := oom.NewWatcher(publisher, srv)
+
 	go ep.Run(ctx)
 	s := &service{
 		context:              ctx,
@@ -312,9 +312,9 @@ func (s *service) Start(ctx context.Context, r *taskAPI.StartRequest) (*taskAPI.
 	case "":
 		switch cg := container.Cgroup().(type) {
 		case cgroup1.Cgroup:
-			if err := s.ep.Add(container.ID, cg); err != nil {
-				log.G(ctx).WithError(err).Error("add cg to OOM monitor")
-			}
+			// if err := s.ep.Add(container.ID, cg); err != nil {
+			// 	log.G(ctx).WithError(err).Error("add cg to OOM monitor")
+			// }
 		case *cgroupsv2.Manager:
 			allControllers, err := cg.RootControllers()
 			if err != nil {
@@ -328,9 +328,11 @@ func (s *service) Start(ctx context.Context, r *taskAPI.StartRequest) (*taskAPI.
 					}
 				}
 			}
-			if err := s.ep.Add(container.ID, cg); err != nil {
-				log.G(ctx).WithError(err).Error("add cg to OOM monitor")
-			}
+
+			// todo: switch the toggle
+			// if err := s.ep.Add(container.ID, cg); err != nil {
+			// 	log.G(ctx).WithError(err).Error("add cg to OOM monitor")
+			// }
 		}
 
 		s.send(&eventstypes.TaskStart{
@@ -619,6 +621,7 @@ func (s *service) Shutdown(ctx context.Context, r *taskAPI.ShutdownRequest) (*pt
 }
 
 func (s *service) Stats(ctx context.Context, r *taskAPI.StatsRequest) (*taskAPI.StatsResponse, error) {
+
 	container, err := s.getContainer(r.ID)
 	if err != nil {
 		return nil, err

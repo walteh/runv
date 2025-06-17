@@ -15,6 +15,16 @@ import (
 	runmv1 "github.com/walteh/runm/proto/v1"
 )
 
+func ConvertCgroupEventFromProto(event *runmv1.CgroupEvent) runtime.CgroupEvent {
+	return runtime.CgroupEvent{
+		High:    event.GetHigh(),
+		Max:     event.GetMax(),
+		OOM:     event.GetOom(),
+		OOMKill: event.GetOomKill(),
+		Low:     event.GetLow(),
+	}
+}
+
 func ConvertStatsFromProto(stats *runmv1.RuncStats) (*gorunc.Stats, error) {
 	var runcStats gorunc.Stats
 	if err := json.Unmarshal(stats.GetRawJson(), &runcStats); err != nil {

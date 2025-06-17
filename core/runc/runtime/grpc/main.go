@@ -18,6 +18,8 @@ type GRPCClientRuntime struct {
 	runtimeExtras   runmv1.RuncExtrasServiceClient
 	socketAllocator runmv1.SocketAllocatorServiceClient
 	management      runmv1.GuestManagementServiceClient
+	cgroupAdapter   runmv1.GuestCgroupServiceClient
+	eventPublisher  runmv1.EventServiceClient
 
 	vsockProxier        runtime.VsockProxier
 	sharedDirPathPrefix string
@@ -49,6 +51,8 @@ func NewGRPCClientRuntimeFromConn(conn *grpc.ClientConn) (*GRPCClientRuntime, er
 		runtimeExtras:   runmv1.NewRuncExtrasServiceClient(conn),
 		socketAllocator: runmv1.NewSocketAllocatorServiceClient(conn),
 		management:      runmv1.NewGuestManagementServiceClient(conn),
+		cgroupAdapter:   runmv1.NewGuestCgroupServiceClient(conn),
+		eventPublisher:  runmv1.NewEventServiceClient(conn),
 		conn:            conn,
 		state:           state.NewState(),
 	}
@@ -70,6 +74,14 @@ func (me *GRPCClientRuntime) RuntimeExtras() runmv1.RuncExtrasServiceClient {
 
 func (me *GRPCClientRuntime) SocketAllocator() runmv1.SocketAllocatorServiceClient {
 	return me.socketAllocator
+}
+
+func (me *GRPCClientRuntime) CgroupAdapter() runmv1.GuestCgroupServiceClient {
+	return me.cgroupAdapter
+}
+
+func (me *GRPCClientRuntime) EventPublisher() runmv1.EventServiceClient {
+	return me.eventPublisher
 }
 
 // Close closes the client connection.

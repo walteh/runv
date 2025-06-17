@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"time"
 
+	"github.com/containerd/cgroups/v3/cgroup2/stats"
 	"github.com/containerd/console"
 	"github.com/opencontainers/runtime-spec/specs-go"
 
@@ -33,6 +34,37 @@ type RuntimeCreator interface {
 //go:mock
 type SocketAllocator interface {
 	AllocateSocket(ctx context.Context) (AllocatedSocket, error)
+}
+
+type CgroupEvent struct {
+	Low     uint64
+	High    uint64
+	Max     uint64
+	OOM     uint64
+	OOMKill uint64
+}
+
+type CgroupAdapter interface {
+	Stat(ctx context.Context) (*stats.Metrics, error)
+	ToggleControllers(ctx context.Context) error
+	OpenEventChan(ctx context.Context) (chan CgroupEvent, chan error, error)
+}
+
+type GuestManagement interface {
+	TimeSync(ctx context.Context, unixTimeNs uint64, timezone string) error
+	Readiness(ctx context.Context) error
+	RunCommand(ctx context.Context, stdin []byte, executable string, args []string, env []string, cwd string) error
+}
+
+type PublishEvent struct {
+	Topic string
+	Data  []byte
+}
+
+type EventHandler interface {
+	Publish(ctx context.Context, event *PublishEvent) error
+
+	Receive(ctx context.Context) (<-chan *PublishEvent, error)
 }
 
 //go:mock
