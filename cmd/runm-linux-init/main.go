@@ -107,6 +107,9 @@ func runGrpcVsockServer(ctx context.Context) error {
 		realRuntime,
 		mockRuntimeExtras,
 		realSocketAllocator,
+		realEventHandler,
+		realCgroupAdapter,
+		realGuestManagement,
 	)
 
 	serverz.RegisterGrpcServer(grpcVsockServer)

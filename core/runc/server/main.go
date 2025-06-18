@@ -28,7 +28,14 @@ type ServerOpt func(*ServerOpts)
 type ServerOpts struct {
 }
 
-func NewServer(r runtime.Runtime, runtimeExtras runtime.RuntimeExtras, socketAllocator runtime.SocketAllocator, opts ...ServerOpt) *Server {
+func NewServer(
+	r runtime.Runtime,
+	runtimeExtras runtime.RuntimeExtras,
+	socketAllocator runtime.SocketAllocator,
+	eventHandler runtime.EventHandler,
+	cgroupAdapter runtime.CgroupAdapter,
+	guestManagement runtime.GuestManagement,
+	opts ...ServerOpt) *Server {
 
 	optz := &ServerOpts{}
 	for _, opt := range opts {
@@ -49,6 +56,9 @@ func (s *Server) RegisterGrpcServer(grpcServer *grpc.Server) {
 	runmv1.RegisterRuncServiceServer(grpcServer, s)
 	runmv1.RegisterRuncExtrasServiceServer(grpcServer, s)
 	runmv1.RegisterSocketAllocatorServiceServer(grpcServer, s)
+	runmv1.RegisterCgroupAdapterServiceServer(grpcServer, s)
+	runmv1.RegisterEventServiceServer(grpcServer, s)
+	runmv1.RegisterGuestManagementServiceServer(grpcServer, s)
 }
 
 // 	// Create gRPC server

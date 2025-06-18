@@ -66,9 +66,10 @@ func (r *RunningVM[VM]) GuestService(ctx context.Context) (*grpcruntime.GRPCClie
 				lastError = err
 				continue
 			}
-			grpcConn, err := grpc.NewClient("runm-runtime",
+			grpcConn, err := grpc.NewClient("passthrough:target",
 				grpc.WithTransportCredentials(insecure.NewCredentials()),
 				grpc.WithContextDialer(func(ctx context.Context, addr string) (net.Conn, error) {
+					slog.InfoContext(ctx, "dialing vsock", "port", constants.RunmVsockPort, "ignored_addr", addr)
 					return conn, nil
 				}),
 			)
@@ -76,6 +77,10 @@ func (r *RunningVM[VM]) GuestService(ctx context.Context) (*grpcruntime.GRPCClie
 				lastError = err
 				continue
 			}
+
+			// test the connection
+			grpcConn.Connect()
+
 			r.runtime, err = grpcruntime.NewGRPCClientRuntimeFromConn(grpcConn)
 			if err != nil {
 				lastError = err
@@ -241,6 +246,7 @@ func (rvm *RunningVM[VM]) Start(ctx context.Context) error {
 	tsreq.SetUnixTimeNs(uint64(time.Now().UnixNano()))
 	response, err := connection.Management().GuestTimeSync(ctx, tsreq)
 	if err != nil {
+		slog.ErrorContext(ctx, "failed to time sync", "error", err)
 		return errors.Errorf("failed to time sync: %w", err)
 	}
 
