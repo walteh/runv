@@ -37,18 +37,42 @@ WORKDIR ${LINUX_DIR}
 
 ARG TARGETARCH
 
+# 1. Set the build target
+ENV ARCH=${TARGETARCH}
+#ENV CROSS_COMPILE=${TARGETARCH}-linux-gnu-   # if needed
+
+# 2. Copy in your config fragments
 COPY base.config ./
 COPY ${TARGETARCH}.fragment.config ./
 
+# RUN make ARCH=${TARGETARCH} defconfig
+
+# 3. Merge them into a working .config
 RUN scripts/kconfig/merge_config.sh -m base.config ${TARGETARCH}.fragment.config
 
-RUN make LOCALVERSION= olddefconfig
+RUN grep CONFIG_SQUASHFS .config
 
+
+# RUN make ARCH=${TARGETARCH} \
+# 	KCONFIG_ALLCONFIG=.config \
+# 	alldefconfig
+
+RUN grep CONFIG_SQUASHFS .config
+
+# 4. Update new symbols to defaults—but read YOUR .config!
+# RUN make ARCH=${TARGETARCH} \
+# 	KCONFIG_CONFIG=.config \
+# 	olddefconfig
+
+# 5. (Optional) Verify that squashfs stuck around
+# RUN grep CONFIG_SQUASHFS .config
+# 4) Apply defaults for any new options
+# RUN make ARCH=${TARGETARCH} olddefconfig
 RUN <<EOF
 if [ "${TARGETARCH}" = "arm64" ]; then
-	make LOCALVERSION= -j$(nproc) Image
+	make ARCH=${TARGETARCH} LOCALVERSION= -j$(nproc) Image
 else
-	make LOCALVERSION= -j$(nproc) bzImage
+	make ARCH=${TARGETARCH} LOCALVERSION= -j$(nproc) bzImage
 fi
 EOF
 
@@ -61,6 +85,9 @@ else
 	cp .config /boot/config
 fi
 EOF
+
+RUN grep CONFIG_EXFAT_FS .config
+RUN grep CONFIG_SQUASHFS .config
 
 ########################################################
 # export stage

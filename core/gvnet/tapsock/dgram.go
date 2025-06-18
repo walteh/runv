@@ -116,7 +116,9 @@ func NewDgramVirtioNet(ctx context.Context, macstr string) (*virtio.VirtioNet, *
 	}
 
 	// delegate cleanup to the VirtualNetworkRunner
-	cleanups = func() {}
+	cleanups = func() {
+		slog.InfoContext(ctx, "NOOP_CLEANUP up tapsock")
+	}
 
 	runner := &VirtualNetworkRunner{
 		name:    "virtual-network-runner(" + macstr + ")",

@@ -22,6 +22,7 @@ import (
 	"github.com/containerd/containerd/v2/plugins"
 	"github.com/containerd/plugin"
 	"github.com/containerd/plugin/registry"
+	"gitlab.com/tozd/go/errors"
 
 	"github.com/walteh/runm/cmd/containerd-shim-runm-v2/task"
 	"github.com/walteh/runm/core/runc/runtime"
@@ -46,17 +47,21 @@ func register() {
 		InitFn: func(ic *plugin.InitContext) (interface{}, error) {
 			pp, err := ic.GetByID(plugins.EventPlugin, "publisher")
 			if err != nil {
-				return nil, err
+				return nil, errors.Errorf("getting publisher: %w", err)
 			}
 			ss, err := ic.GetByID(plugins.InternalPlugin, "shutdown")
 			if err != nil {
-				return nil, err
+				return nil, errors.Errorf("getting shutdown: %w", err)
 			}
 			rtc, err := ic.GetByID(plugins.InternalPlugin, "runm-runtime-creator")
 			if err != nil {
-				return nil, err
+				return nil, errors.Errorf("getting runm-runtime-creator: %w", err)
 			}
-			return task.NewTaskService(ic.Context, pp.(shim.Publisher), ss.(shutdown.Service), rtc.(runtime.RuntimeCreator))
+			ts, err := task.NewTaskService(ic.Context, pp.(shim.Publisher), ss.(shutdown.Service), rtc.(runtime.RuntimeCreator))
+			if err != nil {
+				return nil, errors.Errorf("creating task service: %w", err)
+			}
+			return task.NewDebugTaskService(ts, true, true), nil
 		},
 	})
 

@@ -2,9 +2,10 @@
 # args
 ########################################################
 
-ARG BUSYBOX_VERSION=1.37.0
+ARG BUSYBOX_VERSION=1.36.1
 ARG GO_VERSION=1.24
 ARG ALPINE_VERSION=3.22
+ARG ALPINE_BUSYBOX_VERSION=3.21
 ARG DEBIAN_CODENAME=bookworm
 ARG SOCAT_VERSION=1.8.0.3
 
@@ -14,6 +15,7 @@ ARG E2FSPROGS_GIT_REF=master
 ARG RUNC_GIT_REF=main
 
 FROM alpine:${ALPINE_VERSION} AS alpine-ref
+FROM alpine:${ALPINE_BUSYBOX_VERSION} AS alpine-busybox-ref
 FROM debian:${DEBIAN_CODENAME}-slim AS debian-ref
 FROM golang:${GO_VERSION}-alpine${ALPINE_VERSION} AS alpine-golang-ref
 FROM golang:${GO_VERSION}-${DEBIAN_CODENAME} AS debian-golang-ref
@@ -62,7 +64,7 @@ RUN echo -e 'auto eth0\niface eth0 inet dhcp' > /rootfs/etc/network/interfaces
 ########################################################
 # busybox builder
 ########################################################
-FROM alpine-ref AS busybox-static-builder
+FROM alpine-busybox-ref AS busybox-static-builder
 RUN apk add --no-cache build-base wget tar linux-headers musl-dev musl-utils perl
 WORKDIR /build
 
@@ -81,7 +83,6 @@ COPY busybox.fragment.config .config.fragment
 RUN KCONFIG_ALLCONFIG=.config.fragment yes "" | make oldconfig
 
 ARG TARGET=aarch64
-
 RUN make -j$(nproc) CFLAGS="-static -fno-PIE" LDFLAGS="-static -no-pie"
 
 RUN mkdir -p /rootfs/bin /rootfs/sbin /rootfs/usr/sbin /rootfs/usr/bin /rootfs/usr/local/bin
@@ -238,7 +239,7 @@ FROM scratch AS initramfs-files
 COPY --from=runm-linux-mounter-builder /out/runm-linux-mounter /runm-linux-mounter
 
 # busybox initalized filesystem
-COPY --from=busybox-static-builder-2 /rootfs/ /
+COPY --from=busybox-static-builder /rootfs/ /
 
 # our raw files
 COPY udhcpc.default /rootfs/etc/udhcpc/default.script

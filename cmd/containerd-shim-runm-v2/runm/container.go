@@ -20,6 +20,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -39,6 +40,7 @@ import (
 	"github.com/containerd/typeurl/v2"
 	"github.com/opencontainers/runtime-spec/specs-go"
 
+	"github.com/walteh/run"
 	"github.com/walteh/runm/cmd/containerd-shim-runm-v2/process"
 	rtprocess "github.com/walteh/runm/core/runc/process"
 	"github.com/walteh/runm/core/runc/runtime"
@@ -133,6 +135,13 @@ func NewContainer(
 		return nil, fmt.Errorf("failed to mount rootfs component: %w", err)
 	}
 
+	defer func() {
+		<-ctx.Done()
+		slog.InfoContext(ctx, "DONE, cleaning up container", "id", r.ID)
+	}()
+	if ctx.Err() != nil {
+		slog.ErrorContext(ctx, "context done before creating container runtime", "id", r.ID)
+	}
 	rt, err := rtc.Create(ctx, &runtime.RuntimeOptions{
 		Namespace:           ns,
 		ProcessCreateConfig: config,
@@ -144,6 +153,17 @@ func NewContainer(
 		return nil, fmt.Errorf("failed to create runtime: %w", err)
 	}
 
+	slog.InfoContext(ctx, "created container runtime", "id", r.ID)
+
+	if runnable, ok := rt.(run.Runnable); ok {
+		go func() {
+			slog.InfoContext(ctx, "running container runtime", "id", r.ID)
+			if err := runnable.Run(ctx); err != nil {
+				slog.ErrorContext(ctx, "failed to run container runtime", "id", r.ID, "error", err)
+			}
+		}()
+	}
+
 	var cgroupAdapter runtime.CgroupAdapter
 
 	// todo: this needs to be better
@@ -152,6 +172,8 @@ func NewContainer(
 	} else {
 		return nil, fmt.Errorf("runtime is not a cgroup adapter")
 	}
+
+	slog.InfoContext(ctx, "creating init process", "id", r.ID)
 
 	p, err := newInit(
 		ctx,

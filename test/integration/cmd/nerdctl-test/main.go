@@ -49,13 +49,12 @@ import (
 	"github.com/pelletier/go-toml/v2"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+	slogctx "github.com/veqryn/slog-context"
 
 	ncdefaults "github.com/containerd/nerdctl/v2/pkg/defaults"
 
-	"github.com/walteh/ec1/pkg/logging/logrusshim"
-	"github.com/walteh/ec1/pkg/tcontainerd"
-
-	ec1logging "github.com/walteh/ec1/pkg/logging"
+	ec1logging "github.com/walteh/runm/pkg/logging"
+	"github.com/walteh/runm/test/integration/env"
 )
 
 func init() {
@@ -72,9 +71,8 @@ func init() {
 }
 
 func init() {
-	logrusshim.ForwardLogrusToSlogGlobally()
 
-	os.Setenv("NERDCTL_TOML", tcontainerd.NerdctlConfigTomlPath())
+	os.Setenv("NERDCTL_TOML", env.NerdctlConfigTomlPath())
 
 	// os.Args = append(os.Args, "run", "--platform=linux/arm64", "--runtime=containerd.shim.harpoon.v2", "--network=host", "--rm", "alpine:latest", "echo", "'hi'")
 }
@@ -85,13 +83,13 @@ var (
 )
 
 func main() {
-	tcontainerd.ShimReexecInit()
+	env.ShimReexecInit()
 
 	if reexec.Init() {
 		os.Exit(0)
 	}
 
-	err := tcontainerd.SetupReexec(context.Background(), true)
+	err := env.SetupReexec(context.Background(), true)
 	if err != nil {
 		log.L.Fatal("Failed to setup reexec", "error", err)
 	}
@@ -181,7 +179,8 @@ func xmain() error {
 
 	ctx := context.Background()
 
-	ctx = ec1logging.SetupSlogSimpleToWriterWithProcessName(ctx, os.Stdout, true, "nerdctl")
+	l := ec1logging.NewDefaultDevLogger("nerdctl", os.Stdout)
+	ctx = slogctx.NewCtx(ctx, l)
 
 	return app.ExecuteContext(ctx)
 }

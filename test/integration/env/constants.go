@@ -8,7 +8,7 @@ import (
 var (
 	globalWorkDir           = "/tmp/tcontainerd"
 	globalPersistentWorkDir = "/tmp/tcontainerd-persistent"
-	namespace               = "runm"
+	namespace               = "default"
 	shimRuntimeID           = "io.containerd.runc.v2"
 	shimName                = "containerd-shim-runc-v2"
 	timeout                 = 10 * time.Second

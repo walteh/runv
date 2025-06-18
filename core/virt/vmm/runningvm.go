@@ -45,6 +45,7 @@ type RunningVM[VM VirtualMachine] struct {
 }
 
 func (r *RunningVM[VM]) GuestService(ctx context.Context) (*grpcruntime.GRPCClientRuntime, error) {
+	slog.InfoContext(ctx, "getting guest service", "id", r.vm.ID())
 	if r.runtime != nil {
 		return r.runtime, nil
 	}
@@ -59,6 +60,7 @@ func (r *RunningVM[VM]) GuestService(ctx context.Context) (*grpcruntime.GRPCClie
 	for {
 		select {
 		case <-ticker.C:
+			slog.InfoContext(ctx, "connecting to vsock", "port", constants.RunmVsockPort)
 			conn, err := r.vm.VSockConnect(ctx, uint32(constants.RunmVsockPort))
 			if err != nil {
 				lastError = err
@@ -70,6 +72,10 @@ func (r *RunningVM[VM]) GuestService(ctx context.Context) (*grpcruntime.GRPCClie
 					return conn, nil
 				}),
 			)
+			if err != nil {
+				lastError = err
+				continue
+			}
 			r.runtime, err = grpcruntime.NewGRPCClientRuntimeFromConn(grpcConn)
 			if err != nil {
 				lastError = err
@@ -77,8 +83,10 @@ func (r *RunningVM[VM]) GuestService(ctx context.Context) (*grpcruntime.GRPCClie
 			}
 			return r.runtime, nil
 		case <-timeout.C:
+			slog.ErrorContext(ctx, "timeout waiting for guest service connection", "error", lastError)
 			return nil, errors.Errorf("timeout waiting for guest service connection: %w", lastError)
 		case <-ctx.Done():
+			slog.ErrorContext(ctx, "context done waiting for guest service connection", "error", lastError)
 			return nil, ctx.Err()
 		}
 	}
@@ -137,7 +145,7 @@ func (r *RunningVM[VM]) RunCommandSimple(ctx context.Context, command string) ([
 
 func (rvm *RunningVM[VM]) Start(ctx context.Context) error {
 
-	errgrp, ctx := errgroup.WithContext(ctx)
+	errgrp, _ := errgroup.WithContext(ctx)
 
 	errgrp.Go(func() error {
 		err := rvm.netdev.Wait(ctx)
@@ -148,7 +156,7 @@ func (rvm *RunningVM[VM]) Start(ctx context.Context) error {
 		return nil
 	})
 
-	err := bootContainerVM(ctx, rvm.VM())
+	err := bootVM(ctx, rvm.VM())
 	if err != nil {
 		if err := TryAppendingConsoleLog(ctx, rvm.workingDir); err != nil {
 			slog.ErrorContext(ctx, "error appending console log", "error", err)
@@ -165,15 +173,15 @@ func (rvm *RunningVM[VM]) Start(ctx context.Context) error {
 		return nil
 	})
 
-	errgrp.Go(func() error {
-		err = rvm.ForwardStdio(ctx, rvm.stdin, rvm.stdout, rvm.stderr)
-		if err != nil {
-			slog.ErrorContext(ctx, "error forwarding stdio", "error", err)
-			return errors.Errorf("forwarding stdio: %w", err)
-		}
-		slog.WarnContext(ctx, "forwarding stdio done")
-		return nil
-	})
+	// errgrp.Go(func() error {
+	// 	err = rvm.ForwardStdio(ctx, rvm.stdin, rvm.stdout, rvm.stderr)
+	// 	if err != nil {
+	// 		slog.ErrorContext(ctx, "error forwarding stdio", "error", err)
+	// 		return errors.Errorf("forwarding stdio: %w", err)
+	// 	}
+	// 	slog.WarnContext(ctx, "forwarding stdio done")
+	// 	return nil
+	// })
 
 	err = TailConsoleLog(ctx, rvm.workingDir)
 	if err != nil {
@@ -220,10 +228,14 @@ func (rvm *RunningVM[VM]) Start(ctx context.Context) error {
 		}
 	}()
 
+	slog.InfoContext(ctx, "waiting for guest service")
+
 	connection, err := rvm.GuestService(ctx)
 	if err != nil {
 		return errors.Errorf("failed to get guest service: %w", err)
 	}
+
+	slog.InfoContext(ctx, "got guest service - making time sync request to management service")
 
 	tsreq := &runmv1.GuestTimeSyncRequest{}
 	tsreq.SetUnixTimeNs(uint64(time.Now().UnixNano()))
@@ -237,7 +249,7 @@ func (rvm *RunningVM[VM]) Start(ctx context.Context) error {
 	return nil
 }
 
-func bootContainerVM[VM VirtualMachine](ctx context.Context, vm VM) error {
+func bootVM[VM VirtualMachine](ctx context.Context, vm VM) error {
 	bootCtx, bootCancel := context.WithCancel(ctx)
 	errGroup, ctx := errgroup.WithContext(bootCtx)
 	defer func() {

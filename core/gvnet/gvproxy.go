@@ -72,6 +72,11 @@ func NewProxy(ctx context.Context, cfg *GvproxyConfig) (Proxy, error) {
 
 	group := run.New(run.WithLogger(slog.Default()))
 
+	go func() {
+		<-ctx.Done()
+		slog.InfoContext(ctx, "DONE, cleaning up gvproxy")
+	}()
+
 	// start the vmFileSocket
 	device, runner, err := tapsock.NewDgramVirtioNet(ctx, VIRTUAL_GUEST_MAC)
 	if err != nil {

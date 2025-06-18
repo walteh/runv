@@ -58,6 +58,10 @@ func WithValues(opt []slog.Attr) OptLoggerOptsSetter {
 	return func(o *LoggerOpts) { o.values = opt }
 }
 
+func WithGlobalLogWriter(opt io.Writer) OptLoggerOptsSetter {
+	return func(o *LoggerOpts) { o.globalLogWriter = opt }
+}
+
 func WithDelayedHandlerCreatorOpts(opt []OptLoggerOptsSetter) OptLoggerOptsSetter {
 	return func(o *LoggerOpts) { o.delayedHandlerCreatorOpts = opt }
 }

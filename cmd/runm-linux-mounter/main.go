@@ -23,9 +23,9 @@ import (
 	"github.com/walteh/runm/pkg/logging"
 )
 
-var binariesToCopy = []string{
-	"/hbin/lshw",
-}
+// var binariesToCopy = []string{
+// 	"/hbin/lshw",
+// }
 
 func main() {
 
@@ -72,11 +72,80 @@ func mount(ctx context.Context) error {
 		os.MkdirAll(constants.Ec1AbsPath, 0755)
 	}
 
+	// mount devtmpfs
+
+	os.MkdirAll("/dev", 0755)
+	os.MkdirAll("/sys", 0755)
+	os.MkdirAll("/proc", 0755)
+
+	if err := ExecCmdForwardingStdio(ctx, "mount", "-t", "devtmpfs", "devtmpfs", "/dev"); err != nil {
+		return errors.Errorf("problem mounting devtmpfs: %w", err)
+	}
+
+	// mount sysfs
+	if err := ExecCmdForwardingStdio(ctx, "mount", "-t", "sysfs", "sysfs", "/sys"); err != nil {
+		return errors.Errorf("problem mounting sysfs: %w", err)
+	}
+
+	// mount proc
+	if err := ExecCmdForwardingStdio(ctx, "mount", "-t", "proc", "proc", "/proc"); err != nil {
+		return errors.Errorf("problem mounting proc: %w", err)
+	}
+
+	// cmds = append(cmds, []string{"mkdir", "-p", prefix + "/dev/pts"})
+	// cmds = append(cmds, []string{"mount", "-t", "devpts", "devpts", prefix + "/dev/pts", "-o", "gid=5,mode=620,ptmxmode=666"})
+
 	// mount the ec1 virtiofs
 	err := ExecCmdForwardingStdio(ctx, "mount", "-t", "virtiofs", constants.Ec1VirtioTag, constants.Ec1AbsPath)
 	if err != nil {
 		return errors.Errorf("problem mounting ec1 virtiofs: %w", err)
 	}
+
+	if _, err := os.Stat(constants.NewRootAbsPath); os.IsNotExist(err) {
+		os.MkdirAll(constants.NewRootAbsPath, 0755)
+	}
+
+	err = ExecCmdForwardingStdio(ctx, "mount", "-t", "virtiofs", constants.RootfsVirtioTag, constants.NewRootAbsPath)
+	if err != nil {
+		return errors.Errorf("problem mounting rootfs virtiofs: %w", err)
+	}
+
+	if _, err := os.Stat(constants.MbinAbsPath); os.IsNotExist(err) {
+		os.MkdirAll(constants.MbinAbsPath, 0755)
+	}
+
+	// err = ExecCmdForwardingStdio(ctx, "ls", "-lah", "/proc")
+	// if err != nil {
+	// 	return errors.Errorf("problem mounting mbin: %w", err)
+	// }
+
+	// err = ExecCmdForwardingStdio(ctx, "ls", "-lah", "/proc")
+	// if err != nil {
+	// 	return errors.Errorf("problem mounting mbin: %w", err)
+	// }
+
+	// err = ExecCmdForwardingStdio(ctx, "cat", "/proc/filesystems")
+	// if err != nil {
+	// 	return errors.Errorf("problem mounting mbin: %w", err)
+	// }
+
+	// err = ExecCmdForwardingStdio(ctx, "ls", "-lah", "/dev")
+	// if err != nil {
+	// 	return errors.Errorf("problem mounting mbin: %w", err)
+	// }
+
+	// ///bin/zcat /proc/config.gz | /bin/grep CONFIG_SQUASHFS
+	// err = ExecCmdForwardingStdio(ctx, "sh", "-c", "/bin/zcat /proc/config.gz | /bin/grep CONFIG_SQUASHFS")
+	// if err != nil {
+	// 	return errors.Errorf("problem mounting mbin: %w", err)
+	// }
+
+	err = ExecCmdForwardingStdio(ctx, "mount", "-t", constants.MbinFSType, "-o", "ro", constants.MbinVirtioTag, constants.MbinAbsPath)
+	if err != nil {
+		return errors.Errorf("problem mounting mbin: %w", err)
+	}
+
+	// mount the rootfs virtiofs
 
 	bindMounts, exists, err := loadBindMounts(ctx)
 	if err != nil {
@@ -96,7 +165,7 @@ func mount(ctx context.Context) error {
 	// 	return errors.Errorf("no spec found")
 	// }
 
-	if err := mountRootfsSecondary(ctx, constants.NewRootAbsPath, bindMounts); err != nil {
+	if err := mountRootfsSecondary(ctx, "", bindMounts); err != nil {
 		return errors.Errorf("problem mounting rootfs secondary: %w", err)
 	}
 
@@ -147,13 +216,18 @@ func mountRootfsPrimary(ctx context.Context) error {
 
 	_ = ExecCmdForwardingStdio(ctx, "ls", "-lah", "/newroot")
 
-	if err := os.MkdirAll(filepath.Join(constants.NewRootAbsPath, constants.Ec1AbsPath), 0755); err != nil {
-		return errors.Errorf("making directories: %w", err)
-	}
+	// if err := os.MkdirAll(filepath.Join(constants.NewRootAbsPath), 0755); err != nil {
+	// 	return errors.Errorf("making directories: %w", err)
+	// }
 
-	if err := ExecCmdForwardingStdio(ctx, "mount", "--move", constants.Ec1AbsPath, filepath.Join(constants.NewRootAbsPath, constants.Ec1AbsPath)); err != nil {
-		return errors.Errorf("mounting ec1: %w", err)
-	}
+	// // mount the first block device as the mbin
+	// if err := ExecCmdForwardingStdio(ctx, "mount", "-t", constants.MbinFSType, "/dev/sda1", constants.MbinAbsPath); err != nil {
+	// 	return errors.Errorf("mounting mbin: %w", err)
+	// }
+
+	// if err := ExecCmdForwardingStdio(ctx, "mount", "--move", constants.Ec1AbsPath, filepath.Join(constants.NewRootAbsPath, constants.Ec1AbsPath)); err != nil {
+	// 	return errors.Errorf("mounting ec1: %w", err)
+	// }
 
 	cmds := [][]string{}
 
@@ -164,11 +238,11 @@ func mountRootfsPrimary(ctx context.Context) error {
 
 	// cmds = append(cmds, copyMounts...)
 
-	for _, binary := range binariesToCopy {
-		cmds = append(cmds, []string{"mkdir", "-p", filepath.Join(constants.NewRootAbsPath, filepath.Dir(binary))})
-		cmds = append(cmds, []string{"touch", filepath.Join(constants.NewRootAbsPath, binary)})
-		cmds = append(cmds, []string{"mount", "--bind", binary, filepath.Join(constants.NewRootAbsPath, binary)})
-	}
+	// for _, binary := range binariesToCopy {
+	// 	cmds = append(cmds, []string{"mkdir", "-p", filepath.Join(constants.NewRootAbsPath, filepath.Dir(binary))})
+	// 	cmds = append(cmds, []string{"touch", filepath.Join(constants.NewRootAbsPath, binary)})
+	// 	cmds = append(cmds, []string{"mount", "--bind", binary, filepath.Join(constants.NewRootAbsPath, binary)})
+	// }
 
 	for _, cmd := range cmds {
 		err := ExecCmdForwardingStdio(ctx, cmd...)
@@ -191,9 +265,6 @@ func mountRootfsSecondary(ctx context.Context, prefix string, customMounts []spe
 	// 	return errors.Errorf("making directories: %w", err)
 	// }
 
-	cmds = append(cmds, []string{"mkdir", "-p", prefix + "/dev/pts"})
-	cmds = append(cmds, []string{"mount", "-t", "devpts", "devpts", prefix + "/dev/pts", "-o", "gid=5,mode=620,ptmxmode=666"})
-
 	// dirs = append(dirs, filepath.Join(prefix, constants.Ec1AbsPath))
 
 	// trying to figure out how to proerly do this to not skip things
@@ -207,7 +278,16 @@ func mountRootfsSecondary(ctx context.Context, prefix string, customMounts []spe
 		// 	if mount.Type == "bind" || slices.Contains(mount.Options, "rbind") {
 		// 		continue
 		// 	}
-		// }
+
+		if mount.Source == constants.RootfsVirtioTag {
+			continue
+		}
+
+		if mount.Destination == "/dev" {
+			continue
+		}
+
+		slog.InfoContext(ctx, "mounting", "dest", dest, "mount", mount)
 		cmds = append(cmds, []string{"mkdir", "-p", dest})
 		// if err := os.MkdirAll(filepath.Dir(dest), 0755); err != nil {
 		// 	return errors.Errorf("making directories: %w", err)
@@ -243,7 +323,7 @@ func mountRootfsSecondary(ctx context.Context, prefix string, customMounts []spe
 	}
 
 	for _, cmd := range cmds {
-		err := ExecCmdForwardingStdio(ctx, cmd...)
+		err := ExecCmdForwardingStdioChroot(ctx, constants.NewRootAbsPath, cmd...)
 		if err != nil {
 			return errors.Errorf("running command: %v: %w", cmd, err)
 		}
@@ -256,32 +336,34 @@ func mountRootfsSecondary(ctx context.Context, prefix string, customMounts []spe
 
 func switchRoot(ctx context.Context) error {
 
-	if err := ExecCmdForwardingStdio(ctx, "touch", "/newroot/harpoond"); err != nil {
-		return errors.Errorf("touching harpoond: %w", err)
-	}
+	// if err := ExecCmdForwardingStdio(ctx, "touch", "/newroot/harpoond"); err != nil {
+	// 	return errors.Errorf("touching harpoond: %w", err)
+	// }
 
-	// bind hbin
-	if err := ExecCmdForwardingStdio(ctx, "ls", "-lah", "/newroot/hbin"); err != nil {
-		return errors.Errorf("binding hbin: %w", err)
-	}
+	// // bind hbin
+	// if err := ExecCmdForwardingStdio(ctx, "ls", "-lah", "/newroot/hbin"); err != nil {
+	// 	return errors.Errorf("binding hbin: %w", err)
+	// }
 
 	// rename ourself to new root
-	if err := ExecCmdForwardingStdio(ctx, "mount", "--bind", os.Args[0], "/newroot/harpoond"); err != nil {
-		return errors.Errorf("renaming self: %w", err)
-	}
+	// if err := ExecCmdForwardingStdio(ctx, "mount", "--bind", os.Args[0], "/newroot/harpoond"); err != nil {
+	// 	return errors.Errorf("renaming self: %w", err)
+	// }
 
-	entrypoint := []string{"/harpoond"}
+	// entrypoint := []string{"/mbin/runm-linux-init"}
 
-	env := []string{}
-	env = append(env, "PATH=/usr/sbin:/usr/bin:/sbin:/bin:/hbin")
+	env := os.Environ()
+	argc := "/mbin/runm-linux-init"
+	argv := []string{}
+	// env = append(env, "PATH=/usr/sbin:/usr/bin:/sbin:/bin:/hbin")
 
-	argc := "/bin/busybox"
-	argv := append([]string{"switch_root", constants.NewRootAbsPath}, entrypoint...)
+	// argc := "/bin/busybox"
+	// argv := append([]string{"switch_root", constants.NewRootAbsPath}, entrypoint...)
 
 	slog.InfoContext(ctx, "switching root - godspeed little process", "rootfs", constants.NewRootAbsPath, "argv", argv)
 
 	if err := syscall.Exec(argc, argv, env); err != nil {
-		return errors.Errorf("Failed to exec %v %v: %v", entrypoint, argv, err)
+		return errors.Errorf("Failed to exec %v %v: %v", argc, argv, err)
 	}
 
 	panic("unreachable, we hand off to the entrypoint")
@@ -323,6 +405,10 @@ func loadSpec(ctx context.Context) (spec *oci.Spec, exists bool, err error) {
 }
 
 func ExecCmdForwardingStdio(ctx context.Context, cmds ...string) error {
+	return ExecCmdForwardingStdioChroot(ctx, "", cmds...)
+}
+
+func ExecCmdForwardingStdioChroot(ctx context.Context, chroot string, cmds ...string) error {
 	if len(cmds) == 0 {
 		return errors.Errorf("no command to execute")
 	}
@@ -338,6 +424,7 @@ func ExecCmdForwardingStdio(ctx context.Context, cmds ...string) error {
 	cmd := exec.CommandContext(ctx, argc, argv...)
 	cmd.SysProcAttr = &syscall.SysProcAttr{
 		// Cloneflags: syscall.CLONE_NEWNS,
+		Chroot: chroot,
 	}
 
 	path := os.Getenv("PATH")

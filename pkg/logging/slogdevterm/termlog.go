@@ -3,6 +3,7 @@ package slogdevterm
 import (
 	"context"
 	"fmt"
+	"hash/fnv"
 	"io"
 	"log/slog"
 	"os"
@@ -57,6 +58,68 @@ type TermLogger struct {
 	renderer      *lipgloss.Renderer
 	name          string
 	hyperlinkFunc HyperlinkFunc
+	nameColors    map[string]lipgloss.Color // Map to cache colors for names
+}
+
+// Generate a deterministic neon color from a string
+func generateDeterministicNeonColor(s string) lipgloss.Color {
+	// Use FNV hash for a deterministic but distributed value
+	h := fnv.New32a()
+	h.Write([]byte(s))
+	hash := h.Sum32()
+
+	// Enhanced color palette - larger variety of vibrant colors
+	neonColors := []string{
+		// Primary Neons
+		"#FF00FF", // Magenta
+		"#00FFFF", // Cyan
+		"#FF0000", // Red
+		"#00FF00", // Green
+		"#0000FF", // Blue
+		"#FFFF00", // Yellow
+
+		// Secondary Neons
+		"#FF4500", // Orange Red
+		"#9D00FF", // Purple
+		"#FF0080", // Hot Pink
+		"#00FF80", // Spring Green
+		"#00B0FF", // Bright Blue
+		"#80FF00", // Lime Green
+
+		// Tertiary Neons
+		"#FF79E1", // Neon Pink
+		"#7FFFD4", // Aquamarine
+		"#FFD700", // Gold
+		"#1E90FF", // Dodger Blue
+		"#00FA9A", // Medium Spring Green
+		"#FA8072", // Salmon
+		"#E6FF00", // Acid Green
+		"#FF73B3", // Tickle Me Pink
+
+		// Vibrant Pastels
+		"#FF9E80", // Coral
+		"#F740FF", // Fuchsia
+		"#40DFFF", // Electric Blue
+		"#8B78E6", // Medium Purple
+		"#00BFFF", // Deep Sky Blue
+		"#CCFF00", // Electric Lime
+		"#FF6037", // Outrageous Orange
+		"#00CCCC", // Caribbean Green
+		"#B3FF00", // Spring Bud
+		"#FF4ADE", // Purple Pizzazz
+
+		// Rich Jewel Tones
+		"#3300FF", // Ultramarine
+		"#00FF9C", // Caribbean Green
+		"#FF3800", // Coquelicot
+		"#56FF0D", // Screamin' Green
+		"#AE00FB", // Electric Violet
+	}
+
+	// Use the hash to select a color
+	index := hash % uint32(len(neonColors))
+
+	return lipgloss.Color(neonColors[index])
 }
 
 func NewTermLogger(writer io.Writer, sopts *slog.HandlerOptions, opts ...TermLoggerOption) *TermLogger {
@@ -67,6 +130,7 @@ func NewTermLogger(writer io.Writer, sopts *slog.HandlerOptions, opts ...TermLog
 		renderOpts:    []termenv.OutputOption{},
 		name:          "",
 		hyperlinkFunc: hyperlink,
+		nameColors:    make(map[string]lipgloss.Color),
 	}
 	for _, opt := range opts {
 		opt(l)
@@ -101,9 +165,32 @@ func (l *TermLogger) Handle(ctx context.Context, r slog.Record) error {
 	var b strings.Builder
 	var appendageBuilder strings.Builder
 
+	enableNameColors := false
+
 	// 0. Name.
 	if l.name != "" {
-		b.WriteString(l.render(l.styles.Prefix, strings.ToUpper(l.name)))
+		name := l.name
+		if len(name) > maxNameLength {
+			name = name[:maxNameLength]
+		}
+
+		prefixStyle := l.styles.Prefix
+
+		if enableNameColors {
+
+			// Get or generate a color for this name
+			nameColor, exists := l.nameColors[name]
+			if !exists {
+				// Generate a deterministic color based on the name
+				nameColor = generateDeterministicNeonColor(name)
+				l.nameColors[name] = nameColor
+			}
+
+			prefixStyle = prefixStyle.Foreground(nameColor).Bold(true).Faint(true)
+		}
+
+		// Create a style with the deterministic color
+		b.WriteString(l.render(prefixStyle, strings.ToUpper(name)))
 		b.WriteByte(' ')
 	}
 

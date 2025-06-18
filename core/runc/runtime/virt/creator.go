@@ -2,6 +2,7 @@ package virt
 
 import (
 	"context"
+	"log/slog"
 
 	"github.com/containers/common/pkg/strongunits"
 	"github.com/opencontainers/runtime-spec/specs-go/features"
@@ -53,10 +54,16 @@ func (me *RunmVMRuntimeCreator[VM]) Features(ctx context.Context) (*features.Fea
 }
 
 func (me *RunmVMRuntimeCreator[VM]) Create(ctx context.Context, opts *runtime.RuntimeOptions) (runtime.Runtime, error) {
+	if ctx.Err() != nil {
+		slog.ErrorContext(ctx, "context done before creating VM runtime")
+		return nil, ctx.Err()
+	}
 	vm, err := NewRunmVMRuntime(ctx, me.hpv, opts, me.maxMemory, me.vcpus)
 	if err != nil {
 		return nil, errors.Errorf("failed to create VM: %w", err)
 	}
+
+	slog.InfoContext(ctx, "created VM", "id", opts.ProcessCreateConfig.ID)
 	return vm, nil
 }
 

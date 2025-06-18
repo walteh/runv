@@ -111,6 +111,8 @@ func runGrpcVsockServer(ctx context.Context) error {
 
 	serverz.RegisterGrpcServer(grpcVsockServer)
 
+	slog.InfoContext(ctx, "listening on vsock", "port", constants.RunmVsockPort)
+
 	listener, err := vsock.ListenContextID(3, uint32(constants.RunmVsockPort), nil)
 	if err != nil {
 		slog.ErrorContext(ctx, "problem listening vsock", "error", err)
@@ -120,6 +122,7 @@ func runGrpcVsockServer(ctx context.Context) error {
 	egroup := errgroup.Group{}
 
 	egroup.Go(func() error {
+		slog.InfoContext(ctx, "serving grpc vsock server", "port", constants.RunmVsockPort)
 		if err := grpcVsockServer.Serve(listener); err != nil {
 			return errors.Errorf("problem serving grpc vsock server: %w", err)
 		}

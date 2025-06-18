@@ -13,6 +13,9 @@ vars:
       - ../go-runc
       - ../ttrpc
       - ../gvisor-tap-vsock
+      - ../go-errors
+      - ../nerdctl
+      - ../containerd
     BUILD_OUT_DIR: gen/build
 
 env:
@@ -184,7 +187,7 @@ tasks:
         requires: {vars: [ARCH]}
         desc: builds the kernel
         sources:
-          - ./harpoon/kernel/**
+          - ./linux/kernel/**
         generates:
           - "./{{.BUILD_OUT_DIR}}/linux_kernel_{{ .ARCH }}/**"
         vars:
@@ -289,10 +292,12 @@ tasks:
           - defer: rm -rf {{.TMP_DIR}}
           - cmd: cp {{.KERNEL_DIR}}/kernel.xz {{.TMP_DIR}}/kernel.xz
           - cmd: cp {{.INITRAMFS_DIR}}/initramfs.cpio.gz.xz {{.TMP_DIR}}/initramfs.cpio.gz.xz
+          - cmd: cp {{.INITRAMFS_DIR}}/mbin.squashfs {{.TMP_DIR}}/mbin.squashfs
           - cmd: unxz {{.TMP_DIR}}/kernel.xz
           - cmd: unxz {{.TMP_DIR}}/initramfs.cpio.gz.xz
           - cmd: mv -f {{.TMP_DIR}}/kernel {{.OUT_DIR}}/kernel
           - cmd: mv -f {{.TMP_DIR}}/initramfs.cpio.gz {{.OUT_DIR}}/initramfs.cpio.gz
+          - cmd: mv -f {{.TMP_DIR}}/mbin.squashfs {{.OUT_DIR}}/mbin.squashfs
 
     linux:all:
         desc: builds all linux components
@@ -361,10 +366,10 @@ tasks:
     dev:shim:killall:
         desc: kills all running containers
         cmds:
-          - cmd: sudo -A pkill -f containerd-shim-harpoon-v2 || true
-          - cmd: sudo -A pkill -f nerdctl-dev || true
-          - cmd: sudo -A killall -9 containerd-shim-harpoon-v2 || true
-          - cmd: sudo -A killall -9 nerdctl-dev || true
+          - cmd: sudo -A pkill -f containerd-shim-runc-v2 || true
+          - cmd: sudo -A pkill -f nerdctl-test || true
+          - cmd: sudo -A killall -9 containerd-shim-runc-v2 || true
+          - cmd: sudo -A killall -9 nerdctl-test || true
 
     dev:2025-06-08:01:
         desc: runs the shim for 2025-06-08
@@ -428,6 +433,24 @@ tasks:
         cmds:
           - cmd: CGO_ENABLED=1 go build -buildmode=plugin -o /tmp/proc-demo/vz-plugin.so ./cmd/plugin-demo/plugin/main.go
           - cmd: ./gow run -codesign ./cmd/proc-demo -{{.ARG}}
+
+    dev:2025-06-18:01:
+        desc: runs the shim for 2025-06-08
+        env:
+            LINUX_RUNTIME_BUILD_DIR:
+                sh: realpath ./gen/build/linux_vf_arm64
+        cmds:
+          - task: dev:shim:killall
+          - task: linux:vf:arm64
+          - cmd: |-
+                timeout 20s sudo -A -E go tool goshim run -codesign -log-file-to-append-in=.logs/containerd.log ./test/integration/cmd/nerdctl-test run \
+                    --platform=linux/arm64 \
+                    --network=host \
+                    --runtime=containerd.shim.runc.v2 \
+                    --pull=missing \
+                    --rm \
+                    docker.io/oven/bun:alpine \
+                    --version
 
     setup:
         desc: sets up the environment

@@ -353,6 +353,8 @@ github.com/BurntSushi/toml v1.4.0/go.mod h1:ukJfTF/6rtPPRCnwkur4qwRxa8vTRFBF0uk2
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802 h1:1BDTz0u9nC3//pOCMdNH+CiXJVYJh5UQNCOBG7jbELc=
 github.com/Code-Hex/go-generics-cache v1.5.1 h1:6vhZGc5M7Y/YD8cIUcY8kcuQLB4cHR7U+0KMqAA0KcU=
 github.com/Code-Hex/go-generics-cache v1.5.1/go.mod h1:qxcC9kRVrct9rHeiYpFWSoW1vxyillCVzX13KZG8dl4=
+github.com/Code-Hex/vz/v3 v3.7.0 h1:VEkfq5TVKnv85M81gQVPzLH9JzHrUJN/QQMpDZ+odPA=
+github.com/Code-Hex/vz/v3 v3.7.0/go.mod h1:1LsW0jqW0r0cQ+IeR4hHbjdqOtSidNCVMWhStMHGho8=
 github.com/DATA-DOG/go-sqlmock v1.5.2 h1:OcvFkGmslmlZibjAjaHm3L//6LiuBgolP7OputlJIzU=
 github.com/DATA-DOG/go-sqlmock v1.5.2/go.mod h1:88MAG/4G7SMwSE3CeA0ZKzrT5CiOU3OJ+JlNzwDqpNU=
 github.com/DataDog/appsec-internal-go v1.9.0 h1:cGOneFsg0JTRzWl5U2+og5dbtyW3N8XaYwc5nXe39Vw=
@@ -439,6 +441,8 @@ github.com/RussellLuo/slidingwindow v0.0.0-20200528002341-535bb99d338b h1:5/++qT
 github.com/RussellLuo/slidingwindow v0.0.0-20200528002341-535bb99d338b/go.mod h1:4+EPqMRApwwE/6yo6CxiHoSnBzjRr3jsqer7frxP8y4=
 github.com/ThalesIgnite/crypto11 v1.2.5 h1:1IiIIEqYmBvUYFeMnHqRft4bwf/O36jryEUpY+9ef8E=
 github.com/ThalesIgnite/crypto11 v1.2.5/go.mod h1:ILDKtnCKiQ7zRoNxcp36Y1ZR8LBPmR2E23+wTQe/MlE=
+github.com/VividCortex/ewma v1.2.0 h1:f58SaIzcDXrSy3kWaHNvuJgJ3Nmz59Zji6XoJR/q1ow=
+github.com/VividCortex/ewma v1.2.0/go.mod h1:nz4BbCtbLyFDeC9SUHbtcT5644juEuWfUAUnGx7j5l4=
 github.com/a8m/expect v1.0.0 h1:o0PXeXn7zLB77ajwOyT1s1HcPJ4hbV6jAvCWUwvFBUM=
 github.com/a8m/expect v1.0.0/go.mod h1:4IwSCMumY49ScypDnjNbYEjgVeqy1/U2cEs3Lat96eA=
 github.com/acorn-io/baaah v0.0.0-20230522221318-afcc93619e30 h1:qeroOYy6vdkNS2xatEWdqdeJYEwoiFaQEBgb48N+fD0=
@@ -758,6 +762,7 @@ github.com/containerd/fuse-overlayfs-snapshotter/v2 v2.1.1 h1:3N/qo9fkWavYRLeUWs
 github.com/containerd/fuse-overlayfs-snapshotter/v2 v2.1.1/go.mod h1:WFiRbg7aIgJozIvNe3r9aHszi6AQQigOPgnbkk9xMmo=
 github.com/containerd/imgcrypt v1.1.8 h1:ZS7TuywcRNLoHpU0g+v4/PsKynl6TYlw5xDVWWoIyFA=
 github.com/containerd/imgcrypt v1.1.8/go.mod h1:x6QvFIkMyO2qGIY2zXc88ivEzcbgvLdWjoZyGqDap5U=
+github.com/containerd/nerdctl v1.7.7 h1:NmtSMmpF4qbS4aVj1/wyj2HTD3synzGFLXc4RC74Hwg=
 github.com/containerd/nerdctl v1.7.7/go.mod h1:tOE0YIYIwr/IyY3buGUmoinQ65nCPXNpnQZWafLAfrM=
 github.com/containerd/nerdctl/mod/tigron v0.0.0-20250606061308-e5db88c1e6ad h1:wVmHeVl7eVSVQuKTC2OzsOevOe0GWSq554Iq3nalWKE=
 github.com/containerd/nerdctl/mod/tigron v0.0.0-20250606061308-e5db88c1e6ad/go.mod h1:gmUZh2wUVxr/msGogKUi6v9eJbP5ASO4fVYEPzHH4iI=
@@ -772,6 +777,12 @@ github.com/containerd/typeurl v1.0.2/go.mod h1:9trJWW2sRlGub4wZJRTW83VtbOLS6hwcD
 github.com/containerd/zfs v1.1.0 h1:n7OZ7jZumLIqNJqXrEc/paBM840mORnmGdJDmAmJZHM=
 github.com/containerd/zfs v1.1.0/go.mod h1:oZF9wBnrnQjpWLaPKEinrx3TQ9a+W/RJO7Zb41d8YLE=
 github.com/containers/gvisor-tap-vsock v0.8.6/go.mod h1:+0mtKmm4STeSDnZe+DGnIwN4EH2f7AcWir7PwT28Ti0=
+github.com/containers/image/v5 v5.35.0 h1:T1OeyWp3GjObt47bchwD9cqiaAm/u4O4R9hIWdrdrP8=
+github.com/containers/image/v5 v5.35.0/go.mod h1:8vTsgb+1gKcBL7cnjyNOInhJQfTUQjJoO2WWkKDoebM=
+github.com/containers/libtrust v0.0.0-20230121012942-c1716e8a8d01 h1:Qzk5C6cYglewc+UyGf6lc8Mj2UaPTHy/iF2De0/77CA=
+github.com/containers/libtrust v0.0.0-20230121012942-c1716e8a8d01/go.mod h1:9rfv8iPl1ZP7aqh9YA68wnZv2NUDbXdcdPHVz0pFbPY=
+github.com/containers/storage v1.58.0 h1:Q7SyyCCjqgT3wYNgRNIL8o/wUS92heIj2/cc8Sewvcc=
+github.com/containers/storage v1.58.0/go.mod h1:w7Jl6oG+OpeLGLzlLyOZPkmUso40kjpzgrHUk5tyBlo=
 github.com/containers/winquit v1.1.0 h1:jArun04BNDQvt2W0Y78kh9TazN2EIEMG5Im6/JY7+pE=
 github.com/containers/winquit v1.1.0/go.mod h1:PsPeZlnbkmGGIToMPHF1zhWjBUkd8aHjMOr/vFcPxw8=
 github.com/coreos/bbolt v1.3.2 h1:wZwiHHUieZCquLkDL0B8UhzreNWsPHooDAG3q34zk0s=
@@ -962,6 +973,7 @@ github.com/go-ini/ini v1.67.0/go.mod h1:ByCAeIL28uOIIG0E3PJtZPDL8WnHpFKFOtgjp+3I
 github.com/go-jose/go-jose/v3 v3.0.4 h1:Wp5HA7bLQcKnf6YYao/4kpRpVMp/yf6+pJKV8WFSaNY=
 github.com/go-jose/go-jose/v3 v3.0.4/go.mod h1:5b+7YgP7ZICgJDBdfjZaIt+H/9L9T/YQrVfLAMboGkQ=
 github.com/go-jose/go-jose/v4 v4.0.4/go.mod h1:NKb5HO1EZccyMpiZNbdUw/14tiXNyUJh188dfnMCAfc=
+github.com/go-kit/kit v0.8.0 h1:Wz+5lgoB0kkuqLEc6NVmwRknTKP6dTGbSqvhZtBI/j0=
 github.com/go-kit/kit v0.9.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
 github.com/go-kit/kit v0.12.0 h1:e4o3o3IsBfAKQh5Qbbiqyfu97Ku7jrO/JbohvztANh4=
 github.com/go-kit/kit v0.12.0/go.mod h1:lHd+EkCZPIwYItmGDDRdhinkzX2A1sj+M9biaEaizzs=
@@ -1330,6 +1342,7 @@ github.com/json-iterator/go v1.1.10/go.mod h1:KdQUCv79m/52Kvf8AW2vK1V8akMuk1QjK/
 github.com/jstemmer/go-junit-report v0.9.1 h1:6QPYqodiu3GuPL+7mfx+NwDdp2eTkp9IfEUpgAwUN0o=
 github.com/julienschmidt/httprouter v1.3.0 h1:U0609e9tgbseu3rBINet9P48AI/D3oJs4dN7jwJOQ1U=
 github.com/julienschmidt/httprouter v1.3.0/go.mod h1:JR6WtHb+2LUe8TCKY3cZOxFyyO8IZAc4RVcycCCAKdM=
+github.com/k0kubun/pp/v3 v3.4.1/go.mod h1:+SiNiqKnBfw1Nkj82Lh5bIeKQOAkPy6Xw9CAZUZ8npI=
 github.com/kdomanski/iso9660 v0.4.0 h1:BPKKdcINz3m0MdjIMwS0wx1nofsOjxOq8TOr45WGHFg=
 github.com/kdomanski/iso9660 v0.4.0/go.mod h1:OxUSupHsO9ceI8lBLPJKWBTphLemjrCQY8LPXM7qSzU=
 github.com/kelseyhightower/envconfig v1.4.0 h1:Im6hONhd3pLkfDFsbRgu68RDNkGF1r3dvMUtDTo2cv8=
@@ -1399,6 +1412,7 @@ github.com/lestrrat-go/option v1.0.1 h1:oAzP2fvZGQKWkvHa1/SAcFolBEca1oN+mQ7eooNB
 github.com/lestrrat-go/option v1.0.1/go.mod h1:5ZHFbivi4xwXxhxY9XHDe2FHo6/Z7WWmtT7T5nBBp3I=
 github.com/letsencrypt/borp v0.0.0-20240620175310-a78493c6e2bd h1:3c+LdlAOEcW1qmG8gtkMCyAEoslmj6XCmniB+926kMM=
 github.com/letsencrypt/borp v0.0.0-20240620175310-a78493c6e2bd/go.mod h1:gMSMCNKhxox/ccR923EJsIvHeVVYfCABGbirqa0EwuM=
+github.com/letsencrypt/boulder v0.0.0-20240620165639-de9c06129bec/go.mod h1:TmwEoGCwIti7BCeJ9hescZgRtatxRE+A72pCoPfmcfk=
 github.com/letsencrypt/challtestsrv v1.3.2 h1:pIDLBCLXR3B1DLmOmkkqg29qVa7DDozBnsOpL9PxmAY=
 github.com/letsencrypt/challtestsrv v1.3.2/go.mod h1:Ur4e4FvELUXLGhkMztHOsPIsvGxD/kzSJninOrkM+zc=
 github.com/letsencrypt/pkcs11key/v4 v4.0.0 h1:qLc/OznH7xMr5ARJgkZCCWk+EomQkiNTOoOF5LAgagc=
@@ -1449,6 +1463,8 @@ github.com/mattn/go-runewidth v0.0.13/go.mod h1:Jdepj2loyihRzMpdS35Xk/zdY8IAYHsh
 github.com/mattn/go-sqlite3 v1.14.22/go.mod h1:Uh1q+B4BYcTPb+yiD3kU8Ct7aC0hY9fxUwlHK0RXw+Y=
 github.com/mattn/go-sqlite3 v1.14.24 h1:tpSp2G2KyMnnQu99ngJ47EIkWVmliIizyZBfPrBWDRM=
 github.com/mattn/go-sqlite3 v1.14.24/go.mod h1:Uh1q+B4BYcTPb+yiD3kU8Ct7aC0hY9fxUwlHK0RXw+Y=
+github.com/mattn/go-sqlite3 v1.14.27 h1:drZCnuvf37yPfs95E5jd9s3XhdVWLal+6BOK6qrv6IU=
+github.com/mattn/go-sqlite3 v1.14.27/go.mod h1:Uh1q+B4BYcTPb+yiD3kU8Ct7aC0hY9fxUwlHK0RXw+Y=
 github.com/mattn/go-zglob v0.0.6 h1:mP8RnmCgho4oaUYDIDn6GNxYk+qJGUs8fJLn+twYj2A=
 github.com/mattn/go-zglob v0.0.6/go.mod h1:MxxjyoXXnMxfIpxTK2GAkw1w8glPsQILx3N5wrKakiY=
 github.com/matttproud/golang_protobuf_extensions v1.0.4 h1:mmDVorXM7PCGKw94cs5zkfA9PSy5pEvNWRP0ET0TIVo=
@@ -1492,9 +1508,12 @@ github.com/mitchellh/go-wordwrap v1.0.0/go.mod h1:ZXFpozHsX6DPmq2I0TCekCxypsnAUb
 github.com/mitchellh/mapstructure v0.0.0-20160808181253-ca63d7c062ee/go.mod h1:FVVH3fgwuzCH5S8UJGiWEs2h04kUh9fWfEaFds41c1Y=
 github.com/mitchellh/mapstructure v1.1.2/go.mod h1:FVVH3fgwuzCH5S8UJGiWEs2h04kUh9fWfEaFds41c1Y=
 github.com/mitchellh/mapstructure v1.4.1/go.mod h1:bFUtVrKA4DC2yAKiSyO/QUcy7e+RRV2QTWOzhPopBRo=
+github.com/mitchellh/mapstructure v1.5.0/go.mod h1:bFUtVrKA4DC2yAKiSyO/QUcy7e+RRV2QTWOzhPopBRo=
 github.com/mitchellh/reflectwalk v1.0.0/go.mod h1:mSTlrgnPZtwu0c4WaC2kGObEpuNDbx0jmZXqmk4esnw=
 github.com/mndrix/tap-go v0.0.0-20171203230836-629fa407e90b h1:Ga1nclDSe8gOw37MVLMhfu2QKWtD6gvtQ298zsKVh8g=
 github.com/mndrix/tap-go v0.0.0-20171203230836-629fa407e90b/go.mod h1:pzzDgJWZ34fGzaAZGFW22KVZDfyrYW+QABMrWnJBnSs=
+github.com/moby/sys/capability v0.4.0 h1:4D4mI6KlNtWMCM1Z/K0i7RV1FkX+DBDHKVJpCndZoHk=
+github.com/moby/sys/capability v0.4.0/go.mod h1:4g9IK291rVkms3LKCDOoYlnV8xKwoDTpIrNEE35Wq0I=
 github.com/moby/sys/mountinfo v0.6.2/go.mod h1:IJb6JQeOklcdMU9F5xQ8ZALD+CUr5VlGpwtX+VE0rpI=
 github.com/moby/sys/user v0.3.0/go.mod h1:bG+tYYYJgaMtRKgEmuueC0hJEAZWwtIbZTB+85uoHjs=
 github.com/moby/term v0.0.0-20210619224110-3f7ff695adc6/go.mod h1:E2VnQOmVuvZB6UYnnDB0qG5Nq/1tD9acaOpo6xmt0Kw=
@@ -1663,6 +1682,8 @@ github.com/poy/onpar v1.1.2 h1:QaNrNiZx0+Nar5dLgTVp5mXkyoVFIbepjyEoGSnhbAY=
 github.com/poy/onpar v1.1.2/go.mod h1:6X8FLNoxyr9kkmnlqpK6LSoiOtrO6MICtWwEuWkLjzg=
 github.com/prashantgupta24/mac-sleep-notifier v1.0.1 h1:xd1lPtnn1gxGNjD2tCoVDoOtiQcQ8B9KNFhcWgGqreQ=
 github.com/prashantgupta24/mac-sleep-notifier v1.0.1/go.mod h1:bcfTio1xW+rjjZzdF0kbMEs9mcCEmrOBOSK+Jeml7zM=
+github.com/proglottis/gpgme v0.1.4 h1:3nE7YNA70o2aLjcg63tXMOhPD7bplfE5CBdV+hLAm2M=
+github.com/proglottis/gpgme v0.1.4/go.mod h1:5LoXMgpE4bttgwwdv9bLs/vwqv3qV7F4glEEZ7mRKrM=
 github.com/prometheus/alertmanager v0.28.0 h1:sLN+6HhZet8hrbmGHLAHWsTXgZSVCvq9Ix3U3wvivqc=
 github.com/prometheus/alertmanager v0.28.0/go.mod h1:/okSnb2LlodbMlRoOWQEKtqI/coOo2NKZDm2Hu9QHLQ=
 github.com/prometheus/client_golang v0.9.2/go.mod h1:OsXs2jCmiKlQ1lTBmv21f2mNfw4xf/QclQDMrYNZzcM=
@@ -1802,6 +1823,8 @@ github.com/shurcooL/httpfs v0.0.0-20230704072500-f1e31cf0ba5c/go.mod h1:owqhoLW1
 github.com/shurcooL/sanitized_anchor_name v1.0.0 h1:PdmoCO6wvbs+7yrJyMORt4/BmY5IYyJwS/kOiWx8mHo=
 github.com/shurcooL/vfsgen v0.0.0-20230704071429-0000e147ea92 h1:OfRzdxCzDhp+rsKWXuOO2I/quKMJ/+TQwVbIP/gltZg=
 github.com/shurcooL/vfsgen v0.0.0-20230704071429-0000e147ea92/go.mod h1:7/OT02F6S6I7v6WXb+IjhMuZEYfH/RJ5RwEWnEo5BMg=
+github.com/sigstore/fulcio v1.6.6 h1:XaMYX6TNT+8n7Npe8D94nyZ7/ERjEsNGFC+REdi/wzw=
+github.com/sigstore/fulcio v1.6.6/go.mod h1:BhQ22lwaebDgIxVBEYOOqLRcN5+xOV+C9bh/GUXRhOk=
 github.com/sigstore/rekor v1.3.9/go.mod h1:xThNUhm6eNEmkJ/SiU/FVU7pLY2f380fSDZFsdDWlcM=
 github.com/sigstore/sigstore v1.9.1/go.mod h1:zUoATYzR1J3rLNp3jmp4fzIJtWdhC3ZM6MnpcBtnsE4=
 github.com/sirupsen/logrus v1.3.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
@@ -1929,6 +1952,8 @@ github.com/valyala/fasttemplate v1.2.2/go.mod h1:KHLXt3tVN2HBp8eijSv/kGJopbvo7S+
 github.com/valyala/quicktemplate v1.8.0 h1:zU0tjbIqTRgKQzFY1L42zq0qR3eh4WoQQdIdqCysW5k=
 github.com/valyala/quicktemplate v1.8.0/go.mod h1:qIqW8/igXt8fdrUln5kOSb+KWMaJ4Y8QUsfd1k6L2jM=
 github.com/vbatts/tar-split v0.11.6/go.mod h1:dqKNtesIOr2j2Qv3W/cHjnvk9I8+G7oAkFDFN6TCBEI=
+github.com/vbauerster/mpb/v8 v8.9.3 h1:PnMeF+sMvYv9u23l6DO6Q3+Mdj408mjLRXIzmUmU2Z8=
+github.com/vbauerster/mpb/v8 v8.9.3/go.mod h1:hxS8Hz4C6ijnppDSIX6LjG8FYJSoPo9iIOcE53Zik0c=
 github.com/vburenin/ifacemaker v1.2.1 h1:3Vq8B/bfBgjWTkv+jDg4dVL1KHt3k1K4lO7XRxYA2sk=
 github.com/vburenin/ifacemaker v1.2.1/go.mod h1:5WqrzX2aD7/hi+okBjcaEQJMg4lDGrpuEX3B8L4Wgrs=
 github.com/vektah/gqlparser/v2 v2.5.19 h1:bhCPCX1D4WWzCDvkPl4+TP1N8/kLrWnp43egplt7iSg=
@@ -1958,6 +1983,7 @@ github.com/vtolstov/go-ioctl v0.0.0-20151206205506-6be9cced4810/go.mod h1:dF0BBJ
 github.com/vultr/govultr/v2 v2.17.2 h1:gej/rwr91Puc/tgh+j33p/BLR16UrIPnSr+AIwYWZQs=
 github.com/vultr/govultr/v2 v2.17.2/go.mod h1:ZFOKGWmgjytfyjeyAdhQlSWwTjh2ig+X49cAp50dzXI=
 github.com/wagoodman/go-progress v0.0.0-20220614130704-4b1c25a33c7c/go.mod h1:jLXFoL31zFaHKAAyZUh+sxiTDFe1L1ZHrcK2T1itVKA=
+github.com/walteh/ec1 v0.0.0-20250613112923-0e64a26166de/go.mod h1:iQE28iihbq8Nq2N16FGEs5fANOkz69Mvmq8i0XAI6oU=
 github.com/weppos/publicsuffix-go v0.13.0/go.mod h1:z3LCPQ38eedDQSwmsSRW4Y7t2L8Ln16JPQ02lHAdn5k=
 github.com/weppos/publicsuffix-go v0.30.2-0.20230730094716-a20f9abcc222/go.mod h1:s41lQh6dIsDWIC1OWh7ChWJXLH0zkJ9KHZVqA7vHyuQ=
 github.com/weppos/publicsuffix-go v0.40.3-0.20250307081557-c05521c3453a h1:YTfQ27VVE3PLzEZnGeSrxSKXMOs0JM2lfK0u4qT3/Mk=
@@ -2063,6 +2089,7 @@ go.etcd.io/etcd/v3 v3.5.17/go.mod h1:eL6ktWWJRCZ/C5Ak8SFCOfMUQcZjzasSKEtzkpSB6aM
 go.etcd.io/gofail v0.2.0 h1:p19drv16FKK345a09a1iubchlw/vmRuksmRzgBIGjcA=
 go.etcd.io/gofail v0.2.0/go.mod h1:nL3ILMGfkXTekKI3clMBNazKnjUZjYLKmBHzsVAnC1o=
 go.mongodb.org/mongo-driver v1.14.0/go.mod h1:Vzb0Mk/pa7e6cWw85R4F/endUC3u0U9jGcNU603k65c=
+go.mongodb.org/mongo-driver v1.17.2/go.mod h1:Hy04i7O2kC4RS06ZrhPRqj/u4DTYkFDAAccj+rVKqgQ=
 go.mozilla.org/pkcs7 v0.0.0-20200128120323-432b2356ecb1 h1:A/5uWzF44DlIgdm/PQFwfMkW0JX+cIcQi/SwLAmZP5M=
 go.mozilla.org/pkcs7 v0.0.0-20200128120323-432b2356ecb1/go.mod h1:SNgMg+EgDFwmvSmLRTNKC5fegJjB7v23qTQ0XLGUNHk=
 go.mozilla.org/pkcs7 v0.9.0 h1:yM4/HS9dYv7ri2biPtxt8ikvB37a980dg69/pKmS+eI=

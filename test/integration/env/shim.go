@@ -2,11 +2,13 @@ package env
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"runtime"
 	"runtime/debug"
 	"slices"
@@ -151,7 +153,15 @@ func RunShim(ctx context.Context) error {
 	taskplugin.Reregister()
 	vfruntimeplugin.Reregister()
 
-	shim.Run(ctx, manager.NewShimManager("io.containerd.runc.v2"), func(c *shim.Config) {
+	// get abs path of current go file (not working directory)
+	_, filename, _, ok := runtime.Caller(1)
+	if !ok {
+		return errors.New("failed to get caller")
+	}
+
+	os.Setenv("LINUX_RUNTIME_BUILD_DIR", filepath.Join(filepath.Dir(filename), "..", "..", "..", "gen", "build", "linux_vf_arm64"))
+
+	shim.Run(ctx, manager.NewDebugManager(manager.NewShimManager("io.containerd.runc.v2")), func(c *shim.Config) {
 		c.NoReaper = true
 		c.NoSetupLogger = true
 	})

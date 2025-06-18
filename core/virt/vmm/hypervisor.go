@@ -57,6 +57,24 @@ func NewEc1BlockDevice(ctx context.Context, wrkdir string) (virtio.VirtioDevice,
 	return ec1Dev, outMount, nil
 }
 
+func NewMbinBlockDevice(ctx context.Context, wrkdir string) (virtio.VirtioDevice, specs.Mount, error) {
+	ec1DataPath := filepath.Join(wrkdir, constants.MbinFileName)
+
+	outMount := specs.Mount{
+		Type:        constants.MbinFSType,
+		Source:      constants.MbinVirtioTag,
+		Destination: constants.MbinAbsPath,
+		Options:     []string{"ro"},
+	}
+
+	mbinDev, err := virtio.VirtioBlkNew(ec1DataPath)
+	if err != nil {
+		return nil, outMount, errors.Errorf("creating mbin virtio device: %w", err)
+	}
+
+	return mbinDev, outMount, nil
+}
+
 func connectToVsockWithRetry(ctx context.Context, vm VirtualMachine, port uint32) (net.Conn, error) {
 
 	ticker := time.NewTicker(100 * time.Millisecond)

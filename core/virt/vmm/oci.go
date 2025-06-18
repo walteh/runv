@@ -83,20 +83,36 @@ func NewOCIVirtualMachine[VM VirtualMachine](
 
 	startTime := time.Now()
 
+	linuxRuntimeBuildDir := os.Getenv("LINUX_RUNTIME_BUILD_DIR")
+	if linuxRuntimeBuildDir == "" {
+		return nil, errors.New("LINUX_RUNTIME_BUILD_DIR is not set")
+	}
+
 	workingDir, err := host.EmphiricalVMCacheDir(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	err = os.MkdirAll(workingDir, 0755)
+	// copy the build dir to the working dir
+	err = os.MkdirAll(filepath.Join(workingDir, "build"), 0755)
 	if err != nil {
-		return nil, errors.Errorf("creating working directory: %w", err)
+		return nil, errors.Errorf("creating build directory: %w", err)
+	}
+
+	if err = os.CopyFS(workingDir, os.DirFS(linuxRuntimeBuildDir)); err != nil {
+		return nil, errors.Errorf("copying build directory: %w", err)
 	}
 
 	bindMounts, mountDevices, err := PrepareContainerMounts(ctx, ctrconfig.Spec, ctrconfig.ID)
 	if err != nil {
 		return nil, errors.Errorf("preparing container mounts: %w", err)
 	}
+
+	mbinDev, _, err := NewMbinBlockDevice(ctx, workingDir)
+	if err != nil {
+		return nil, errors.Errorf("creating mbin block device: %w", err)
+	}
+	devices = append(devices, mbinDev)
 
 	ec1Dev, _, err := NewEc1BlockDevice(ctx, workingDir)
 	if err != nil {
@@ -117,11 +133,6 @@ func NewOCIVirtualMachine[VM VirtualMachine](
 		return nil, errors.Errorf("creating ec1 block device from rootfs: %w", err)
 	}
 	devices = append(devices, ec1Devices...)
-
-	linuxRuntimeBuildDir := os.Getenv("LINUX_RUNTIME_BUILD_DIR")
-	if linuxRuntimeBuildDir == "" {
-		return nil, errors.New("LINUX_RUNTIME_BUILD_DIR is not set")
-	}
 
 	var bootloader virtio.Bootloader
 
@@ -188,6 +199,8 @@ func NewOCIVirtualMachine[VM VirtualMachine](
 		workingDir:   workingDir,
 		netdev:       netdev,
 	}
+
+	slog.InfoContext(ctx, "created oci vm", "id", ctrconfig.ID)
 
 	return runner, nil
 }

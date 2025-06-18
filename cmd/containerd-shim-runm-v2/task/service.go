@@ -24,6 +24,7 @@ import (
 	"net"
 	"os"
 	"path"
+	"path/filepath"
 	"sync"
 
 	"github.com/containerd/containerd/api/types/runc/options"
@@ -40,7 +41,7 @@ import (
 	"github.com/containerd/log"
 	"github.com/containerd/ttrpc"
 	"github.com/containerd/typeurl/v2"
-	"github.com/pkg/errors"
+	"gitlab.com/tozd/go/errors"
 	"google.golang.org/grpc"
 
 	eventstypes "github.com/containerd/containerd/api/events"
@@ -63,25 +64,6 @@ var (
 
 // NewTaskService creates a new instance of a task service
 func NewTaskService(ctx context.Context, publisher shim.Publisher, sd shutdown.Service, rtc runtime.RuntimeCreator) (taskAPI.TTRPCTaskService, error) {
-	var primarySocketAddress, runmSocketAddress string
-
-	if address, err := shim.ReadAddress("address"); err == nil {
-		primarySocketAddress = address
-		runmSocketAddress = address + ".runm"
-	} else {
-		return nil, err
-	}
-
-	sd.RegisterCallback(func(context.Context) error {
-		if err := shim.RemoveSocket(primarySocketAddress); err != nil {
-			slog.Error("failed to remove primary socket", "error", err)
-		}
-		if err := shim.RemoveSocket(runmSocketAddress); err != nil {
-			slog.Error("failed to remove runm socket", "error", err)
-		}
-
-		return nil
-	})
 
 	s := &service{
 		context:              ctx,
@@ -108,13 +90,14 @@ func NewTaskService(ctx context.Context, publisher shim.Publisher, sd shutdown.S
 		return nil
 	})
 
-	grpcServer := grpc.NewServer()
-	runmv1.RegisterShimServiceServer(grpcServer, s)
-	listener, err := net.Listen("unix", runmSocketAddress)
-	if err != nil {
-		return nil, err
+	if address, err := shim.ReadAddress("address"); err == nil {
+		sd.RegisterCallback(func(context.Context) error {
+			if err := shim.RemoveSocket(address); err != nil {
+				slog.Error("failed to remove primary socket", "error", err)
+			}
+			return nil
+		})
 	}
-	go grpcServer.Serve(listener)
 
 	return s, nil
 }
@@ -160,6 +143,45 @@ type service struct {
 	publisher shim.Publisher
 
 	creator runtime.RuntimeCreator
+}
+
+func (s *service) serveGrpc(ctx context.Context, cid string) (func() error, func() error, error) {
+	grpcServer := grpc.NewServer()
+	runmv1.RegisterShimServiceServer(grpcServer, s)
+
+	runmSocketAddress := filepath.Join("tmp", "runm", cid[:16], "runm-shim.sock")
+
+	os.Remove(runmSocketAddress)
+
+	// if cl, err := os.Create(runmSocketAddress); err != nil {
+	// 	return nil, nil, errors.Errorf("creating runm socket: %w", err)
+	// } else {
+	// 	cl.Close()
+	// }
+
+	os.MkdirAll(filepath.Dir(runmSocketAddress), 0755)
+
+	listener, err := net.Listen("unix", runmSocketAddress)
+	if err != nil {
+		return nil, nil, errors.Errorf("listening on runm socket: %w", err)
+	}
+
+	s.shutdown.RegisterCallback(func(context.Context) error {
+		if err := shim.RemoveSocket(runmSocketAddress); err != nil {
+			slog.Error("failed to remove primary socket", "error", err)
+		}
+
+		return nil
+	})
+
+	return func() error {
+			return grpcServer.Serve(listener)
+		}, func() error {
+			if err := listener.Close(); err != nil {
+				return errors.Errorf("closing listener: %w", err)
+			}
+			return nil
+		}, nil
 }
 
 // ShimFeatures implements runmv1.ShimServiceServer.
@@ -286,6 +308,17 @@ func (s *service) Create(ctx context.Context, r *taskAPI.CreateTaskRequest) (_ *
 	handleStarted, cleanup := s.preStart(nil)
 	s.lifecycleMu.Unlock()
 	defer cleanup()
+
+	serveGrpc, stopGrpc, err := s.serveGrpc(ctx, r.Bundle)
+	if err != nil {
+		return nil, err
+	}
+
+	s.shutdown.RegisterCallback(func(context.Context) error {
+		return stopGrpc()
+	})
+
+	go serveGrpc()
 
 	specPath := path.Join(r.Bundle, oci.ConfigFilename)
 

@@ -60,12 +60,29 @@ func NewRunmVMRuntime[VM vmm.VirtualMachine](
 		return nil, err
 	}
 
+	slog.InfoContext(ctx, "created oci vm, starting it", "id", vm.VM().ID())
+
+	if err := vm.Start(ctx); err != nil {
+		return nil, err
+	}
+
+	slog.InfoContext(ctx, "started vm, connecting to guest service", "id", vm.VM().ID())
+
+	if ctx.Err() != nil {
+		slog.ErrorContext(ctx, "context done before creating VM runtime")
+		return nil, ctx.Err()
+	}
+
 	srv, err := vm.GuestService(ctx)
 	if err != nil {
 		return nil, err
 	}
 
+	slog.InfoContext(ctx, "connected to guest service", "id", vm.VM().ID())
+
 	ep := oom.NewWatcher(opts.Publisher, srv)
+
+	slog.InfoContext(ctx, "created oom watcher", "id", vm.VM().ID())
 
 	runGroup.Always(ep)
 
@@ -84,26 +101,30 @@ func NewRunmVMRuntime[VM vmm.VirtualMachine](
 
 // Alive implements run.Runnable.
 func (r *RunmVMRuntime[VM]) Alive() bool {
-	panic("unimplemented")
+	return r.vm.VM().CurrentState() == vmm.VirtualMachineStateTypeRunning
 }
 
 // Close implements run.Runnable.
-func (r *RunmVMRuntime[VM]) Close(context.Context) error {
-	panic("unimplemented")
+func (r *RunmVMRuntime[VM]) Close(ctx context.Context) error {
+	return r.vm.VM().HardStop(ctx)
 }
 
 // Fields implements run.Runnable.
 func (r *RunmVMRuntime[VM]) Fields() []slog.Attr {
-	panic("unimplemented")
+	return []slog.Attr{
+		slog.String("id", r.vm.VM().ID()),
+	}
 }
 
 // Name implements run.Runnable.
 func (r *RunmVMRuntime[VM]) Name() string {
-	panic("unimplemented")
+	return r.vm.VM().ID()
 }
 
 // Run implements run.Runnable.
 // Subtle: this method shadows the method (RuntimeExtras).Run of RunmVMRuntime.RuntimeExtras.
-func (r *RunmVMRuntime[VM]) Run(context.Context) error {
-	panic("unimplemented")
+func (r *RunmVMRuntime[VM]) Run(ctx context.Context) error {
+	slog.InfoContext(ctx, "running vm", "id", r.vm.VM().ID())
+
+	return r.runGroup.RunContext(ctx)
 }

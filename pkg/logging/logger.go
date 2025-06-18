@@ -26,6 +26,7 @@ type LoggerOpts struct {
 	interceptLogrus   bool
 	interceptHclog    bool
 	values            []slog.Attr
+	globalLogWriter   io.Writer
 
 	delayedHandlerCreatorOpts []OptLoggerOptsSetter `opts:"-"`
 }
@@ -39,6 +40,7 @@ func NewDefaultDevLogger(name string, writer io.Writer, opts ...OptLoggerOptsSet
 		WithInterceptLogrus(true),
 		WithInterceptHclog(true),
 		WithMakeDefaultLogger(true),
+		WithGlobalLogWriter(writer),
 		WithHandlerOptions(&slog.HandlerOptions{
 			Level:     slog.LevelDebug,
 			AddSource: true,
@@ -55,6 +57,7 @@ func NewDefaultJSONLogger(name string, writer io.Writer, opts ...OptLoggerOptsSe
 		WithInterceptLogrus(true),
 		WithInterceptHclog(true),
 		WithMakeDefaultLogger(true),
+		WithGlobalLogWriter(writer),
 		WithJSONHandler(writer),
 		WithHandlerOptions(&slog.HandlerOptions{
 			Level:     slog.LevelDebug,
@@ -118,6 +121,10 @@ func NewLogger(opts ...OptLoggerOptsSetter) *slog.Logger {
 
 	for _, v := range copts.values {
 		l = l.With(v)
+	}
+
+	if copts.globalLogWriter != nil {
+		SetDefaultLogWriter(copts.globalLogWriter)
 	}
 
 	if copts.makeDefaultLogger {
