@@ -28,8 +28,8 @@ var _ runmv1.RuncExtrasServiceClient = &MockRuncExtrasServiceClient{}
 //			ListFunc: func(ctx context.Context, in *runmv1.RuncListRequest, opts ...grpc.CallOption) (*runmv1.RuncListResponse, error) {
 //				panic("mock out the List method")
 //			},
-//			RunFunc: func(ctx context.Context, in *runmv1.RuncRunRequest, opts ...grpc.CallOption) (*runmv1.RuncRunResponse, error) {
-//				panic("mock out the Run method")
+//			RuncRunFunc: func(ctx context.Context, in *runmv1.RuncRunRequest, opts ...grpc.CallOption) (*runmv1.RuncRunResponse, error) {
+//				panic("mock out the RuncRun method")
 //			},
 //			StateFunc: func(ctx context.Context, in *runmv1.RuncStateRequest, opts ...grpc.CallOption) (*runmv1.RuncStateResponse, error) {
 //				panic("mock out the State method")
@@ -56,8 +56,8 @@ type MockRuncExtrasServiceClient struct {
 	// ListFunc mocks the List method.
 	ListFunc func(ctx context.Context, in *runmv1.RuncListRequest, opts ...grpc.CallOption) (*runmv1.RuncListResponse, error)
 
-	// RunFunc mocks the Run method.
-	RunFunc func(ctx context.Context, in *runmv1.RuncRunRequest, opts ...grpc.CallOption) (*runmv1.RuncRunResponse, error)
+	// RuncRunFunc mocks the RuncRun method.
+	RuncRunFunc func(ctx context.Context, in *runmv1.RuncRunRequest, opts ...grpc.CallOption) (*runmv1.RuncRunResponse, error)
 
 	// StateFunc mocks the State method.
 	StateFunc func(ctx context.Context, in *runmv1.RuncStateRequest, opts ...grpc.CallOption) (*runmv1.RuncStateResponse, error)
@@ -91,8 +91,8 @@ type MockRuncExtrasServiceClient struct {
 			// Opts is the opts argument value.
 			Opts []grpc.CallOption
 		}
-		// Run holds details about calls to the Run method.
-		Run []struct {
+		// RuncRun holds details about calls to the RuncRun method.
+		RuncRun []struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
 			// In is the in argument value.
@@ -139,7 +139,7 @@ type MockRuncExtrasServiceClient struct {
 	}
 	lockEvents  sync.RWMutex
 	lockList    sync.RWMutex
-	lockRun     sync.RWMutex
+	lockRuncRun sync.RWMutex
 	lockState   sync.RWMutex
 	lockStats   sync.RWMutex
 	lockTop     sync.RWMutex
@@ -226,10 +226,10 @@ func (mock *MockRuncExtrasServiceClient) ListCalls() []struct {
 	return calls
 }
 
-// Run calls RunFunc.
-func (mock *MockRuncExtrasServiceClient) Run(ctx context.Context, in *runmv1.RuncRunRequest, opts ...grpc.CallOption) (*runmv1.RuncRunResponse, error) {
-	if mock.RunFunc == nil {
-		panic("MockRuncExtrasServiceClient.RunFunc: method is nil but RuncExtrasServiceClient.Run was just called")
+// RuncRun calls RuncRunFunc.
+func (mock *MockRuncExtrasServiceClient) RuncRun(ctx context.Context, in *runmv1.RuncRunRequest, opts ...grpc.CallOption) (*runmv1.RuncRunResponse, error) {
+	if mock.RuncRunFunc == nil {
+		panic("MockRuncExtrasServiceClient.RuncRunFunc: method is nil but RuncExtrasServiceClient.RuncRun was just called")
 	}
 	callInfo := struct {
 		Ctx  context.Context
@@ -240,17 +240,17 @@ func (mock *MockRuncExtrasServiceClient) Run(ctx context.Context, in *runmv1.Run
 		In:   in,
 		Opts: opts,
 	}
-	mock.lockRun.Lock()
-	mock.calls.Run = append(mock.calls.Run, callInfo)
-	mock.lockRun.Unlock()
-	return mock.RunFunc(ctx, in, opts...)
+	mock.lockRuncRun.Lock()
+	mock.calls.RuncRun = append(mock.calls.RuncRun, callInfo)
+	mock.lockRuncRun.Unlock()
+	return mock.RuncRunFunc(ctx, in, opts...)
 }
 
-// RunCalls gets all the calls that were made to Run.
+// RuncRunCalls gets all the calls that were made to RuncRun.
 // Check the length with:
 //
-//	len(mockedRuncExtrasServiceClient.RunCalls())
-func (mock *MockRuncExtrasServiceClient) RunCalls() []struct {
+//	len(mockedRuncExtrasServiceClient.RuncRunCalls())
+func (mock *MockRuncExtrasServiceClient) RuncRunCalls() []struct {
 	Ctx  context.Context
 	In   *runmv1.RuncRunRequest
 	Opts []grpc.CallOption
@@ -260,9 +260,9 @@ func (mock *MockRuncExtrasServiceClient) RunCalls() []struct {
 		In   *runmv1.RuncRunRequest
 		Opts []grpc.CallOption
 	}
-	mock.lockRun.RLock()
-	calls = mock.calls.Run
-	mock.lockRun.RUnlock()
+	mock.lockRuncRun.RLock()
+	calls = mock.calls.RuncRun
+	mock.lockRuncRun.RUnlock()
 	return calls
 }
 

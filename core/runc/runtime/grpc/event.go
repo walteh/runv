@@ -15,7 +15,7 @@ var _ runtime.EventHandler = (*GRPCClientRuntime)(nil)
 func (me *GRPCClientRuntime) Receive(ctx context.Context) (<-chan *runtime.PublishEvent, error) {
 	ech := make(chan *runtime.PublishEvent)
 
-	stream, err := me.eventPublisher.ReceiveEvents(ctx, &emptypb.Empty{})
+	stream, err := me.eventService.ReceiveEvents(ctx, &emptypb.Empty{})
 	if err != nil {
 		return nil, err
 	}
@@ -44,6 +44,6 @@ func (me *GRPCClientRuntime) Publish(ctx context.Context, event *runtime.Publish
 	req.SetTopic(event.Topic)
 	req.SetRawJson(event.Data)
 
-	_, err := me.eventPublisher.PublishEvent(ctx, req)
+	_, err := me.eventService.PublishEvent(ctx, req)
 	return err
 }

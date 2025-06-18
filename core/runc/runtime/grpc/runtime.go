@@ -25,14 +25,14 @@ func (c *GRPCClientRuntime) SharedDir() string {
 
 // Ping checks if the runc service is alive.
 func (c *GRPCClientRuntime) Ping(ctx context.Context) error {
-	_, err := c.runtime.Ping(ctx, &runmv1.PingRequest{})
+	_, err := c.runtimeGrpcService.Ping(ctx, &runmv1.PingRequest{})
 	return err
 }
 
 // NewTempConsoleSocket implements runtime.Runtime.
 func (c *GRPCClientRuntime) NewTempConsoleSocket(ctx context.Context) (runtime.ConsoleSocket, error) {
 
-	sock, err := c.socketAllocator.AllocateSocketStream(ctx, &runmv1.AllocateSocketStreamRequest{})
+	sock, err := c.socketAllocatorGrpcService.AllocateSocketStream(ctx, &runmv1.AllocateSocketStreamRequest{})
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +75,7 @@ func (c *GRPCClientRuntime) NewTempConsoleSocket(ctx context.Context) (runtime.C
 	}
 	slog.InfoContext(ctx, "socket is ready - D")
 
-	cons, err := c.runtime.NewTempConsoleSocket(ctx, &runmv1.RuncNewTempConsoleSocketRequest{})
+	cons, err := c.runtimeGrpcService.NewTempConsoleSocket(ctx, &runmv1.RuncNewTempConsoleSocketRequest{})
 	if err != nil {
 		return nil, err
 	}
@@ -93,7 +93,7 @@ func (c *GRPCClientRuntime) NewTempConsoleSocket(ctx context.Context) (runtime.C
 
 	// bind the two together
 
-	_, err = c.socketAllocator.BindConsoleToSocket(ctx, req)
+	_, err = c.socketAllocatorGrpcService.BindConsoleToSocket(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -120,7 +120,7 @@ func (c *GRPCClientRuntime) NewTempConsoleSocket(ctx context.Context) (runtime.C
 func (c *GRPCClientRuntime) ReadPidFile(ctx context.Context, path string) (int, error) {
 	req := &runmv1.RuncReadPidFileRequest{}
 	req.SetPath(path)
-	resp, err := c.runtime.ReadPidFile(ctx, req)
+	resp, err := c.runtimeGrpcService.ReadPidFile(ctx, req)
 	if err != nil {
 		return -1, err
 	}
@@ -171,7 +171,7 @@ func (c *GRPCClientRuntime) NewPipeIO(ctx context.Context, ioUID, ioGID int, opt
 	req := &runmv1.AllocateSocketsRequest{}
 	req.SetCount(uint32(count))
 
-	iov, err := c.socketAllocator.AllocateSockets(ctx, req)
+	iov, err := c.socketAllocatorGrpcService.AllocateSockets(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -181,7 +181,7 @@ func (c *GRPCClientRuntime) NewPipeIO(ctx context.Context, ioUID, ioGID int, opt
 	ioReq.SetOpenStdout(ropts.OpenStdout)
 	ioReq.SetOpenStderr(ropts.OpenStderr)
 
-	sock, err := c.socketAllocator.AllocateIO(ctx, ioReq)
+	sock, err := c.socketAllocatorGrpcService.AllocateIO(ctx, ioReq)
 	if err != nil {
 		return nil, err
 	}
@@ -203,7 +203,7 @@ func (c *GRPCClientRuntime) NewPipeIO(ctx context.Context, ioUID, ioGID int, opt
 		bindReq.SetStderrSocketReferenceId(iov.GetSocketReferenceIds()[count2])
 	}
 
-	_, err = c.socketAllocator.BindIOToSockets(ctx, bindReq)
+	_, err = c.socketAllocatorGrpcService.BindIOToSockets(ctx, bindReq)
 	if err != nil {
 		return nil, err
 	}
@@ -260,7 +260,7 @@ func (c *GRPCClientRuntime) Create(ctx context.Context, id, bundle string, optio
 	req.SetBundle(bundle)
 	req.SetOptions(conv)
 
-	resp, err := c.runtime.Create(ctx, req)
+	resp, err := c.runtimeGrpcService.Create(ctx, req)
 	if err != nil {
 		return err
 	}
@@ -275,7 +275,7 @@ func (c *GRPCClientRuntime) Start(ctx context.Context, id string) error {
 	req := &runmv1.RuncStartRequest{}
 	req.SetId(id)
 
-	resp, err := c.runtime.Start(ctx, req)
+	resp, err := c.runtimeGrpcService.Start(ctx, req)
 	if err != nil {
 		return err
 	}
@@ -291,7 +291,7 @@ func (c *GRPCClientRuntime) Delete(ctx context.Context, id string, opts *gorunc.
 	req.SetId(id)
 	req.SetOptions(conversion.ConvertDeleteOptsToProto(opts))
 
-	resp, err := c.runtime.Delete(ctx, req)
+	resp, err := c.runtimeGrpcService.Delete(ctx, req)
 	if err != nil {
 		return err
 	}
@@ -308,7 +308,7 @@ func (c *GRPCClientRuntime) Kill(ctx context.Context, id string, signal int, opt
 	req.SetSignal(int32(signal))
 	req.SetOptions(conversion.ConvertKillOptsToProto(opts))
 
-	resp, err := c.runtime.Kill(ctx, req)
+	resp, err := c.runtimeGrpcService.Kill(ctx, req)
 	if err != nil {
 		return err
 	}
@@ -323,7 +323,7 @@ func (c *GRPCClientRuntime) Pause(ctx context.Context, id string) error {
 	req := &runmv1.RuncPauseRequest{}
 	req.SetId(id)
 
-	resp, err := c.runtime.Pause(ctx, req)
+	resp, err := c.runtimeGrpcService.Pause(ctx, req)
 	if err != nil {
 		return err
 	}
@@ -338,7 +338,7 @@ func (c *GRPCClientRuntime) Resume(ctx context.Context, id string) error {
 	req := &runmv1.RuncResumeRequest{}
 	req.SetId(id)
 
-	resp, err := c.runtime.Resume(ctx, req)
+	resp, err := c.runtimeGrpcService.Resume(ctx, req)
 	if err != nil {
 		return err
 	}
@@ -353,7 +353,7 @@ func (c *GRPCClientRuntime) Ps(ctx context.Context, id string) ([]int, error) {
 	req := &runmv1.RuncPsRequest{}
 	req.SetId(id)
 
-	resp, err := c.runtime.Ps(ctx, req)
+	resp, err := c.runtimeGrpcService.Ps(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -380,7 +380,7 @@ func (c *GRPCClientRuntime) Exec(ctx context.Context, id string, spec specs.Proc
 
 	req.SetOptions(conversion.ConvertExecOptsToProto(options))
 
-	resp, err := c.runtime.Exec(ctx, req)
+	resp, err := c.runtimeGrpcService.Exec(ctx, req)
 	if err != nil {
 		return err
 	}
@@ -396,7 +396,7 @@ func (c *GRPCClientRuntime) Checkpoint(ctx context.Context, id string, options *
 	req.SetOptions(conversion.ConvertCheckpointOptsToProto(options))
 	req.SetActions(conversion.ConvertCheckpointActionsToProto(actions...))
 
-	resp, err := c.runtime.Checkpoint(ctx, req)
+	resp, err := c.runtimeGrpcService.Checkpoint(ctx, req)
 	if err != nil {
 		return err
 	}
@@ -412,7 +412,7 @@ func (c *GRPCClientRuntime) Restore(ctx context.Context, id, bundle string, opti
 	req.SetBundle(bundle)
 	req.SetOptions(conversion.ConvertRestoreOptsToProto(options))
 
-	resp, err := c.runtime.Restore(ctx, req)
+	resp, err := c.runtimeGrpcService.Restore(ctx, req)
 	if err != nil {
 		return -1, err
 	}

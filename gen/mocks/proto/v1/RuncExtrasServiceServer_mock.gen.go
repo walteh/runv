@@ -28,8 +28,8 @@ var _ runmv1.RuncExtrasServiceServer = &MockRuncExtrasServiceServer{}
 //			ListFunc: func(context1 context.Context, runcListRequest *runmv1.RuncListRequest) (*runmv1.RuncListResponse, error) {
 //				panic("mock out the List method")
 //			},
-//			RunFunc: func(context1 context.Context, runcRunRequest *runmv1.RuncRunRequest) (*runmv1.RuncRunResponse, error) {
-//				panic("mock out the Run method")
+//			RuncRunFunc: func(context1 context.Context, runcRunRequest *runmv1.RuncRunRequest) (*runmv1.RuncRunResponse, error) {
+//				panic("mock out the RuncRun method")
 //			},
 //			StateFunc: func(context1 context.Context, runcStateRequest *runmv1.RuncStateRequest) (*runmv1.RuncStateResponse, error) {
 //				panic("mock out the State method")
@@ -56,8 +56,8 @@ type MockRuncExtrasServiceServer struct {
 	// ListFunc mocks the List method.
 	ListFunc func(context1 context.Context, runcListRequest *runmv1.RuncListRequest) (*runmv1.RuncListResponse, error)
 
-	// RunFunc mocks the Run method.
-	RunFunc func(context1 context.Context, runcRunRequest *runmv1.RuncRunRequest) (*runmv1.RuncRunResponse, error)
+	// RuncRunFunc mocks the RuncRun method.
+	RuncRunFunc func(context1 context.Context, runcRunRequest *runmv1.RuncRunRequest) (*runmv1.RuncRunResponse, error)
 
 	// StateFunc mocks the State method.
 	StateFunc func(context1 context.Context, runcStateRequest *runmv1.RuncStateRequest) (*runmv1.RuncStateResponse, error)
@@ -87,8 +87,8 @@ type MockRuncExtrasServiceServer struct {
 			// RuncListRequest is the runcListRequest argument value.
 			RuncListRequest *runmv1.RuncListRequest
 		}
-		// Run holds details about calls to the Run method.
-		Run []struct {
+		// RuncRun holds details about calls to the RuncRun method.
+		RuncRun []struct {
 			// Context1 is the context1 argument value.
 			Context1 context.Context
 			// RuncRunRequest is the runcRunRequest argument value.
@@ -125,7 +125,7 @@ type MockRuncExtrasServiceServer struct {
 	}
 	lockEvents  sync.RWMutex
 	lockList    sync.RWMutex
-	lockRun     sync.RWMutex
+	lockRuncRun sync.RWMutex
 	lockState   sync.RWMutex
 	lockStats   sync.RWMutex
 	lockTop     sync.RWMutex
@@ -204,10 +204,10 @@ func (mock *MockRuncExtrasServiceServer) ListCalls() []struct {
 	return calls
 }
 
-// Run calls RunFunc.
-func (mock *MockRuncExtrasServiceServer) Run(context1 context.Context, runcRunRequest *runmv1.RuncRunRequest) (*runmv1.RuncRunResponse, error) {
-	if mock.RunFunc == nil {
-		panic("MockRuncExtrasServiceServer.RunFunc: method is nil but RuncExtrasServiceServer.Run was just called")
+// RuncRun calls RuncRunFunc.
+func (mock *MockRuncExtrasServiceServer) RuncRun(context1 context.Context, runcRunRequest *runmv1.RuncRunRequest) (*runmv1.RuncRunResponse, error) {
+	if mock.RuncRunFunc == nil {
+		panic("MockRuncExtrasServiceServer.RuncRunFunc: method is nil but RuncExtrasServiceServer.RuncRun was just called")
 	}
 	callInfo := struct {
 		Context1       context.Context
@@ -216,17 +216,17 @@ func (mock *MockRuncExtrasServiceServer) Run(context1 context.Context, runcRunRe
 		Context1:       context1,
 		RuncRunRequest: runcRunRequest,
 	}
-	mock.lockRun.Lock()
-	mock.calls.Run = append(mock.calls.Run, callInfo)
-	mock.lockRun.Unlock()
-	return mock.RunFunc(context1, runcRunRequest)
+	mock.lockRuncRun.Lock()
+	mock.calls.RuncRun = append(mock.calls.RuncRun, callInfo)
+	mock.lockRuncRun.Unlock()
+	return mock.RuncRunFunc(context1, runcRunRequest)
 }
 
-// RunCalls gets all the calls that were made to Run.
+// RuncRunCalls gets all the calls that were made to RuncRun.
 // Check the length with:
 //
-//	len(mockedRuncExtrasServiceServer.RunCalls())
-func (mock *MockRuncExtrasServiceServer) RunCalls() []struct {
+//	len(mockedRuncExtrasServiceServer.RuncRunCalls())
+func (mock *MockRuncExtrasServiceServer) RuncRunCalls() []struct {
 	Context1       context.Context
 	RuncRunRequest *runmv1.RuncRunRequest
 } {
@@ -234,9 +234,9 @@ func (mock *MockRuncExtrasServiceServer) RunCalls() []struct {
 		Context1       context.Context
 		RuncRunRequest *runmv1.RuncRunRequest
 	}
-	mock.lockRun.RLock()
-	calls = mock.calls.Run
-	mock.lockRun.RUnlock()
+	mock.lockRuncRun.RLock()
+	calls = mock.calls.RuncRun
+	mock.lockRuncRun.RUnlock()
 	return calls
 }
 

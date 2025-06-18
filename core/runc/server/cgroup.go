@@ -9,9 +9,9 @@ import (
 	"google.golang.org/protobuf/types/known/anypb"
 )
 
-var _ runmv1.GuestCgroupServiceServer = (*Server)(nil)
+var _ runmv1.CgroupAdapterServiceServer = (*Server)(nil)
 
-// GetCgroupStats implements runmv1.GuestCgroupServiceServer.
+// GetCgroupStats implements runmv1.CgroupAdapterServiceServer.
 func (s *Server) GetCgroupStats(ctx context.Context, _ *runmv1.GetCgroupStatsRequest) (*runmv1.GetCgroupStatsResponse, error) {
 	statz, err := s.cgroupAdapter.Stat(ctx)
 	if err != nil {

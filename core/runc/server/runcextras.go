@@ -17,7 +17,7 @@ var _ runmv1.RuncExtrasServiceServer = (*Server)(nil)
 // RuntimeExtras
 ////////////////////////////////////////////////////////////
 
-func (s *Server) Run(ctx context.Context, req *runmv1.RuncRunRequest) (*runmv1.RuncRunResponse, error) {
+func (s *Server) RuncRun(ctx context.Context, req *runmv1.RuncRunRequest) (*runmv1.RuncRunResponse, error) {
 	resp := &runmv1.RuncRunResponse{}
 
 	opts, err := conversion.ConvertCreateOptsFromProto(ctx, req.GetOptions(), s.state)
@@ -25,7 +25,7 @@ func (s *Server) Run(ctx context.Context, req *runmv1.RuncRunRequest) (*runmv1.R
 		return nil, err
 	}
 
-	status, err := s.runtimeExtras.Run(ctx, req.GetId(), req.GetBundle(), opts)
+	status, err := s.runtimeExtras.RuncRun(ctx, req.GetId(), req.GetBundle(), opts)
 	if err != nil {
 		resp.SetGoError(err.Error())
 	}

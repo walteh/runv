@@ -45,6 +45,10 @@ func (r *GoRuncRuntime) ReadPidFile(ctx context.Context, path string) (int, erro
 	return gorunc.ReadPidFile(path)
 }
 
+func (r *GoRuncRuntime) RuncRun(ctx context.Context, id, bundle string, options *gorunc.CreateOpts) (int, error) {
+	return r.Runc.Run(ctx, id, bundle, options)
+}
+
 type GoRuncRuntimeCreator struct{}
 
 func (c *GoRuncRuntimeCreator) Create(ctx context.Context, sharedDir string, opts *runtime.RuntimeOptions) runtime.Runtime {

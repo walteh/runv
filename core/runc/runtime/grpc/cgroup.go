@@ -15,7 +15,7 @@ var _ runtime.CgroupAdapter = (*GRPCClientRuntime)(nil)
 // EventChan implements runtime.CgroupAdapter.
 func (me *GRPCClientRuntime) OpenEventChan(ctx context.Context) (chan runtime.CgroupEvent, chan error, error) {
 
-	stream, err := me.cgroupAdapter.StreamCgroupEvents(ctx, &runmv1.StreamCgroupEventsRequest{})
+	stream, err := me.guestCgroupAdapterService.StreamCgroupEvents(ctx, &runmv1.StreamCgroupEventsRequest{})
 	if err != nil {
 		return nil, nil, errors.Errorf("failed to open event channel: %w", err)
 	}
@@ -41,7 +41,7 @@ func (me *GRPCClientRuntime) OpenEventChan(ctx context.Context) (chan runtime.Cg
 func (me *GRPCClientRuntime) Stat(ctx context.Context) (*stats.Metrics, error) {
 	var stats *stats.Metrics
 
-	res, err := me.cgroupAdapter.GetCgroupStats(ctx, &runmv1.GetCgroupStatsRequest{})
+	res, err := me.guestCgroupAdapterService.GetCgroupStats(ctx, &runmv1.GetCgroupStatsRequest{})
 	if err != nil {
 		return nil, errors.Errorf("failed to get cgroup stats: %w", err)
 	}
@@ -55,7 +55,7 @@ func (me *GRPCClientRuntime) Stat(ctx context.Context) (*stats.Metrics, error) {
 
 // ToggleControllers implements runtime.CgroupAdapter.
 func (me *GRPCClientRuntime) ToggleControllers(ctx context.Context) error {
-	_, err := me.cgroupAdapter.ToggleAllControllers(ctx, &runmv1.ToggleAllControllersRequest{})
+	_, err := me.guestCgroupAdapterService.ToggleAllControllers(ctx, &runmv1.ToggleAllControllersRequest{})
 	if err != nil {
 		return errors.Errorf("failed to toggle cgroup controllers: %w", err)
 	}

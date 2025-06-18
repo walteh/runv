@@ -274,9 +274,6 @@ tasks:
     linux:vf:*:
         label: 'linux:vf:{{.ARCH}}'
         requires: {vars: [ARCH]}
-        deps:
-          - linux:kernel:{{.ARCH}}
-          - linux:initramfs:{{.ARCH}}
         desc: builds the vf
         vars:
             ARCH: "{{index .MATCH 0}}"
@@ -286,10 +283,14 @@ tasks:
             TMP_DIR:
                 sh: mktemp -d
         cmds:
-          - cmd: mkdir -p {{.TMP_DIR}}
+          - task: linux:kernel:{{.ARCH}}
+          - task: linux:initramfs:{{.ARCH}}
+          - cmd: mkdir -p {{.TMP_DIR}} {{.OUT_DIR}}
           - defer: rm -rf {{.TMP_DIR}}
-          - cmd: unxz {{.KERNEL_DIR}}/kernel.xz > {{.TMP_DIR}}/kernel
-          - cmd: unxz {{.INITRAMFS_DIR}}/initramfs.cpio.gz.xz > {{.TMP_DIR}}/initramfs.cpio.gz
+          - cmd: cp {{.KERNEL_DIR}}/kernel.xz {{.TMP_DIR}}/kernel.xz
+          - cmd: cp {{.INITRAMFS_DIR}}/initramfs.cpio.gz.xz {{.TMP_DIR}}/initramfs.cpio.gz.xz
+          - cmd: unxz {{.TMP_DIR}}/kernel.xz
+          - cmd: unxz {{.TMP_DIR}}/initramfs.cpio.gz.xz
           - cmd: mv -f {{.TMP_DIR}}/kernel {{.OUT_DIR}}/kernel
           - cmd: mv -f {{.TMP_DIR}}/initramfs.cpio.gz {{.OUT_DIR}}/initramfs.cpio.gz
 

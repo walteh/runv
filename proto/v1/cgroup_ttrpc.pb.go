@@ -7,27 +7,27 @@ import (
 	ttrpc "github.com/containerd/ttrpc"
 )
 
-type TTRPCGuestCgroupServiceService interface {
+type TTRPCCgroupAdapterServiceService interface {
 	GetCgroupStats(context.Context, *GetCgroupStatsRequest) (*GetCgroupStatsResponse, error)
-	StreamCgroupEvents(context.Context, *StreamCgroupEventsRequest, TTRPCGuestCgroupService_StreamCgroupEventsServer) error
+	StreamCgroupEvents(context.Context, *StreamCgroupEventsRequest, TTRPCCgroupAdapterService_StreamCgroupEventsServer) error
 	ToggleAllControllers(context.Context, *ToggleAllControllersRequest) (*ToggleAllControllersResponse, error)
 }
 
-type TTRPCGuestCgroupService_StreamCgroupEventsServer interface {
+type TTRPCCgroupAdapterService_StreamCgroupEventsServer interface {
 	Send(*StreamCgroupEventsResponse) error
 	ttrpc.StreamServer
 }
 
-type ttrpcguestcgroupserviceStreamCgroupEventsServer struct {
+type ttrpccgroupadapterserviceStreamCgroupEventsServer struct {
 	ttrpc.StreamServer
 }
 
-func (x *ttrpcguestcgroupserviceStreamCgroupEventsServer) Send(m *StreamCgroupEventsResponse) error {
+func (x *ttrpccgroupadapterserviceStreamCgroupEventsServer) Send(m *StreamCgroupEventsResponse) error {
 	return x.StreamServer.SendMsg(m)
 }
 
-func RegisterTTRPCGuestCgroupServiceService(srv *ttrpc.Server, svc TTRPCGuestCgroupServiceService) {
-	srv.RegisterService("runm.v1.GuestCgroupService", &ttrpc.ServiceDesc{
+func RegisterTTRPCCgroupAdapterServiceService(srv *ttrpc.Server, svc TTRPCCgroupAdapterServiceService) {
+	srv.RegisterService("runm.v1.CgroupAdapterService", &ttrpc.ServiceDesc{
 		Methods: map[string]ttrpc.Method{
 			"GetCgroupStats": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
 				var req GetCgroupStatsRequest
@@ -51,7 +51,7 @@ func RegisterTTRPCGuestCgroupServiceService(srv *ttrpc.Server, svc TTRPCGuestCgr
 					if err := stream.RecvMsg(m); err != nil {
 						return nil, err
 					}
-					return nil, svc.StreamCgroupEvents(ctx, m, &ttrpcguestcgroupserviceStreamCgroupEventsServer{stream})
+					return nil, svc.StreamCgroupEvents(ctx, m, &ttrpccgroupadapterserviceStreamCgroupEventsServer{stream})
 				},
 				StreamingClient: false,
 				StreamingServer: true,
@@ -60,52 +60,52 @@ func RegisterTTRPCGuestCgroupServiceService(srv *ttrpc.Server, svc TTRPCGuestCgr
 	})
 }
 
-type TTRPCGuestCgroupServiceClient interface {
+type TTRPCCgroupAdapterServiceClient interface {
 	GetCgroupStats(context.Context, *GetCgroupStatsRequest) (*GetCgroupStatsResponse, error)
-	StreamCgroupEvents(context.Context, *StreamCgroupEventsRequest) (TTRPCGuestCgroupService_StreamCgroupEventsClient, error)
+	StreamCgroupEvents(context.Context, *StreamCgroupEventsRequest) (TTRPCCgroupAdapterService_StreamCgroupEventsClient, error)
 	ToggleAllControllers(context.Context, *ToggleAllControllersRequest) (*ToggleAllControllersResponse, error)
 }
 
-type ttrpcguestcgroupserviceClient struct {
+type ttrpccgroupadapterserviceClient struct {
 	client *ttrpc.Client
 }
 
-func NewTTRPCGuestCgroupServiceClient(client *ttrpc.Client) TTRPCGuestCgroupServiceClient {
-	return &ttrpcguestcgroupserviceClient{
+func NewTTRPCCgroupAdapterServiceClient(client *ttrpc.Client) TTRPCCgroupAdapterServiceClient {
+	return &ttrpccgroupadapterserviceClient{
 		client: client,
 	}
 }
 
-func (c *ttrpcguestcgroupserviceClient) GetCgroupStats(ctx context.Context, req *GetCgroupStatsRequest) (*GetCgroupStatsResponse, error) {
+func (c *ttrpccgroupadapterserviceClient) GetCgroupStats(ctx context.Context, req *GetCgroupStatsRequest) (*GetCgroupStatsResponse, error) {
 	var resp GetCgroupStatsResponse
-	if err := c.client.Call(ctx, "runm.v1.GuestCgroupService", "GetCgroupStats", req, &resp); err != nil {
+	if err := c.client.Call(ctx, "runm.v1.CgroupAdapterService", "GetCgroupStats", req, &resp); err != nil {
 		return nil, err
 	}
 	return &resp, nil
 }
 
-func (c *ttrpcguestcgroupserviceClient) StreamCgroupEvents(ctx context.Context, req *StreamCgroupEventsRequest) (TTRPCGuestCgroupService_StreamCgroupEventsClient, error) {
+func (c *ttrpccgroupadapterserviceClient) StreamCgroupEvents(ctx context.Context, req *StreamCgroupEventsRequest) (TTRPCCgroupAdapterService_StreamCgroupEventsClient, error) {
 	stream, err := c.client.NewStream(ctx, &ttrpc.StreamDesc{
 		StreamingClient: false,
 		StreamingServer: true,
-	}, "runm.v1.GuestCgroupService", "StreamCgroupEvents", req)
+	}, "runm.v1.CgroupAdapterService", "StreamCgroupEvents", req)
 	if err != nil {
 		return nil, err
 	}
-	x := &ttrpcguestcgroupserviceStreamCgroupEventsClient{stream}
+	x := &ttrpccgroupadapterserviceStreamCgroupEventsClient{stream}
 	return x, nil
 }
 
-type TTRPCGuestCgroupService_StreamCgroupEventsClient interface {
+type TTRPCCgroupAdapterService_StreamCgroupEventsClient interface {
 	Recv() (*StreamCgroupEventsResponse, error)
 	ttrpc.ClientStream
 }
 
-type ttrpcguestcgroupserviceStreamCgroupEventsClient struct {
+type ttrpccgroupadapterserviceStreamCgroupEventsClient struct {
 	ttrpc.ClientStream
 }
 
-func (x *ttrpcguestcgroupserviceStreamCgroupEventsClient) Recv() (*StreamCgroupEventsResponse, error) {
+func (x *ttrpccgroupadapterserviceStreamCgroupEventsClient) Recv() (*StreamCgroupEventsResponse, error) {
 	m := new(StreamCgroupEventsResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -113,9 +113,9 @@ func (x *ttrpcguestcgroupserviceStreamCgroupEventsClient) Recv() (*StreamCgroupE
 	return m, nil
 }
 
-func (c *ttrpcguestcgroupserviceClient) ToggleAllControllers(ctx context.Context, req *ToggleAllControllersRequest) (*ToggleAllControllersResponse, error) {
+func (c *ttrpccgroupadapterserviceClient) ToggleAllControllers(ctx context.Context, req *ToggleAllControllersRequest) (*ToggleAllControllersResponse, error) {
 	var resp ToggleAllControllersResponse
-	if err := c.client.Call(ctx, "runm.v1.GuestCgroupService", "ToggleAllControllers", req, &resp); err != nil {
+	if err := c.client.Call(ctx, "runm.v1.CgroupAdapterService", "ToggleAllControllers", req, &resp); err != nil {
 		return nil, err
 	}
 	return &resp, nil

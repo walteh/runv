@@ -23,7 +23,7 @@ func (c *GRPCClientRuntime) Stats(ctx context.Context, id string) (*gorunc.Stats
 	req := &runmv1.RuncStatsRequest{}
 	req.SetId(id)
 
-	resp, err := c.runtimeExtras.Stats(ctx, req)
+	resp, err := c.runtimeExtrasGprcService.Stats(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func (c *GRPCClientRuntime) State(ctx context.Context, id string) (*gorunc.Conta
 }
 
 // Run runs the create, start, delete lifecycle of the container.
-func (c *GRPCClientRuntime) Run(ctx context.Context, id, bundle string, options *gorunc.CreateOpts) (int, error) {
+func (c *GRPCClientRuntime) RuncRun(ctx context.Context, id, bundle string, options *gorunc.CreateOpts) (int, error) {
 	panic("unimplemented")
 }
 
@@ -57,7 +57,7 @@ func (c *GRPCClientRuntime) Events(ctx context.Context, id string, duration time
 	req.SetId(id)
 	req.SetDuration(durationpb.New(duration))
 
-	stream, err := c.runtimeExtras.Events(ctx, req)
+	stream, err := c.runtimeExtrasGprcService.Events(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +94,7 @@ func (c *GRPCClientRuntime) Top(ctx context.Context, id string, psOptions string
 	req.SetId(id)
 	req.SetPsOptions(psOptions)
 
-	resp, err := c.runtimeExtras.Top(ctx, req)
+	resp, err := c.runtimeExtrasGprcService.Top(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +109,7 @@ func (c *GRPCClientRuntime) Top(ctx context.Context, id string, psOptions string
 
 // Version returns the runc and runtime-spec versions.
 func (c *GRPCClientRuntime) Version(ctx context.Context) (gorunc.Version, error) {
-	resp, err := c.runtimeExtras.Version(ctx, &runmv1.RuncVersionRequest{})
+	resp, err := c.runtimeExtrasGprcService.Version(ctx, &runmv1.RuncVersionRequest{})
 	if err != nil {
 		return gorunc.Version{}, err
 	}

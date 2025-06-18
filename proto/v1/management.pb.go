@@ -257,7 +257,7 @@ type GuestRunCommandRequest struct {
 	xxx_hidden_Argv    []string               `protobuf:"bytes,3,rep,name=argv"`
 	xxx_hidden_EnvVars map[string]string      `protobuf:"bytes,4,rep,name=env_vars,json=envVars" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	xxx_hidden_Chroot  string                 `protobuf:"bytes,5,opt,name=chroot"`
-	xxx_hidden_Cwd     []byte                 `protobuf:"bytes,6,opt,name=cwd"`
+	xxx_hidden_Cwd     string                 `protobuf:"bytes,6,opt,name=cwd"`
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
@@ -322,11 +322,11 @@ func (x *GuestRunCommandRequest) GetChroot() string {
 	return ""
 }
 
-func (x *GuestRunCommandRequest) GetCwd() []byte {
+func (x *GuestRunCommandRequest) GetCwd() string {
 	if x != nil {
 		return x.xxx_hidden_Cwd
 	}
-	return nil
+	return ""
 }
 
 func (x *GuestRunCommandRequest) SetStdin(v []byte) {
@@ -352,10 +352,7 @@ func (x *GuestRunCommandRequest) SetChroot(v string) {
 	x.xxx_hidden_Chroot = v
 }
 
-func (x *GuestRunCommandRequest) SetCwd(v []byte) {
-	if v == nil {
-		v = []byte{}
-	}
+func (x *GuestRunCommandRequest) SetCwd(v string) {
 	x.xxx_hidden_Cwd = v
 }
 
@@ -370,7 +367,7 @@ type GuestRunCommandRequest_builder struct {
 	// the environment variables to set for the executable
 	EnvVars map[string]string
 	Chroot  string
-	Cwd     []byte
+	Cwd     string
 }
 
 func (b0 GuestRunCommandRequest_builder) Build() *GuestRunCommandRequest {
@@ -497,7 +494,7 @@ const file_v1_management_proto_rawDesc = "" +
 	"\x04argv\x18\x03 \x03(\tB\x06\xbaH\x03\xc8\x01\x01R\x04argv\x12O\n" +
 	"\benv_vars\x18\x04 \x03(\v2,.runm.v1.GuestRunCommandRequest.EnvVarsEntryB\x06\xbaH\x03\xc8\x01\x01R\aenvVars\x12\x1e\n" +
 	"\x06chroot\x18\x05 \x01(\tB\x06\xbaH\x03\xc8\x01\x00R\x06chroot\x12\x18\n" +
-	"\x03cwd\x18\x06 \x01(\fB\x06\xbaH\x03\xc8\x01\x00R\x03cwd\x1a:\n" +
+	"\x03cwd\x18\x06 \x01(\tB\x06\xbaH\x03\xc8\x01\x00R\x03cwd\x1a:\n" +
 	"\fEnvVarsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"~\n" +

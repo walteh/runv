@@ -12,16 +12,16 @@ import (
 	"google.golang.org/grpc"
 )
 
-// Ensure that MockGuestCgroupServiceServer does implement runmv1.GuestCgroupServiceServer.
+// Ensure that MockCgroupAdapterServiceServer does implement runmv1.CgroupAdapterServiceServer.
 // If this is not the case, regenerate this file with mockery.
-var _ runmv1.GuestCgroupServiceServer = &MockGuestCgroupServiceServer{}
+var _ runmv1.CgroupAdapterServiceServer = &MockCgroupAdapterServiceServer{}
 
-// MockGuestCgroupServiceServer is a mock implementation of runmv1.GuestCgroupServiceServer.
+// MockCgroupAdapterServiceServer is a mock implementation of runmv1.CgroupAdapterServiceServer.
 //
-//	func TestSomethingThatUsesGuestCgroupServiceServer(t *testing.T) {
+//	func TestSomethingThatUsesCgroupAdapterServiceServer(t *testing.T) {
 //
-//		// make and configure a mocked runmv1.GuestCgroupServiceServer
-//		mockedGuestCgroupServiceServer := &MockGuestCgroupServiceServer{
+//		// make and configure a mocked runmv1.CgroupAdapterServiceServer
+//		mockedCgroupAdapterServiceServer := &MockCgroupAdapterServiceServer{
 //			GetCgroupStatsFunc: func(context1 context.Context, getCgroupStatsRequest *runmv1.GetCgroupStatsRequest) (*runmv1.GetCgroupStatsResponse, error) {
 //				panic("mock out the GetCgroupStats method")
 //			},
@@ -33,11 +33,11 @@ var _ runmv1.GuestCgroupServiceServer = &MockGuestCgroupServiceServer{}
 //			},
 //		}
 //
-//		// use mockedGuestCgroupServiceServer in code that requires runmv1.GuestCgroupServiceServer
+//		// use mockedCgroupAdapterServiceServer in code that requires runmv1.CgroupAdapterServiceServer
 //		// and then make assertions.
 //
 //	}
-type MockGuestCgroupServiceServer struct {
+type MockCgroupAdapterServiceServer struct {
 	// GetCgroupStatsFunc mocks the GetCgroupStats method.
 	GetCgroupStatsFunc func(context1 context.Context, getCgroupStatsRequest *runmv1.GetCgroupStatsRequest) (*runmv1.GetCgroupStatsResponse, error)
 
@@ -77,9 +77,9 @@ type MockGuestCgroupServiceServer struct {
 }
 
 // GetCgroupStats calls GetCgroupStatsFunc.
-func (mock *MockGuestCgroupServiceServer) GetCgroupStats(context1 context.Context, getCgroupStatsRequest *runmv1.GetCgroupStatsRequest) (*runmv1.GetCgroupStatsResponse, error) {
+func (mock *MockCgroupAdapterServiceServer) GetCgroupStats(context1 context.Context, getCgroupStatsRequest *runmv1.GetCgroupStatsRequest) (*runmv1.GetCgroupStatsResponse, error) {
 	if mock.GetCgroupStatsFunc == nil {
-		panic("MockGuestCgroupServiceServer.GetCgroupStatsFunc: method is nil but GuestCgroupServiceServer.GetCgroupStats was just called")
+		panic("MockCgroupAdapterServiceServer.GetCgroupStatsFunc: method is nil but CgroupAdapterServiceServer.GetCgroupStats was just called")
 	}
 	callInfo := struct {
 		Context1              context.Context
@@ -97,8 +97,8 @@ func (mock *MockGuestCgroupServiceServer) GetCgroupStats(context1 context.Contex
 // GetCgroupStatsCalls gets all the calls that were made to GetCgroupStats.
 // Check the length with:
 //
-//	len(mockedGuestCgroupServiceServer.GetCgroupStatsCalls())
-func (mock *MockGuestCgroupServiceServer) GetCgroupStatsCalls() []struct {
+//	len(mockedCgroupAdapterServiceServer.GetCgroupStatsCalls())
+func (mock *MockCgroupAdapterServiceServer) GetCgroupStatsCalls() []struct {
 	Context1              context.Context
 	GetCgroupStatsRequest *runmv1.GetCgroupStatsRequest
 } {
@@ -113,9 +113,9 @@ func (mock *MockGuestCgroupServiceServer) GetCgroupStatsCalls() []struct {
 }
 
 // StreamCgroupEvents calls StreamCgroupEventsFunc.
-func (mock *MockGuestCgroupServiceServer) StreamCgroupEvents(streamCgroupEventsRequest *runmv1.StreamCgroupEventsRequest, serverStreamingServer grpc.ServerStreamingServer[runmv1.StreamCgroupEventsResponse]) error {
+func (mock *MockCgroupAdapterServiceServer) StreamCgroupEvents(streamCgroupEventsRequest *runmv1.StreamCgroupEventsRequest, serverStreamingServer grpc.ServerStreamingServer[runmv1.StreamCgroupEventsResponse]) error {
 	if mock.StreamCgroupEventsFunc == nil {
-		panic("MockGuestCgroupServiceServer.StreamCgroupEventsFunc: method is nil but GuestCgroupServiceServer.StreamCgroupEvents was just called")
+		panic("MockCgroupAdapterServiceServer.StreamCgroupEventsFunc: method is nil but CgroupAdapterServiceServer.StreamCgroupEvents was just called")
 	}
 	callInfo := struct {
 		StreamCgroupEventsRequest *runmv1.StreamCgroupEventsRequest
@@ -133,8 +133,8 @@ func (mock *MockGuestCgroupServiceServer) StreamCgroupEvents(streamCgroupEventsR
 // StreamCgroupEventsCalls gets all the calls that were made to StreamCgroupEvents.
 // Check the length with:
 //
-//	len(mockedGuestCgroupServiceServer.StreamCgroupEventsCalls())
-func (mock *MockGuestCgroupServiceServer) StreamCgroupEventsCalls() []struct {
+//	len(mockedCgroupAdapterServiceServer.StreamCgroupEventsCalls())
+func (mock *MockCgroupAdapterServiceServer) StreamCgroupEventsCalls() []struct {
 	StreamCgroupEventsRequest *runmv1.StreamCgroupEventsRequest
 	ServerStreamingServer     grpc.ServerStreamingServer[runmv1.StreamCgroupEventsResponse]
 } {
@@ -149,9 +149,9 @@ func (mock *MockGuestCgroupServiceServer) StreamCgroupEventsCalls() []struct {
 }
 
 // ToggleAllControllers calls ToggleAllControllersFunc.
-func (mock *MockGuestCgroupServiceServer) ToggleAllControllers(context1 context.Context, toggleAllControllersRequest *runmv1.ToggleAllControllersRequest) (*runmv1.ToggleAllControllersResponse, error) {
+func (mock *MockCgroupAdapterServiceServer) ToggleAllControllers(context1 context.Context, toggleAllControllersRequest *runmv1.ToggleAllControllersRequest) (*runmv1.ToggleAllControllersResponse, error) {
 	if mock.ToggleAllControllersFunc == nil {
-		panic("MockGuestCgroupServiceServer.ToggleAllControllersFunc: method is nil but GuestCgroupServiceServer.ToggleAllControllers was just called")
+		panic("MockCgroupAdapterServiceServer.ToggleAllControllersFunc: method is nil but CgroupAdapterServiceServer.ToggleAllControllers was just called")
 	}
 	callInfo := struct {
 		Context1                    context.Context
@@ -169,8 +169,8 @@ func (mock *MockGuestCgroupServiceServer) ToggleAllControllers(context1 context.
 // ToggleAllControllersCalls gets all the calls that were made to ToggleAllControllers.
 // Check the length with:
 //
-//	len(mockedGuestCgroupServiceServer.ToggleAllControllersCalls())
-func (mock *MockGuestCgroupServiceServer) ToggleAllControllersCalls() []struct {
+//	len(mockedCgroupAdapterServiceServer.ToggleAllControllersCalls())
+func (mock *MockCgroupAdapterServiceServer) ToggleAllControllersCalls() []struct {
 	Context1                    context.Context
 	ToggleAllControllersRequest *runmv1.ToggleAllControllersRequest
 } {

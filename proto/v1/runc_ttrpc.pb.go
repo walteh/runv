@@ -253,7 +253,7 @@ func (c *ttrpcruncserviceClient) ReadPidFile(ctx context.Context, req *RuncReadP
 
 type TTRPCRuncExtrasServiceService interface {
 	State(context.Context, *RuncStateRequest) (*RuncStateResponse, error)
-	Run(context.Context, *RuncRunRequest) (*RuncRunResponse, error)
+	RuncRun(context.Context, *RuncRunRequest) (*RuncRunResponse, error)
 	Stats(context.Context, *RuncStatsRequest) (*RuncStatsResponse, error)
 	Events(context.Context, *RuncEventsRequest, TTRPCRuncExtrasService_EventsServer) error
 	List(context.Context, *RuncListRequest) (*RuncListResponse, error)
@@ -284,12 +284,12 @@ func RegisterTTRPCRuncExtrasServiceService(srv *ttrpc.Server, svc TTRPCRuncExtra
 				}
 				return svc.State(ctx, &req)
 			},
-			"Run": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+			"RuncRun": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
 				var req RuncRunRequest
 				if err := unmarshal(&req); err != nil {
 					return nil, err
 				}
-				return svc.Run(ctx, &req)
+				return svc.RuncRun(ctx, &req)
 			},
 			"Stats": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
 				var req RuncStatsRequest
@@ -338,7 +338,7 @@ func RegisterTTRPCRuncExtrasServiceService(srv *ttrpc.Server, svc TTRPCRuncExtra
 
 type TTRPCRuncExtrasServiceClient interface {
 	State(context.Context, *RuncStateRequest) (*RuncStateResponse, error)
-	Run(context.Context, *RuncRunRequest) (*RuncRunResponse, error)
+	RuncRun(context.Context, *RuncRunRequest) (*RuncRunResponse, error)
 	Stats(context.Context, *RuncStatsRequest) (*RuncStatsResponse, error)
 	Events(context.Context, *RuncEventsRequest) (TTRPCRuncExtrasService_EventsClient, error)
 	List(context.Context, *RuncListRequest) (*RuncListResponse, error)
@@ -364,9 +364,9 @@ func (c *ttrpcruncextrasserviceClient) State(ctx context.Context, req *RuncState
 	return &resp, nil
 }
 
-func (c *ttrpcruncextrasserviceClient) Run(ctx context.Context, req *RuncRunRequest) (*RuncRunResponse, error) {
+func (c *ttrpcruncextrasserviceClient) RuncRun(ctx context.Context, req *RuncRunRequest) (*RuncRunResponse, error) {
 	var resp RuncRunResponse
-	if err := c.client.Call(ctx, "runm.v1.RuncExtrasService", "Run", req, &resp); err != nil {
+	if err := c.client.Call(ctx, "runm.v1.RuncExtrasService", "RuncRun", req, &resp); err != nil {
 		return nil, err
 	}
 	return &resp, nil

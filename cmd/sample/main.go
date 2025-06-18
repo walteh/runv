@@ -41,7 +41,7 @@ func newMockServer() *server.Server {
 	}
 
 	var mockRuntimeExtras = &runtimemock.MockRuntimeExtras{
-		RunFunc: func(context1 context.Context, s string, s1 string, createOpts *gorunc.CreateOpts) (int, error) {
+		RuncRunFunc: func(context1 context.Context, s string, s1 string, createOpts *gorunc.CreateOpts) (int, error) {
 			return 1234, nil
 		},
 	}

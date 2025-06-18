@@ -38,13 +38,13 @@ import (
 type ContainerizedVMConfig struct {
 	ID           string
 	RootfsMounts []*types.Mount
-	StderrWriter io.Writer
-	StdoutWriter io.Writer
-	StdinReader  io.Reader
-	Spec         *oci.Spec
-	Memory       strongunits.B
-	VCPUs        uint64
-	Platform     units.Platform
+	// StderrWriter io.Writer
+	// StdoutWriter io.Writer
+	// StdinReader  io.Reader
+	Spec           *oci.Spec
+	StartingMemory strongunits.B
+	VCPUs          uint64
+	Platform       units.Platform
 }
 
 func appendContext(ctx context.Context, id string) context.Context {
@@ -77,13 +77,13 @@ func appendContext(ctx context.Context, id string) context.Context {
 
 // NewContainerizedVirtualMachineFromRootfs creates a VM using an already-prepared rootfs directory
 // This is used by container runtimes like containerd that have already prepared the rootfs
-func NewContainerizedVirtualMachineFromRootfs[VM VirtualMachine](
+func NewContainerizedVirtualMachine[VM VirtualMachine](
 	ctx context.Context,
 	hpv Hypervisor[VM],
 	ctrconfig ContainerizedVMConfig,
 	devices ...virtio.VirtioDevice) (*RunningVM[VM], error) {
 
-	id := "harpoon-oci-" + ctrconfig.ID[:8]
+	id := "vm-" + ctrconfig.ID[:8]
 	creationErrGroup, ctx := errgroup.WithContext(ctx)
 
 	ctx = appendContext(ctx, id)
@@ -107,16 +107,8 @@ func NewContainerizedVirtualMachineFromRootfs[VM VirtualMachine](
 
 	devices = append(devices, mountDevices...)
 
-	// // get real location of symlink location spec.root.path
-	// realRootfsPath, err := os.Readlink(ctrconfig.Spec.Root.Path)
-	// if err != nil {
-	// 	return nil, errors.Errorf("reading rootfs path: %w", err)
-	// }
-
 	slog.InfoContext(ctx, "about to set up rootfs",
 		"ctrconfig.RootfsMounts", ctrconfig.RootfsMounts,
-		// "realRootfsPath", realRootfsPath,
-		// "bindMounts", tint.NewPrettyValue(bindMounts),
 		"spec.Root.Path", ctrconfig.Spec.Root.Path,
 		"spec.Root.Readonly", ctrconfig.Spec.Root.Readonly,
 	)
@@ -163,14 +155,14 @@ func NewContainerizedVirtualMachineFromRootfs[VM VirtualMachine](
 		return nil, errors.Errorf("creating net device: %w", err)
 	}
 	devices = append(devices, netdev.VirtioNetDevice())
-
 	devices = append(devices, &virtio.VirtioVsock{})
 	devices = append(devices, &virtio.VirtioBalloon{})
 
 	opts := NewVMOptions{
-		Vcpus:   ctrconfig.VCPUs,
-		Memory:  ctrconfig.Memory,
-		Devices: devices,
+		Vcpus:         ctrconfig.VCPUs,
+		Memory:        ctrconfig.StartingMemory,
+		Devices:       devices,
+		GuestPlatform: ctrconfig.Platform,
 	}
 
 	waitStart := time.Now()
@@ -191,9 +183,6 @@ func NewContainerizedVirtualMachineFromRootfs[VM VirtualMachine](
 		bootloader:   bootloader,
 		start:        startTime,
 		vm:           vm,
-		stdin:        ctrconfig.StdinReader,
-		stdout:       ctrconfig.StdoutWriter,
-		stderr:       ctrconfig.StderrWriter,
 		portOnHostIP: hostIPPort,
 		wait:         make(chan error, 1),
 		runtime:      nil,
@@ -296,7 +285,6 @@ func (rvm *RunningVM[VM]) Start(ctx context.Context) error {
 
 	tsreq := &runmv1.GuestTimeSyncRequest{}
 	tsreq.SetUnixTimeNs(uint64(time.Now().UnixNano()))
-
 	response, err := connection.Management().GuestTimeSync(ctx, tsreq)
 	if err != nil {
 		return errors.Errorf("failed to time sync: %w", err)

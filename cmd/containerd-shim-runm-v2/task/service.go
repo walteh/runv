@@ -49,8 +49,6 @@ import (
 	"github.com/walteh/runm/cmd/containerd-shim-runm-v2/runm"
 	"github.com/walteh/runm/core/runc/oom"
 	"github.com/walteh/runm/core/runc/runtime"
-	"github.com/walteh/runm/core/virt/vf"
-	"github.com/walteh/runm/core/virt/vmm"
 )
 
 var (
@@ -61,25 +59,11 @@ var (
 // NewTaskService creates a new instance of a task service
 func NewTaskService(ctx context.Context, publisher shim.Publisher, sd shutdown.Service) (taskAPI.TTRPCTaskService, error) {
 
-	hpv := vf.NewHypervisor()
-	vm, err := vmm.NewContainerizedVirtualMachineFromRootfs(ctx, hpv, vmm.ContainerizedVMConfig{}, nil, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	srv, err := vm.GuestService(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	ep := oom.NewWatcher(publisher, srv)
-
-	go ep.Run(ctx)
 	s := &service{
 		context:              ctx,
 		events:               make(chan interface{}, 128),
 		ec:                   reaper.Default.Subscribe(),
-		ep:                   ep,
+		ep:                   nil,
 		shutdown:             sd,
 		containers:           make(map[string]*runm.Container),
 		running:              make(map[int][]containerProcess),
@@ -115,7 +99,7 @@ type service struct {
 	events   chan interface{}
 	platform stdio.Platform
 	ec       chan gorunc.Exit
-	ep       oom.Watcher
+	ep       *oom.Watcher
 
 	containers map[string]*runm.Container
 

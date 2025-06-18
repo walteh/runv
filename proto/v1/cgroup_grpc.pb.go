@@ -19,41 +19,41 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	GuestCgroupService_GetCgroupStats_FullMethodName       = "/runm.v1.GuestCgroupService/GetCgroupStats"
-	GuestCgroupService_StreamCgroupEvents_FullMethodName   = "/runm.v1.GuestCgroupService/StreamCgroupEvents"
-	GuestCgroupService_ToggleAllControllers_FullMethodName = "/runm.v1.GuestCgroupService/ToggleAllControllers"
+	CgroupAdapterService_GetCgroupStats_FullMethodName       = "/runm.v1.CgroupAdapterService/GetCgroupStats"
+	CgroupAdapterService_StreamCgroupEvents_FullMethodName   = "/runm.v1.CgroupAdapterService/StreamCgroupEvents"
+	CgroupAdapterService_ToggleAllControllers_FullMethodName = "/runm.v1.CgroupAdapterService/ToggleAllControllers"
 )
 
-// GuestCgroupServiceClient is the client API for GuestCgroupService service.
+// CgroupAdapterServiceClient is the client API for CgroupAdapterService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type GuestCgroupServiceClient interface {
+type CgroupAdapterServiceClient interface {
 	GetCgroupStats(ctx context.Context, in *GetCgroupStatsRequest, opts ...grpc.CallOption) (*GetCgroupStatsResponse, error)
 	StreamCgroupEvents(ctx context.Context, in *StreamCgroupEventsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamCgroupEventsResponse], error)
 	ToggleAllControllers(ctx context.Context, in *ToggleAllControllersRequest, opts ...grpc.CallOption) (*ToggleAllControllersResponse, error)
 }
 
-type guestCgroupServiceClient struct {
+type cgroupAdapterServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewGuestCgroupServiceClient(cc grpc.ClientConnInterface) GuestCgroupServiceClient {
-	return &guestCgroupServiceClient{cc}
+func NewCgroupAdapterServiceClient(cc grpc.ClientConnInterface) CgroupAdapterServiceClient {
+	return &cgroupAdapterServiceClient{cc}
 }
 
-func (c *guestCgroupServiceClient) GetCgroupStats(ctx context.Context, in *GetCgroupStatsRequest, opts ...grpc.CallOption) (*GetCgroupStatsResponse, error) {
+func (c *cgroupAdapterServiceClient) GetCgroupStats(ctx context.Context, in *GetCgroupStatsRequest, opts ...grpc.CallOption) (*GetCgroupStatsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetCgroupStatsResponse)
-	err := c.cc.Invoke(ctx, GuestCgroupService_GetCgroupStats_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, CgroupAdapterService_GetCgroupStats_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *guestCgroupServiceClient) StreamCgroupEvents(ctx context.Context, in *StreamCgroupEventsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamCgroupEventsResponse], error) {
+func (c *cgroupAdapterServiceClient) StreamCgroupEvents(ctx context.Context, in *StreamCgroupEventsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamCgroupEventsResponse], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &GuestCgroupService_ServiceDesc.Streams[0], GuestCgroupService_StreamCgroupEvents_FullMethodName, cOpts...)
+	stream, err := c.cc.NewStream(ctx, &CgroupAdapterService_ServiceDesc.Streams[0], CgroupAdapterService_StreamCgroupEvents_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -68,130 +68,130 @@ func (c *guestCgroupServiceClient) StreamCgroupEvents(ctx context.Context, in *S
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type GuestCgroupService_StreamCgroupEventsClient = grpc.ServerStreamingClient[StreamCgroupEventsResponse]
+type CgroupAdapterService_StreamCgroupEventsClient = grpc.ServerStreamingClient[StreamCgroupEventsResponse]
 
-func (c *guestCgroupServiceClient) ToggleAllControllers(ctx context.Context, in *ToggleAllControllersRequest, opts ...grpc.CallOption) (*ToggleAllControllersResponse, error) {
+func (c *cgroupAdapterServiceClient) ToggleAllControllers(ctx context.Context, in *ToggleAllControllersRequest, opts ...grpc.CallOption) (*ToggleAllControllersResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ToggleAllControllersResponse)
-	err := c.cc.Invoke(ctx, GuestCgroupService_ToggleAllControllers_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, CgroupAdapterService_ToggleAllControllers_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// GuestCgroupServiceServer is the server API for GuestCgroupService service.
-// All implementations should embed UnimplementedGuestCgroupServiceServer
+// CgroupAdapterServiceServer is the server API for CgroupAdapterService service.
+// All implementations should embed UnimplementedCgroupAdapterServiceServer
 // for forward compatibility.
-type GuestCgroupServiceServer interface {
+type CgroupAdapterServiceServer interface {
 	GetCgroupStats(context.Context, *GetCgroupStatsRequest) (*GetCgroupStatsResponse, error)
 	StreamCgroupEvents(*StreamCgroupEventsRequest, grpc.ServerStreamingServer[StreamCgroupEventsResponse]) error
 	ToggleAllControllers(context.Context, *ToggleAllControllersRequest) (*ToggleAllControllersResponse, error)
 }
 
-// UnimplementedGuestCgroupServiceServer should be embedded to have
+// UnimplementedCgroupAdapterServiceServer should be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedGuestCgroupServiceServer struct{}
+type UnimplementedCgroupAdapterServiceServer struct{}
 
-func (UnimplementedGuestCgroupServiceServer) GetCgroupStats(context.Context, *GetCgroupStatsRequest) (*GetCgroupStatsResponse, error) {
+func (UnimplementedCgroupAdapterServiceServer) GetCgroupStats(context.Context, *GetCgroupStatsRequest) (*GetCgroupStatsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCgroupStats not implemented")
 }
-func (UnimplementedGuestCgroupServiceServer) StreamCgroupEvents(*StreamCgroupEventsRequest, grpc.ServerStreamingServer[StreamCgroupEventsResponse]) error {
+func (UnimplementedCgroupAdapterServiceServer) StreamCgroupEvents(*StreamCgroupEventsRequest, grpc.ServerStreamingServer[StreamCgroupEventsResponse]) error {
 	return status.Errorf(codes.Unimplemented, "method StreamCgroupEvents not implemented")
 }
-func (UnimplementedGuestCgroupServiceServer) ToggleAllControllers(context.Context, *ToggleAllControllersRequest) (*ToggleAllControllersResponse, error) {
+func (UnimplementedCgroupAdapterServiceServer) ToggleAllControllers(context.Context, *ToggleAllControllersRequest) (*ToggleAllControllersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ToggleAllControllers not implemented")
 }
-func (UnimplementedGuestCgroupServiceServer) testEmbeddedByValue() {}
+func (UnimplementedCgroupAdapterServiceServer) testEmbeddedByValue() {}
 
-// UnsafeGuestCgroupServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to GuestCgroupServiceServer will
+// UnsafeCgroupAdapterServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to CgroupAdapterServiceServer will
 // result in compilation errors.
-type UnsafeGuestCgroupServiceServer interface {
-	mustEmbedUnimplementedGuestCgroupServiceServer()
+type UnsafeCgroupAdapterServiceServer interface {
+	mustEmbedUnimplementedCgroupAdapterServiceServer()
 }
 
-func RegisterGuestCgroupServiceServer(s grpc.ServiceRegistrar, srv GuestCgroupServiceServer) {
-	// If the following call pancis, it indicates UnimplementedGuestCgroupServiceServer was
+func RegisterCgroupAdapterServiceServer(s grpc.ServiceRegistrar, srv CgroupAdapterServiceServer) {
+	// If the following call pancis, it indicates UnimplementedCgroupAdapterServiceServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&GuestCgroupService_ServiceDesc, srv)
+	s.RegisterService(&CgroupAdapterService_ServiceDesc, srv)
 }
 
-func _GuestCgroupService_GetCgroupStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _CgroupAdapterService_GetCgroupStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetCgroupStatsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GuestCgroupServiceServer).GetCgroupStats(ctx, in)
+		return srv.(CgroupAdapterServiceServer).GetCgroupStats(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: GuestCgroupService_GetCgroupStats_FullMethodName,
+		FullMethod: CgroupAdapterService_GetCgroupStats_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GuestCgroupServiceServer).GetCgroupStats(ctx, req.(*GetCgroupStatsRequest))
+		return srv.(CgroupAdapterServiceServer).GetCgroupStats(ctx, req.(*GetCgroupStatsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GuestCgroupService_StreamCgroupEvents_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _CgroupAdapterService_StreamCgroupEvents_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(StreamCgroupEventsRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(GuestCgroupServiceServer).StreamCgroupEvents(m, &grpc.GenericServerStream[StreamCgroupEventsRequest, StreamCgroupEventsResponse]{ServerStream: stream})
+	return srv.(CgroupAdapterServiceServer).StreamCgroupEvents(m, &grpc.GenericServerStream[StreamCgroupEventsRequest, StreamCgroupEventsResponse]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type GuestCgroupService_StreamCgroupEventsServer = grpc.ServerStreamingServer[StreamCgroupEventsResponse]
+type CgroupAdapterService_StreamCgroupEventsServer = grpc.ServerStreamingServer[StreamCgroupEventsResponse]
 
-func _GuestCgroupService_ToggleAllControllers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _CgroupAdapterService_ToggleAllControllers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ToggleAllControllersRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GuestCgroupServiceServer).ToggleAllControllers(ctx, in)
+		return srv.(CgroupAdapterServiceServer).ToggleAllControllers(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: GuestCgroupService_ToggleAllControllers_FullMethodName,
+		FullMethod: CgroupAdapterService_ToggleAllControllers_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GuestCgroupServiceServer).ToggleAllControllers(ctx, req.(*ToggleAllControllersRequest))
+		return srv.(CgroupAdapterServiceServer).ToggleAllControllers(ctx, req.(*ToggleAllControllersRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// GuestCgroupService_ServiceDesc is the grpc.ServiceDesc for GuestCgroupService service.
+// CgroupAdapterService_ServiceDesc is the grpc.ServiceDesc for CgroupAdapterService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var GuestCgroupService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "runm.v1.GuestCgroupService",
-	HandlerType: (*GuestCgroupServiceServer)(nil),
+var CgroupAdapterService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "runm.v1.CgroupAdapterService",
+	HandlerType: (*CgroupAdapterServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "GetCgroupStats",
-			Handler:    _GuestCgroupService_GetCgroupStats_Handler,
+			Handler:    _CgroupAdapterService_GetCgroupStats_Handler,
 		},
 		{
 			MethodName: "ToggleAllControllers",
-			Handler:    _GuestCgroupService_ToggleAllControllers_Handler,
+			Handler:    _CgroupAdapterService_ToggleAllControllers_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "StreamCgroupEvents",
-			Handler:       _GuestCgroupService_StreamCgroupEvents_Handler,
+			Handler:       _CgroupAdapterService_StreamCgroupEvents_Handler,
 			ServerStreams: true,
 		},
 	},

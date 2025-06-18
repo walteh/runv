@@ -67,7 +67,7 @@ func (x *GuestRunCommandRequest) LogValue() slog.Value {
 		attrs = append(attrs, slog.Any("env_vars", attrs3))
 	}
 	attrs = append(attrs, slog.String("chroot", x.GetChroot()))
-	attrs = append(attrs, slog.Any("cwd", x.GetCwd()))
+	attrs = append(attrs, slog.String("cwd", x.GetCwd()))
 	return slog.GroupValue(attrs...)
 }
 

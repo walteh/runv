@@ -53,7 +53,7 @@ type CgroupAdapter interface {
 type GuestManagement interface {
 	TimeSync(ctx context.Context, unixTimeNs uint64, timezone string) error
 	Readiness(ctx context.Context) error
-	RunCommand(ctx context.Context, stdin []byte, executable string, args []string, env []string, cwd string) error
+	RunCommand(ctx context.Context, cmd *exec.Cmd) error
 }
 
 type PublishEvent struct {
@@ -155,7 +155,7 @@ type RuntimeExtras interface {
 	State(context.Context, string) (*gorunc.Container, error)
 
 	// Run creates and starts a container and returns its pid.
-	Run(context.Context, string, string, *gorunc.CreateOpts) (int, error)
+	RuncRun(context.Context, string, string, *gorunc.CreateOpts) (int, error)
 
 	// Stats returns runtime specific metrics for a container.
 	Stats(context.Context, string) (*gorunc.Stats, error)

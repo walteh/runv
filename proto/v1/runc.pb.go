@@ -5337,10 +5337,10 @@ const file_v1_runc_proto_rawDesc = "" +
 	"\aRestore\x12\x1b.runm.v1.RuncRestoreRequest\x1a\x1c.runm.v1.RuncRestoreResponse\"\x00\x12C\n" +
 	"\x06Update\x12\x1a.runm.v1.RuncUpdateRequest\x1a\x1b.runm.v1.RuncUpdateResponse\"\x00\x12m\n" +
 	"\x14NewTempConsoleSocket\x12(.runm.v1.RuncNewTempConsoleSocketRequest\x1a).runm.v1.RuncNewTempConsoleSocketResponse\"\x00\x12R\n" +
-	"\vReadPidFile\x12\x1f.runm.v1.RuncReadPidFileRequest\x1a .runm.v1.RuncReadPidFileResponse\"\x002\xd4\x03\n" +
+	"\vReadPidFile\x12\x1f.runm.v1.RuncReadPidFileRequest\x1a .runm.v1.RuncReadPidFileResponse\"\x002\xd8\x03\n" +
 	"\x11RuncExtrasService\x12@\n" +
-	"\x05State\x12\x19.runm.v1.RuncStateRequest\x1a\x1a.runm.v1.RuncStateResponse\"\x00\x12:\n" +
-	"\x03Run\x12\x17.runm.v1.RuncRunRequest\x1a\x18.runm.v1.RuncRunResponse\"\x00\x12@\n" +
+	"\x05State\x12\x19.runm.v1.RuncStateRequest\x1a\x1a.runm.v1.RuncStateResponse\"\x00\x12>\n" +
+	"\aRuncRun\x12\x17.runm.v1.RuncRunRequest\x1a\x18.runm.v1.RuncRunResponse\"\x00\x12@\n" +
 	"\x05Stats\x12\x19.runm.v1.RuncStatsRequest\x1a\x1a.runm.v1.RuncStatsResponse\"\x00\x12<\n" +
 	"\x06Events\x12\x1a.runm.v1.RuncEventsRequest\x1a\x12.runm.v1.RuncEvent\"\x000\x01\x12=\n" +
 	"\x04List\x12\x18.runm.v1.RuncListRequest\x1a\x19.runm.v1.RuncListResponse\"\x00\x12F\n" +
@@ -5458,7 +5458,7 @@ var file_v1_runc_proto_depIdxs = []int32{
 	2,  // 35: runm.v1.RuncService.NewTempConsoleSocket:input_type -> runm.v1.RuncNewTempConsoleSocketRequest
 	0,  // 36: runm.v1.RuncService.ReadPidFile:input_type -> runm.v1.RuncReadPidFileRequest
 	13, // 37: runm.v1.RuncExtrasService.State:input_type -> runm.v1.RuncStateRequest
-	24, // 38: runm.v1.RuncExtrasService.Run:input_type -> runm.v1.RuncRunRequest
+	24, // 38: runm.v1.RuncExtrasService.RuncRun:input_type -> runm.v1.RuncRunRequest
 	32, // 39: runm.v1.RuncExtrasService.Stats:input_type -> runm.v1.RuncStatsRequest
 	56, // 40: runm.v1.RuncExtrasService.Events:input_type -> runm.v1.RuncEventsRequest
 	10, // 41: runm.v1.RuncExtrasService.List:input_type -> runm.v1.RuncListRequest
@@ -5479,7 +5479,7 @@ var file_v1_runc_proto_depIdxs = []int32{
 	3,  // 56: runm.v1.RuncService.NewTempConsoleSocket:output_type -> runm.v1.RuncNewTempConsoleSocketResponse
 	1,  // 57: runm.v1.RuncService.ReadPidFile:output_type -> runm.v1.RuncReadPidFileResponse
 	14, // 58: runm.v1.RuncExtrasService.State:output_type -> runm.v1.RuncStateResponse
-	25, // 59: runm.v1.RuncExtrasService.Run:output_type -> runm.v1.RuncRunResponse
+	25, // 59: runm.v1.RuncExtrasService.RuncRun:output_type -> runm.v1.RuncRunResponse
 	34, // 60: runm.v1.RuncExtrasService.Stats:output_type -> runm.v1.RuncStatsResponse
 	57, // 61: runm.v1.RuncExtrasService.Events:output_type -> runm.v1.RuncEvent
 	12, // 62: runm.v1.RuncExtrasService.List:output_type -> runm.v1.RuncListResponse

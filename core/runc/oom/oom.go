@@ -5,6 +5,7 @@ import (
 	"log/slog"
 
 	"github.com/containerd/containerd/v2/core/events"
+	"github.com/walteh/run"
 	"github.com/walteh/runm/core/runc/runtime"
 	"gitlab.com/tozd/go/errors"
 
@@ -12,15 +13,27 @@ import (
 	coreruntime "github.com/containerd/containerd/v2/core/runtime"
 )
 
-// Watcher watches OOM events
-type Watcher interface {
-	Close() error
-	Run(ctx context.Context) error
-}
+var _ run.Runnable = (*Watcher)(nil)
 
-type watcher struct {
+type Watcher struct {
+	alive         bool
 	publisher     events.Publisher
 	cgroupAdapter runtime.CgroupAdapter
+}
+
+// Alive implements run.Runnable.
+func (w *Watcher) Alive() bool {
+	return w.alive
+}
+
+// Fields implements run.Runnable.
+func (w *Watcher) Fields() []slog.Attr {
+	return []slog.Attr{}
+}
+
+// Name implements run.Runnable.
+func (w *Watcher) Name() string {
+	return "oom-watcher"
 }
 
 type item struct {
@@ -29,18 +42,22 @@ type item struct {
 	err error
 }
 
-func NewWatcher(publisher events.Publisher, cgroupAdapter runtime.CgroupAdapter) Watcher {
-	return &watcher{
+func NewWatcher(publisher events.Publisher, cgroupAdapter runtime.CgroupAdapter) *Watcher {
+	return &Watcher{
 		publisher:     publisher,
 		cgroupAdapter: cgroupAdapter,
 	}
 }
 
-func (w *watcher) Close() error {
+func (w *Watcher) Close(ctx context.Context) error {
 	return nil
 }
 
-func (w *watcher) Run(ctx context.Context) error {
+func (w *Watcher) Run(ctx context.Context) error {
+	w.alive = true
+	defer func() {
+		w.alive = false
+	}()
 
 	eventCh, errCh, err := w.cgroupAdapter.OpenEventChan(ctx)
 	if err != nil {

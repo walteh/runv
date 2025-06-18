@@ -465,8 +465,8 @@ const file_v1_cgroup_proto_rawDesc = "" +
 	"\x1aStreamCgroupEventsResponse\x12*\n" +
 	"\x05event\x18\x01 \x01(\v2\x14.runm.v1.CgroupEventR\x05event\"\x1d\n" +
 	"\x1bToggleAllControllersRequest\"\x1e\n" +
-	"\x1cToggleAllControllersResponse2\xad\x02\n" +
-	"\x12GuestCgroupService\x12Q\n" +
+	"\x1cToggleAllControllersResponse2\xaf\x02\n" +
+	"\x14CgroupAdapterService\x12Q\n" +
 	"\x0eGetCgroupStats\x12\x1e.runm.v1.GetCgroupStatsRequest\x1a\x1f.runm.v1.GetCgroupStatsResponse\x12_\n" +
 	"\x12StreamCgroupEvents\x12\".runm.v1.StreamCgroupEventsRequest\x1a#.runm.v1.StreamCgroupEventsResponse0\x01\x12c\n" +
 	"\x14ToggleAllControllers\x12$.runm.v1.ToggleAllControllersRequest\x1a%.runm.v1.ToggleAllControllersResponseB\x89\x01\n" +
@@ -486,12 +486,12 @@ var file_v1_cgroup_proto_goTypes = []any{
 var file_v1_cgroup_proto_depIdxs = []int32{
 	7, // 0: runm.v1.GetCgroupStatsResponse.stats:type_name -> google.protobuf.Any
 	3, // 1: runm.v1.StreamCgroupEventsResponse.event:type_name -> runm.v1.CgroupEvent
-	0, // 2: runm.v1.GuestCgroupService.GetCgroupStats:input_type -> runm.v1.GetCgroupStatsRequest
-	2, // 3: runm.v1.GuestCgroupService.StreamCgroupEvents:input_type -> runm.v1.StreamCgroupEventsRequest
-	5, // 4: runm.v1.GuestCgroupService.ToggleAllControllers:input_type -> runm.v1.ToggleAllControllersRequest
-	1, // 5: runm.v1.GuestCgroupService.GetCgroupStats:output_type -> runm.v1.GetCgroupStatsResponse
-	4, // 6: runm.v1.GuestCgroupService.StreamCgroupEvents:output_type -> runm.v1.StreamCgroupEventsResponse
-	6, // 7: runm.v1.GuestCgroupService.ToggleAllControllers:output_type -> runm.v1.ToggleAllControllersResponse
+	0, // 2: runm.v1.CgroupAdapterService.GetCgroupStats:input_type -> runm.v1.GetCgroupStatsRequest
+	2, // 3: runm.v1.CgroupAdapterService.StreamCgroupEvents:input_type -> runm.v1.StreamCgroupEventsRequest
+	5, // 4: runm.v1.CgroupAdapterService.ToggleAllControllers:input_type -> runm.v1.ToggleAllControllersRequest
+	1, // 5: runm.v1.CgroupAdapterService.GetCgroupStats:output_type -> runm.v1.GetCgroupStatsResponse
+	4, // 6: runm.v1.CgroupAdapterService.StreamCgroupEvents:output_type -> runm.v1.StreamCgroupEventsResponse
+	6, // 7: runm.v1.CgroupAdapterService.ToggleAllControllers:output_type -> runm.v1.ToggleAllControllersResponse
 	5, // [5:8] is the sub-list for method output_type
 	2, // [2:5] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name

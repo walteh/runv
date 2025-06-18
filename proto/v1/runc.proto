@@ -67,7 +67,7 @@ service RuncExtrasService {
 	rpc State(RuncStateRequest) returns (RuncStateResponse) {}
 
 
-	rpc Run(RuncRunRequest) returns (RuncRunResponse) {}
+	rpc RuncRun(RuncRunRequest) returns (RuncRunResponse) {}
 
 
 	rpc Stats(RuncStatsRequest) returns (RuncStatsResponse) {}
