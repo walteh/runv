@@ -1,26 +1,21 @@
 package vmm
 
 import (
-	"bytes"
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
-	"fmt"
-	"io"
 	"log/slog"
 	"os"
 	"path/filepath"
 	"slices"
 	"strconv"
-	"strings"
 	"time"
 
 	"golang.org/x/sync/errgroup"
 
 	"github.com/containerd/containerd/v2/pkg/oci"
 	"github.com/containers/common/pkg/strongunits"
-	"github.com/nxadm/tail"
 	"github.com/opencontainers/runtime-spec/specs-go"
 	"gitlab.com/tozd/go/errors"
 
@@ -30,12 +25,10 @@ import (
 	"github.com/walteh/runm/core/virt/host"
 	"github.com/walteh/runm/core/virt/virtio"
 	"github.com/walteh/runm/linux/constants"
-	"github.com/walteh/runm/pkg/logging"
 	"github.com/walteh/runm/pkg/units"
-	runmv1 "github.com/walteh/runm/proto/v1"
 )
 
-type ContainerizedVMConfig struct {
+type OCIVMConfig struct {
 	ID           string
 	RootfsMounts []process.Mount
 	// StderrWriter io.Writer
@@ -77,13 +70,13 @@ func appendContext(ctx context.Context, id string) context.Context {
 
 // NewContainerizedVirtualMachineFromRootfs creates a VM using an already-prepared rootfs directory
 // This is used by container runtimes like containerd that have already prepared the rootfs
-func NewContainerizedVirtualMachine[VM VirtualMachine](
+func NewOCIVirtualMachine[VM VirtualMachine](
 	ctx context.Context,
 	hpv Hypervisor[VM],
-	ctrconfig ContainerizedVMConfig,
+	ctrconfig OCIVMConfig,
 	devices ...virtio.VirtioDevice) (*RunningVM[VM], error) {
 
-	id := "vm-" + ctrconfig.ID[:8]
+	id := "vm-oci-" + ctrconfig.ID[:8]
 	creationErrGroup, ctx := errgroup.WithContext(ctx)
 
 	ctx = appendContext(ctx, id)
@@ -105,6 +98,12 @@ func NewContainerizedVirtualMachine[VM VirtualMachine](
 		return nil, errors.Errorf("preparing container mounts: %w", err)
 	}
 
+	ec1Dev, _, err := NewEc1BlockDevice(ctx, workingDir)
+	if err != nil {
+		return nil, errors.Errorf("creating ec1 block device: %w", err)
+	}
+
+	devices = append(devices, ec1Dev)
 	devices = append(devices, mountDevices...)
 
 	slog.InfoContext(ctx, "about to set up rootfs",
@@ -131,7 +130,7 @@ func NewContainerizedVirtualMachine[VM VirtualMachine](
 		bootloader = &virtio.LinuxBootloader{
 			InitrdPath:    filepath.Join(linuxRuntimeBuildDir, "initramfs.cpio.gz"),
 			VmlinuzPath:   filepath.Join(linuxRuntimeBuildDir, "kernel"),
-			KernelCmdLine: "console=hvc0",
+			KernelCmdLine: "console=hvc0 -- runm-mode=oci",
 		}
 	default:
 		return nil, errors.Errorf("unsupported OS: %s", ctrconfig.Platform.OS())
@@ -191,208 +190,6 @@ func NewContainerizedVirtualMachine[VM VirtualMachine](
 	}
 
 	return runner, nil
-}
-
-func (rvm *RunningVM[VM]) Start(ctx context.Context) error {
-
-	errgrp, ctx := errgroup.WithContext(ctx)
-
-	errgrp.Go(func() error {
-		err := rvm.netdev.Wait(ctx)
-		if err != nil {
-			slog.ErrorContext(ctx, "error waiting for netdev", "error", err)
-			return errors.Errorf("waiting for netdev: %w", err)
-		}
-		return nil
-	})
-
-	err := bootContainerVM(ctx, rvm.VM())
-	if err != nil {
-		if err := TryAppendingConsoleLog(ctx, rvm.workingDir); err != nil {
-			slog.ErrorContext(ctx, "error appending console log", "error", err)
-		}
-		return errors.Errorf("booting virtual machine: %w", err)
-	}
-
-	errgrp.Go(func() error {
-		err = rvm.VM().ServeBackgroundTasks(ctx)
-		if err != nil {
-			slog.ErrorContext(ctx, "error serving background tasks", "error", err)
-			return errors.Errorf("serving background tasks: %w", err)
-		}
-		return nil
-	})
-
-	errgrp.Go(func() error {
-		err = rvm.ForwardStdio(ctx, rvm.stdin, rvm.stdout, rvm.stderr)
-		if err != nil {
-			slog.ErrorContext(ctx, "error forwarding stdio", "error", err)
-			return errors.Errorf("forwarding stdio: %w", err)
-		}
-		slog.WarnContext(ctx, "forwarding stdio done")
-		return nil
-	})
-
-	err = TailConsoleLog(ctx, rvm.workingDir)
-	if err != nil {
-		slog.ErrorContext(ctx, "error tailing console log", "error", err)
-	}
-
-	// For container runtimes, we want the VM to stay running, not wait for it to stop
-	slog.InfoContext(ctx, "VM is ready for container execution")
-
-	// Create an error channel that will receive VM state changes
-
-	go func() {
-
-		// Wait for errgroup to finish (this handles cleanup when context is cancelled)
-		if err := errgrp.Wait(); err != nil && err != context.Canceled {
-			slog.ErrorContext(ctx, "error running gvproxy", "error", err)
-		}
-
-		// // Wait for runtime services to finish
-		// if err := runErrGroup.Wait(); err != nil && err != context.Canceled {
-		// 	slog.ErrorContext(ctx, "error running runtime services", "error", err)
-		// 	errCh <- err
-		// 	return
-		// }
-
-		// Only send error if VM actually encounters an error state
-		stateNotify := rvm.VM().StateChangeNotify(ctx)
-		for {
-			select {
-			case state := <-stateNotify:
-				if state.StateType == VirtualMachineStateTypeError {
-					rvm.wait <- errors.Errorf("VM entered error state")
-					return
-				}
-				if state.StateType == VirtualMachineStateTypeStopped {
-					slog.InfoContext(ctx, "VM stopped")
-					rvm.wait <- nil
-					return
-				}
-				slog.InfoContext(ctx, "VM state changed", "state", state.StateType, "metadata", state.Metadata)
-			case <-ctx.Done():
-				return
-			}
-		}
-	}()
-
-	connection, err := rvm.GuestService(ctx)
-	if err != nil {
-		return errors.Errorf("failed to get guest service: %w", err)
-	}
-
-	tsreq := &runmv1.GuestTimeSyncRequest{}
-	tsreq.SetUnixTimeNs(uint64(time.Now().UnixNano()))
-	response, err := connection.Management().GuestTimeSync(ctx, tsreq)
-	if err != nil {
-		return errors.Errorf("failed to time sync: %w", err)
-	}
-
-	slog.InfoContext(ctx, "time sync", "response", response)
-
-	return nil
-}
-
-func bootContainerVM[VM VirtualMachine](ctx context.Context, vm VM) error {
-	bootCtx, bootCancel := context.WithCancel(ctx)
-	errGroup, ctx := errgroup.WithContext(bootCtx)
-	defer func() {
-		if r := recover(); r != nil {
-			slog.ErrorContext(ctx, "panic in bootContainerVM", "panic", r)
-			panic(r)
-		}
-		// clean up the boot provisioners - this shouldn't throw an error because they prob are going to throw something
-		bootCancel()
-		if err := errGroup.Wait(); err != nil {
-			slog.DebugContext(ctx, "error running boot provisioners", "error", err)
-		}
-
-	}()
-
-	go func() {
-		for {
-			select {
-			case <-bootCtx.Done():
-				return
-			case <-vm.StateChangeNotify(bootCtx):
-				slog.InfoContext(bootCtx, "virtual machine state changed", "state", vm.CurrentState())
-			}
-		}
-	}()
-
-	slog.InfoContext(ctx, "starting virtual machine")
-
-	if err := vm.Start(ctx); err != nil {
-		return errors.Errorf("starting virtual machine: %w", err)
-	}
-
-	if err := WaitForVMState(ctx, vm, VirtualMachineStateTypeRunning, time.After(30*time.Second)); err != nil {
-		return errors.Errorf("waiting for virtual machine to start: %w", err)
-	}
-
-	slog.InfoContext(ctx, "virtual machine is running")
-
-	return nil
-}
-
-func (rvm *RunningVM[VM]) Wait(ctx context.Context) error {
-	return <-rvm.wait
-}
-
-func ptr[T any](v T) *T { return &v }
-
-func TryAppendingConsoleLog(ctx context.Context, workingDir string) error {
-	// log file
-	file, err := os.ReadFile(filepath.Join(workingDir, "console.log"))
-	if err != nil {
-		return errors.Errorf("opening console log file: %w", err)
-	}
-
-	writer := logging.GetDefaultLogWriter()
-
-	buf := bytes.NewBuffer(nil)
-	buf.Write([]byte("\n\n--------------------------------\n\n"))
-	buf.Write([]byte(filepath.Join(workingDir, "console.log")))
-	buf.Write([]byte("\n\n"))
-	buf.Write(file)
-	buf.Write([]byte("\n--------------------------------\n\n"))
-
-	_, err = io.Copy(writer, buf)
-	if err != nil {
-		slog.ErrorContext(ctx, "error copying console log", "error", err)
-		return errors.Errorf("copying console log: %w", err)
-	}
-
-	return nil
-}
-
-func TailConsoleLog(ctx context.Context, workingDir string) error {
-	dat, err := os.ReadFile(filepath.Join(workingDir, "console.log"))
-	if err != nil {
-		slog.ErrorContext(ctx, "error reading console log file", "error", err)
-		return errors.Errorf("reading console log file: %w", err)
-	}
-
-	writer := logging.GetDefaultLogWriter()
-
-	for _, line := range strings.Split(string(dat), "\n") {
-		fmt.Fprintf(writer, "%s\n", line)
-	}
-
-	go func() {
-		t, err := tail.TailFile(filepath.Join(workingDir, "console.log"), tail.Config{Follow: true, Location: &tail.SeekInfo{Offset: int64(len(dat)), Whence: io.SeekStart}})
-		if err != nil {
-			slog.ErrorContext(ctx, "error tailing log file", "error", err)
-			return
-		}
-		for line := range t.Lines {
-			fmt.Fprintf(writer, "%s\n", line.Text)
-		}
-	}()
-
-	return nil
 }
 
 func bindMountToVirtioFs(ctx context.Context, mount specs.Mount, containerId string) (*specs.Mount, virtio.VirtioDevice, error) {
@@ -525,12 +322,12 @@ func PrepareContainerVirtioDevicesFromRootfs(ctx context.Context, wrkdir string,
 		return nil, errors.Errorf("marshalling spec: %w", err)
 	}
 
-	outMounts = append(outMounts, specs.Mount{
-		Type:        "virtiofs",
-		Source:      constants.Ec1VirtioTag,
-		Destination: constants.Ec1AbsPath,
-		Options:     []string{},
-	})
+	// outMounts = append(outMounts, specs.Mount{
+	// 	Type:        "virtiofs",
+	// 	Source:      constants.Ec1VirtioTag,
+	// 	Destination: constants.Ec1AbsPath,
+	// 	Options:     []string{},
+	// })
 
 	outMounts = append(outMounts, bindMounts...)
 
@@ -592,12 +389,12 @@ func PrepareContainerVirtioDevicesFromRootfs(ctx context.Context, wrkdir string,
 		}
 	}()
 
-	ec1Dev, err := virtio.VirtioFsNew(ec1DataPath, constants.Ec1VirtioTag)
-	if err != nil {
-		return nil, errors.Errorf("creating ec1 virtio device: %w", err)
-	}
+	// ec1Dev, err := virtio.VirtioFsNew(ec1DataPath, constants.Ec1VirtioTag)
+	// if err != nil {
+	// 	return nil, errors.Errorf("creating ec1 virtio device: %w", err)
+	// }
 
-	devices = append(devices, ec1Dev)
+	// devices = append(devices, ec1Dev)
 
 	return devices, nil
 }

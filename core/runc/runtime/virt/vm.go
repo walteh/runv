@@ -46,7 +46,7 @@ func NewRunmVMRuntime[VM vmm.VirtualMachine](
 
 	runGroup := run.New()
 
-	cfg := vmm.ContainerizedVMConfig{
+	cfg := vmm.OCIVMConfig{
 		ID:             opts.ProcessCreateConfig.ID,
 		Spec:           opts.OciSpec,
 		RootfsMounts:   opts.Mounts,
@@ -55,7 +55,7 @@ func NewRunmVMRuntime[VM vmm.VirtualMachine](
 		Platform:       units.PlatformLinuxARM64,
 	}
 
-	vm, err := vmm.NewContainerizedVirtualMachine(ctx, hpv, cfg)
+	vm, err := vmm.NewOCIVirtualMachine(ctx, hpv, cfg)
 	if err != nil {
 		return nil, err
 	}

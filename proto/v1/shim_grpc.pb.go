@@ -19,7 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ShimService_ShimKill_FullMethodName = "/runm.v1.ShimService/ShimKill"
+	ShimService_ShimKill_FullMethodName     = "/runm.v1.ShimService/ShimKill"
+	ShimService_ShimFeatures_FullMethodName = "/runm.v1.ShimService/ShimFeatures"
 )
 
 // ShimServiceClient is the client API for ShimService service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ShimServiceClient interface {
 	ShimKill(ctx context.Context, in *ShimKillRequest, opts ...grpc.CallOption) (*ShimKillResponse, error)
+	ShimFeatures(ctx context.Context, in *ShimFeaturesRequest, opts ...grpc.CallOption) (*ShimFeaturesResponse, error)
 }
 
 type shimServiceClient struct {
@@ -47,11 +49,22 @@ func (c *shimServiceClient) ShimKill(ctx context.Context, in *ShimKillRequest, o
 	return out, nil
 }
 
+func (c *shimServiceClient) ShimFeatures(ctx context.Context, in *ShimFeaturesRequest, opts ...grpc.CallOption) (*ShimFeaturesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ShimFeaturesResponse)
+	err := c.cc.Invoke(ctx, ShimService_ShimFeatures_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ShimServiceServer is the server API for ShimService service.
 // All implementations should embed UnimplementedShimServiceServer
 // for forward compatibility.
 type ShimServiceServer interface {
 	ShimKill(context.Context, *ShimKillRequest) (*ShimKillResponse, error)
+	ShimFeatures(context.Context, *ShimFeaturesRequest) (*ShimFeaturesResponse, error)
 }
 
 // UnimplementedShimServiceServer should be embedded to have
@@ -63,6 +76,9 @@ type UnimplementedShimServiceServer struct{}
 
 func (UnimplementedShimServiceServer) ShimKill(context.Context, *ShimKillRequest) (*ShimKillResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ShimKill not implemented")
+}
+func (UnimplementedShimServiceServer) ShimFeatures(context.Context, *ShimFeaturesRequest) (*ShimFeaturesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ShimFeatures not implemented")
 }
 func (UnimplementedShimServiceServer) testEmbeddedByValue() {}
 
@@ -102,6 +118,24 @@ func _ShimService_ShimKill_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ShimService_ShimFeatures_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ShimFeaturesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ShimServiceServer).ShimFeatures(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ShimService_ShimFeatures_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ShimServiceServer).ShimFeatures(ctx, req.(*ShimFeaturesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ShimService_ServiceDesc is the grpc.ServiceDesc for ShimService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -112,6 +146,10 @@ var ShimService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ShimKill",
 			Handler:    _ShimService_ShimKill_Handler,
+		},
+		{
+			MethodName: "ShimFeatures",
+			Handler:    _ShimService_ShimFeatures_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

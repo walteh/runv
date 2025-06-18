@@ -17,7 +17,6 @@
 package manager
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -43,11 +42,9 @@ import (
 	"github.com/containerd/containerd/v2/version"
 	"github.com/containerd/errdefs"
 	"github.com/containerd/log"
+	"github.com/containerd/plugin"
+	"github.com/containerd/plugin/registry"
 	"github.com/containerd/typeurl/v2"
-	"github.com/opencontainers/runtime-spec/specs-go/features"
-
-	gorunc "github.com/containerd/go-runc"
-
 	"github.com/walteh/runm/cmd/containerd-shim-runm-v2/runm"
 	"github.com/walteh/runm/core/runc/runtime"
 	runmv1 "github.com/walteh/runm/proto/v1"
@@ -56,8 +53,32 @@ import (
 // NewShimManager returns an implementation of the shim manager
 // using runc
 func NewShimManager(name string) shim.Manager {
+
+	grp := registry.Graph(func(r *plugin.Registration) bool {
+		return r.ID != "runm-runtime-creator"
+	})
+
+	if len(grp) == 0 {
+		panic("runm-runtime-creator not found")
+	}
+
+	ctx := context.Background()
+
+	initctx := plugin.NewContext(ctx, nil, nil)
+
+	creator, err := grp[0].InitFn(initctx)
+	if err != nil {
+		panic(err)
+	}
+
+	t, ok := creator.(runtime.RuntimeCreator)
+	if !ok {
+		panic("runm-runtime-creator is not a runtime.RuntimeCreator")
+	}
+
 	return &manager{
-		name: name,
+		name:    name,
+		creator: t,
 	}
 }
 
@@ -79,8 +100,8 @@ type spec struct {
 
 type manager struct {
 	name            string
-	creator         runtime.RuntimeCreator
 	shimGrpcService runmv1.ShimServiceClient
+	creator         runtime.RuntimeCreator
 }
 
 func newCommand(ctx context.Context, id, containerdAddress, containerdTTRPCAddress string, debug bool) (*exec.Cmd, error) {
@@ -359,7 +380,7 @@ func (m manager) Info(ctx context.Context, optionsR io.Reader) (*types.RuntimeIn
 		},
 		Annotations: nil,
 	}
-	binaryName := gorunc.DefaultCommand
+
 	opts, err := shim.ReadRuntimeOptions[*options.Options](optionsR)
 	if err != nil {
 		if !errors.Is(err, errdefs.ErrNotFound) {
@@ -371,41 +392,54 @@ func (m manager) Info(ctx context.Context, optionsR io.Reader) (*types.RuntimeIn
 		if err != nil {
 			return nil, fmt.Errorf("failed to marshal %T: %w", opts, err)
 		}
-		if opts.BinaryName != "" {
-			binaryName = opts.BinaryName
-		}
+	}
+	// if opts.BinaryName != "" {
+	// 	binaryName = opts.BinaryName
+	// }
 
-	}
-	absBinary, err := exec.LookPath(binaryName)
+	// }
+	// absBinary, err := exec.LookPath(binaryName)
+	// if err != nil {
+	// 	return nil, fmt.Errorf("failed to look up the path of %q: %w", binaryName, err)
+	// }
+	// features, err := m.features(ctx, absBinary, opts)
+	// if err != nil {
+	// 	// youki does not implement `runc features` yet, at the time of writing this (Sep 2023)
+	// 	// https://github.com/containers/youki/issues/815
+	// 	log.G(ctx).WithError(err).Debug("Failed to get the runtime features. The runc binary does not implement `runc features` command?")
+	// }
+
+	// if m.features != nil {
+	// 	info.Features, err = typeurl.MarshalAnyToProto(m.features)
+	// 	if err != nil {
+	// 		return nil, fmt.Errorf("failed to marshal %T: %w", m.features, err)
+	// 	}
+	// } else {
+
+	// 	fPayload, err := m.shimGrpcService.ShimFeatures(ctx, &runmv1.ShimFeaturesRequest{})
+	// 	if err != nil {
+	// 		return nil, fmt.Errorf("failed to get runtime features: %w", err)
+	// 	}
+
+	// 	// if f != nil {
+	// 	f := &features.Features{}
+	// 	if err := json.Unmarshal(fPayload.GetRawJson(), f); err != nil {
+	// 		return nil, fmt.Errorf("failed to unmarshal runtime features: %w", err)
+	// 	}
+	// 	info.Features, err = typeurl.MarshalAnyToProto(f)
+	// 	if err != nil {
+	// 		return nil, fmt.Errorf("failed to marshal %T: %w", f, err)
+	// 	}
+	// }
+
+	features, err := m.creator.Features(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("failed to look up the path of %q: %w", binaryName, err)
+		return nil, fmt.Errorf("failed to get runtime features: %w", err)
 	}
-	features, err := m.features(ctx, absBinary, opts)
+	info.Features, err = typeurl.MarshalAnyToProto(features)
 	if err != nil {
-		// youki does not implement `runc features` yet, at the time of writing this (Sep 2023)
-		// https://github.com/containers/youki/issues/815
-		log.G(ctx).WithError(err).Debug("Failed to get the runtime features. The runc binary does not implement `runc features` command?")
+		return nil, fmt.Errorf("failed to marshal %T: %w", features, err)
 	}
-	if features != nil {
-		info.Features, err = typeurl.MarshalAnyToProto(features)
-		if err != nil {
-			return nil, fmt.Errorf("failed to marshal %T: %w", features, err)
-		}
-	}
+	// }
 	return info, nil
-}
-
-func (m manager) features(ctx context.Context, absBinary string, opts *options.Options) (*features.Features, error) {
-	var stderr bytes.Buffer
-	cmd := exec.CommandContext(ctx, absBinary, "features")
-	cmd.Stderr = &stderr
-	stdout, err := cmd.Output()
-	if err != nil {
-		return nil, fmt.Errorf("failed to execute %v: %w (stderr: %q)", cmd.Args, err, stderr.String())
-	}
-	var feat features.Features
-	if err := json.Unmarshal(stdout, &feat); err != nil {
-		return nil, err
-	}
-	return &feat, nil
 }

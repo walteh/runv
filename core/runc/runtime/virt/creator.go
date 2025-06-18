@@ -4,16 +4,52 @@ import (
 	"context"
 
 	"github.com/containers/common/pkg/strongunits"
-	"github.com/pkg/errors"
+	"github.com/opencontainers/runtime-spec/specs-go/features"
 	"github.com/walteh/runm/core/runc/runtime"
 	"github.com/walteh/runm/core/virt/vmm"
+	"gitlab.com/tozd/go/errors"
 )
+
+func ptr[T any](v T) *T {
+	return &v
+}
+
+var _ runtime.RuntimeCreator = (*RunmVMRuntimeCreator[vmm.VirtualMachine])(nil)
 
 type RunmVMRuntimeCreator[VM vmm.VirtualMachine] struct {
 	// publisher events.Publisher
 	hpv       vmm.Hypervisor[VM]
 	maxMemory strongunits.StorageUnits
 	vcpus     int
+}
+
+// Features implements runtime.RuntimeCreator.
+func (me *RunmVMRuntimeCreator[VM]) Features(ctx context.Context) (*features.Features, error) {
+	feats := &features.Features{
+		OCIVersionMin: "1.0.0",
+		OCIVersionMax: "1.1.0",
+		MountOptions:  []string{"ro", "rw", "bind", "recursive"},
+		Linux: &features.Linux{
+			MountExtensions: &features.MountExtensions{
+				IDMap: &features.IDMap{Enabled: ptr(true)},
+			},
+			Cgroup: &features.Cgroup{
+				V1:          ptr(false),
+				V2:          ptr(true),
+				Systemd:     ptr(false),
+				SystemdUser: ptr(false),
+				Rdma:        ptr(false),
+			},
+			Namespaces: []string{
+				"mount", "uts", "ipc",
+				"pid", "net", "user", "cgroup",
+			},
+			IntelRdt: nil,
+			Apparmor: nil,
+			Selinux:  nil,
+		},
+	}
+	return feats, nil
 }
 
 func (me *RunmVMRuntimeCreator[VM]) Create(ctx context.Context, opts *runtime.RuntimeOptions) (runtime.Runtime, error) {

@@ -34,3 +34,31 @@ func NewShimKillResponseE(b *ShimKillResponse_builder) (*ShimKillResponse, error
 	}
 	return m, nil
 }
+
+// NewShimFeaturesRequest creates a new ShimFeaturesRequest using the builder
+func NewShimFeaturesRequest(b *ShimFeaturesRequest_builder) *ShimFeaturesRequest {
+	return b.Build()
+}
+
+// NewShimFeaturesRequestE creates a new ShimFeaturesRequest using the builder with validation
+func NewShimFeaturesRequestE(b *ShimFeaturesRequest_builder) (*ShimFeaturesRequest, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// NewShimFeaturesResponse creates a new ShimFeaturesResponse using the builder
+func NewShimFeaturesResponse(b *ShimFeaturesResponse_builder) *ShimFeaturesResponse {
+	return b.Build()
+}
+
+// NewShimFeaturesResponseE creates a new ShimFeaturesResponse using the builder with validation
+func NewShimFeaturesResponseE(b *ShimFeaturesResponse_builder) (*ShimFeaturesResponse, error) {
+	m := b.Build()
+	if err := protovalidate.Validate(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}

@@ -28,6 +28,14 @@ import (
 )
 
 func init() {
+	register()
+}
+
+func Reregister() {
+	register()
+}
+
+func register() {
 	registry.Register(&plugin.Registration{
 		Type: plugins.TTRPCPlugin,
 		ID:   "task",

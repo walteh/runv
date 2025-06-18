@@ -11,10 +11,10 @@ import (
 	"github.com/containerd/console"
 	"github.com/containerd/containerd/v2/core/events"
 	"github.com/containerd/containerd/v2/pkg/oci"
-	"github.com/opencontainers/runtime-spec/specs-go"
-	"github.com/walteh/runm/core/runc/process"
-
 	gorunc "github.com/containerd/go-runc"
+	"github.com/opencontainers/runtime-spec/specs-go"
+	"github.com/opencontainers/runtime-spec/specs-go/features"
+	"github.com/walteh/runm/core/runc/process"
 )
 
 const (
@@ -33,6 +33,7 @@ type RuntimeOptions struct {
 
 type RuntimeCreator interface {
 	Create(ctx context.Context, opts *RuntimeOptions) (Runtime, error)
+	Features(ctx context.Context) (*features.Features, error)
 }
 
 //go:mock

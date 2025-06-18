@@ -21,6 +21,9 @@ var _ runmv1.ShimServiceServer = &MockShimServiceServer{}
 //
 //		// make and configure a mocked runmv1.ShimServiceServer
 //		mockedShimServiceServer := &MockShimServiceServer{
+//			ShimFeaturesFunc: func(context1 context.Context, shimFeaturesRequest *runmv1.ShimFeaturesRequest) (*runmv1.ShimFeaturesResponse, error) {
+//				panic("mock out the ShimFeatures method")
+//			},
 //			ShimKillFunc: func(context1 context.Context, shimKillRequest *runmv1.ShimKillRequest) (*runmv1.ShimKillResponse, error) {
 //				panic("mock out the ShimKill method")
 //			},
@@ -31,11 +34,21 @@ var _ runmv1.ShimServiceServer = &MockShimServiceServer{}
 //
 //	}
 type MockShimServiceServer struct {
+	// ShimFeaturesFunc mocks the ShimFeatures method.
+	ShimFeaturesFunc func(context1 context.Context, shimFeaturesRequest *runmv1.ShimFeaturesRequest) (*runmv1.ShimFeaturesResponse, error)
+
 	// ShimKillFunc mocks the ShimKill method.
 	ShimKillFunc func(context1 context.Context, shimKillRequest *runmv1.ShimKillRequest) (*runmv1.ShimKillResponse, error)
 
 	// calls tracks calls to the methods.
 	calls struct {
+		// ShimFeatures holds details about calls to the ShimFeatures method.
+		ShimFeatures []struct {
+			// Context1 is the context1 argument value.
+			Context1 context.Context
+			// ShimFeaturesRequest is the shimFeaturesRequest argument value.
+			ShimFeaturesRequest *runmv1.ShimFeaturesRequest
+		}
 		// ShimKill holds details about calls to the ShimKill method.
 		ShimKill []struct {
 			// Context1 is the context1 argument value.
@@ -44,7 +57,44 @@ type MockShimServiceServer struct {
 			ShimKillRequest *runmv1.ShimKillRequest
 		}
 	}
-	lockShimKill sync.RWMutex
+	lockShimFeatures sync.RWMutex
+	lockShimKill     sync.RWMutex
+}
+
+// ShimFeatures calls ShimFeaturesFunc.
+func (mock *MockShimServiceServer) ShimFeatures(context1 context.Context, shimFeaturesRequest *runmv1.ShimFeaturesRequest) (*runmv1.ShimFeaturesResponse, error) {
+	if mock.ShimFeaturesFunc == nil {
+		panic("MockShimServiceServer.ShimFeaturesFunc: method is nil but ShimServiceServer.ShimFeatures was just called")
+	}
+	callInfo := struct {
+		Context1            context.Context
+		ShimFeaturesRequest *runmv1.ShimFeaturesRequest
+	}{
+		Context1:            context1,
+		ShimFeaturesRequest: shimFeaturesRequest,
+	}
+	mock.lockShimFeatures.Lock()
+	mock.calls.ShimFeatures = append(mock.calls.ShimFeatures, callInfo)
+	mock.lockShimFeatures.Unlock()
+	return mock.ShimFeaturesFunc(context1, shimFeaturesRequest)
+}
+
+// ShimFeaturesCalls gets all the calls that were made to ShimFeatures.
+// Check the length with:
+//
+//	len(mockedShimServiceServer.ShimFeaturesCalls())
+func (mock *MockShimServiceServer) ShimFeaturesCalls() []struct {
+	Context1            context.Context
+	ShimFeaturesRequest *runmv1.ShimFeaturesRequest
+} {
+	var calls []struct {
+		Context1            context.Context
+		ShimFeaturesRequest *runmv1.ShimFeaturesRequest
+	}
+	mock.lockShimFeatures.RLock()
+	calls = mock.calls.ShimFeatures
+	mock.lockShimFeatures.RUnlock()
+	return calls
 }
 
 // ShimKill calls ShimKillFunc.

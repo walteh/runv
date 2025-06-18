@@ -1,12 +1,17 @@
 package goruncruntime
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
+	"fmt"
+	"os/exec"
 	"path/filepath"
 
 	"golang.org/x/sys/unix"
 
 	gorunc "github.com/containerd/go-runc"
+	"github.com/opencontainers/runtime-spec/specs-go/features"
 
 	"github.com/walteh/runm/core/runc/runtime"
 )
@@ -49,17 +54,35 @@ func (r *GoRuncRuntime) RuncRun(ctx context.Context, id, bundle string, options 
 	return r.Runc.Run(ctx, id, bundle, options)
 }
 
+var _ runtime.RuntimeCreator = (*GoRuncRuntimeCreator)(nil)
+
 type GoRuncRuntimeCreator struct {
 }
 
-func (c *GoRuncRuntimeCreator) Create(ctx context.Context, sharedDir string, opts *runtime.RuntimeOptions) runtime.Runtime {
+// Features implements runtime.RuntimeCreator.
+func (c *GoRuncRuntimeCreator) Features(ctx context.Context) (*features.Features, error) {
+	var stderr bytes.Buffer
+	cmd := exec.CommandContext(ctx, gorunc.DefaultCommand, "features")
+	cmd.Stderr = &stderr
+	stdout, err := cmd.Output()
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute %v: %w (stderr: %q)", cmd.Args, err, stderr.String())
+	}
+	var feat features.Features
+	if err := json.Unmarshal(stdout, &feat); err != nil {
+		return nil, err
+	}
+	return &feat, nil
+}
+
+func (c *GoRuncRuntimeCreator) Create(ctx context.Context, opts *runtime.RuntimeOptions) (runtime.Runtime, error) {
 	r := WrapdGoRuncRuntime(&gorunc.Runc{
 		Command:       opts.ProcessCreateConfig.Runtime,
-		Log:           filepath.Join(sharedDir, runtime.LogFileBase),
+		Log:           filepath.Join(opts.ProcessCreateConfig.Bundle, runtime.LogFileBase),
 		LogFormat:     gorunc.JSON,
 		PdeathSignal:  unix.SIGKILL,
 		Root:          filepath.Join(opts.ProcessCreateConfig.Options.Root, opts.Namespace),
 		SystemdCgroup: opts.ProcessCreateConfig.Options.SystemdCgroup,
 	})
-	return r
+	return r, nil
 }

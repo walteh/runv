@@ -47,6 +47,23 @@ func NewDefaultDevLogger(name string, writer io.Writer, opts ...OptLoggerOptsSet
 	return NewLogger(opts...)
 }
 
+func NewDefaultJSONLogger(name string, writer io.Writer, opts ...OptLoggerOptsSetter) *slog.Logger {
+	opts = append(opts,
+		WithProcessName(name),
+		WithGlobalRedactor(),
+		WithErrorStackTracer(),
+		WithInterceptLogrus(true),
+		WithInterceptHclog(true),
+		WithMakeDefaultLogger(true),
+		WithJSONHandler(writer),
+		WithHandlerOptions(&slog.HandlerOptions{
+			Level:     slog.LevelDebug,
+			AddSource: true,
+		}),
+	)
+	return NewLogger(opts...)
+}
+
 func NewLogger(opts ...OptLoggerOptsSetter) *slog.Logger {
 	copts := NewLoggerOpts(opts...)
 
@@ -133,6 +150,14 @@ func WithDevTermHanlder(writer io.Writer) OptLoggerOptsSetter {
 				slogdevterm.WithRenderOption(termenv.WithTTY(true)),
 				slogdevterm.WithLoggerName(o.processName),
 			))
+		})
+	}
+}
+
+func WithJSONHandler(writer io.Writer) OptLoggerOptsSetter {
+	return func(o *LoggerOpts) {
+		o.delayedHandlerCreatorOpts = append(o.delayedHandlerCreatorOpts, func(o *LoggerOpts) {
+			o.handlers = append(o.handlers, slog.NewJSONHandler(writer, o.handlerOptions))
 		})
 	}
 }

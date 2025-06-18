@@ -18,6 +18,7 @@ package task
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log/slog"
 	"net"
@@ -159,6 +160,21 @@ type service struct {
 	publisher shim.Publisher
 
 	creator runtime.RuntimeCreator
+}
+
+// ShimFeatures implements runmv1.ShimServiceServer.
+func (s *service) ShimFeatures(ctx context.Context, r *runmv1.ShimFeaturesRequest) (*runmv1.ShimFeaturesResponse, error) {
+	features, err := s.creator.Features(ctx)
+	if err != nil {
+		return nil, err
+	}
+	rawJson, err := json.Marshal(features)
+	if err != nil {
+		return nil, err
+	}
+	resp := &runmv1.ShimFeaturesResponse{}
+	resp.SetRawJson(rawJson)
+	return resp, nil
 }
 
 func (s *service) ShimKill(ctx context.Context, r *runmv1.ShimKillRequest) (*runmv1.ShimKillResponse, error) {

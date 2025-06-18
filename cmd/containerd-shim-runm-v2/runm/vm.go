@@ -34,11 +34,11 @@ type RunmVMRuntime[VM vmm.VirtualMachine] struct {
 	runGroup *run.Group
 }
 
-func NewRunmVMRuntime[VM vmm.VirtualMachine](ctx context.Context, hpv vmm.Hypervisor[VM], publisher shim.Publisher, cfg vmm.ContainerizedVMConfig) (*RunmVMRuntime[VM], error) {
+func NewRunmVMRuntime[VM vmm.VirtualMachine](ctx context.Context, hpv vmm.Hypervisor[VM], publisher shim.Publisher, cfg vmm.OCIVMConfig) (*RunmVMRuntime[VM], error) {
 
 	runGroup := run.New()
 
-	vm, err := vmm.NewContainerizedVirtualMachine(ctx, hpv, cfg)
+	vm, err := vmm.NewOCIVirtualMachine(ctx, hpv, cfg)
 	if err != nil {
 		return nil, err
 	}

@@ -9,10 +9,19 @@ option features.field_presence = IMPLICIT;  // makes everything by default requi
 
 service ShimService {
 	rpc ShimKill(ShimKillRequest) returns (ShimKillResponse) {}
+
+
+	rpc ShimFeatures(ShimFeaturesRequest) returns (ShimFeaturesResponse) {}
 }
 
 message ShimKillRequest {}
 
 message ShimKillResponse {
 	int64 init_pid = 1;
+}
+
+message ShimFeaturesRequest {}
+
+message ShimFeaturesResponse {
+	bytes raw_json = 1;
 }

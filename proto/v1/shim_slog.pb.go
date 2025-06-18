@@ -24,3 +24,20 @@ func (x *ShimKillResponse) LogValue() slog.Value {
 	attrs = append(attrs, slog.Int64("init_pid", x.GetInitPid()))
 	return slog.GroupValue(attrs...)
 }
+
+func (x *ShimFeaturesRequest) LogValue() slog.Value {
+	if x == nil {
+		return slog.AnyValue(nil)
+	}
+	attrs := make([]slog.Attr, 0, 0)
+	return slog.GroupValue(attrs...)
+}
+
+func (x *ShimFeaturesResponse) LogValue() slog.Value {
+	if x == nil {
+		return slog.AnyValue(nil)
+	}
+	attrs := make([]slog.Attr, 0, 1)
+	attrs = append(attrs, slog.Any("raw_json", x.GetRawJson()))
+	return slog.GroupValue(attrs...)
+}

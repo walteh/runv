@@ -121,6 +121,109 @@ func (b0 ShimKillResponse_builder) Build() *ShimKillResponse {
 	return m0
 }
 
+type ShimFeaturesRequest struct {
+	state         protoimpl.MessageState `protogen:"opaque.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ShimFeaturesRequest) Reset() {
+	*x = ShimFeaturesRequest{}
+	mi := &file_v1_shim_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ShimFeaturesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ShimFeaturesRequest) ProtoMessage() {}
+
+func (x *ShimFeaturesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_shim_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+type ShimFeaturesRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 ShimFeaturesRequest_builder) Build() *ShimFeaturesRequest {
+	m0 := &ShimFeaturesRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
+}
+
+type ShimFeaturesResponse struct {
+	state              protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_RawJson []byte                 `protobuf:"bytes,1,opt,name=raw_json,json=rawJson"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
+}
+
+func (x *ShimFeaturesResponse) Reset() {
+	*x = ShimFeaturesResponse{}
+	mi := &file_v1_shim_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ShimFeaturesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ShimFeaturesResponse) ProtoMessage() {}
+
+func (x *ShimFeaturesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_shim_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ShimFeaturesResponse) GetRawJson() []byte {
+	if x != nil {
+		return x.xxx_hidden_RawJson
+	}
+	return nil
+}
+
+func (x *ShimFeaturesResponse) SetRawJson(v []byte) {
+	if v == nil {
+		v = []byte{}
+	}
+	x.xxx_hidden_RawJson = v
+}
+
+type ShimFeaturesResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	RawJson []byte
+}
+
+func (b0 ShimFeaturesResponse_builder) Build() *ShimFeaturesResponse {
+	m0 := &ShimFeaturesResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_RawJson = b.RawJson
+	return m0
+}
+
 var File_v1_shim_proto protoreflect.FileDescriptor
 
 const file_v1_shim_proto_rawDesc = "" +
@@ -128,21 +231,29 @@ const file_v1_shim_proto_rawDesc = "" +
 	"\rv1/shim.proto\x12\arunm.v1\x1a!google/protobuf/go_features.proto\"\x11\n" +
 	"\x0fShimKillRequest\"-\n" +
 	"\x10ShimKillResponse\x12\x19\n" +
-	"\binit_pid\x18\x01 \x01(\x03R\ainitPid2P\n" +
+	"\binit_pid\x18\x01 \x01(\x03R\ainitPid\"\x15\n" +
+	"\x13ShimFeaturesRequest\"1\n" +
+	"\x14ShimFeaturesResponse\x12\x19\n" +
+	"\braw_json\x18\x01 \x01(\fR\arawJson2\x9f\x01\n" +
 	"\vShimService\x12A\n" +
-	"\bShimKill\x12\x18.runm.v1.ShimKillRequest\x1a\x19.runm.v1.ShimKillResponse\"\x00B\x87\x01\n" +
+	"\bShimKill\x12\x18.runm.v1.ShimKillRequest\x1a\x19.runm.v1.ShimKillResponse\"\x00\x12M\n" +
+	"\fShimFeatures\x12\x1c.runm.v1.ShimFeaturesRequest\x1a\x1d.runm.v1.ShimFeaturesResponse\"\x00B\x87\x01\n" +
 	"\vcom.runm.v1B\tShimProtoP\x01Z&github.com/walteh/runm/proto/v1;runmv1\xa2\x02\x03RXX\xaa\x02\aRunm.V1\xca\x02\aRunm\\V1\xe2\x02\x13Runm\\V1\\GPBMetadata\xea\x02\bRunm::V1\x92\x03\a\xd2>\x02\x10\x03\b\x02b\beditionsp\xe8\a"
 
-var file_v1_shim_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_v1_shim_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_v1_shim_proto_goTypes = []any{
-	(*ShimKillRequest)(nil),  // 0: runm.v1.ShimKillRequest
-	(*ShimKillResponse)(nil), // 1: runm.v1.ShimKillResponse
+	(*ShimKillRequest)(nil),      // 0: runm.v1.ShimKillRequest
+	(*ShimKillResponse)(nil),     // 1: runm.v1.ShimKillResponse
+	(*ShimFeaturesRequest)(nil),  // 2: runm.v1.ShimFeaturesRequest
+	(*ShimFeaturesResponse)(nil), // 3: runm.v1.ShimFeaturesResponse
 }
 var file_v1_shim_proto_depIdxs = []int32{
 	0, // 0: runm.v1.ShimService.ShimKill:input_type -> runm.v1.ShimKillRequest
-	1, // 1: runm.v1.ShimService.ShimKill:output_type -> runm.v1.ShimKillResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
+	2, // 1: runm.v1.ShimService.ShimFeatures:input_type -> runm.v1.ShimFeaturesRequest
+	1, // 2: runm.v1.ShimService.ShimKill:output_type -> runm.v1.ShimKillResponse
+	3, // 3: runm.v1.ShimService.ShimFeatures:output_type -> runm.v1.ShimFeaturesResponse
+	2, // [2:4] is the sub-list for method output_type
+	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -159,7 +270,7 @@ func file_v1_shim_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_shim_proto_rawDesc), len(file_v1_shim_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

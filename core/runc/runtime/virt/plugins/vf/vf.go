@@ -10,6 +10,10 @@ import (
 )
 
 func init() {
+	register()
+}
+
+func register() {
 	registry.Register(&plugin.Registration{
 		Type:     plugins.InternalPlugin,
 		ID:       "runm-runtime-creator",
@@ -23,4 +27,8 @@ func init() {
 		},
 	})
 
+}
+
+func Reregister() {
+	register()
 }

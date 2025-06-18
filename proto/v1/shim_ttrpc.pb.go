@@ -9,6 +9,7 @@ import (
 
 type TTRPCShimServiceService interface {
 	ShimKill(context.Context, *ShimKillRequest) (*ShimKillResponse, error)
+	ShimFeatures(context.Context, *ShimFeaturesRequest) (*ShimFeaturesResponse, error)
 }
 
 func RegisterTTRPCShimServiceService(srv *ttrpc.Server, svc TTRPCShimServiceService) {
@@ -20,6 +21,13 @@ func RegisterTTRPCShimServiceService(srv *ttrpc.Server, svc TTRPCShimServiceServ
 					return nil, err
 				}
 				return svc.ShimKill(ctx, &req)
+			},
+			"ShimFeatures": func(ctx context.Context, unmarshal func(interface{}) error) (interface{}, error) {
+				var req ShimFeaturesRequest
+				if err := unmarshal(&req); err != nil {
+					return nil, err
+				}
+				return svc.ShimFeatures(ctx, &req)
 			},
 		},
 	})
@@ -38,6 +46,14 @@ func NewTTRPCShimServiceClient(client *ttrpc.Client) TTRPCShimServiceService {
 func (c *ttrpcshimserviceClient) ShimKill(ctx context.Context, req *ShimKillRequest) (*ShimKillResponse, error) {
 	var resp ShimKillResponse
 	if err := c.client.Call(ctx, "runm.v1.ShimService", "ShimKill", req, &resp); err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (c *ttrpcshimserviceClient) ShimFeatures(ctx context.Context, req *ShimFeaturesRequest) (*ShimFeaturesResponse, error) {
+	var resp ShimFeaturesResponse
+	if err := c.client.Call(ctx, "runm.v1.ShimService", "ShimFeatures", req, &resp); err != nil {
 		return nil, err
 	}
 	return &resp, nil
