@@ -24,8 +24,6 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/containerd/cgroups/v3"
-	"github.com/containerd/cgroups/v3/cgroup1"
 	"github.com/containerd/console"
 	"github.com/containerd/containerd/api/runtime/task/v3"
 	"github.com/containerd/containerd/api/types/runc/options"
@@ -37,14 +35,13 @@ import (
 	"github.com/containerd/log"
 	"github.com/containerd/typeurl/v2"
 
-	cgroupsv2 "github.com/containerd/cgroups/v3/cgroup2"
-
 	"github.com/walteh/runm/cmd/containerd-shim-runm-v2/process"
 	"github.com/walteh/runm/core/runc/runtime"
+	"github.com/walteh/runm/core/virt/vmm"
 )
 
 // NewContainer returns a new runc container
-func NewContainer(ctx context.Context, platform stdio.Platform, r *task.CreateTaskRequest, creator runtime.RuntimeCreator) (_ *Container, retErr error) {
+func NewContainer(ctx context.Context, platform stdio.Platform, r *task.CreateTaskRequest) (_ *Container, retErr error) {
 	ns, err := namespaces.NamespaceRequired(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("create namespace: %w", err)
@@ -147,9 +144,9 @@ func NewContainer(ctx context.Context, platform stdio.Platform, r *task.CreateTa
 	}
 	pid := p.Pid()
 	if pid > 0 {
-		if cg, err := loadProcessCgroup(ctx, pid); err == nil {
-			container.cgroup = cg
-		}
+		// if _, err := loadProcessCgroup(ctx, pid); err == nil {
+		// 	// container.cgroup = cg
+		// }
 	}
 	return container, nil
 }
@@ -249,10 +246,12 @@ type Container struct {
 	Bundle string
 
 	// cgroup is either cgroups.Cgroup or *cgroupsv2.Manager
-	cgroup          interface{}
+	// cgroup          interface{}
 	process         process.Process
 	processes       map[string]process.Process
 	reservedProcess map[string]struct{}
+
+	vm *RunmVMRuntime[vmm.VirtualMachine]
 }
 
 // All processes in the container
@@ -287,18 +286,18 @@ func (c *Container) Pid() int {
 }
 
 // Cgroup of the container
-func (c *Container) Cgroup() interface{} {
+func (c *Container) Cgroup() runtime.CgroupAdapter {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	return c.cgroup
+	return c.vm
 }
 
-// CgroupSet sets the cgroup to the container
-func (c *Container) CgroupSet(cg interface{}) {
-	c.mu.Lock()
-	c.cgroup = cg
-	c.mu.Unlock()
-}
+// // CgroupSet sets the cgroup to the container
+// func (c *Container) CgroupSet(cg interface{}) {
+// 	c.mu.Lock()
+// 	c.cgroup = cg
+// 	c.mu.Unlock()
+// }
 
 // Process returns the process by id
 func (c *Container) Process(id string) (process.Process, error) {
@@ -498,24 +497,24 @@ func (c *Container) HasPid(pid int) bool {
 	return false
 }
 
-func loadProcessCgroup(ctx context.Context, pid int) (cg interface{}, err error) {
-	if cgroups.Mode() == cgroups.Unified {
-		g, err := cgroupsv2.PidGroupPath(pid)
-		if err != nil {
-			log.G(ctx).WithError(err).Errorf("loading cgroup2 for %d", pid)
-			return nil, err
-		}
-		cg, err = cgroupsv2.Load(g)
-		if err != nil {
-			log.G(ctx).WithError(err).Errorf("loading cgroup2 for %d", pid)
-			return nil, err
-		}
-	} else {
-		cg, err = cgroup1.Load(cgroup1.PidPath(pid))
-		if err != nil {
-			log.G(ctx).WithError(err).Errorf("loading cgroup for %d", pid)
-			return nil, err
-		}
-	}
-	return cg, nil
-}
+// func loadProcessCgroup(ctx context.Context, pid int) (cg interface{}, err error) {
+// 	if cgroups.Mode() == cgroups.Unified {
+// 		g, err := cgroupsv2.PidGroupPath(pid)
+// 		if err != nil {
+// 			log.G(ctx).WithError(err).Errorf("loading cgroup2 for %d", pid)
+// 			return nil, err
+// 		}
+// 		cg, err = cgroupsv2.Load(g)
+// 		if err != nil {
+// 			log.G(ctx).WithError(err).Errorf("loading cgroup2 for %d", pid)
+// 			return nil, err
+// 		}
+// 	} else {
+// 		cg, err = cgroup1.Load(cgroup1.PidPath(pid))
+// 		if err != nil {
+// 			log.G(ctx).WithError(err).Errorf("loading cgroup for %d", pid)
+// 			return nil, err
+// 		}
+// 	}
+// 	return cg, nil
+// }

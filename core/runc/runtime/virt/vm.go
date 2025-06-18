@@ -1,4 +1,4 @@
-package runm
+package virt
 
 import (
 	"context"
@@ -12,13 +12,14 @@ import (
 	"github.com/walteh/runm/core/virt/vmm"
 )
 
-var _ runtime.Runtime = (*RunmVMRuntime[vmm.VirtualMachine])(nil)
-var _ runtime.RuntimeExtras = (*RunmVMRuntime[vmm.VirtualMachine])(nil)
-var _ runtime.CgroupAdapter = (*RunmVMRuntime[vmm.VirtualMachine])(nil)
-var _ runtime.EventHandler = (*RunmVMRuntime[vmm.VirtualMachine])(nil)
-var _ runtime.GuestManagement = (*RunmVMRuntime[vmm.VirtualMachine])(nil)
-
-var _ run.Runnable = (*RunmVMRuntime[vmm.VirtualMachine])(nil)
+var (
+	_ runtime.Runtime         = (*RunmVMRuntime[vmm.VirtualMachine])(nil)
+	_ runtime.RuntimeExtras   = (*RunmVMRuntime[vmm.VirtualMachine])(nil)
+	_ runtime.CgroupAdapter   = (*RunmVMRuntime[vmm.VirtualMachine])(nil)
+	_ runtime.EventHandler    = (*RunmVMRuntime[vmm.VirtualMachine])(nil)
+	_ runtime.GuestManagement = (*RunmVMRuntime[vmm.VirtualMachine])(nil)
+	_ run.Runnable            = (*RunmVMRuntime[vmm.VirtualMachine])(nil)
+)
 
 type RunmVMRuntime[VM vmm.VirtualMachine] struct {
 	runtime.Runtime

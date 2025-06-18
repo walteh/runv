@@ -49,16 +49,18 @@ func (r *GoRuncRuntime) RuncRun(ctx context.Context, id, bundle string, options 
 	return r.Runc.Run(ctx, id, bundle, options)
 }
 
-type GoRuncRuntimeCreator struct{}
+type GoRuncRuntimeCreator struct {
+	goRunc *gorunc.Runc
+}
 
 func (c *GoRuncRuntimeCreator) Create(ctx context.Context, sharedDir string, opts *runtime.RuntimeOptions) runtime.Runtime {
 	r := WrapdGoRuncRuntime(&gorunc.Runc{
-		Command:       opts.Runtime,
-		Log:           filepath.Join(sharedDir, runtime.LogFileBase),
-		LogFormat:     gorunc.JSON,
-		PdeathSignal:  unix.SIGKILL,
-		Root:          filepath.Join(opts.Root, opts.Namespace),
-		SystemdCgroup: opts.SystemdCgroup,
+		Command:      opts.Runtime,
+		Log:          filepath.Join(sharedDir, runtime.LogFileBase),
+		LogFormat:    gorunc.JSON,
+		PdeathSignal: unix.SIGKILL,
+		Root:         filepath.Join(opts.Root, opts.Namespace),
+		// SystemdCgroup: opts.SystemdCgroup,
 	})
 	return r
 }
