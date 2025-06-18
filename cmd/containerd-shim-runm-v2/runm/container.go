@@ -22,26 +22,37 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
 	"sync"
 
 	"github.com/containerd/console"
 	"github.com/containerd/containerd/api/runtime/task/v3"
 	"github.com/containerd/containerd/api/types/runc/options"
+	"github.com/containerd/containerd/v2/core/events"
 	"github.com/containerd/containerd/v2/core/mount"
 	"github.com/containerd/containerd/v2/pkg/namespaces"
+	"github.com/containerd/containerd/v2/pkg/oci"
 	"github.com/containerd/containerd/v2/pkg/stdio"
 	"github.com/containerd/errdefs"
 	"github.com/containerd/errdefs/pkg/errgrpc"
 	"github.com/containerd/log"
 	"github.com/containerd/typeurl/v2"
+	"github.com/opencontainers/runtime-spec/specs-go"
 
 	"github.com/walteh/runm/cmd/containerd-shim-runm-v2/process"
+	rtprocess "github.com/walteh/runm/core/runc/process"
 	"github.com/walteh/runm/core/runc/runtime"
-	"github.com/walteh/runm/core/virt/vmm"
 )
 
 // NewContainer returns a new runc container
-func NewContainer(ctx context.Context, platform stdio.Platform, r *task.CreateTaskRequest) (_ *Container, retErr error) {
+func NewContainer(
+	ctx context.Context,
+	platform stdio.Platform,
+	r *task.CreateTaskRequest,
+	spec *oci.Spec,
+	publisher events.Publisher,
+	rtc runtime.RuntimeCreator,
+) (_ *Container, retErr error) {
 	ns, err := namespaces.NamespaceRequired(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("create namespace: %w", err)
@@ -58,9 +69,9 @@ func NewContainer(ctx context.Context, platform stdio.Platform, r *task.CreateTa
 		}
 	}
 
-	var pmounts []process.Mount
+	var pmounts []rtprocess.Mount
 	for _, m := range r.Rootfs {
-		pmounts = append(pmounts, process.Mount{
+		pmounts = append(pmounts, rtprocess.Mount{
 			Type:    m.Type,
 			Source:  m.Source,
 			Target:  m.Target,
@@ -76,7 +87,7 @@ func NewContainer(ctx context.Context, platform stdio.Platform, r *task.CreateTa
 		}
 	}
 
-	config := &process.CreateConfig{
+	config := &rtprocess.CreateConfig{
 		ID:               r.ID,
 		Bundle:           r.Bundle,
 		Runtime:          opts.BinaryName,
@@ -87,7 +98,7 @@ func NewContainer(ctx context.Context, platform stdio.Platform, r *task.CreateTa
 		Stderr:           r.Stderr,
 		Checkpoint:       r.Checkpoint,
 		ParentCheckpoint: r.ParentCheckpoint,
-		Options:          r.Options,
+		Options:          opts,
 	}
 
 	if err := WriteOptions(r.Bundle, opts); err != nil {
@@ -95,6 +106,10 @@ func NewContainer(ctx context.Context, platform stdio.Platform, r *task.CreateTa
 	}
 	// For historical reason, we write opts.BinaryName as well as the entire opts
 	if err := WriteRuntime(r.Bundle, opts.BinaryName); err != nil {
+		return nil, err
+	}
+
+	if err := WritePid(r.Bundle); err != nil {
 		return nil, err
 	}
 
@@ -118,6 +133,26 @@ func NewContainer(ctx context.Context, platform stdio.Platform, r *task.CreateTa
 		return nil, fmt.Errorf("failed to mount rootfs component: %w", err)
 	}
 
+	rt, err := rtc.Create(ctx, &runtime.RuntimeOptions{
+		Namespace:           ns,
+		ProcessCreateConfig: config,
+		Rootfs:              rootfs,
+		Mounts:              pmounts,
+		OciSpec:             spec,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to create runtime: %w", err)
+	}
+
+	var cgroupAdapter runtime.CgroupAdapter
+
+	// todo: this needs to be better
+	if cg, ok := rt.(runtime.CgroupAdapter); ok {
+		cgroupAdapter = cg
+	} else {
+		return nil, fmt.Errorf("runtime is not a cgroup adapter")
+	}
+
 	p, err := newInit(
 		ctx,
 		r.Bundle,
@@ -127,7 +162,8 @@ func NewContainer(ctx context.Context, platform stdio.Platform, r *task.CreateTa
 		config,
 		opts,
 		rootfs,
-		creator,
+		rt,
+		cgroupAdapter,
 	)
 	if err != nil {
 		return nil, errgrpc.ToGRPC(err)
@@ -198,23 +234,29 @@ func WriteRuntime(path, runtime string) error {
 	return os.WriteFile(filepath.Join(path, "runtime"), []byte(runtime), 0600)
 }
 
+func WritePid(path string) error {
+	return os.WriteFile(filepath.Join(path, "pid"), []byte(strconv.Itoa(os.Getpid())), 0600)
+}
+
+func ReadPid(path string) (int, error) {
+	data, err := os.ReadFile(filepath.Join(path, "pid"))
+	if err != nil {
+		return 0, err
+	}
+	return strconv.Atoi(string(data))
+}
+
 func newInit(
 	ctx context.Context,
 	path, workDir, namespace string,
 	platform stdio.Platform,
-	r *process.CreateConfig,
+	r *rtprocess.CreateConfig,
 	options *options.Options,
 	rootfs string,
-	creator runtime.RuntimeCreator,
+	rt runtime.Runtime,
+	cgroupAdapter runtime.CgroupAdapter,
 ) (*process.Init, error) {
-	runtime := creator.Create(ctx, &runtime.RuntimeOptions{
-		Root:          options.Root,
-		Path:          path,
-		Namespace:     namespace,
-		Runtime:       options.BinaryName,
-		SystemdCgroup: options.SystemdCgroup,
-	})
-	p := process.New(r.ID, runtime, stdio.Stdio{
+	p := process.New(r.ID, rt, cgroupAdapter, stdio.Stdio{
 		Stdin:    r.Stdin,
 		Stdout:   r.Stdout,
 		Stderr:   r.Stderr,
@@ -251,7 +293,7 @@ type Container struct {
 	processes       map[string]process.Process
 	reservedProcess map[string]struct{}
 
-	vm *RunmVMRuntime[vmm.VirtualMachine]
+	// vm *RunmVMRuntime[vmm.VirtualMachine]
 }
 
 // All processes in the container
@@ -286,10 +328,10 @@ func (c *Container) Pid() int {
 }
 
 // Cgroup of the container
-func (c *Container) Cgroup() runtime.CgroupAdapter {
+func (c *Container) CgroupAdapter() runtime.CgroupAdapter {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	return c.vm
+	return c.process.CgroupAdapter()
 }
 
 // // CgroupSet sets the cgroup to the container
@@ -389,13 +431,18 @@ func (c *Container) Delete(ctx context.Context, r *task.DeleteRequest) (process.
 
 // Exec an additional process
 func (c *Container) Exec(ctx context.Context, r *task.ExecProcessRequest) (process.Process, error) {
-	process, err := c.process.(*process.Init).Exec(ctx, c.Bundle, &process.ExecConfig{
+	var spec specs.Process
+	if err := json.Unmarshal(r.Spec.Value, &spec); err != nil {
+		return nil, err
+	}
+	spec.Terminal = r.Terminal
+	process, err := c.process.(*process.Init).Exec(ctx, c.Bundle, &rtprocess.ExecConfig{
 		ID:       r.ExecID,
 		Terminal: r.Terminal,
 		Stdin:    r.Stdin,
 		Stdout:   r.Stdout,
 		Stderr:   r.Stderr,
-		Spec:     r.Spec,
+		Spec:     &spec,
 	})
 	if err != nil {
 		return nil, err
@@ -463,7 +510,7 @@ func (c *Container) Checkpoint(ctx context.Context, r *task.CheckpointTaskReques
 			return err
 		}
 	}
-	return p.(*process.Init).Checkpoint(ctx, &process.CheckpointConfig{
+	return p.(*process.Init).Checkpoint(ctx, &rtprocess.CheckpointConfig{
 		Path:                     r.Path,
 		Exit:                     opts.Exit,
 		AllowOpenTCP:             opts.OpenTcp,

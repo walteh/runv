@@ -19,12 +19,15 @@ package task
 import (
 	"context"
 	"fmt"
+	"log/slog"
+	"net"
 	"os"
+	"path"
 	"sync"
 
-	"github.com/containerd/cgroups/v3/cgroup1"
 	"github.com/containerd/containerd/api/types/runc/options"
 	"github.com/containerd/containerd/api/types/task"
+	"github.com/containerd/containerd/oci"
 	"github.com/containerd/containerd/v2/pkg/namespaces"
 	"github.com/containerd/containerd/v2/pkg/protobuf"
 	"github.com/containerd/containerd/v2/pkg/shim"
@@ -36,9 +39,9 @@ import (
 	"github.com/containerd/log"
 	"github.com/containerd/ttrpc"
 	"github.com/containerd/typeurl/v2"
-	"github.com/moby/sys/userns"
+	"github.com/pkg/errors"
+	"google.golang.org/grpc"
 
-	cgroupsv2 "github.com/containerd/cgroups/v3/cgroup2"
 	eventstypes "github.com/containerd/containerd/api/events"
 	taskAPI "github.com/containerd/containerd/api/runtime/task/v3"
 	containerdruntime "github.com/containerd/containerd/v2/core/runtime"
@@ -49,6 +52,7 @@ import (
 	"github.com/walteh/runm/cmd/containerd-shim-runm-v2/runm"
 	"github.com/walteh/runm/core/runc/oom"
 	"github.com/walteh/runm/core/runc/runtime"
+	runmv1 "github.com/walteh/runm/proto/v1"
 )
 
 var (
@@ -57,7 +61,26 @@ var (
 )
 
 // NewTaskService creates a new instance of a task service
-func NewTaskService(ctx context.Context, publisher shim.Publisher, sd shutdown.Service) (taskAPI.TTRPCTaskService, error) {
+func NewTaskService(ctx context.Context, publisher shim.Publisher, sd shutdown.Service, rtc runtime.RuntimeCreator) (taskAPI.TTRPCTaskService, error) {
+	var primarySocketAddress, runmSocketAddress string
+
+	if address, err := shim.ReadAddress("address"); err == nil {
+		primarySocketAddress = address
+		runmSocketAddress = address + ".runm"
+	} else {
+		return nil, err
+	}
+
+	sd.RegisterCallback(func(context.Context) error {
+		if err := shim.RemoveSocket(primarySocketAddress); err != nil {
+			slog.Error("failed to remove primary socket", "error", err)
+		}
+		if err := shim.RemoveSocket(runmSocketAddress); err != nil {
+			slog.Error("failed to remove runm socket", "error", err)
+		}
+
+		return nil
+	})
 
 	s := &service{
 		context:              ctx,
@@ -71,6 +94,7 @@ func NewTaskService(ctx context.Context, publisher shim.Publisher, sd shutdown.S
 		execCountSubscribers: make(map[*runm.Container]chan<- int),
 		containerInitExit:    make(map[*runm.Container]gorunc.Exit),
 		exitSubscribers:      make(map[*map[int][]gorunc.Exit]struct{}),
+		creator:              rtc,
 	}
 	go s.processExits()
 	gorunc.Monitor = reaper.Default
@@ -83,13 +107,20 @@ func NewTaskService(ctx context.Context, publisher shim.Publisher, sd shutdown.S
 		return nil
 	})
 
-	if address, err := shim.ReadAddress("address"); err == nil {
-		sd.RegisterCallback(func(context.Context) error {
-			return shim.RemoveSocket(address)
-		})
+	grpcServer := grpc.NewServer()
+	runmv1.RegisterShimServiceServer(grpcServer, s)
+	listener, err := net.Listen("unix", runmSocketAddress)
+	if err != nil {
+		return nil, err
 	}
+	go grpcServer.Serve(listener)
+
 	return s, nil
 }
+
+var (
+	_ runmv1.ShimServiceServer = &service{}
+)
 
 // service is the shim implementation of a remote shim over GRPC
 type service struct {
@@ -101,7 +132,8 @@ type service struct {
 	ec       chan gorunc.Exit
 	ep       *oom.Watcher
 
-	containers map[string]*runm.Container
+	primaryContainerId string
+	containers         map[string]*runm.Container
 
 	lifecycleMu  sync.Mutex
 	running      map[int][]containerProcess // pid -> running process, guarded by lifecycleMu
@@ -123,9 +155,32 @@ type service struct {
 	// lifecycleMu.
 	exitSubscribers map[*map[int][]gorunc.Exit]struct{}
 
-	shutdown shutdown.Service
+	shutdown  shutdown.Service
+	publisher shim.Publisher
 
 	creator runtime.RuntimeCreator
+}
+
+func (s *service) ShimKill(ctx context.Context, r *runmv1.ShimKillRequest) (*runmv1.ShimKillResponse, error) {
+	container, err := s.getContainer(s.primaryContainerId)
+	if err != nil {
+		return nil, err
+	}
+
+	init, err := container.Process("")
+	if err != nil {
+		return nil, err
+	}
+
+	if err := init.Runtime().Delete(ctx, "", &gorunc.DeleteOpts{
+		Force: true,
+	}); err != nil {
+		log.G(ctx).WithError(err).Warn("failed to remove runc container")
+	}
+
+	resp := &runmv1.ShimKillResponse{}
+	resp.SetInitPid(int64(init.Pid()))
+	return resp, nil
 }
 
 type containerProcess struct {
@@ -216,11 +271,23 @@ func (s *service) Create(ctx context.Context, r *taskAPI.CreateTaskRequest) (_ *
 	s.lifecycleMu.Unlock()
 	defer cleanup()
 
-	container, err := runm.NewContainer(ctx, s.platform, r, s.creator)
+	specPath := path.Join(r.Bundle, oci.ConfigFilename)
+
+	spec, err := oci.ReadSpec(specPath)
+	if err != nil {
+		return nil, errors.Errorf("reading spec: %w", err)
+	}
+
+	container, err := runm.NewContainer(ctx, s.platform, r, spec, s.publisher, s.creator)
 	if err != nil {
 		return nil, err
 	}
 
+	if s.primaryContainerId != "" {
+		return nil, errgrpc.ToGRPCf(errdefs.ErrAlreadyExists, "runm only supports one container per shim")
+	}
+
+	s.primaryContainerId = r.ID
 	s.containers[r.ID] = container
 
 	s.send(&eventstypes.TaskCreate{
@@ -294,30 +361,33 @@ func (s *service) Start(ctx context.Context, r *taskAPI.StartRequest) (*taskAPI.
 
 	switch r.ExecID {
 	case "":
-		switch cg := container.Cgroup().(type) {
-		case cgroup1.Cgroup:
-			// if err := s.ep.Add(container.ID, cg); err != nil {
-			// 	log.G(ctx).WithError(err).Error("add cg to OOM monitor")
-			// }
-		case *cgroupsv2.Manager:
-			allControllers, err := cg.RootControllers()
-			if err != nil {
-				log.G(ctx).WithError(err).Error("failed to get root controllers")
-			} else {
-				if err := cg.ToggleControllers(allControllers, cgroupsv2.Enable); err != nil {
-					if userns.RunningInUserNS() {
-						log.G(ctx).WithError(err).Debugf("failed to enable controllers (%v)", allControllers)
-					} else {
-						log.G(ctx).WithError(err).Errorf("failed to enable controllers (%v)", allControllers)
-					}
-				}
-			}
-
-			// todo: switch the toggle
-			// if err := s.ep.Add(container.ID, cg); err != nil {
-			// 	log.G(ctx).WithError(err).Error("add cg to OOM monitor")
-			// }
+		if err := p.CgroupAdapter().ToggleControllers(ctx); err != nil {
+			log.G(ctx).WithError(err).Error("failed to toggle controllers")
 		}
+		// switch cg := container.Cgroup().(type) {
+		// case cgroup1.Cgroup:
+		// 	// if err := s.ep.Add(container.ID, cg); err != nil {
+		// 	// 	log.G(ctx).WithError(err).Error("add cg to OOM monitor")
+		// 	// }
+		// case *cgroupsv2.Manager:
+		// 	allControllers, err := cg.RootControllers()
+		// 	if err != nil {
+		// 		log.G(ctx).WithError(err).Error("failed to get root controllers")
+		// 	} else {
+		// 		if err := cg.ToggleControllers(allControllers, cgroupsv2.Enable); err != nil {
+		// 			if userns.RunningInUserNS() {
+		// 				log.G(ctx).WithError(err).Debugf("failed to enable controllers (%v)", allControllers)
+		// 			} else {
+		// 				log.G(ctx).WithError(err).Errorf("failed to enable controllers (%v)", allControllers)
+		// 			}
+		// 		}
+		// 	}
+
+		// todo: switch the toggle
+		// if err := s.ep.Add(container.ID, cg); err != nil {
+		// 	log.G(ctx).WithError(err).Error("add cg to OOM monitor")
+		// }
+		// }
 
 		s.send(&eventstypes.TaskStart{
 			ContainerID: container.ID,
@@ -610,27 +680,32 @@ func (s *service) Stats(ctx context.Context, r *taskAPI.StatsRequest) (*taskAPI.
 	if err != nil {
 		return nil, err
 	}
-	cgx := container.Cgroup()
+	cgx := container.CgroupAdapter()
 	if cgx == nil {
 		return nil, errgrpc.ToGRPCf(errdefs.ErrNotFound, "cgroup does not exist")
 	}
-	var statsx interface{}
-	switch cg := cgx.(type) {
-	case cgroup1.Cgroup:
-		stats, err := cg.Stat(cgroup1.IgnoreNotExist)
-		if err != nil {
-			return nil, err
-		}
-		statsx = stats
-	case *cgroupsv2.Manager:
-		stats, err := cg.Stat()
-		if err != nil {
-			return nil, err
-		}
-		statsx = stats
-	default:
-		return nil, errgrpc.ToGRPCf(errdefs.ErrNotImplemented, "unsupported cgroup type %T", cg)
+	stats, err := cgx.Stat(ctx)
+	if err != nil {
+		return nil, err
 	}
+	statsx := stats
+	// var statsx interface{}
+	// switch cg := cgx.(type) {
+	// case cgroup1.Cgroup:
+	// 	stats, err := cg.Stat(cgroup1.IgnoreNotExist)
+	// 	if err != nil {
+	// 		return nil, err
+	// 	}
+	// 	statsx = stats
+	// case *cgroupsv2.Manager:
+	// 	stats, err := cg.Stat()
+	// 	if err != nil {
+	// 		return nil, err
+	// 	}
+	// 	statsx = stats
+	// default:
+	// 	return nil, errgrpc.ToGRPCf(errdefs.ErrNotImplemented, "unsupported cgroup type %T", cg)
+	// }
 	data, err := typeurl.MarshalAny(statsx)
 	if err != nil {
 		return nil, err

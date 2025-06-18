@@ -42,6 +42,7 @@ import (
 	gorunc "github.com/containerd/go-runc"
 	specs "github.com/opencontainers/runtime-spec/specs-go"
 
+	"github.com/walteh/runm/core/runc/process"
 	"github.com/walteh/runm/core/runc/runtime"
 )
 
@@ -65,7 +66,7 @@ type Init struct {
 	console  console.Console
 	Platform stdio.Platform
 	io       *processIO
-	runtime  runtime.Runtime
+
 	// pausing preserves the pausing state.
 	pausing      atomic.Bool
 	status       int
@@ -80,23 +81,27 @@ type Init struct {
 	NoPivotRoot  bool
 	NoNewKeyring bool
 	CriuWorkPath string
+
+	runtime       runtime.Runtime
+	cgroupAdapter runtime.CgroupAdapter
 }
 
 // New returns a new process
-func New(id string, runtime runtime.Runtime, stdio stdio.Stdio) *Init {
+func New(id string, runtime runtime.Runtime, cgroupAdapter runtime.CgroupAdapter, stdio stdio.Stdio) *Init {
 	p := &Init{
-		id:        id,
-		runtime:   runtime,
-		stdio:     stdio,
-		status:    0,
-		waitBlock: make(chan struct{}),
+		id:            id,
+		runtime:       runtime,
+		cgroupAdapter: cgroupAdapter,
+		stdio:         stdio,
+		status:        0,
+		waitBlock:     make(chan struct{}),
 	}
 	p.initState = &createdState{p: p}
 	return p
 }
 
 // Create the process with the provided config
-func (p *Init) Create(ctx context.Context, r *CreateConfig) error {
+func (p *Init) Create(ctx context.Context, r *process.CreateConfig) error {
 	var (
 		err     error
 		socket  runtime.ConsoleSocket
@@ -174,7 +179,7 @@ func (p *Init) openStdin(path string) error {
 	return nil
 }
 
-func (p *Init) createCheckpointedState(r *CreateConfig, pidFile *pidFile) error {
+func (p *Init) createCheckpointedState(r *process.CreateConfig, pidFile *pidFile) error {
 	opts := &gorunc.RestoreOpts{
 		CheckpointOpts: gorunc.CheckpointOpts{
 			ImagePath:  r.Checkpoint,
@@ -371,8 +376,13 @@ func (p *Init) Runtime() runtime.Runtime {
 	return p.runtime
 }
 
+// CgroupAdapter returns the cgroup adapter for the init process
+func (p *Init) CgroupAdapter() runtime.CgroupAdapter {
+	return p.cgroupAdapter
+}
+
 // Exec returns a new child process
-func (p *Init) Exec(ctx context.Context, path string, r *ExecConfig) (Process, error) {
+func (p *Init) Exec(ctx context.Context, path string, r *process.ExecConfig) (Process, error) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
@@ -380,19 +390,23 @@ func (p *Init) Exec(ctx context.Context, path string, r *ExecConfig) (Process, e
 }
 
 // exec returns a new exec'd process
-func (p *Init) exec(ctx context.Context, path string, r *ExecConfig) (Process, error) {
-	// process exec request
-	var spec specs.Process
-	if err := json.Unmarshal(r.Spec.Value, &spec); err != nil {
-		return nil, err
+func (p *Init) exec(ctx context.Context, path string, r *process.ExecConfig) (Process, error) {
+	// // process exec request
+	// var spec specs.Process
+	// if err := json.Unmarshal(r.Spec.Value, &spec); err != nil {
+	// 	return nil, err
+	// }
+	// spec.Terminal = r.Terminal
+
+	if r.Spec == nil {
+		return nil, fmt.Errorf("spec is nil")
 	}
-	spec.Terminal = r.Terminal
 
 	e := &execProcess{
 		id:     r.ID,
 		path:   path,
 		parent: p,
-		spec:   spec,
+		spec:   *r.Spec,
 		stdio: stdio.Stdio{
 			Stdin:    r.Stdin,
 			Stdout:   r.Stdout,
@@ -406,14 +420,14 @@ func (p *Init) exec(ctx context.Context, path string, r *ExecConfig) (Process, e
 }
 
 // Checkpoint the init process
-func (p *Init) Checkpoint(ctx context.Context, r *CheckpointConfig) error {
+func (p *Init) Checkpoint(ctx context.Context, r *process.CheckpointConfig) error {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
 	return p.initState.Checkpoint(ctx, r)
 }
 
-func (p *Init) checkpoint(ctx context.Context, r *CheckpointConfig) error {
+func (p *Init) checkpoint(ctx context.Context, r *process.CheckpointConfig) error {
 	var actions []gorunc.CheckpointAction
 	if !r.Exit {
 		actions = append(actions, gorunc.LeaveRunning)

@@ -28,6 +28,7 @@ import (
 	google_protobuf "github.com/containerd/containerd/v2/pkg/protobuf/types"
 	gorunc "github.com/containerd/go-runc"
 
+	"github.com/walteh/runm/core/runc/process"
 	"github.com/walteh/runm/core/runc/runtime"
 )
 
@@ -37,8 +38,8 @@ type initState interface {
 	Pause(context.Context) error
 	Resume(context.Context) error
 	Update(context.Context, *google_protobuf.Any) error
-	Checkpoint(context.Context, *CheckpointConfig) error
-	Exec(context.Context, string, *ExecConfig) (Process, error)
+	Checkpoint(context.Context, *process.CheckpointConfig) error
+	Exec(context.Context, string, *process.ExecConfig) (Process, error)
 	Kill(context.Context, uint32, bool) error
 	SetExited(int)
 	Status(context.Context) (string, error)
@@ -74,7 +75,7 @@ func (s *createdState) Update(ctx context.Context, r *google_protobuf.Any) error
 	return s.p.update(ctx, r)
 }
 
-func (s *createdState) Checkpoint(ctx context.Context, r *CheckpointConfig) error {
+func (s *createdState) Checkpoint(ctx context.Context, r *process.CheckpointConfig) error {
 	return errors.New("cannot checkpoint a task in created state")
 }
 
@@ -104,7 +105,7 @@ func (s *createdState) SetExited(status int) {
 	}
 }
 
-func (s *createdState) Exec(ctx context.Context, path string, r *ExecConfig) (Process, error) {
+func (s *createdState) Exec(ctx context.Context, path string, r *process.ExecConfig) (Process, error) {
 	return s.p.exec(ctx, path, r)
 }
 
@@ -143,7 +144,7 @@ func (s *createdCheckpointState) Update(ctx context.Context, r *google_protobuf.
 	return s.p.update(ctx, r)
 }
 
-func (s *createdCheckpointState) Checkpoint(ctx context.Context, r *CheckpointConfig) error {
+func (s *createdCheckpointState) Checkpoint(ctx context.Context, r *process.CheckpointConfig) error {
 	return errors.New("cannot checkpoint a task in created state")
 }
 
@@ -213,7 +214,7 @@ func (s *createdCheckpointState) SetExited(status int) {
 	}
 }
 
-func (s *createdCheckpointState) Exec(ctx context.Context, path string, r *ExecConfig) (Process, error) {
+func (s *createdCheckpointState) Exec(ctx context.Context, path string, r *process.ExecConfig) (Process, error) {
 	return nil, errors.New("cannot exec in a created state")
 }
 
@@ -260,7 +261,7 @@ func (s *runningState) Update(ctx context.Context, r *google_protobuf.Any) error
 	return s.p.update(ctx, r)
 }
 
-func (s *runningState) Checkpoint(ctx context.Context, r *CheckpointConfig) error {
+func (s *runningState) Checkpoint(ctx context.Context, r *process.CheckpointConfig) error {
 	return s.p.checkpoint(ctx, r)
 }
 
@@ -284,7 +285,7 @@ func (s *runningState) SetExited(status int) {
 	}
 }
 
-func (s *runningState) Exec(ctx context.Context, path string, r *ExecConfig) (Process, error) {
+func (s *runningState) Exec(ctx context.Context, path string, r *process.ExecConfig) (Process, error) {
 	return s.p.exec(ctx, path, r)
 }
 
@@ -324,7 +325,7 @@ func (s *pausedState) Update(ctx context.Context, r *google_protobuf.Any) error 
 	return s.p.update(ctx, r)
 }
 
-func (s *pausedState) Checkpoint(ctx context.Context, r *CheckpointConfig) error {
+func (s *pausedState) Checkpoint(ctx context.Context, r *process.CheckpointConfig) error {
 	return s.p.checkpoint(ctx, r)
 }
 
@@ -352,7 +353,7 @@ func (s *pausedState) SetExited(status int) {
 	}
 }
 
-func (s *pausedState) Exec(ctx context.Context, path string, r *ExecConfig) (Process, error) {
+func (s *pausedState) Exec(ctx context.Context, path string, r *process.ExecConfig) (Process, error) {
 	return nil, errors.New("cannot exec in a paused state")
 }
 
@@ -386,7 +387,7 @@ func (s *stoppedState) Update(ctx context.Context, r *google_protobuf.Any) error
 	return errors.New("cannot update a stopped container")
 }
 
-func (s *stoppedState) Checkpoint(ctx context.Context, r *CheckpointConfig) error {
+func (s *stoppedState) Checkpoint(ctx context.Context, r *process.CheckpointConfig) error {
 	return errors.New("cannot checkpoint a stopped container")
 }
 
@@ -409,7 +410,7 @@ func (s *stoppedState) SetExited(status int) {
 	// no op
 }
 
-func (s *stoppedState) Exec(ctx context.Context, path string, r *ExecConfig) (Process, error) {
+func (s *stoppedState) Exec(ctx context.Context, path string, r *process.ExecConfig) (Process, error) {
 	return nil, errors.New("cannot exec in a stopped state")
 }
 

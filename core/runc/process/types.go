@@ -17,7 +17,8 @@
 package process
 
 import (
-	google_protobuf "github.com/containerd/containerd/v2/pkg/protobuf/types"
+	"github.com/containerd/containerd/api/types/runc/options"
+	"github.com/opencontainers/runtime-spec/specs-go"
 )
 
 // Mount holds filesystem mount configuration
@@ -40,7 +41,7 @@ type CreateConfig struct {
 	Stderr           string
 	Checkpoint       string
 	ParentCheckpoint string
-	Options          *google_protobuf.Any
+	Options          *options.Options
 }
 
 // ExecConfig holds exec creation configuration
@@ -50,7 +51,7 @@ type ExecConfig struct {
 	Stdin    string
 	Stdout   string
 	Stderr   string
-	Spec     *google_protobuf.Any
+	Spec     *specs.Process
 }
 
 // CheckpointConfig holds task checkpoint configuration

@@ -23,6 +23,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"net"
 	"os"
 	"os/exec"
@@ -47,9 +48,9 @@ import (
 
 	gorunc "github.com/containerd/go-runc"
 
-	"github.com/walteh/runm/cmd/containerd-shim-runm-v2/process"
 	"github.com/walteh/runm/cmd/containerd-shim-runm-v2/runm"
 	"github.com/walteh/runm/core/runc/runtime"
+	runmv1 "github.com/walteh/runm/proto/v1"
 )
 
 // NewShimManager returns an implementation of the shim manager
@@ -77,8 +78,9 @@ type spec struct {
 }
 
 type manager struct {
-	name    string
-	creator runtime.RuntimeCreator
+	name            string
+	creator         runtime.RuntimeCreator
+	shimGrpcService runmv1.ShimServiceClient
 }
 
 func newCommand(ctx context.Context, id, containerdAddress, containerdTTRPCAddress string, debug bool) (*exec.Cmd, error) {
@@ -292,42 +294,55 @@ func (m manager) Stop(ctx context.Context, id string) (shim.StopStatus, error) {
 	}
 
 	path := filepath.Join(filepath.Dir(cwd), id)
-	ns, err := namespaces.NamespaceRequired(ctx)
+	// ns, err := namespaces.NamespaceRequired(ctx)
+	// if err != nil {
+	// 	return shim.StopStatus{}, err
+	// }
+	// runtimez, err := runm.ReadRuntime(path)
+	// if err != nil && !os.IsNotExist(err) {
+	// 	return shim.StopStatus{}, err
+	// }
+	// opts, err := runm.ReadOptions(path)
+	// if err != nil {
+	// 	return shim.StopStatus{}, err
+	// }
+	// root := process.RuncRoot
+	// if opts != nil && opts.Root != "" {
+	// 	root = opts.Root
+	// }
+
+	// this needs to be taken care of in the sig-kill of the main shim process, not here
+	pid, err := runm.ReadPid(path)
 	if err != nil {
 		return shim.StopStatus{}, err
-	}
-	runtimez, err := runm.ReadRuntime(path)
-	if err != nil && !os.IsNotExist(err) {
-		return shim.StopStatus{}, err
-	}
-	opts, err := runm.ReadOptions(path)
-	if err != nil {
-		return shim.StopStatus{}, err
-	}
-	root := process.RuncRoot
-	if opts != nil && opts.Root != "" {
-		root = opts.Root
 	}
 
-	r := m.creator.Create(ctx, &runtime.RuntimeOptions{
-		Root:          root,
-		Path:          path,
-		Namespace:     ns,
-		Runtime:       runtimez,
-		SystemdCgroup: opts.SystemdCgroup,
-	})
-	if err := r.Delete(ctx, id, &gorunc.DeleteOpts{
-		Force: true,
-	}); err != nil {
-		log.G(ctx).WithError(err).Warn("failed to remove runc container")
+	_, err = m.shimGrpcService.ShimKill(ctx, &runmv1.ShimKillRequest{})
+	if err != nil {
+		return shim.StopStatus{}, err
 	}
+	// pid = int(killResponse.GetInitPid())
+
+	// kill the pid
+	if err := syscall.Kill(pid, syscall.SIGKILL); err != nil {
+		slog.Error("failed to kill pid", "error", err)
+	}
+
+	// r := m.creator.Create(ctx, &runtime.RuntimeOptions{
+	// 	Root:          root,
+	// 	Path:          path,
+	// 	Namespace:     ns,
+	// 	Runtime:       runtimez,
+	// 	SystemdCgroup: opts.SystemdCgroup,
+	// })
+
 	if err := mount.UnmountRecursive(filepath.Join(path, "rootfs"), 0); err != nil {
 		log.G(ctx).WithError(err).Warn("failed to cleanup rootfs mount")
 	}
-	pid, err := gorunc.ReadPidFile(filepath.Join(path, process.InitPidFile))
-	if err != nil {
-		log.G(ctx).WithError(err).Warn("failed to read init pid file")
-	}
+	// pid, err := gorunc.ReadPidFile(filepath.Join(path, process.InitPidFile))
+	// if err != nil {
+	// 	log.G(ctx).WithError(err).Warn("failed to read init pid file")
+	// }
 	return shim.StopStatus{
 		ExitedAt:   time.Now(),
 		ExitStatus: 128 + int(unix.SIGKILL),

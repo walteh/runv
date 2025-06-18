@@ -63,6 +63,14 @@ type execProcess struct {
 	waitBlock chan struct{}
 }
 
+func (e *execProcess) Runtime() runtime.Runtime {
+	return e.parent.runtime
+}
+
+func (e *execProcess) CgroupAdapter() runtime.CgroupAdapter {
+	return e.parent.cgroupAdapter
+}
+
 func (e *execProcess) Wait() {
 	<-e.waitBlock
 }

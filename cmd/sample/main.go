@@ -59,11 +59,11 @@ func newRealServer(ctx context.Context) *server.Server {
 	realRuntimeCreator := goruncruntime.GoRuncRuntimeCreator{}
 
 	realRuntime := realRuntimeCreator.Create(ctx, wrkDir, &runtime.RuntimeOptions{
-		Root:          filepath.Join(wrkDir, "root"),
-		Path:          filepath.Join(wrkDir, "path"),
-		Namespace:     "runm",
-		Runtime:       "runc",
-		SystemdCgroup: true,
+		// Root:          filepath.Join(wrkDir, "root"),
+		// Path:          filepath.Join(wrkDir, "path"),
+		// Namespace:     "runm",
+		// Runtime:       "runc",
+		// SystemdCgroup: true,
 	})
 
 	realSocketAllocator := runtime.NewGuestUnixSocketAllocator(wrkDir)

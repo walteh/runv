@@ -24,6 +24,7 @@ import (
 	"github.com/containerd/plugin/registry"
 
 	"github.com/walteh/runm/cmd/containerd-shim-runm-v2/task"
+	"github.com/walteh/runm/core/runc/runtime"
 )
 
 func init() {
@@ -43,7 +44,11 @@ func init() {
 			if err != nil {
 				return nil, err
 			}
-			return task.NewTaskService(ic.Context, pp.(shim.Publisher), ss.(shutdown.Service))
+			rtc, err := ic.GetByID(plugins.InternalPlugin, "runm-runtime-creator")
+			if err != nil {
+				return nil, err
+			}
+			return task.NewTaskService(ic.Context, pp.(shim.Publisher), ss.(shutdown.Service), rtc.(runtime.RuntimeCreator))
 		},
 	})
 

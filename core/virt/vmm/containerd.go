@@ -18,7 +18,6 @@ import (
 
 	"golang.org/x/sync/errgroup"
 
-	"github.com/containerd/containerd/api/types"
 	"github.com/containerd/containerd/v2/pkg/oci"
 	"github.com/containers/common/pkg/strongunits"
 	"github.com/nxadm/tail"
@@ -27,6 +26,7 @@ import (
 
 	slogctx "github.com/veqryn/slog-context"
 
+	"github.com/walteh/runm/core/runc/process"
 	"github.com/walteh/runm/core/virt/host"
 	"github.com/walteh/runm/core/virt/virtio"
 	"github.com/walteh/runm/linux/constants"
@@ -37,7 +37,7 @@ import (
 
 type ContainerizedVMConfig struct {
 	ID           string
-	RootfsMounts []*types.Mount
+	RootfsMounts []process.Mount
 	// StderrWriter io.Writer
 	// StdoutWriter io.Writer
 	// StdinReader  io.Reader
@@ -482,7 +482,7 @@ func PrepareContainerMounts(ctx context.Context, spec *oci.Spec, containerId str
 }
 
 // PrepareContainerVirtioDevicesFromRootfs creates virtio devices using an existing rootfs directory
-func PrepareContainerVirtioDevicesFromRootfs(ctx context.Context, wrkdir string, ctrconfig *oci.Spec, rootfsMounts []*types.Mount, bindMounts []specs.Mount, wg *errgroup.Group) ([]virtio.VirtioDevice, error) {
+func PrepareContainerVirtioDevicesFromRootfs(ctx context.Context, wrkdir string, ctrconfig *oci.Spec, rootfsMounts []process.Mount, bindMounts []specs.Mount, wg *errgroup.Group) ([]virtio.VirtioDevice, error) {
 	outMounts := []specs.Mount{}
 	ec1DataPath := filepath.Join(wrkdir, "harpoon-runtime-fs-device")
 

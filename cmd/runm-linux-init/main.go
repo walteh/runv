@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime/debug"
 	"strings"
 	"syscall"
@@ -15,6 +16,7 @@ import (
 	"github.com/mdlayher/vsock"
 	"gitlab.com/tozd/go/errors"
 	"golang.org/x/sync/errgroup"
+	"golang.org/x/sys/unix"
 	"google.golang.org/grpc"
 
 	slogctx "github.com/veqryn/slog-context"
@@ -24,6 +26,8 @@ import (
 	"github.com/walteh/runm/core/runc/server"
 	"github.com/walteh/runm/linux/constants"
 	"github.com/walteh/runm/pkg/logging"
+
+	gorunc "github.com/containerd/go-runc"
 
 	runtimemock "github.com/walteh/runm/gen/mocks/core/runc/runtime"
 )
@@ -81,16 +85,16 @@ func runGrpcVsockServer(ctx context.Context) error {
 		}
 	}()
 
-	realRuntimeCreator := goruncruntime.GoRuncRuntimeCreator{}
-
 	wrkDir := constants.Ec1AbsPath
 
-	realRuntime := realRuntimeCreator.Create(ctx, constants.Ec1AbsPath, &runtime.RuntimeOptions{
+	realRuntime := goruncruntime.WrapdGoRuncRuntime(&gorunc.Runc{
+		Command:      "/mbin/runc",
+		Log:          filepath.Join(constants.Ec1AbsPath, runtime.LogFileBase),
+		LogFormat:    gorunc.JSON,
+		PdeathSignal: unix.SIGKILL,
+		// Root:          filepath.Join(opts.ProcessCreateConfig.Options.Root, opts.Namespace),
 		Root:          constants.NewRootAbsPath,
-		Path:          "/mbin/runc",
-		Namespace:     "runm",
-		Runtime:       "runc",
-		SystemdCgroup: true,
+		SystemdCgroup: false,
 	})
 
 	realSocketAllocator := runtime.NewGuestUnixSocketAllocator(wrkDir)

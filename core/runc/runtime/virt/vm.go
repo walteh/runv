@@ -4,12 +4,13 @@ import (
 	"context"
 	"log/slog"
 
-	"github.com/containerd/containerd/v2/pkg/shim"
+	"github.com/containers/common/pkg/strongunits"
 	"github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/walteh/run"
 	"github.com/walteh/runm/core/runc/oom"
 	"github.com/walteh/runm/core/runc/runtime"
 	"github.com/walteh/runm/core/virt/vmm"
+	"github.com/walteh/runm/pkg/units"
 )
 
 var (
@@ -35,9 +36,24 @@ type RunmVMRuntime[VM vmm.VirtualMachine] struct {
 	runGroup *run.Group
 }
 
-func NewRunmVMRuntime[VM vmm.VirtualMachine](ctx context.Context, hpv vmm.Hypervisor[VM], publisher shim.Publisher, cfg vmm.ContainerizedVMConfig) (*RunmVMRuntime[VM], error) {
+func NewRunmVMRuntime[VM vmm.VirtualMachine](
+	ctx context.Context,
+	hpv vmm.Hypervisor[VM],
+	opts *runtime.RuntimeOptions,
+	maxMemory strongunits.StorageUnits,
+	vcpus int,
+) (*RunmVMRuntime[VM], error) {
 
 	runGroup := run.New()
+
+	cfg := vmm.ContainerizedVMConfig{
+		ID:             opts.ProcessCreateConfig.ID,
+		Spec:           opts.OciSpec,
+		RootfsMounts:   opts.Mounts,
+		StartingMemory: strongunits.MiB(64).ToBytes(),
+		VCPUs:          1,
+		Platform:       units.PlatformLinuxARM64,
+	}
 
 	vm, err := vmm.NewContainerizedVirtualMachine(ctx, hpv, cfg)
 	if err != nil {
@@ -49,7 +65,7 @@ func NewRunmVMRuntime[VM vmm.VirtualMachine](ctx context.Context, hpv vmm.Hyperv
 		return nil, err
 	}
 
-	ep := oom.NewWatcher(publisher, srv)
+	ep := oom.NewWatcher(opts.Publisher, srv)
 
 	runGroup.Always(ep)
 

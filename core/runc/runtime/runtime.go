@@ -9,7 +9,10 @@ import (
 
 	"github.com/containerd/cgroups/v3/cgroup2/stats"
 	"github.com/containerd/console"
+	"github.com/containerd/containerd/v2/core/events"
+	"github.com/containerd/containerd/v2/pkg/oci"
 	"github.com/opencontainers/runtime-spec/specs-go"
+	"github.com/walteh/runm/core/runc/process"
 
 	gorunc "github.com/containerd/go-runc"
 )
@@ -20,15 +23,16 @@ const (
 )
 
 type RuntimeOptions struct {
-	Root          string
-	Path          string
-	Namespace     string
-	Runtime       string
-	SystemdCgroup bool
+	ProcessCreateConfig *process.CreateConfig
+	Mounts              []process.Mount
+	Rootfs              string
+	Namespace           string
+	Publisher           events.Publisher
+	OciSpec             *oci.Spec
 }
 
 type RuntimeCreator interface {
-	Create(ctx context.Context, opts *RuntimeOptions) Runtime
+	Create(ctx context.Context, opts *RuntimeOptions) (Runtime, error)
 }
 
 //go:mock

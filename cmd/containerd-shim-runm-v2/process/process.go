@@ -23,6 +23,7 @@ import (
 
 	"github.com/containerd/console"
 	"github.com/containerd/containerd/v2/pkg/stdio"
+	"github.com/walteh/runm/core/runc/runtime"
 )
 
 // Process on a system
@@ -53,4 +54,8 @@ type Process interface {
 	Kill(context.Context, uint32, bool) error
 	// SetExited sets the exit status for the process
 	SetExited(status int)
+	// Runtime returns the OCI runtime configured for the process
+	Runtime() runtime.Runtime
+	// Cgroup returns the cgroup for the process
+	CgroupAdapter() runtime.CgroupAdapter
 }
