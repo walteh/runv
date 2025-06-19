@@ -52,7 +52,7 @@ type CgroupEvent struct {
 type CgroupAdapter interface {
 	Stat(ctx context.Context) (*stats.Metrics, error)
 	ToggleControllers(ctx context.Context) error
-	OpenEventChan(ctx context.Context) (chan CgroupEvent, chan error, error)
+	OpenEventChan(ctx context.Context) (<-chan CgroupEvent, <-chan error, error)
 }
 
 type GuestManagement interface {

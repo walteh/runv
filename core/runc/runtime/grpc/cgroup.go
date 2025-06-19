@@ -13,7 +13,7 @@ import (
 var _ runtime.CgroupAdapter = (*GRPCClientRuntime)(nil)
 
 // EventChan implements runtime.CgroupAdapter.
-func (me *GRPCClientRuntime) OpenEventChan(ctx context.Context) (chan runtime.CgroupEvent, chan error, error) {
+func (me *GRPCClientRuntime) OpenEventChan(ctx context.Context) (<-chan runtime.CgroupEvent, <-chan error, error) {
 
 	stream, err := me.guestCgroupAdapterService.StreamCgroupEvents(ctx, &runmv1.StreamCgroupEventsRequest{})
 	if err != nil {

@@ -99,17 +99,23 @@ func runGrpcVsockServer(ctx context.Context) error {
 
 	realSocketAllocator := runtime.NewGuestUnixSocketAllocator(wrkDir)
 
+	cgroupAdapter, err := goruncruntime.NewCgroupV2Adapter(ctx)
+	if err != nil {
+		return errors.Errorf("failed to create cgroup adapter: %w", err)
+	}
+
 	var mockRuntimeExtras = &runtimemock.MockRuntimeExtras{}
 
 	grpcVsockServer := grpc.NewServer()
+
+	realEventHandler := goruncruntime.NewGoRuncEventHandler()
 
 	serverz := server.NewServer(
 		realRuntime,
 		mockRuntimeExtras,
 		realSocketAllocator,
 		realEventHandler,
-		realCgroupAdapter,
-		realGuestManagement,
+		cgroupAdapter,
 	)
 
 	serverz.RegisterGrpcServer(grpcVsockServer)

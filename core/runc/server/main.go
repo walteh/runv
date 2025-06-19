@@ -18,7 +18,6 @@ type Server struct {
 	socketAllocator runtime.SocketAllocator
 	eventHandler    runtime.EventHandler
 	cgroupAdapter   runtime.CgroupAdapter
-	guestManagement runtime.GuestManagement
 
 	state *state.State
 }
@@ -34,7 +33,6 @@ func NewServer(
 	socketAllocator runtime.SocketAllocator,
 	eventHandler runtime.EventHandler,
 	cgroupAdapter runtime.CgroupAdapter,
-	guestManagement runtime.GuestManagement,
 	opts ...ServerOpt) *Server {
 
 	optz := &ServerOpts{}
@@ -46,6 +44,8 @@ func NewServer(
 		runtime:         r,
 		runtimeExtras:   runtimeExtras,
 		socketAllocator: socketAllocator,
+		eventHandler:    eventHandler,
+		cgroupAdapter:   cgroupAdapter,
 		state:           state.NewState(),
 	}
 

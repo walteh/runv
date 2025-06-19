@@ -1,3 +1,5 @@
+//go:build linux
+
 package goruncruntime
 
 import (
@@ -6,9 +8,12 @@ import (
 	"github.com/containerd/cgroups/v3/cgroup2"
 	"github.com/containerd/cgroups/v3/cgroup2/stats"
 	"github.com/moby/sys/userns"
+	"github.com/walteh/runm/core/runc/runtime"
 	"gitlab.com/tozd/go/errors"
 	"kraftkit.sh/log"
 )
+
+var _ runtime.CgroupAdapter = (*CgroupV2Adapter)(nil)
 
 type CgroupV2Adapter struct {
 	cgroup *cgroup2.Manager
@@ -23,6 +28,29 @@ func NewCgroupV2Adapter(ctx context.Context) (*CgroupV2Adapter, error) {
 	}
 
 	return &CgroupV2Adapter{cgroup: cg}, nil
+}
+
+// OpenEventChan implements runtime.CgroupAdapter.
+func (me *CgroupV2Adapter) OpenEventChan(ctx context.Context) (<-chan runtime.CgroupEvent, <-chan error, error) {
+	evch, errch := me.cgroup.EventChan()
+
+	evch2 := make(chan runtime.CgroupEvent)
+
+	go func() {
+		for ev := range evch {
+			go func() {
+				evch2 <- runtime.CgroupEvent{
+					Low:     ev.Low,
+					High:    ev.High,
+					Max:     ev.Max,
+					OOM:     ev.OOM,
+					OOMKill: ev.OOMKill,
+				}
+			}()
+		}
+	}()
+
+	return evch2, errch, nil
 }
 
 func (me *CgroupV2Adapter) ToggleControllers(ctx context.Context) error {
@@ -42,7 +70,7 @@ func (me *CgroupV2Adapter) ToggleControllers(ctx context.Context) error {
 	return nil
 }
 
-func (a *CgroupV2Adapter) CgroupV2Stat(ctx context.Context) (*stats.Metrics, error) {
+func (a *CgroupV2Adapter) Stat(ctx context.Context) (*stats.Metrics, error) {
 	return a.cgroup.Stat()
 }
 
